@@ -6,7 +6,7 @@
     <property name="mod.version" value="r1" />
     <property name="mod.modname" value="SlashBlade" />
 
-    <property name="mod.modid" value="slashBlade" />
+    <property name="mod.modid" value="slashblade" />
     <property name="mod.mydomain" value="flammpfeil" />
     <property name="mod.fulldomain" value="${mod.mydomain}.${mod.modid}" />
 

@@ -1,4 +1,4 @@
-package mods.flammpfeil.sweapon;
+package mods.flammpfeil.slashblade;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;

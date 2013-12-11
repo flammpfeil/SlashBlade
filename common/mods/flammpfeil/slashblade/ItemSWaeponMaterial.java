@@ -1,4 +1,4 @@
-package mods.flammpfeil.sweapon;
+package mods.flammpfeil.slashblade;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

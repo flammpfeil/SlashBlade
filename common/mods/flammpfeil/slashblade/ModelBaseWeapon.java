@@ -1,4 +1,4 @@
-package mods.flammpfeil.sweapon;
+package mods.flammpfeil.slashblade;
 
 import org.lwjgl.opengl.GL11;
 

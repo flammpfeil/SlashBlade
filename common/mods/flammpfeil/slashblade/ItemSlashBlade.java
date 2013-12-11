@@ -1,4 +1,4 @@
-package mods.flammpfeil.sweapon;
+package mods.flammpfeil.slashblade;
 
 import java.util.ArrayList;
 import java.util.Arrays;

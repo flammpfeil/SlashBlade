@@ -1,4 +1,4 @@
-package mods.flammpfeil.sweapon;
+package mods.flammpfeil.slashblade;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
