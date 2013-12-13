@@ -1,29 +1,29 @@
 SlashBlade
 ==========
 
-ãƒ»srcã®ä½¿ã„æ–¹
-0.æœ¬ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’gitãƒªãƒã‚¸ãƒˆãƒªCloneã‚’ã‚ã‚‰ã‹ã˜ã‚ç”¨æ„ã™ã‚‹ã¨ã‹ã—ã¨ã
-ã€€è¦ªãƒ•ã‚©ãƒ«ãƒ€ã¯ã€ãƒ“ãƒ«ãƒ‰ç”¨Forgeã‚„ã€packageã•ã‚ŒãŸjarãŒç½®ã‹ã‚Œã‚‹ä½œæ¥­ãƒ•ã‚©ãƒ«ãƒ€ã¨ãªã‚‹ãŸã‚éšŽå±¤ã«æ³¨æ„
+Esrc‚ÌŽg‚¢•û
+0.–{ƒvƒƒWƒFƒNƒg‚ðgitƒŠƒ|ƒWƒgƒŠClone‚ð‚ ‚ç‚©‚¶‚ß—pˆÓ‚·‚é‚Æ‚©‚µ‚Æ‚­
+@eƒtƒHƒ‹ƒ_‚ÍAƒrƒ‹ƒh—pForge‚âApackage‚³‚ê‚½jar‚ª’u‚©‚ê‚éì‹ÆƒtƒHƒ‹ƒ_‚Æ‚È‚é‚½‚ßŠK‘w‚É’ˆÓ
 
-â€»ãƒ•ã‚©ãƒ«ãƒ€æ§‹æˆä¾‹
+¦ƒtƒHƒ‹ƒ_\¬—á
 root
-+build â€»ãƒ“ãƒ«ãƒ‰ç”¨ForgeãŒbuild.xmlã«ã‚ˆã‚Šç”Ÿæˆã•ã‚Œã‚‹ã€‚
-ã€€å¿…è¦ãªãƒ©ã‚¤ãƒ–ãƒ©ãƒªãªã©ã¯ã“ã“ã«è‡ªå‹•ã§æƒã†ãŸã‚ã€é©å®œé–‹ç™ºç’°å¢ƒã®libã¸ã‚³ãƒ”ãƒ¼,åŠã³ãƒ“ãƒ«ãƒ‰ãƒ‘ã‚¹è¿½åŠ ã‚’ã™ã‚‹
-+dist â€»ãƒ“ãƒ«ãƒ‰ã•ã‚Œpackageæ¸ˆã¿ã®jarãŒã“ã“ã«ç”Ÿæˆã•ã‚Œã‚‹ã€‚
-+download â€»ãƒ“ãƒ«ãƒ‰ç’°å¢ƒä½œæˆç”¨ã®tempãƒ•ã‚©ãƒ«ãƒ€
-+SlashBlade æœ¬modãƒã‚¸ãƒˆãƒªãƒ•ã‚©ãƒ«ãƒ€ gitã§ç®¡ç†ã™ã‚‹ã€ã“ã®ãƒ•ã‚©ãƒ«ãƒ€ã‚’ãƒªãƒ³ã‚¯ã™ã‚‹
++build ¦ƒrƒ‹ƒh—pForge‚ªbuild.xml‚É‚æ‚è¶¬‚³‚ê‚éB
+@•K—v‚Èƒ‰ƒCƒuƒ‰ƒŠ‚È‚Ç‚Í‚±‚±‚ÉŽ©“®‚Å‘µ‚¤‚½‚ßA“K‹XŠJ”­ŠÂ‹«‚Ìlib‚ÖƒRƒs[,‹y‚Ñƒrƒ‹ƒhƒpƒX’Ç‰Á‚ð‚·‚é
++dist ¦ƒrƒ‹ƒh‚³‚êpackageÏ‚Ý‚Ìjar‚ª‚±‚±‚É¶¬‚³‚ê‚éB
++download ¦ƒrƒ‹ƒhŠÂ‹«ì¬—p‚ÌtempƒtƒHƒ‹ƒ_
++SlashBlade –{modƒ|ƒWƒgƒŠƒtƒHƒ‹ƒ_ git‚ÅŠÇ—‚·‚éA‚±‚ÌƒtƒHƒ‹ƒ_‚ðƒŠƒ“ƒN‚·‚é
 
-1.ForgeDevï¼ƒ871ç’°å¢ƒã‚’ç”¨æ„ã™ã‚‹ã€‚ï¼ˆ#953ã¾ã§ã§ã‚ã‚Œã°ä½¿ãˆã‚‹ã‹ã‚‚ã€€ASMéƒ¨åˆ†ã¯æ³¨æ„
-2.Eclipseã‹ã‚‰SlashBladeãƒ•ã‚©ãƒ«ãƒ€ã‚’ã€Minecraftãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆé…ä¸‹ã«ãƒªãƒ³ã‚¯ãƒ•ã‚©ãƒ«ãƒ€ã¨ã—ã¦è¿½åŠ ã€‚
-ã€€æ–°è¦ï¼žãƒ•ã‚©ãƒ«ãƒ€ãƒ¼ï¼žæ‹¡å¼µï¼žãƒªãƒ³ã‚¯ã•ã‚ŒãŸãƒ•ã‚©ãƒ«ãƒ€ãƒ¼
-3.ãƒªãƒ³ã‚¯ã•ã‚ŒãŸãƒ•ã‚©ãƒ«ãƒ€ä¸­ã®common resourceã‚’é¸æŠžã—ã‚½ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€ã¨ã—ã¦ç™»éŒ²
-ã€€å³ã‚¯ãƒªãƒƒã‚¯ï¼žãƒ“ãƒ«ãƒ‰ï½¥ãƒ‘ã‚¹ï¼žã‚½ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€ãƒ¼ã¨ã—ã¦ä½¿ç”¨
-4.build.xmlã‚’antå®Ÿè¡Œã™ã‚‹
-ã€€â€»ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¯ã€ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®testã‚’åˆ©ç”¨ã™ã‚‹ã¨Buildç”¨Forgeã®DLã‹ã‚‰jarä½œæˆã¾ã§å…¨ã¦è¡Œã†
-ã€€â€»2å›žç›®ä»¥é™ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã¯ã€install-dependenciesã‚’é™¤ã„ãŸ
-ã€€ã€€recompile reobfcate packageã€€ã‚’é †ã«è¡Œãˆã°çŸ­ç¸®ã§ãã‚‹ã€‚
+1.ForgeDev”871ŠÂ‹«‚ð—pˆÓ‚·‚éBi#953‚Ü‚Å‚Å‚ ‚ê‚ÎŽg‚¦‚é‚©‚à@ASM•”•ª‚Í’ˆÓ
+2.Eclipse‚©‚çSlashBladeƒtƒHƒ‹ƒ_‚ðAMinecraftƒvƒƒWƒFƒNƒg”z‰º‚ÉƒŠƒ“ƒNƒtƒHƒ‹ƒ_‚Æ‚µ‚Ä’Ç‰ÁB
+@V‹K„ƒtƒHƒ‹ƒ_[„Šg’£„ƒŠƒ“ƒN‚³‚ê‚½ƒtƒHƒ‹ƒ_[
+3.ƒŠƒ“ƒN‚³‚ê‚½ƒtƒHƒ‹ƒ_’†‚Ìcommon resource‚ð‘I‘ð‚µƒ\[ƒXƒtƒHƒ‹ƒ_‚Æ‚µ‚Ä“o˜^
+@‰EƒNƒŠƒbƒN„ƒrƒ‹ƒh¥ƒpƒX„ƒ\[ƒXƒtƒHƒ‹ƒ_[‚Æ‚µ‚ÄŽg—p
+4.build.xml‚ðantŽÀs‚·‚é
+@¦ƒ^[ƒQƒbƒg‚ÍAƒfƒtƒHƒ‹ƒg‚Ìtest‚ð—˜—p‚·‚é‚ÆBuild—pForge‚ÌDL‚©‚çjarì¬‚Ü‚Å‘S‚Äs‚¤
+@¦2‰ñ–ÚˆÈ~‚ÌƒRƒ“ƒpƒCƒ‹‚ÍAinstall-dependencies‚ðœ‚¢‚½
+@@recompile reobfcate package@‚ð‡‚És‚¦‚Î’Zk‚Å‚«‚éB
 
-5.Eclipseã§ãƒ‡ãƒãƒƒã‚°ã™ã‚‹
-â€»ASMéƒ¨åˆ†ã¯è€ƒãˆãšã«ãƒ‡ãƒãƒƒã‚°ã™ã‚‹æ–¹æ³•ã€€Forgeã‚¤ãƒ™ãƒ³ãƒˆã®ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¿½åŠ ã—ã¦ã„ã‚‹ã ã‘ãªã®ã§ç„¡è¦–ã—ã¦ã„ã„ã¯ãš
-InitProxyClientã®ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆè¡Œã‚’æœ‰åŠ¹ã«ã™ã‚‹
-ãƒ‡ãƒãƒƒã‚°èµ·å‹•ã§ãã‚‹ã¯ãšã€‚
+5.Eclipse‚ÅƒfƒoƒbƒO‚·‚é
+¦ASM•”•ª‚Íl‚¦‚¸‚ÉƒfƒoƒbƒO‚·‚é•û–@@ForgeƒCƒxƒ“ƒg‚ÌƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“‚ð’Ç‰Á‚µ‚Ä‚¢‚é‚¾‚¯‚È‚Ì‚Å–³Ž‹‚µ‚Ä‚¢‚¢‚Í‚¸
+InitProxyClient‚ÌƒRƒƒ“ƒgƒAƒEƒgs‚ð—LŒø‚É‚·‚é
+ƒfƒoƒbƒO‹N“®‚Å‚«‚é‚Í‚¸B
