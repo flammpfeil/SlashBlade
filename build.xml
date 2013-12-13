@@ -3,14 +3,15 @@
     <property file="buildspecs.properties" prefix="buildspecs" />
 
 
-    <property name="mod.version" value="r1" />
+    <property name="mod.version" value="r2" />
     <property name="mod.modname" value="SlashBlade" />
 
     <property name="mod.modid" value="slashblade" />
     <property name="mod.mydomain" value="flammpfeil" />
     <property name="mod.fulldomain" value="${mod.mydomain}.${mod.modid}" />
 
-	<property name="mod.packagetarget" value="**/mods/${mod.mydomain}/${mod.modid}/*.class" />
+    <property name="mod.packagetarget" value="**/mods/${mod.mydomain}/${mod.modid}/*.class" />
+    <property name="mod.packagetargetasm" value="**/mods/${mod.mydomain}/${mod.modid}/asm/*.class" />
 
     <condition property="mod.build" value="${env.BUILD_NUMBER}" else="0">
         <isset property="env.BUILD_NUMBER" />
@@ -168,12 +169,25 @@
 
     <target name="reobfuscate">
         <echo message="Reobfuscating" />
-        <java jar="${mcp.dir}/${ccobf.name}" fork="true" failonerror="true" resultproperty="reobfuscate.code">
-            <arg value="--mcp" />
+        <!--
+    	<java jar="${mcp.dir}/${ccobf.name}" fork="true" failonerror="true" resultproperty="reobfuscate.code">
+            <arg value="-,-mcp" />
             <arg value="${mcp.dir}" />
             <arg value="-q" />
             <arg value="-srg" />
         </java>
+    	-->
+
+        <property name="mcp.python.exe" location="${mcp.dir}/runtime/bin/python/python_mcp.exe" />
+        <exec dir="${mcp.dir}" executable="${mcp.python.exe}" osfamily="windows" resultproperty="reobfuscate.code">
+            <arg line="runtime/reobfuscate.py" />
+    	    <arg line="--srgnames" />
+        </exec>
+        <exec dir="${mcp.dir}" executable="python" osfamily="unix" resultproperty="reobfuscate.code">
+            <arg line="runtime/reobfuscate.py" />
+        <arg line="--srgnames" />
+        </exec>
+
 
         <echo message="Copying Resources" />
         <delete dir="${mcp.dir}/reobf/resources" />
@@ -205,7 +219,7 @@
         <!-- Packaging Main -->
         <echo message="Packaging Main" />
         <jar destfile="${jar.dir}/${mod.name.base}" manifest="${mcp.dir}/reobf/resources/MANIFEST.MF">
-            <fileset dir="${mcp.dir}/reobf/minecraft" includes="${mod.packagetarget}" />
+            <fileset dir="${mcp.dir}/reobf/minecraft" includes="${mod.packagetarget},${mod.packagetargetasm}" />
 
         	<!--, path , **/mods/** -->
 

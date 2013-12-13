@@ -1,7 +1,18 @@
 package mods.flammpfeil.slashblade;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityOwnable;
+import net.minecraft.entity.IMerchant;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,15 +20,20 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.common.IFuelHandler;
+import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
-@Mod(name="SlashBlade",modid="flammpfeil.slashBlade",useMetadata=false,version="@VERSION@")
-public class SlashBlade implements IFuelHandler{
+@Mod(name="SlashBlade",modid="flammpfeil.slashblade",useMetadata=false,version="@VERSION@")
+public class SlashBlade implements IFuelHandler ,ITickHandler{
 
 
 	public static Item weapon;
@@ -26,10 +42,9 @@ public class SlashBlade implements IFuelHandler{
 	public static int itemid = 22802;
 	public static int itemid2 = 22803;
 
-	public static boolean PFLMFix = false;
-
 	public static float offsetX,offsetY,offsetZ;
 
+	public static Map<String,Boolean> attackDisabled = new HashMap<String,Boolean>();
 
 	public static Configuration mainConfiguration;
 
@@ -47,10 +62,6 @@ public class SlashBlade implements IFuelHandler{
 			Property propShiftItemId2;
 			propShiftItemId2 = mainConfiguration.getItem(Configuration.CATEGORY_ITEM, "ProudSoul", itemid2);
 			itemid2= propShiftItemId2.getInt();
-
-			Property propPFLMFix;
-			propPFLMFix = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "PFLMFix", PFLMFix);
-			PFLMFix = propPFLMFix.getBoolean(PFLMFix);
 
 			Property propOffsets;
 			propOffsets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "OffsetX", 0.0);
@@ -81,8 +92,8 @@ public class SlashBlade implements IFuelHandler{
 		LanguageRegistry.instance().addNameForObject(weapon,"ja_JP","太刀");
 
 		proudSoul = (new ItemSWaeponMaterial(itemid2))
-				.setUnlocalizedName("flammpfeil.sweapon:proudsoul")
-				.setTextureName("flammpfeil.sweapon:proudsoul")
+				.setUnlocalizedName("flammpfeil.slashblade:proudsoul")
+				.setTextureName("flammpfeil.slashblade:proudsoul")
 				.setCreativeTab(CreativeTabs.tabMaterials);
 
 		LanguageRegistry.instance().addName(proudSoul,"ProudSoul");
@@ -112,4 +123,110 @@ public class SlashBlade implements IFuelHandler{
 	public int getBurnTime(ItemStack fuel) {
 		return fuel.itemID == this.proudSoul.itemID ? 20000 : 0;
 	}
+
+
+    @EventHandler
+    public void modsLoaded(FMLPostInitializationEvent evt)
+    {
+        TickRegistry.registerTickHandler(this, Side.CLIENT);
+    }
+
+
+
+
+
+    static boolean loaded = false;
+    @Override
+    public void tickStart(EnumSet<TickType> type, Object... tickData)
+    {
+    }
+
+
+    static public Map<String,Boolean> attackableTargets = new HashMap<String,Boolean>();
+
+    @Override
+    public void tickEnd(EnumSet<TickType> type, Object... tickData)
+    {
+
+		try{
+			mainConfiguration.load();
+
+			ArrayList<String> targets = new ArrayList<String>();
+
+
+			for(Object key : EntityList.classToStringMapping.keySet()){
+				String name = (String)EntityList.classToStringMapping.get(key);
+				if(name == null || name.length() == 0)
+					continue;
+				Entity instance = null;
+
+				try{
+					instance = EntityList.createEntityByName(name, null);
+				}catch(Exception e){
+				}
+
+				if(instance == null)
+					continue;
+
+				boolean attackable = true;
+
+				if(instance instanceof IMob)
+					attackable = true;
+				else
+				if(instance instanceof IAnimals
+					||instance instanceof EntityOwnable
+					||instance instanceof IMerchant)
+					attackable = false;
+
+				attackableTargets.put(name, attackable);
+			}
+
+			Property propAttackableTargets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "AttackableTargets" ,new String[]{});
+
+			for(String curEntry : propAttackableTargets.getStringList()){
+				int spliterIdx = curEntry.lastIndexOf(":");
+				String name = curEntry.substring(0, spliterIdx);
+				String attackableStr = curEntry.substring(spliterIdx + 1, curEntry.length());
+
+				boolean attackable = attackableStr.toLowerCase().equals("true");
+
+				attackableTargets.put(name, attackable);
+			}
+
+			for(Object key : attackableTargets.keySet()){
+				Boolean name = (Boolean)attackableTargets.get(key);
+
+				targets.add(String.format("%s:%b", (String)key,name));
+			}
+
+			String[] data = targets.toArray(new String[]{});
+
+			propAttackableTargets.set(data);
+		}
+		finally
+		{
+			mainConfiguration.save();
+		}
+
+		loaded = true;
+    }
+
+    @Override
+    public EnumSet<TickType> ticks()
+    {
+        if (!loaded)
+        {
+            return EnumSet.of(TickType.CLIENT);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
+    public String getLabel()
+    {
+        return null;
+    }
 }

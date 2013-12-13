@@ -130,7 +130,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 	static float ticks = 0.0f;
 
 
-    private float interpolateRotation(float par1, float par2, float par3)
+	@ForgeSubscribe
+	public void RenderPlayerEventPre(RenderPlayerEvent.Pre event){
+		float partialRenderTick = event.partialRenderTick;
+		EntityPlayer player = event.entityPlayer;
+		render(player,partialRenderTick);
+	}
+
+    static private float interpolateRotation(float par1, float par2, float par3)
     {
         float f3;
 
@@ -147,12 +154,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         return par1 + par3 * f3;
     }
 
-	@ForgeSubscribe
-	void RenderPlayerEventPost(RenderPlayerEvent.Post event){
-
-
-		float partialRenderTick = event.partialRenderTick;
-		EntityPlayer player = event.entityPlayer;
+	static public void render(EntityPlayer player,float partialRenderTick)
+	{
 		if(player == null)
 			return;
 		ItemStack item = player.getCurrentEquippedItem();
@@ -160,6 +163,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		if(item == null || item.itemID != SlashBlade.weapon.itemID)
 			return;
 
+		boolean isBroken = false;
+		if(item.hasTagCompound()){
+			NBTTagCompound tag = item.getTagCompound();
+
+			isBroken = tag.getBoolean("isBroken");
+		}
+		model.isBroken = isBroken;
+		model.isEntity = false;
 
 		float rotate = 0.0f;
 		float x = 0;

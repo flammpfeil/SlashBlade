@@ -8,16 +8,13 @@ import java.util.Random;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.item.EntityTNTPrimed;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -25,6 +22,9 @@ import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -35,9 +35,6 @@ import net.minecraft.world.World;
 import com.google.common.collect.Multimap;
 
 public class ItemSlashBlade extends ItemSword {
-
-	public float atackAmplifier = 0;
-
     /**
      * Current implementations of this method in child classes do not use the entry argument beside ev. They just raise
      * the damage on the stack.
@@ -45,8 +42,10 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
     public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
     {
-        par1ItemStack.damageItem(1, par3EntityLivingBase);
-        return true;
+		if(par1ItemStack.attemptDamageItem(1, par3EntityLivingBase.getRNG()))
+			par1ItemStack.setItemDamage(par1ItemStack.getMaxDamage());
+
+		return true;
     }
 
     /**
@@ -56,7 +55,8 @@ public class ItemSlashBlade extends ItemSword {
     public Multimap getItemAttributeModifiers()
     {
         Multimap multimap = super.getItemAttributeModifiers();
-        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double)(this.atackAmplifier + EnumToolMaterial.EMERALD.getDamageVsEntity()), 0));
+        multimap.removeAll(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName());
+        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double)(4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity()), 0));
         return multimap;
     }
 
@@ -67,6 +67,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	public ItemSlashBlade(int par1, EnumToolMaterial par2EnumToolMaterial) {
 		super(par1, par2EnumToolMaterial);
+        this.setMaxDamage(50);
 	}
 
 	@Override
@@ -122,8 +123,9 @@ public class ItemSlashBlade extends ItemSword {
 			if(curEntity == null)
 				continue;
 
+			String entityStr = EntityList.getEntityString(curEntity);
 			//含む
-			if((curEntity instanceof IMob
+			if(((entityStr != null && SlashBlade.attackableTargets.containsKey(entityStr) && SlashBlade.attackableTargets.get(entityStr))
 				|| curEntity instanceof EntityDragonPart
 				))
 				result.add(curEntity);
@@ -215,6 +217,18 @@ public class ItemSlashBlade extends ItemSword {
 		}
 	}
 
+    private NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier)
+    {
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        nbttagcompound.setString("AttributeName",attrName);
+        nbttagcompound.setString("Name", par0AttributeModifier.getName());
+        nbttagcompound.setDouble("Amount", par0AttributeModifier.getAmount());
+        nbttagcompound.setInteger("Operation", par0AttributeModifier.getOperation());
+        nbttagcompound.setLong("UUIDMost", par0AttributeModifier.getID().getMostSignificantBits());
+        nbttagcompound.setLong("UUIDLeast", par0AttributeModifier.getID().getLeastSignificantBits());
+        return nbttagcompound;
+    }
+
 	@Override
 	public void onUpdate(ItemStack sitem, World par2World,
 			Entity par3Entity, int indexOfMainSlot, boolean isCurrent) {
@@ -234,11 +248,36 @@ public class ItemSlashBlade extends ItemSword {
 
 		boolean isBewitched = sitem.hasDisplayName() && sitem.isItemEnchanted();
 
-        if(isBewitched && par3Entity instanceof EntityPlayer){
-        	int tmp = ((EntityPlayer)par3Entity).experienceLevel;
-        	tmp = 1 + (int)( tmp < 15 ? tmp * 0.5 : tmp < 30 ? 3+tmp*0.45 : 7+0.4 * tmp);
-        	atackAmplifier = tmp;
+    	float tagAttackAmplifier = tag.getFloat("attackAmplifier");
+		float attackAmplifier = 0;
+        if(!isBroken && isBewitched && par3Entity instanceof EntityPlayer){
+        	float tmp = ((EntityPlayer)par3Entity).experienceLevel;
+        	tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
+        	attackAmplifier = tmp;
+        }else if(isBroken){
+        	attackAmplifier = -4;
+        }
+        if(tagAttackAmplifier != attackAmplifier)
+        {
+        	tag.setFloat("attackAmplifier", attackAmplifier);
 
+        	NBTTagList attrTag = null;
+        	/*if(tag.hasKey("AttributeModifiers")){
+        		attrTag = tag.getTagList("AttributeModifiers");
+        	}else{
+	    		attrTag = new NBTTagList();
+	    		tag.setTag("AttributeModifiers",attrTag);
+        	}*/
+
+    		attrTag = new NBTTagList();
+    		tag.setTag("AttributeModifiers",attrTag);
+
+        	attrTag.appendTag(
+        			getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + 4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity()), 0))
+        			);
+        }
+
+        if(isBewitched && par3Entity instanceof EntityPlayer){
         	int nowExp = ((EntityPlayer)par3Entity).experienceTotal;
 
         	if(!tag.hasKey("prevExp")){
@@ -272,13 +311,13 @@ public class ItemSlashBlade extends ItemSword {
 					int descExp;
 
 					if(isBroken){
-			            pl.addExhaustion(0.05F);
+			            pl.addExhaustion(0.025F);
 						repair = 10;
 						descExp = 5;
 					}else{
-						repair = 2;
+						repair = 1;
 						descExp = 1;
-			            pl.addExhaustion(0.05F);
+			            pl.addExhaustion(0.025F);
 					}
 
 					if(0 < curDamage){
@@ -393,9 +432,12 @@ public class ItemSlashBlade extends ItemSword {
 								continue;
 							}
 
+
+							String entityStr = EntityList.getEntityString(curEntity);
+
 							//含む
-							if(!(curEntity instanceof IMob
-								|| curEntity instanceof EntityDragonPart
+							if(!(curEntity instanceof EntityDragonPart
+								|| (entityStr != null && SlashBlade.attackableTargets.containsKey(entityStr) && SlashBlade.attackableTargets.get(entityStr))
 								))
 								continue;
 
@@ -405,12 +447,12 @@ public class ItemSlashBlade extends ItemSword {
 								((EntityPlayer)el).attackTargetEntityWithCurrentItem(curEntity);
 								((EntityPlayer)el).onCriticalHit(curEntity);
 
-								float knockbackFactor = 2.0f;
-								curEntity.addVelocity((double)(-MathHelper.sin(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.3D, (double)(MathHelper.cos(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
+								float knockbackFactor = 1.5f;
+								curEntity.addVelocity((double)(-MathHelper.sin(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
 
 
 								float damagePer = 1.0f - (curDamage / (float)sitem.getMaxDamage());
-								if(isBewitched && !isBroken && damagePer < 0.2f){
+								if(!isBroken && damagePer < 0.2f){
 									tag.setBoolean("isBroken", true);
 									el.renderBrokenItemStack(sitem);
 
@@ -419,8 +461,9 @@ public class ItemSlashBlade extends ItemSword {
 								}
 							}else{
 
-								float atack = 1; //stone like
-/*
+								float atack = 4.0f + EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
+
+								/*
 								if (el.isPotionActive(Potion.damageBoost))
 				                {
 				                    atack += 3 << el.getActivePotionEffect(Potion.damageBoost).getAmplifier();
@@ -430,8 +473,9 @@ public class ItemSlashBlade extends ItemSword {
 				                {
 				                    atack -= 2 << el.getActivePotionEffect(Potion.weakness).getAmplifier();
 				                }
-*/
-				                if (curEntity instanceof EntityLivingBase)
+				                */
+
+								if (curEntity instanceof EntityLivingBase)
 				                {
 					                float var4 = 0;
 				                    var4 = EnchantmentHelper.getEnchantmentModifierLiving(el, (EntityLiving)curEntity);
@@ -449,19 +493,17 @@ public class ItemSlashBlade extends ItemSword {
 				                }
 
 
-								curEntity.hurtResistantTime = 0;/*
-				                if (curEntity instanceof EntityLivingBase){
-				                	((EntityLivingBase) curEntity).setHealth(((EntityLivingBase) curEntity).getHealth()-atack);
-				                	curEntity.playSound("damage.hit", 1.0f, 1.0f);
-				                }
-								else */
-									curEntity.attackEntityFrom(DamageSource.causeMobDamage(el), atack);
+								curEntity.hurtResistantTime = 0;
+								curEntity.attackEntityFrom(DamageSource.causeMobDamage(el), atack);
 
 								curEntity.setVelocity(0,0,0);
 
 
 				                if (curEntity instanceof EntityLivingBase){
 				                	((EntityLivingBase)curEntity).setRevengeTarget(null);
+
+				                	((EntityLivingBase)curEntity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
+				                	((EntityLivingBase)curEntity).addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
 				                }
 							}
 						}
@@ -487,19 +529,8 @@ public class ItemSlashBlade extends ItemSword {
 						bb = bb.expand(10, 5, 10);
 						float distance = 20.0f;
 						List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3Entity, bb);
-						Object[] olist = list.toArray();
-						for(Object curObj : olist){
-							if(!(curObj instanceof Entity)){
-								continue;
-							}
-							Entity curEntity = (Entity)curObj;
-							if(!(curEntity instanceof EntityCreature || (curEntity instanceof EntityLiving && curEntity instanceof IBossDisplayData)))
-								continue;
-
-							if(curEntity instanceof EntityAgeable)
-								continue;
-
-
+						list = targetFilter(list);
+						for(Entity curEntity : list){
 							float curDist = curEntity.getDistanceToEntity(par3Entity);
 							if(curDist < distance)
 							{
