@@ -163,12 +163,24 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		if(item == null || item.itemID != SlashBlade.weapon.itemID)
 			return;
 
+		float progress = player.prevSwingProgress + (player.swingProgress - player.prevSwingProgress) * partialRenderTick;
+
 		boolean isBroken = false;
+		int combo = 0;
 		if(item.hasTagCompound()){
 			NBTTagCompound tag = item.getTagCompound();
 
 			isBroken = tag.getBoolean("isBroken");
+
+			combo = tag.getInteger("comboSeq");
 		}
+
+
+		if(combo <= 2){
+		}else{
+			progress *= 1.2f;
+		}
+
 		model.isBroken = isBroken;
 		model.isEntity = false;
 
@@ -176,7 +188,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		float x = 0;
 		float y = 0;
 		float z = 0;
-		float progress = player.swingProgress;
 
 		GL11.glPushMatrix();{
 	        float f1 = interpolateRotation(player.prevRenderYawOffset, player.renderYawOffset, partialRenderTick);
@@ -189,7 +200,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			//-----------------------------------------------------------------------------------------------------------------------
 			GL11.glPushMatrix();{
-
 				/*
 				if(item.hasTagCompound()){
 					NBTTagCompound tag = item.getTagCompound();
@@ -201,7 +211,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 				}
 				*/
 
-				GL11.glRotatef(progress * 220, -1.0f, 1.75f, 0f);
+
+				GL11.glRotatef(progress * 220.0f, -1.0f, 1.75f, 0f);
 				//if(progress > 0.5f)
 				//	progress = 1.0f - progress;
 				//progress *= 2;
@@ -217,7 +228,16 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 				GL11.glTranslatef(-1f,-5.5f,-0.5f);
 
 				engine().bindTexture(bladeTexture);
+
 				model.render(null, x, y, z, 0, 0, 1.0f);
+
+				if(0 < progress && !(combo <= 2)){
+					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+					GL11.glEnable(GL11.GL_BLEND);
+					GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+					model.render(null, x, y, z, 0, 0, 1.0f);
+					GL11.glPopAttrib();
+				}
 
 			}GL11.glPopMatrix();
 
@@ -225,15 +245,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			GL11.glPushMatrix();{
 
-				if(item.hasTagCompound()){
-					NBTTagCompound tag = item.getTagCompound();
-
-					int combo = tag.getInteger("comboSeq");
-					if(combo != 3){
-						GL11.glRotatef(progress * 220, -1.0f, 1.75f, 0f);
-					}
+				if(combo <= 2){
+					GL11.glRotatef(progress * 220, -1.0f, 1.75f, 0f);
+				}else{
+					GL11.glTranslatef(0.0f,0.0f,-0.0f);
 				}
-
 
 				GL11.glTranslatef(0.3f,0.5f,-0.3f);
 

@@ -42,11 +42,35 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
     public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
     {
-		if(par1ItemStack.attemptDamageItem(1, par3EntityLivingBase.getRNG()))
+		if(par1ItemStack.attemptDamageItem(1, par3EntityLivingBase.getRNG())){
 			par1ItemStack.setItemDamage(par1ItemStack.getMaxDamage());
+
+
+			NBTTagCompound tag;
+			if(par1ItemStack.hasTagCompound()){
+				tag = par1ItemStack.getTagCompound();
+			}else{
+				tag = new NBTTagCompound();
+				par1ItemStack.setTagCompound(tag);
+			}
+
+			if(!tag.getBoolean("isBroken")){
+
+				tag.setBoolean("isBroken", true);
+				par3EntityLivingBase.renderBrokenItemStack(par1ItemStack);
+
+				if(!par3EntityLivingBase.worldObj.isRemote)
+					par3EntityLivingBase.entityDropItem(new ItemStack(SlashBlade.proudSoul,1), 0.0F);
+			}else{
+				if(par1ItemStack.getItemDamage() == 0){
+					tag.setBoolean("isBroken", false);
+				}
+			}
+		}
 
 		return true;
     }
+
 
     /**
      * Gets a map of item attribute modifiers, used by ItemSword to increase hit damage.
@@ -73,7 +97,20 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
 			Entity entity) {
-		return false;// super.onLeftClickEntity(stack, player, entity);
+
+
+		NBTTagCompound tag;
+		if(stack.hasTagCompound()){
+			tag = stack.getTagCompound();
+		}else{
+			tag = new NBTTagCompound();
+			stack.setTagCompound(tag);
+		}
+
+		tag.setInteger("comboSeq", 4);
+		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
+
+		return false;
 	}
 
 	@Override
@@ -95,10 +132,12 @@ public class ItemSlashBlade extends ItemSword {
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
 
-	/*
+
+
+/*
 	@Override
 	public boolean itemInteractionForEntity(ItemStack sitem,
-			EntityLiving par2EntityLiving) {
+			EntityLivingBase par2EntityLivingBase) {
 
 		NBTTagCompound tag;
 		if(sitem.hasTagCompound()){
@@ -114,8 +153,7 @@ public class ItemSlashBlade extends ItemSword {
 
 		return super.itemInteractionForEntity(sitem, par2EntityLiving);
 	}
-	*/
-
+*/
 	private List<Entity> targetFilter(List<Entity> list){
 		List<Entity> result = new ArrayList<Entity>();
 
@@ -344,15 +382,15 @@ public class ItemSlashBlade extends ItemSword {
 			EntityLivingBase el = (EntityLivingBase)par3Entity;
 
 			if(isCurrent){
-				long prevAtackTime = tag.getLong("prevAtackTime");
+				long prevAttackTime = tag.getLong("prevAttackTime");
 				long currentTime =par2World.getTotalWorldTime();
 
 				if(tag.getBoolean("onClick")){
 
 					//sitem.setItemDamage(1320);
-					if(prevAtackTime + 3 < currentTime){
+					if(prevAttackTime + 3 < currentTime){
 						tag.setBoolean("onClick", false);
-						tag.setLong("prevAtackTime", currentTime);
+						tag.setLong("prevAttackTime", currentTime);
 
 
 						int combo = tag.getInteger("comboSeq");
@@ -450,15 +488,6 @@ public class ItemSlashBlade extends ItemSword {
 								float knockbackFactor = 1.5f;
 								curEntity.addVelocity((double)(-MathHelper.sin(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
 
-
-								float damagePer = 1.0f - (curDamage / (float)sitem.getMaxDamage());
-								if(!isBroken && damagePer < 0.2f){
-									tag.setBoolean("isBroken", true);
-									el.renderBrokenItemStack(sitem);
-
-									if(!par2World.isRemote)
-										el.entityDropItem(new ItemStack(SlashBlade.proudSoul,1), 0.0F);
-								}
 							}else{
 
 								float atack = 4.0f + EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
@@ -510,7 +539,7 @@ public class ItemSlashBlade extends ItemSword {
 
 					}
 				}else{
-					if(prevAtackTime +12 < currentTime){
+					if(prevAttackTime +12 < currentTime){
 						tag.setInteger("comboSeq", 0);
 					}
 				}

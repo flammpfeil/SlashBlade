@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntityOwnable;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.monster.IMob;
@@ -165,8 +166,9 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				}catch(Exception e){
 				}
 
-				if(instance == null)
+				if(instance == null || !(instance instanceof EntityLivingBase))
 					continue;
+
 
 				boolean attackable = true;
 
@@ -177,6 +179,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 					||instance instanceof EntityOwnable
 					||instance instanceof IMerchant)
 					attackable = false;
+
 
 				attackableTargets.put(name, attackable);
 			}
