@@ -145,6 +145,24 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 
     static public Map<String,Boolean> attackableTargets = new HashMap<String,Boolean>();
 
+
+    /**
+     * [\] -> [\\]
+     * ["] -> [\quot;]
+     * 改行 -> [\r;\r;]
+     * 全文を""でquotationする
+     * 上記のとおり、エスケープされます。直接configを修正するときに覚えておくべき。
+     * @param source
+     * @return
+     */
+    static private String escape(String source){
+		return String.format("\"%s\"", source.replace("\\","\\\\").replace("\"","\\quot;").replace("\r", "\\r;").replace("\n", "\\n;"));
+    }
+    static private String unescape(String source){
+    	return source.replace("\"", "").replace("\\quot;", "\"").replace("\\r;","\r").replace("\\n;","\n").replace("\\\\", "\\");
+    }
+
+
     @Override
     public void tickEnd(EnumSet<TickType> type, Object... tickData)
     {
@@ -187,9 +205,9 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 			Property propAttackableTargets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "AttackableTargets" ,new String[]{});
 
 			for(String curEntry : propAttackableTargets.getStringList()){
+				curEntry = unescape(curEntry);
 				int spliterIdx = curEntry.lastIndexOf(":");
 				String name = curEntry.substring(0, spliterIdx);
-				name = name.replace(":amp:","&");
 				String attackableStr = curEntry.substring(spliterIdx + 1, curEntry.length());
 
 				boolean attackable = attackableStr.toLowerCase().equals("true");
@@ -201,8 +219,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				Boolean name = (Boolean)attackableTargets.get(key);
 
 				String keyStr = (String)key;
-				keyStr = keyStr.replace("&",":amp:");
-				targets.add(String.format("%s:%b", keyStr ,name));
+				targets.add(escape(String.format("%s:%b", keyStr ,name)));
 			}
 
 			String[] data = targets.toArray(new String[]{});
