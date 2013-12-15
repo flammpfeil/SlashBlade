@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -71,6 +72,40 @@ public class ItemSlashBlade extends ItemSword {
 		return true;
     }
 
+    public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World, int par3, int par4, int par5, int par6, EntityLivingBase par7EntityLivingBase)
+    {
+        if ((double)Block.blocksList[par3].getBlockHardness(par2World, par4, par5, par6) != 0.0D)
+        {
+
+    		if(par1ItemStack.attemptDamageItem(1, par7EntityLivingBase.getRNG())){
+    			par1ItemStack.setItemDamage(par1ItemStack.getMaxDamage());
+
+
+    			NBTTagCompound tag;
+    			if(par1ItemStack.hasTagCompound()){
+    				tag = par1ItemStack.getTagCompound();
+    			}else{
+    				tag = new NBTTagCompound();
+    				par1ItemStack.setTagCompound(tag);
+    			}
+
+    			if(!tag.getBoolean("isBroken")){
+
+    				tag.setBoolean("isBroken", true);
+    				par7EntityLivingBase.renderBrokenItemStack(par1ItemStack);
+
+    				if(!par7EntityLivingBase.worldObj.isRemote)
+    					par7EntityLivingBase.entityDropItem(new ItemStack(SlashBlade.proudSoul,1), 0.0F);
+    			}else{
+    				if(par1ItemStack.getItemDamage() == 0){
+    					tag.setBoolean("isBroken", false);
+    				}
+    			}
+    		}
+        }
+
+        return true;
+    }
 
     /**
      * Gets a map of item attribute modifiers, used by ItemSword to increase hit damage.
