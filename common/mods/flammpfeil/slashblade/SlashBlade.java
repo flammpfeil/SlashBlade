@@ -189,7 +189,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 			for(String curEntry : propAttackableTargets.getStringList()){
 				int spliterIdx = curEntry.lastIndexOf(":");
 				String name = curEntry.substring(0, spliterIdx);
-				name = name.replace("%amp;","&");
+				name = name.replace(":amp:","&");
 				String attackableStr = curEntry.substring(spliterIdx + 1, curEntry.length());
 
 				boolean attackable = attackableStr.toLowerCase().equals("true");
@@ -201,7 +201,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				Boolean name = (Boolean)attackableTargets.get(key);
 
 				String keyStr = (String)key;
-				keyStr = keyStr.replace("&","%amp;");
+				keyStr = keyStr.replace("&",":amp:");
 				targets.add(String.format("%s:%b", keyStr ,name));
 			}
 
