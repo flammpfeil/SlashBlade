@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +23,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 	static ResourceLocation bladeTexture = new ResourceLocation("flammpfeil.slashblade:blade.png");
 	static ResourceLocation scabbardTexture = new ResourceLocation("flammpfeil.slashblade:scabbard.png");
+    private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
+    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
 	static ModelBaseWeapon model = new ModelBaseWeapon();
 	static ModelBase model2 = new ModelBaseWeaponCase();
@@ -75,6 +78,41 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			model.render(null, 0, 0, 0, 0, 0, 1.0f);
 
 
+            if (item.hasEffect(0))
+            {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+                GL11.glDepthFunc(GL11.GL_EQUAL);
+                GL11.glDisable(GL11.GL_LIGHTING);
+                engine().bindTexture(RES_ITEM_GLINT);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
+                float f7 = 0.76F;
+                GL11.glColor4f(0.5F * f7, 0.25F * f7, 0.8F * f7, 1.0F);
+                GL11.glMatrixMode(GL11.GL_TEXTURE);
+                GL11.glPushMatrix();
+                float f8 = 0.125F;
+                GL11.glScalef(f8, f8, f8);
+                float f9 = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F * 8.0F;
+                GL11.glTranslatef(f9, 0.0F, 0.0F);
+                GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
+    			model.render(null, 0, 0, 0, 0, 0, 1.0f);
+                GL11.glPopMatrix();
+                GL11.glPushMatrix();
+                GL11.glScalef(f8, f8, f8);
+                f9 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F * 8.0F;
+                GL11.glTranslatef(-f9, 0.0F, 0.0F);
+                GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
+    			model.render(null, 0, 0, 0, 0, 0, 1.0f);
+                GL11.glPopMatrix();
+                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glEnable(GL11.GL_LIGHTING);
+                GL11.glDepthFunc(GL11.GL_LEQUAL);
+				GL11.glPopAttrib();
+            }
+
+
+
 			GL11.glTranslatef(-4, 7,2);
 			engine().bindTexture(scabbardTexture);
 			model2.render(null,0, 0, 0, 0, 0, 1.0f);
@@ -88,6 +126,38 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			engine().bindTexture(bladeTexture);
 			model.render(null, 0, 0, 0, 0, 0, 1.0f);
 
+            if (item.hasEffect(0))
+            {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+                GL11.glDepthFunc(GL11.GL_EQUAL);
+                GL11.glDisable(GL11.GL_LIGHTING);
+                engine().bindTexture(RES_ITEM_GLINT);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
+                float f7 = 0.76F;
+                GL11.glColor4f(0.5F * f7, 0.25F * f7, 0.8F * f7, 1.0F);
+                GL11.glMatrixMode(GL11.GL_TEXTURE);
+                GL11.glPushMatrix();
+                float f8 = 0.125F;
+                GL11.glScalef(f8, f8, f8);
+                float f9 = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F * 8.0F;
+                GL11.glTranslatef(f9, 0.0F, 0.0F);
+                GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
+    			model.render(null, 0, 0, 0, 0, 0, 1.0f);
+                GL11.glPopMatrix();
+                GL11.glPushMatrix();
+                GL11.glScalef(f8, f8, f8);
+                f9 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F * 8.0F;
+                GL11.glTranslatef(-f9, 0.0F, 0.0F);
+                GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
+    			model.render(null, 0, 0, 0, 0, 0, 1.0f);
+                GL11.glPopMatrix();
+                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glEnable(GL11.GL_LIGHTING);
+                GL11.glDepthFunc(GL11.GL_LEQUAL);
+				GL11.glPopAttrib();
+            }
 
 			GL11.glTranslatef(-4, 7,2);
 			engine().bindTexture(scabbardTexture);
@@ -163,7 +233,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		if(item == null || item.itemID != SlashBlade.weapon.itemID)
 			return;
 
+		boolean isEnchanted = item.isItemEnchanted();
+		boolean isBewitched = item.hasDisplayName() && isEnchanted;
+
 		float progress = player.prevSwingProgress + (player.swingProgress - player.prevSwingProgress) * partialRenderTick;
+
+		int charge = player.getItemInUseDuration();
 
 		boolean isBroken = false;
 		int combo = 0;
@@ -231,7 +306,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 				model.render(null, x, y, z, 0, 0, 1.0f);
 
-				if(0 < progress && !(combo <= 2)){
+				if(isEnchanted && (0 < progress && !(combo <= 2))){
 					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 					GL11.glEnable(GL11.GL_BLEND);
 					GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
@@ -264,6 +339,72 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 				engine().bindTexture(scabbardTexture);
 				model2.render(null, x, y, z, 0, 0, 1.0f);
+
+
+				if(isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || (0 < progress && combo == 5))){
+					GL11.glPushMatrix();
+					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+
+					float offsetX = -1.0f;
+					float offsetY = 0.0f;
+					float offsetZ = -0.5f;
+					float scaleX = 1.05f;
+					float scaleY = 1.0125f;
+					float scaleZ = 1.05f;
+					GL11.glPushMatrix();
+					GL11.glTranslatef(-offsetX,-offsetY,-offsetZ);
+					GL11.glScalef(scaleX, scaleY, scaleZ);
+					GL11.glTranslatef(offsetX,offsetY,offsetZ);
+
+	                GL11.glEnable(GL11.GL_BLEND);
+	                float f4 = 3.0F;
+	                GL11.glColor4f(f4, f4, f4, 3.0F);
+	                GL11.glDisable(GL11.GL_LIGHTING);
+	                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+
+					model2.render(null, x, y, z, 0, 0, 1.0f);
+
+	                GL11.glEnable(GL11.GL_LIGHTING);
+	                GL11.glDisable(GL11.GL_BLEND);
+					GL11.glPopMatrix();
+
+					offsetX = -1.0f;
+					offsetY = 0.0f;
+					offsetZ = -0.5f;
+					scaleX = 1.5f;
+					scaleY = 1.025f;
+					scaleZ = 1.5f;
+
+					GL11.glTranslatef(-offsetX,-offsetY,-offsetZ);
+					GL11.glScalef(scaleX, scaleY, scaleZ);
+					GL11.glTranslatef(offsetX,offsetY,offsetZ);
+
+	                float ff1 = (float)player.ticksExisted + partialRenderTick;
+	                engine().bindTexture(armoredCreeperTextures);
+	                GL11.glMatrixMode(GL11.GL_TEXTURE);
+	                GL11.glLoadIdentity();
+	                float f2 = ff1 * 0.01F;
+	                float f3 = ff1 * 0.01F;
+	                GL11.glTranslatef(f2, f3, 0.0F);
+	                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	                GL11.glEnable(GL11.GL_BLEND);
+	                f4 = 1.0F;
+	                GL11.glColor4f(f4, f4, f4, 1.0F);
+	                GL11.glDisable(GL11.GL_LIGHTING);
+	                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+
+					model2.render(null, x, y, z, 0, 0, 1.0f);
+
+	                GL11.glMatrixMode(GL11.GL_TEXTURE);
+	                GL11.glLoadIdentity();
+	                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	                GL11.glEnable(GL11.GL_LIGHTING);
+	                GL11.glDisable(GL11.GL_BLEND);
+
+					GL11.glPopAttrib();
+					GL11.glPopMatrix();
+				}
 			}GL11.glPopMatrix();
 
 			//-----------------------------------------------------------------------------------------------------------------------

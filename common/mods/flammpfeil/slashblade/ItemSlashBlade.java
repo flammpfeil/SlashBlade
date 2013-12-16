@@ -36,6 +36,11 @@ import net.minecraft.world.World;
 import com.google.common.collect.Multimap;
 
 public class ItemSlashBlade extends ItemSword {
+
+	static public int RequiredChargeTick = 15;
+	static public int ComboInterval = 3;
+	static public int ComboResetTicks = 12;
+
     /**
      * Current implementations of this method in child classes do not use the entry argument beside ev. They just raise
      * the damage on the stack.
@@ -152,18 +157,6 @@ public class ItemSlashBlade extends ItemSword {
 	public ItemStack onItemRightClick(ItemStack sitem, World par2World,
 			EntityPlayer par3EntityPlayer) {
 
-
-		NBTTagCompound tag;
-		if(sitem.hasTagCompound()){
-			tag = sitem.getTagCompound();
-		}else{
-			tag = new NBTTagCompound();
-			sitem.setTagCompound(tag);
-		}
-
-		if(!par3EntityPlayer.isEating())
-			tag.setBoolean("onClick", true);
-
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
 
@@ -211,20 +204,22 @@ public class ItemSlashBlade extends ItemSword {
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
 
-		int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
+		NBTTagCompound tag;
+		if(par1ItemStack.hasTagCompound()){
+			tag = par1ItemStack.getTagCompound();
+		}else{
+			tag = new NBTTagCompound();
+			par1ItemStack.setTagCompound(tag);
+		}
+
+		int var6 =  par3EntityPlayer.getItemInUseDuration();//this.getMaxItemUseDuration(par1ItemStack) - par4;
 
 		boolean isEnchanted = par1ItemStack.isItemEnchanted();
 		boolean isBewitched = par1ItemStack.hasDisplayName() && isEnchanted;
 
-		if(15 < var6 && isEnchanted){
+		if(RequiredChargeTick < var6 && isEnchanted){
 
-			NBTTagCompound tag;
-			if(par1ItemStack.hasTagCompound()){
-				tag = par1ItemStack.getTagCompound();
-			}else{
-				tag = new NBTTagCompound();
-				par1ItemStack.setTagCompound(tag);
-			}
+			par3EntityPlayer.swingItem();
 
 			Entity target = null;
 
@@ -285,9 +280,13 @@ public class ItemSlashBlade extends ItemSword {
 				}
 
 			}
+			tag.setInteger("comboSeq", 5);
 
 
+		}else{
+			tag.setBoolean("onClick", true);
 		}
+
 	}
 
     private NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier)
@@ -413,6 +412,8 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
+		int combo = tag.getInteger("comboSeq");
+
 		if(par3Entity instanceof EntityLivingBase){
 			EntityLivingBase el = (EntityLivingBase)par3Entity;
 
@@ -423,12 +424,11 @@ public class ItemSlashBlade extends ItemSword {
 				if(tag.getBoolean("onClick")){
 
 					//sitem.setItemDamage(1320);
-					if(prevAttackTime + 3 < currentTime){
+					if(prevAttackTime + ComboInterval < currentTime){
 						tag.setBoolean("onClick", false);
 						tag.setLong("prevAttackTime", currentTime);
 
 
-						int combo = tag.getInteger("comboSeq");
 						if(combo >= 3){
 							combo = 0;
 						}
@@ -574,8 +574,9 @@ public class ItemSlashBlade extends ItemSword {
 
 					}
 				}else{
-					if(prevAttackTime +12 < currentTime){
-						tag.setInteger("comboSeq", 0);
+					if(prevAttackTime +ComboResetTicks < currentTime && (combo <= 3 || (par3Entity instanceof EntityLivingBase && ((EntityLivingBase)par3Entity).swingProgressInt == 0))){
+						if(!(par3Entity instanceof EntityPlayer && 0 < ((EntityPlayer)par3Entity).getItemInUseDuration()))
+							tag.setInteger("comboSeq", 0);
 					}
 				}
 			}else{
