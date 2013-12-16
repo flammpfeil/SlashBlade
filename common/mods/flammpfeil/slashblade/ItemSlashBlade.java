@@ -212,7 +212,7 @@ public class ItemSlashBlade extends ItemSword {
 			par1ItemStack.setTagCompound(tag);
 		}
 
-		int var6 =  par3EntityPlayer.getItemInUseDuration();//this.getMaxItemUseDuration(par1ItemStack) - par4;
+		int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
 
 		boolean isEnchanted = par1ItemStack.isItemEnchanted();
 		boolean isBewitched = par1ItemStack.hasDisplayName() && isEnchanted;
@@ -560,7 +560,9 @@ public class ItemSlashBlade extends ItemSword {
 								curEntity.hurtResistantTime = 0;
 								curEntity.attackEntityFrom(DamageSource.causeMobDamage(el), atack);
 
-								curEntity.setVelocity(0,0,0);
+								curEntity.motionX = 0;
+								curEntity.motionY = 0;
+								curEntity.motionZ = 0;
 
 
 				                if (curEntity instanceof EntityLivingBase){
@@ -575,7 +577,7 @@ public class ItemSlashBlade extends ItemSword {
 					}
 				}else{
 					if(prevAttackTime +ComboResetTicks < currentTime && (combo <= 3 || (par3Entity instanceof EntityLivingBase && ((EntityLivingBase)par3Entity).swingProgressInt == 0))){
-						if(!(par3Entity instanceof EntityPlayer && 0 < ((EntityPlayer)par3Entity).getItemInUseDuration()))
+						if(!(par3Entity instanceof EntityPlayer && ((EntityPlayer)par3Entity).isUsingItem()))
 							tag.setInteger("comboSeq", 0);
 					}
 				}

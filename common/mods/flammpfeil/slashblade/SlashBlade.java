@@ -28,12 +28,13 @@ import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 @Mod(name="SlashBlade",modid="flammpfeil.slashblade",useMetadata=false,version="@VERSION@")
+@NetworkMod(clientSideRequired=true)
 public class SlashBlade implements IFuelHandler ,ITickHandler{
 
 
@@ -129,7 +130,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
     @EventHandler
     public void modsLoaded(FMLPostInitializationEvent evt)
     {
-        TickRegistry.registerTickHandler(this, Side.CLIENT);
+        TickRegistry.registerTickHandler(this, evt.getSide());
     }
 
 
@@ -239,7 +240,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
     {
         if (!loaded)
         {
-            return EnumSet.of(TickType.CLIENT);
+            return EnumSet.of(TickType.CLIENT,TickType.SERVER);
         }
         else
         {
