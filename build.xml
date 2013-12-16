@@ -3,7 +3,7 @@
     <property file="buildspecs.properties" prefix="buildspecs" />
 
 
-    <property name="mod.version" value="r6" />
+    <property name="mod.version" value="r7" />
     <property name="mod.modname" value="SlashBlade" />
 
     <property name="mod.modid" value="slashblade" />
