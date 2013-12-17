@@ -41,14 +41,9 @@ public class ItemSlashBlade extends ItemSword {
 	static public int ComboInterval = 3;
 	static public int ComboResetTicks = 12;
 
-    /**
-     * Current implementations of this method in child classes do not use the entry argument beside ev. They just raise
-     * the damage on the stack.
-     */
-	@Override
-    public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
-    {
-		if(par1ItemStack.attemptDamageItem(1, par3EntityLivingBase.getRNG())){
+	private void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
+
+		if(par1ItemStack.attemptDamageItem(damage, par3EntityLivingBase.getRNG())){
 			par1ItemStack.setItemDamage(par1ItemStack.getMaxDamage());
 
 
@@ -73,6 +68,16 @@ public class ItemSlashBlade extends ItemSword {
 				}
 			}
 		}
+	}
+
+    /**
+     * Current implementations of this method in child classes do not use the entry argument beside ev. They just raise
+     * the damage on the stack.
+     */
+	@Override
+    public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
+    {
+		damageItem(1, par1ItemStack,par3EntityLivingBase);
 
 		return true;
     }
@@ -82,31 +87,7 @@ public class ItemSlashBlade extends ItemSword {
         if ((double)Block.blocksList[par3].getBlockHardness(par2World, par4, par5, par6) != 0.0D)
         {
 
-    		if(par1ItemStack.attemptDamageItem(1, par7EntityLivingBase.getRNG())){
-    			par1ItemStack.setItemDamage(par1ItemStack.getMaxDamage());
-
-
-    			NBTTagCompound tag;
-    			if(par1ItemStack.hasTagCompound()){
-    				tag = par1ItemStack.getTagCompound();
-    			}else{
-    				tag = new NBTTagCompound();
-    				par1ItemStack.setTagCompound(tag);
-    			}
-
-    			if(!tag.getBoolean("isBroken")){
-
-    				tag.setBoolean("isBroken", true);
-    				par7EntityLivingBase.renderBrokenItemStack(par1ItemStack);
-
-    				if(!par7EntityLivingBase.worldObj.isRemote)
-    					par7EntityLivingBase.entityDropItem(new ItemStack(SlashBlade.proudSoul,1), 0.0F);
-    			}else{
-    				if(par1ItemStack.getItemDamage() == 0){
-    					tag.setBoolean("isBroken", false);
-    				}
-    			}
-    		}
+        	damageItem(1, par1ItemStack,par7EntityLivingBase);
         }
 
         return true;
@@ -134,11 +115,7 @@ public class ItemSlashBlade extends ItemSword {
         this.setMaxDamage(50);
 	}
 
-	@Override
-	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
-			Entity entity) {
-
-
+	NBTTagCompound getItemTagCompound(ItemStack stack){
 		NBTTagCompound tag;
 		if(stack.hasTagCompound()){
 			tag = stack.getTagCompound();
@@ -146,6 +123,16 @@ public class ItemSlashBlade extends ItemSword {
 			tag = new NBTTagCompound();
 			stack.setTagCompound(tag);
 		}
+
+		return tag;
+	}
+
+	@Override
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
+			Entity entity) {
+
+
+		NBTTagCompound tag = getItemTagCompound(stack);
 
 		tag.setInteger("comboSeq", 4);
 		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
@@ -204,13 +191,8 @@ public class ItemSlashBlade extends ItemSword {
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
 
-		NBTTagCompound tag;
-		if(par1ItemStack.hasTagCompound()){
-			tag = par1ItemStack.getTagCompound();
-		}else{
-			tag = new NBTTagCompound();
-			par1ItemStack.setTagCompound(tag);
-		}
+		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
 
 		int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
 
@@ -247,7 +229,7 @@ public class ItemSlashBlade extends ItemSword {
 
 			if(target != null){
 
-				par1ItemStack.damageItem(5, par3EntityPlayer);
+				damageItem(5, par1ItemStack, par3EntityPlayer);
 
 				//target.spawnExplosionParticle();
 	            par2World.spawnParticle("largeexplode",
@@ -308,13 +290,8 @@ public class ItemSlashBlade extends ItemSword {
 
 
 
-		NBTTagCompound tag;
-		if(sitem.hasTagCompound()){
-			tag = sitem.getTagCompound();
-		}else{
-			tag = new NBTTagCompound();
-			sitem.setTagCompound(tag);
-		}
+		NBTTagCompound tag = getItemTagCompound(sitem);
+
 		boolean isBroken = tag.getBoolean("isBroken");
 		int curDamage = sitem.getItemDamage();
 
@@ -452,7 +429,7 @@ public class ItemSlashBlade extends ItemSword {
 								bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
 							}else if(isBewitched && curDamage == 0){
 								bb = bb.expand(5.0f, 0.25f, 5.0f);
-								sitem.damageItem(10, el);
+								damageItem(10, sitem, el);
 
 								Random rand = ((EntityLivingBase) par3Entity).getRNG();
 								for(int spread = 0 ; spread < 12 ;spread ++){
