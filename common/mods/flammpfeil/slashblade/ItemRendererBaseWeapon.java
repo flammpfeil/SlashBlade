@@ -262,10 +262,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		//progress = (player.ticksExisted % 10) / 10.0f;
 
-/*
+
 		progress = 1.0f - progress;
 		progress = 1.0f - (float)Math.pow(progress,2.0);
-*/
+
 
 		model.isBroken = isBroken;
 		model.isEntity = false;
@@ -289,7 +289,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			//体格補正 configより
 			GL11.glTranslatef(SlashBlade.offsetX,SlashBlade.offsetY,SlashBlade.offsetZ);
 
-
 			//腰位置へ
 			GL11.glTranslatef(0.22f,0.6f,-0.3f);
 
@@ -310,6 +309,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			GL11.glRotatef(90.0f, 0, 1.0f, 0);
 
 
+			float xoffset = 10.0f;
+			float yoffset = 8.0f;
 
 			//-----------------------------------------------------------------------------------------------------------------------
 			GL11.glPushMatrix();{
@@ -317,14 +318,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 				if(!combo.equals(ComboSequence.None)){
 
-					if(combo.equals(ComboSequence.Battou))
-						combo = ComboSequence.Battou;
-
 					float tmp = progress;
 
 					if(combo.swingAmplitude < 0){
 						progress = 1.0f - progress;
 					}
+					//GL11.glRotatef(-90, 0.0f, 1.0f, 0.0f);
 
 					GL11.glRotatef(progress * 20.0f, -1.0f, 0, 0);
 					GL11.glRotatef(progress * -30.0f, 0, 0, -1.0f);
@@ -332,11 +331,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 					GL11.glRotatef(progress * (90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
 
-					float offset = progress * 15.0f;
 
-					GL11.glTranslatef(-offset , 0.0f, 0.0f );
+					GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
 
-					float yoffset = progress * 5.0f;
 
 					GL11.glTranslatef(0.0f, -yoffset, 0.0f);
 
@@ -347,6 +344,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 					}
 
 					GL11.glTranslatef(0.0f, yoffset, 0.0f);
+					GL11.glTranslatef(xoffset , 0.0f, 0.0f );
 
 					progress = tmp;
 				}
@@ -389,11 +387,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 					GL11.glRotatef(progress * (90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
 
-					float offset = progress * 15.0f;
 
-					GL11.glTranslatef(-offset , 0.0f, 0.0f );
+					GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
 
-					float yoffset = progress * 5.0f;
 
 					GL11.glTranslatef(0.0f, -yoffset, 0.0f);
 
@@ -404,6 +400,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 					}
 
 					GL11.glTranslatef(0.0f, yoffset, 0.0f);
+					GL11.glTranslatef(xoffset , 0.0f, 0.0f );
 
 				}
 

@@ -55,9 +55,10 @@ public class ItemSlashBlade extends ItemSword {
     	Saya1(true,200.0f,10.0f,false),
     	Saya2(true,-200.0f,10.0f,false),
     	Battou(false,280.0f,10.0f,false),
-    	Kiriage(false,280.0f,75.0f,false),
-    	Kiriorosi(false,-280.0f,75.0f,false),
-    	SlashDim(false,-250.0f,10.0f,true),
+    	Noutou(false,-220.0f,10.0f,false),
+    	Kiriage(false,260.0f,70.0f,false),
+    	Kiriorosi(false,-260.0f,70.0f,false),
+    	SlashDim(false,-220.0f,10.0f,true),
     	;
 
 	    /**
@@ -491,9 +492,6 @@ public class ItemSlashBlade extends ItemSword {
 
 
 					switch (comboSeq) {
-					case None:
-						comboSeq = ComboSequence.Saya1;
-						break;
 
 					case Saya1:
 						comboSeq = ComboSequence.Saya2;
@@ -503,8 +501,12 @@ public class ItemSlashBlade extends ItemSword {
 						comboSeq = ComboSequence.Battou;
 						break;
 
+					/*
+					case None:
+					case Battou:
+					*/
 					default:
-						comboSeq = ComboSequence.None;
+						comboSeq = ComboSequence.Saya1;
 						break;
 					}
 
@@ -662,7 +664,22 @@ public class ItemSlashBlade extends ItemSword {
 					       || el.swingProgressInt == 0)
 					    && (!el.isUsingItem())
 						){
-					setComboSequence(tag, ComboSequence.None);
+
+					switch (comboSeq) {
+					case SlashDim:
+					case Noutou:
+							setComboSequence(tag, ComboSequence.None);
+							break;
+					default:
+						if(comboSeq.useScabbard){
+							setComboSequence(tag, ComboSequence.None);
+							break;
+						}
+						setComboSequence(tag, ComboSequence.Noutou);
+						tag.setLong("prevAttackTime", currentTime);
+						el.swingItem();
+						break;
+					}
 				}
 			}
 		}else{
