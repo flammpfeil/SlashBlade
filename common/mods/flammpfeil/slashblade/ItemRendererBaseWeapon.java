@@ -237,7 +237,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		boolean isEnchanted = item.isItemEnchanted();
 		boolean isBewitched = item.hasDisplayName() && isEnchanted;
 
-		float progress = player.prevSwingProgress + (player.swingProgress - player.prevSwingProgress) * partialRenderTick;
 
 		int charge = player.getItemInUseDuration();
 
@@ -251,6 +250,23 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			combo = ItemSlashBlade.getComboSequence(tag);
 		}
 
+
+		float progress =  player.prevSwingProgress + (player.swingProgress - player.prevSwingProgress) * partialRenderTick;
+
+		if((!combo.equals(ComboSequence.None)) && player.swingProgress == 0.0f)
+			progress = 1.0f;
+
+		progress *= 1.2;
+		if(1.0f < progress)
+			progress = 1.0f;
+
+		//progress = (player.ticksExisted % 10) / 10.0f;
+
+/*
+		progress = 1.0f - progress;
+		progress = 1.0f - (float)Math.pow(progress,2.0);
+*/
+
 		model.isBroken = isBroken;
 		model.isEntity = false;
 
@@ -261,34 +277,88 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		GL11.glPushMatrix();{
 	        float f1 = interpolateRotation(player.prevRenderYawOffset, player.renderYawOffset, partialRenderTick);
-			GL11.glRotatef(f1, 0.0F, -1.0F, 0.0F);
-			GL11.glRotatef(180, 1.0F, 0.0F, 0.0F);
+
+	        //体の向き補正
+	        GL11.glRotatef(f1, 0.0F, -1.0F, 0.0F);
+
+	        //上下反転補正
+	        GL11.glRotatef(180, 1.0F, 0.0F, 0.0F);
 
 
 
+			//体格補正 configより
 			GL11.glTranslatef(SlashBlade.offsetX,SlashBlade.offsetY,SlashBlade.offsetZ);
+
+
+			//腰位置へ
+			GL11.glTranslatef(0.22f,0.6f,-0.3f);
+
+
+			{
+				//全体スケール補正
+				float scale = (float)(0.075f);
+				GL11.glScalef(scale, scale, scale);
+			}
+
+			//先を後ろへ
+			GL11.glRotatef(60.0f, 1, 0, 0);
+
+			//先を外へ
+			GL11.glRotatef(-20.0f, 0, 0, 1);
+
+			//刃を下に向ける（太刀差し
+			GL11.glRotatef(90.0f, 0, 1.0f, 0);
+
+
 
 			//-----------------------------------------------------------------------------------------------------------------------
 			GL11.glPushMatrix();{
 
 
-				GL11.glRotatef(progress * 220.0f, -1.0f, 1.75f, 0f);
-				//if(progress > 0.5f)
-				//	progress = 1.0f - progress;
-				//progress *= 2;
+				if(!combo.equals(ComboSequence.None)){
 
-				GL11.glTranslatef(0.3f,0.5f,-0.3f);
+					if(combo.equals(ComboSequence.Battou))
+						combo = ComboSequence.Battou;
 
-				GL11.glRotatef(60.0f, 1, 0, 0);
-				GL11.glRotatef(-20.0f, 0, 0, 1);
+					float tmp = progress;
 
-				GL11.glRotatef(90.0f, 0, 1.0f, 0);
-				float scale = (float)(0.075f);
-				GL11.glScalef(scale*0.7f, scale, scale*0.5f);
-				GL11.glTranslatef(-1f,-5.5f,-0.5f);
+					if(combo.swingAmplitude < 0){
+						progress = 1.0f - progress;
+					}
 
+					GL11.glRotatef(progress * 20.0f, -1.0f, 0, 0);
+					GL11.glRotatef(progress * -30.0f, 0, 0, -1.0f);
+
+
+					GL11.glRotatef(progress * (90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
+
+					float offset = progress * 15.0f;
+
+					GL11.glTranslatef(-offset , 0.0f, 0.0f );
+
+					float yoffset = progress * 5.0f;
+
+					GL11.glTranslatef(0.0f, -yoffset, 0.0f);
+
+					if(0 < combo.swingAmplitude){
+						GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+					}else{
+						GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+					}
+
+					GL11.glTranslatef(0.0f, yoffset, 0.0f);
+
+					progress = tmp;
+				}
+
+
+				//スケール補正 薄く、幅を狭く 長さそのまま
+				GL11.glScalef(0.75f, 1.0f, 0.5f);
+
+
+				//センター補正
+				GL11.glTranslatef(-1f,-6.5f,-0.5f);
 				engine().bindTexture(bladeTexture);
-
 				model.render(null, x, y, z, 0, 0, 1.0f);
 
 				if(isEnchanted && (0 < progress && combo != ComboSequence.None)){
@@ -305,88 +375,106 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			GL11.glPushMatrix();{
 
-				GL11.glRotatef(combo.swingDirection, 0.0f, 1.0f, 0.0f);
-				GL11.glRotatef(progress * combo.swingAmplitude, 1.0f, 0.0f, 0.0f);
-//				GL11.glTranslatef(0.3f,0.5f,-0.3f);
+
+				if((!combo.equals(ComboSequence.None)) && combo.useScabbard){
 
 
-				GL11.glTranslatef(0.3f,0.5f,-0.3f);
+					if(combo.swingAmplitude < 0){
+						progress = 1.0f - progress;
+					}
 
-				GL11.glRotatef(60.0f, 1, 0, 0);
-				GL11.glRotatef(-20.0f, 0, 0, 1);
+					GL11.glRotatef(progress * 20.0f, -1.0f, 0, 0);
+					GL11.glRotatef(progress * -30.0f, 0, 0, -1.0f);
 
-				GL11.glRotatef(90.0f, 0, 1.0f, 0);
 
-				float scale = (float)(0.075f);
-				GL11.glScalef(scale, scale, scale);
-				GL11.glTranslatef(-1f,1.0f,-0.5f);
+					GL11.glRotatef(progress * (90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
 
-				engine().bindTexture(scabbardTexture);
-				model2.render(null, x, y, z, 0, 0, 1.0f);
+					float offset = progress * 15.0f;
 
+					GL11.glTranslatef(-offset , 0.0f, 0.0f );
+
+					float yoffset = progress * 5.0f;
+
+					GL11.glTranslatef(0.0f, -yoffset, 0.0f);
+
+					if(0 < combo.swingAmplitude){
+						GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+					}else{
+						GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+					}
+
+					GL11.glTranslatef(0.0f, yoffset, 0.0f);
+
+				}
+
+
+
+				//スケール補正 幅を狭く 長さそのまま 薄く
+				GL11.glScalef(1.0f, 0.9f, 0.8f);
+
+
+				GL11.glPushMatrix();
+
+					engine().bindTexture(scabbardTexture);
+					//センター補正
+					GL11.glTranslatef(-1f,0.0f,-0.5f);
+					model2.render(null, x, y, z, 0, 0, 1.0f);
+
+				GL11.glPopMatrix();
 
 				if(isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || combo.isCharged)){
 					GL11.glPushMatrix();
-					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+						GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
+						float scaleX = 1.05f;
+						float scaleY = 1.0125f;
+						float scaleZ = 1.05f;
+						GL11.glPushMatrix();
+							GL11.glScalef(scaleX, scaleY, scaleZ);
 
-					float offsetX = -1.0f;
-					float offsetY = 0.0f;
-					float offsetZ = -0.5f;
-					float scaleX = 1.05f;
-					float scaleY = 1.0125f;
-					float scaleZ = 1.05f;
-					GL11.glPushMatrix();
-					GL11.glTranslatef(-offsetX,-offsetY,-offsetZ);
-					GL11.glScalef(scaleX, scaleY, scaleZ);
-					GL11.glTranslatef(offsetX,offsetY,offsetZ);
+			                GL11.glEnable(GL11.GL_BLEND);
+			                float f4 = 3.0F;
+			                GL11.glColor4f(f4, f4, f4, 3.0F);
+			                GL11.glDisable(GL11.GL_LIGHTING);
+			                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
-	                GL11.glEnable(GL11.GL_BLEND);
-	                float f4 = 3.0F;
-	                GL11.glColor4f(f4, f4, f4, 3.0F);
-	                GL11.glDisable(GL11.GL_LIGHTING);
-	                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+							GL11.glTranslatef(-1f,0.0f,-0.5f);
+							model2.render(null, x, y, z, 0, 0, 1.0f);
 
-					model2.render(null, x, y, z, 0, 0, 1.0f);
+			                GL11.glEnable(GL11.GL_LIGHTING);
+			                GL11.glDisable(GL11.GL_BLEND);
+						GL11.glPopMatrix();
 
-	                GL11.glEnable(GL11.GL_LIGHTING);
-	                GL11.glDisable(GL11.GL_BLEND);
-					GL11.glPopMatrix();
+						scaleX = 1.5f;
+						scaleY = 1.025f;
+						scaleZ = 1.5f;
 
-					offsetX = -1.0f;
-					offsetY = 0.0f;
-					offsetZ = -0.5f;
-					scaleX = 1.5f;
-					scaleY = 1.025f;
-					scaleZ = 1.5f;
+						GL11.glScalef(scaleX, scaleY, scaleZ);
 
-					GL11.glTranslatef(-offsetX,-offsetY,-offsetZ);
-					GL11.glScalef(scaleX, scaleY, scaleZ);
-					GL11.glTranslatef(offsetX,offsetY,offsetZ);
+		                float ff1 = (float)player.ticksExisted + partialRenderTick;
+		                engine().bindTexture(armoredCreeperTextures);
+		                GL11.glMatrixMode(GL11.GL_TEXTURE);
+		                GL11.glLoadIdentity();
+		                float f2 = ff1 * 0.01F;
+		                float f3 = ff1 * 0.01F;
+		                GL11.glTranslatef(f2, f3, 0.0F);
+		                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		                GL11.glEnable(GL11.GL_BLEND);
+		                f4 = 1.0F;
+		                GL11.glColor4f(f4, f4, f4, 1.0F);
+		                GL11.glDisable(GL11.GL_LIGHTING);
+		                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
-	                float ff1 = (float)player.ticksExisted + partialRenderTick;
-	                engine().bindTexture(armoredCreeperTextures);
-	                GL11.glMatrixMode(GL11.GL_TEXTURE);
-	                GL11.glLoadIdentity();
-	                float f2 = ff1 * 0.01F;
-	                float f3 = ff1 * 0.01F;
-	                GL11.glTranslatef(f2, f3, 0.0F);
-	                GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	                GL11.glEnable(GL11.GL_BLEND);
-	                f4 = 1.0F;
-	                GL11.glColor4f(f4, f4, f4, 1.0F);
-	                GL11.glDisable(GL11.GL_LIGHTING);
-	                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+						GL11.glTranslatef(-1f,0.0f,-0.5f);
+						model2.render(null, x, y, z, 0, 0, 1.0f);
 
-					model2.render(null, x, y, z, 0, 0, 1.0f);
+		                GL11.glMatrixMode(GL11.GL_TEXTURE);
+		                GL11.glLoadIdentity();
+		                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		                GL11.glEnable(GL11.GL_LIGHTING);
+		                GL11.glDisable(GL11.GL_BLEND);
 
-	                GL11.glMatrixMode(GL11.GL_TEXTURE);
-	                GL11.glLoadIdentity();
-	                GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	                GL11.glEnable(GL11.GL_LIGHTING);
-	                GL11.glDisable(GL11.GL_BLEND);
-
-					GL11.glPopAttrib();
+						GL11.glPopAttrib();
 					GL11.glPopMatrix();
 				}
 			}GL11.glPopMatrix();

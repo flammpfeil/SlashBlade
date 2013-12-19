@@ -52,12 +52,12 @@ public class ItemSlashBlade extends ItemSword {
     public enum ComboSequence
 	{
     	None(true,0.0f,0.0f,false),
-    	Saya1(true,180.0f,30.0f,false),
-    	Saya2(true,-180.0f,30.0f,false),
-    	Battou(false,250.0f,30.0f,false),
-    	Kiriage(false,250.0f,90.0f,false),
-    	Kiriorosi(false,-250.0f,90.0f,false),
-    	SlashDim(false,-180.0f,30.0f,true),
+    	Saya1(true,200.0f,10.0f,false),
+    	Saya2(true,-200.0f,10.0f,false),
+    	Battou(false,280.0f,10.0f,false),
+    	Kiriage(false,280.0f,75.0f,false),
+    	Kiriorosi(false,-280.0f,75.0f,false),
+    	SlashDim(false,-250.0f,10.0f,true),
     	;
 
 	    /**
@@ -205,13 +205,14 @@ public class ItemSlashBlade extends ItemSword {
         		NBTTagCompound tag = getItemTagCompound(stack);
 
         		ComboSequence comboSec = getComboSequence(tag);
-        		if(comboSec != ComboSequence.Kiriage){
+        		if(comboSec.equals(ComboSequence.None)){
         			setComboSequence(tag,ComboSequence.Kiriage);
-        		}else{
+            		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
+        		}else if(comboSec.equals(ComboSequence.Kiriage)){
         			setComboSequence(tag,ComboSequence.Kiriorosi);
+            		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
         		}
 
-        		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
             }
 
         }
@@ -344,6 +345,7 @@ public class ItemSlashBlade extends ItemSword {
 
 			}
 			setComboSequence(tag,ComboSequence.SlashDim);
+    		tag.setLong("prevAttackTime", par3EntityPlayer.worldObj.getTotalWorldTime());
 
 
 		}else{
@@ -475,9 +477,10 @@ public class ItemSlashBlade extends ItemSword {
 
 		ComboSequence comboSeq = getComboSequence(tag);
 
+		long prevAttackTime = tag.getLong("prevAttackTime");
+		long currentTime =par2World.getTotalWorldTime();
+
 		if(isCurrent){
-			long prevAttackTime = tag.getLong("prevAttackTime");
-			long currentTime =par2World.getTotalWorldTime();
 
 			if(tag.getBoolean("onClick")){
 
@@ -498,6 +501,7 @@ public class ItemSlashBlade extends ItemSword {
 
 					case Saya2:
 						comboSeq = ComboSequence.Battou;
+						break;
 
 					default:
 						comboSeq = ComboSequence.None;
@@ -652,17 +656,17 @@ public class ItemSlashBlade extends ItemSword {
 					}
 				}
 			}else{
-				if(prevAttackTime + ComboResetTicks < currentTime
-						&& (comboSeq == ComboSequence.Saya1
-					       || comboSeq == ComboSequence.Saya2
+				if(((prevAttackTime + ComboResetTicks) < currentTime)
+						&& (comboSeq.equals(ComboSequence.Saya1)
+					       || comboSeq.equals(ComboSequence.Saya2)
 					       || el.swingProgressInt == 0)
-					    && !(el.isUsingItem())
+					    && (!el.isUsingItem())
 						){
 					setComboSequence(tag, ComboSequence.None);
 				}
 			}
 		}else{
-			if(comboSeq != ComboSequence.None)
+			if(!comboSeq.equals(ComboSequence.None) && ((prevAttackTime + ComboResetTicks) < currentTime))
 				setComboSequence(tag, ComboSequence.None);
 		}
 
