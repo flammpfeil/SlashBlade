@@ -37,35 +37,103 @@ import com.google.common.collect.Multimap;
 
 public class ItemSlashBlade extends ItemSword {
 
+	public static final String comboSeqStr = "comboSeq";
+	public static final String isBrokenStr = "isBroken";
+	public static void setComboSequence(NBTTagCompound tag,ComboSequence comboSeq){
+		tag.setInteger(comboSeqStr, comboSeq.ordinal());
+	}
+
+	public static ComboSequence getComboSequence(NBTTagCompound tag){
+		return ComboSequence.get(tag.getInteger(comboSeqStr));
+	}
+
+
+	private static ArrayList<ComboSequence> Seqs = new ArrayList<ItemSlashBlade.ComboSequence>();
+    public enum ComboSequence
+	{
+    	None(true,0.0f,0.0f,false),
+    	Saya1(true,180.0f,30.0f,false),
+    	Saya2(true,-180.0f,30.0f,false),
+    	Battou(false,250.0f,30.0f,false),
+    	Kiriage(false,250.0f,90.0f,false),
+    	Kiriorosi(false,-250.0f,90.0f,false),
+    	SlashDim(false,-180.0f,30.0f,true),
+    	;
+
+	    /**
+	     * ordinal : コンボ進行ID
+	     */
+
+	    /**
+	     * 抜刀フラグ trueなら鞘打ち
+	     */
+	    public final boolean useScabbard;
+
+	    /**
+	     * 振り幅 マイナスは振り切った状態から逆に振る
+	     */
+	    public final float swingAmplitude;
+
+	    /**
+	     * 振る方向 360度
+	     */
+	    public final float swingDirection;
+
+	    /**
+	     * チャージエフェクト
+	     */
+	    public final boolean isCharged;
+
+	    /**
+	     *
+	     * @param useScabbard true:鞘も動く
+	     * @param swingAmplitude 振り幅 マイナスは振り切った状態から逆に振る
+	     * @param swingDirection 振る角度
+	     * @param isCharged チャージエフェクト有無
+	     */
+	    private ComboSequence(boolean useScabbard, float swingAmplitude, float swingDirection, boolean isCharged)
+	    {
+	    	Seqs.add(this.ordinal(), this);
+
+	    	this.useScabbard = useScabbard;
+	    	this.swingAmplitude = swingAmplitude;
+	    	this.swingDirection = swingDirection;
+	    	this.isCharged = isCharged;
+	    }
+
+	    public static ComboSequence get(int ordinal){
+	    	return Seqs.get(ordinal);
+	    }
+	}
+
 	static public int RequiredChargeTick = 15;
 	static public int ComboInterval = 3;
 	static public int ComboResetTicks = 12;
 
 	private void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
 
+		NBTTagCompound tag;
+		if(par1ItemStack.hasTagCompound()){
+			tag = par1ItemStack.getTagCompound();
+		}else{
+			tag = new NBTTagCompound();
+			par1ItemStack.setTagCompound(tag);
+		}
+
+		if(par1ItemStack.getItemDamage() == 0){
+			tag.setBoolean(isBrokenStr, false);
+		}
+
 		if(par1ItemStack.attemptDamageItem(damage, par3EntityLivingBase.getRNG())){
 			par1ItemStack.setItemDamage(par1ItemStack.getMaxDamage());
 
+			if(!tag.getBoolean(isBrokenStr)){
 
-			NBTTagCompound tag;
-			if(par1ItemStack.hasTagCompound()){
-				tag = par1ItemStack.getTagCompound();
-			}else{
-				tag = new NBTTagCompound();
-				par1ItemStack.setTagCompound(tag);
-			}
-
-			if(!tag.getBoolean("isBroken")){
-
-				tag.setBoolean("isBroken", true);
+				tag.setBoolean(isBrokenStr, true);
 				par3EntityLivingBase.renderBrokenItemStack(par1ItemStack);
 
 				if(!par3EntityLivingBase.worldObj.isRemote)
 					par3EntityLivingBase.entityDropItem(new ItemStack(SlashBlade.proudSoul,1), 0.0F);
-			}else{
-				if(par1ItemStack.getItemDamage() == 0){
-					tag.setBoolean("isBroken", false);
-				}
 			}
 		}
 	}
@@ -131,11 +199,24 @@ public class ItemSlashBlade extends ItemSword {
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
 			Entity entity) {
 
+        if (entity.canAttackWithItem()){
+            if (!entity.hitByEntity(player) || entity instanceof EntityLivingBase){
 
-		NBTTagCompound tag = getItemTagCompound(stack);
+        		NBTTagCompound tag = getItemTagCompound(stack);
 
-		tag.setInteger("comboSeq", 4);
-		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
+        		ComboSequence comboSec = getComboSequence(tag);
+        		if(comboSec != ComboSequence.Kiriage){
+        			setComboSequence(tag,ComboSequence.Kiriage);
+        		}else{
+        			setComboSequence(tag,ComboSequence.Kiriorosi);
+        		}
+
+        		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
+            }
+
+        }
+
+
 
 		return false;
 	}
@@ -262,7 +343,7 @@ public class ItemSlashBlade extends ItemSword {
 				}
 
 			}
-			tag.setInteger("comboSeq", 5);
+			setComboSequence(tag,ComboSequence.SlashDim);
 
 
 		}else{
@@ -287,20 +368,24 @@ public class ItemSlashBlade extends ItemSword {
 	public void onUpdate(ItemStack sitem, World par2World,
 			Entity par3Entity, int indexOfMainSlot, boolean isCurrent) {
 
+		if(!(par3Entity instanceof EntityPlayer)){
+			super.onUpdate(sitem, par2World, par3Entity, indexOfMainSlot, isCurrent);
+			return;
+		}
 
-
+		EntityPlayer el = (EntityPlayer)par3Entity;
 
 		NBTTagCompound tag = getItemTagCompound(sitem);
 
-		boolean isBroken = tag.getBoolean("isBroken");
+		boolean isBroken = tag.getBoolean(isBrokenStr);
 		int curDamage = sitem.getItemDamage();
 
 		boolean isBewitched = sitem.hasDisplayName() && sitem.isItemEnchanted();
 
     	float tagAttackAmplifier = tag.getFloat("attackAmplifier");
 		float attackAmplifier = 0;
-        if(!isBroken && isBewitched && par3Entity instanceof EntityPlayer){
-        	float tmp = ((EntityPlayer)par3Entity).experienceLevel;
+        if(!isBroken && isBewitched){
+        	float tmp = el.experienceLevel;
         	tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
         	attackAmplifier = tmp;
         }else if(isBroken){
@@ -326,8 +411,8 @@ public class ItemSlashBlade extends ItemSword {
         			);
         }
 
-        if(isBewitched && par3Entity instanceof EntityPlayer){
-        	int nowExp = ((EntityPlayer)par3Entity).experienceTotal;
+        if(isBewitched){
+        	int nowExp = el.experienceTotal;
 
         	if(!tag.hasKey("prevExp")){
         		tag.setInteger("prevExp", nowExp);
@@ -344,29 +429,28 @@ public class ItemSlashBlade extends ItemSword {
 
 			sitem.setItemDamage(Math.max(0,curDamage-repair));
 
-    		tag.setInteger("prevExp", ((EntityPlayer)par3Entity).experienceTotal);
+    		tag.setInteger("prevExp", el.experienceTotal);
         }
 
 		if(!isCurrent && !par2World.isRemote){
-			if(isBewitched && par3Entity instanceof EntityPlayer && 0 < curDamage && par2World.getTotalWorldTime() % 20 == 0){
-				EntityPlayer pl = (EntityPlayer)par3Entity;
+			if(isBewitched && 0 < curDamage && par2World.getTotalWorldTime() % 20 == 0){
 
-				int idx = Arrays.asList(pl.inventory.mainInventory).indexOf(sitem);
+				int idx = Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
 
 				//pl.experienceTotal = 0;
 				//pl.experience = 0;
-				if(0<= idx && idx < 9 && 0 < pl.experienceLevel){
+				if(0<= idx && idx < 9 && 0 < el.experienceLevel){
 					int repair;
 					int descExp;
 
 					if(isBroken){
-			            pl.addExhaustion(0.025F);
+						el.addExhaustion(0.025F);
 						repair = 10;
 						descExp = 5;
 					}else{
 						repair = 1;
 						descExp = 1;
-			            pl.addExhaustion(0.025F);
+						el.addExhaustion(0.025F);
 					}
 
 					if(0 < curDamage){
@@ -374,14 +458,14 @@ public class ItemSlashBlade extends ItemSword {
 					}
 
 					for(;descExp > 0;descExp--){
-						pl.addExperience(-1);
+						el.addExperience(-1);
 
-						if(pl.experience < 0){
-							if(pl.experienceLevel <= 0){
-								pl.experience = 0;
+						if(el.experience < 0){
+							if(el.experienceLevel <= 0){
+								el.experience = 0;
 							}else{
-								pl.experienceLevel--;
-								pl.experience = 1.0f - (0.9f/pl.xpBarCap());
+								el.experienceLevel--;
+								el.experience = 1.0f - (0.9f/el.xpBarCap());
 							}
 						}
 					}
@@ -389,109 +473,129 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
-		int combo = tag.getInteger("comboSeq");
+		ComboSequence comboSeq = getComboSequence(tag);
 
-		if(par3Entity instanceof EntityLivingBase){
-			EntityLivingBase el = (EntityLivingBase)par3Entity;
+		if(isCurrent){
+			long prevAttackTime = tag.getLong("prevAttackTime");
+			long currentTime =par2World.getTotalWorldTime();
 
-			if(isCurrent){
-				long prevAttackTime = tag.getLong("prevAttackTime");
-				long currentTime =par2World.getTotalWorldTime();
+			if(tag.getBoolean("onClick")){
 
-				if(tag.getBoolean("onClick")){
-
-					//sitem.setItemDamage(1320);
-					if(prevAttackTime + ComboInterval < currentTime){
-						tag.setBoolean("onClick", false);
-						tag.setLong("prevAttackTime", currentTime);
+				//sitem.setItemDamage(1320);
+				if(prevAttackTime + ComboInterval < currentTime){
+					tag.setBoolean("onClick", false);
+					tag.setLong("prevAttackTime", currentTime);
 
 
-						if(combo >= 3){
-							combo = 0;
-						}
-						combo = combo+1;//getNextCombo(param,combo);
-						tag.setInteger("comboSeq", combo);
+					switch (comboSeq) {
+					case None:
+						comboSeq = ComboSequence.Saya1;
+						break;
 
-						if(combo>=3 && isBroken && curDamage == 0){
-							isBroken = false;
-							tag.setBoolean("isBroken", false);
-						}
+					case Saya1:
+						comboSeq = ComboSequence.Saya2;
+						break;
 
-						el.isSwingInProgress = true;
+					case Saya2:
+						comboSeq = ComboSequence.Battou;
 
-						AxisAlignedBB bb = el.boundingBox.copy();
-						Vec3 vec = el.getLookVec();
-						vec.yCoord = 0.000001;
-						vec = vec.normalize();
-						if(combo >= 3){
-							if(isBroken){
-								bb = bb.expand(1.0f, 0.0f, 1.0f);
-								bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
-							}else if(isBewitched && curDamage == 0){
-								bb = bb.expand(5.0f, 0.25f, 5.0f);
-								damageItem(10, sitem, el);
+					default:
+						comboSeq = ComboSequence.None;
+						break;
+					}
 
-								Random rand = ((EntityLivingBase) par3Entity).getRNG();
-								for(int spread = 0 ; spread < 12 ;spread ++){
-									float xSp = rand.nextFloat() * 2 - 1.0f;
-									float zSp = rand.nextFloat() * 2 - 1.0f;
-									xSp += 0.2 * Math.signum(xSp);
-									zSp += 0.2 * Math.signum(zSp);
-						            par2World.spawnParticle("largeexplode",
-						            		el.posX + 3.0f*xSp,
-						            		el.posY,
-						            		el.posZ + 3.0f*zSp,
-						            		1.0, 1.0, 1.0);
-								}
-							}else{
-								bb = bb.expand(2.0f, 0.25f, 2.0f);
-								bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+					setComboSequence(tag, comboSeq);
+
+					el.isSwingInProgress = true;
+
+					AxisAlignedBB bb = el.boundingBox.copy();
+					Vec3 vec = el.getLookVec();
+					vec.yCoord = 0.000001;
+					vec = vec.normalize();
+
+					switch (comboSeq) {
+					case Battou:
+
+
+						if(isBroken){
+							bb = bb.expand(1.0f, 0.0f, 1.0f);
+							bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+
+						}else if(isBewitched && curDamage == 0){
+							bb = bb.expand(5.0f, 0.25f, 5.0f);
+							damageItem(10, sitem, el);
+
+							Random rand = ((EntityLivingBase) par3Entity).getRNG();
+							for(int spread = 0 ; spread < 12 ;spread ++){
+								float xSp = rand.nextFloat() * 2 - 1.0f;
+								float zSp = rand.nextFloat() * 2 - 1.0f;
+								xSp += 0.2 * Math.signum(xSp);
+								zSp += 0.2 * Math.signum(zSp);
+					            par2World.spawnParticle("largeexplode",
+					            		el.posX + 3.0f*xSp,
+					            		el.posY,
+					            		el.posZ + 3.0f*zSp,
+					            		1.0, 1.0, 1.0);
 							}
 						}else{
-							bb = bb.expand(1.2f, 0.25f, 1.2f);
-							bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
+							bb = bb.expand(2.0f, 0.25f, 2.0f);
+							bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+						}
+						break;
+
+					case Saya1:
+					case Saya2:
+						bb = bb.expand(1.2f, 0.25f, 1.2f);
+						bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
+						break;
+
+					default:
+						break;
+					}
+
+					List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb);
+					Object[] olist = list.toArray();
+					for(Object curObj : olist){
+						if(!(curObj instanceof Entity)){
+							continue;
+						}
+						Entity curEntity = (Entity)curObj;
+
+						if(curEntity instanceof EntityArrow || curEntity instanceof EntityTNTPrimed){
+							curEntity.setVelocity(0, 0, 0);
+							curEntity.setDead();
+
+					        for (int var1 = 0; var1 < 20; ++var1)
+					        {
+					        	Random rand = el.getRNG();
+					            double var2 = rand.nextGaussian() * 0.02D;
+					            double var4 = rand.nextGaussian() * 0.02D;
+					            double var6 = rand.nextGaussian() * 0.02D;
+					            double var8 = 10.0D;
+					            par2World.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
+					        }
+
+							continue;
 						}
 
-						List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb);
-						Object[] olist = list.toArray();
-						for(Object curObj : olist){
-							if(!(curObj instanceof Entity)){
-								continue;
-							}
-							Entity curEntity = (Entity)curObj;
-
-							if(curEntity instanceof EntityArrow || curEntity instanceof EntityTNTPrimed){
-								curEntity.setVelocity(0, 0, 0);
-								curEntity.setDead();
-
-						        for (int var1 = 0; var1 < 20; ++var1)
-						        {
-						        	Random rand = el.getRNG();
-						            double var2 = rand.nextGaussian() * 0.02D;
-						            double var4 = rand.nextGaussian() * 0.02D;
-						            double var6 = rand.nextGaussian() * 0.02D;
-						            double var8 = 10.0D;
-						            par2World.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
-						        }
-
-								continue;
-							}
-
-							if(curEntity instanceof EntityFireball){
-								curEntity.attackEntityFrom(DamageSource.causeMobDamage(el),1);
-								continue;
-							}
+						if(curEntity instanceof EntityFireball){
+							curEntity.attackEntityFrom(DamageSource.causeMobDamage(el),1);
+							continue;
+						}
 
 
-							String entityStr = EntityList.getEntityString(curEntity);
+						String entityStr = EntityList.getEntityString(curEntity);
 
-							//含む
-							if(!(curEntity instanceof EntityDragonPart
-								|| (entityStr != null && SlashBlade.attackableTargets.containsKey(entityStr) && SlashBlade.attackableTargets.get(entityStr))
-								))
-								continue;
+						//含む
+						if(!(curEntity instanceof EntityDragonPart
+							|| (entityStr != null && SlashBlade.attackableTargets.containsKey(entityStr) && SlashBlade.attackableTargets.get(entityStr))
+							))
+							continue;
 
-							if(el instanceof EntityPlayer && combo >= 3){
+
+						if(el instanceof EntityPlayer ){
+							switch (comboSeq) {
+							case Battou:
 
 								curEntity.hurtResistantTime = 0;
 								((EntityPlayer)el).attackTargetEntityWithCurrentItem(curEntity);
@@ -500,21 +604,12 @@ public class ItemSlashBlade extends ItemSword {
 								float knockbackFactor = 1.5f;
 								curEntity.addVelocity((double)(-MathHelper.sin(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
 
-							}else{
+								break;
 
+							case Saya1:
+							case Saya2:
 								float atack = 4.0f + EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
 
-								/*
-								if (el.isPotionActive(Potion.damageBoost))
-				                {
-				                    atack += 3 << el.getActivePotionEffect(Potion.damageBoost).getAmplifier();
-				                }
-
-				                if (el.isPotionActive(Potion.weakness))
-				                {
-				                    atack -= 2 << el.getActivePotionEffect(Potion.weakness).getAmplifier();
-				                }
-				                */
 
 								if (curEntity instanceof EntityLivingBase)
 				                {
@@ -548,49 +643,58 @@ public class ItemSlashBlade extends ItemSword {
 				                	((EntityLivingBase)curEntity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
 				                	((EntityLivingBase)curEntity).addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
 				                }
+								break;
+
+							default:
+								break;
 							}
 						}
-
-					}
-				}else{
-					if(prevAttackTime +ComboResetTicks < currentTime && (combo <= 3 || (par3Entity instanceof EntityLivingBase && ((EntityLivingBase)par3Entity).swingProgressInt == 0))){
-						if(!(par3Entity instanceof EntityPlayer && ((EntityPlayer)par3Entity).isUsingItem()))
-							tag.setInteger("comboSeq", 0);
 					}
 				}
 			}else{
-				if(tag.getInteger("comboSeq") != 0)
-					tag.setInteger("comboSeq", 0);
-			}
-
-			if(par2World.isRemote && sitem.equals(el.getHeldItem())){
-
-				int eId = tag.getInteger("TargetEntity");
-
-				if(el.isSneaking()){
-					if(eId == 0){
-						AxisAlignedBB bb = par3Entity.boundingBox.copy();
-						bb = bb.expand(10, 5, 10);
-						float distance = 20.0f;
-						List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3Entity, bb);
-						list = targetFilter(list);
-						for(Entity curEntity : list){
-							float curDist = curEntity.getDistanceToEntity(par3Entity);
-							if(curDist < distance)
-							{
-								eId = curEntity.entityId;
-								distance = curDist;
-							}
-						}
-						tag.setInteger("TargetEntity", eId);
-					}
-					Entity target = par2World.getEntityByID(eId);
-					if(target != null && el instanceof EntityLivingBase)
-						this.faceEntity(el,target, 1000.0f,1000.0f);
-
-				}else if(eId != 0){
-					tag.setInteger("TargetEntity", 0);
+				if(prevAttackTime + ComboResetTicks < currentTime
+						&& (comboSeq == ComboSequence.Saya1
+					       || comboSeq == ComboSequence.Saya2
+					       || el.swingProgressInt == 0)
+					    && !(el.isUsingItem())
+						){
+					setComboSequence(tag, ComboSequence.None);
 				}
+			}
+		}else{
+			if(comboSeq != ComboSequence.None)
+				setComboSequence(tag, ComboSequence.None);
+		}
+
+		if(par2World.isRemote && sitem.equals(el.getHeldItem())){
+
+			final String TargetEntityStr = "TargetEntity";
+
+			int eId = tag.getInteger(TargetEntityStr);
+
+			if(el.isSneaking()){
+				if(eId == 0){
+					AxisAlignedBB bb = el.boundingBox.copy();
+					bb = bb.expand(10, 5, 10);
+					float distance = 20.0f;
+					List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb);
+					list = targetFilter(list);
+					for(Entity curEntity : list){
+						float curDist = curEntity.getDistanceToEntity(el);
+						if(curDist < distance)
+						{
+							eId = curEntity.entityId;
+							distance = curDist;
+						}
+					}
+					tag.setInteger(TargetEntityStr, eId);
+				}
+				Entity target = par2World.getEntityByID(eId);
+				if(target != null)
+					this.faceEntity(el,target, 1000.0f,1000.0f);
+
+			}else if(eId != 0){
+				tag.setInteger(TargetEntityStr, 0);
 			}
 		}
 	}

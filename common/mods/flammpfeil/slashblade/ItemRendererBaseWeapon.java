@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -62,7 +63,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		if(item.hasTagCompound()){
 			NBTTagCompound tag = item.getTagCompound();
 
-			isBroken = tag.getBoolean("isBroken");
+			isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
 		}
 		model.isBroken = isBroken;
 
@@ -241,19 +242,13 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		int charge = player.getItemInUseDuration();
 
 		boolean isBroken = false;
-		int combo = 0;
+		ItemSlashBlade.ComboSequence combo = ComboSequence.None;
 		if(item.hasTagCompound()){
 			NBTTagCompound tag = item.getTagCompound();
 
-			isBroken = tag.getBoolean("isBroken");
+			isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
 
-			combo = tag.getInteger("comboSeq");
-		}
-
-
-		if(combo <= 2){
-		}else{
-			progress *= 1.2f;
+			combo = ItemSlashBlade.getComboSequence(tag);
 		}
 
 		model.isBroken = isBroken;
@@ -275,16 +270,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			//-----------------------------------------------------------------------------------------------------------------------
 			GL11.glPushMatrix();{
-				/*
-				if(item.hasTagCompound()){
-					NBTTagCompound tag = item.getTagCompound();
-
-					int combo = tag.getInteger("comboSeq");
-					if(combo == 3){
-					}else{
-					}
-				}
-				*/
 
 
 				GL11.glRotatef(progress * 220.0f, -1.0f, 1.75f, 0f);
@@ -306,7 +291,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 				model.render(null, x, y, z, 0, 0, 1.0f);
 
-				if(isEnchanted && (0 < progress && !(combo <= 2))){
+				if(isEnchanted && (0 < progress && combo != ComboSequence.None)){
 					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 					GL11.glEnable(GL11.GL_BLEND);
 					GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
@@ -320,11 +305,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			GL11.glPushMatrix();{
 
-				if(combo <= 2){
-					GL11.glRotatef(progress * 220, -1.0f, 1.75f, 0f);
-				}else{
-					GL11.glTranslatef(0.0f,0.0f,-0.0f);
-				}
+				GL11.glRotatef(combo.swingDirection, 0.0f, 1.0f, 0.0f);
+				GL11.glRotatef(progress * combo.swingAmplitude, 1.0f, 0.0f, 0.0f);
+//				GL11.glTranslatef(0.3f,0.5f,-0.3f);
+
 
 				GL11.glTranslatef(0.3f,0.5f,-0.3f);
 
@@ -341,7 +325,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 				model2.render(null, x, y, z, 0, 0, 1.0f);
 
 
-				if(isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || (0 < progress && combo == 5))){
+				if(isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || combo.isCharged)){
 					GL11.glPushMatrix();
 					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 

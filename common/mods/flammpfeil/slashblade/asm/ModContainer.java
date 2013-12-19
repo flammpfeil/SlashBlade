@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import mods.flammpfeil.classupdater.asm.CorePlugin;
+
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
