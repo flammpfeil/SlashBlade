@@ -40,6 +40,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	public static final String comboSeqStr = "comboSeq";
 	public static final String isBrokenStr = "isBroken";
+	public static final String onClickStr = "onClick";
 	public static void setComboSequence(NBTTagCompound tag,ComboSequence comboSeq){
 		tag.setInteger(comboSeqStr, comboSeq.ordinal());
 	}
@@ -53,13 +54,14 @@ public class ItemSlashBlade extends ItemSword {
     public enum ComboSequence
 	{
     	None(true,0.0f,0.0f,false,0),
-    	Saya1(true,200.0f,50.0f,false,8),
-    	Saya2(true,-200.0f,50.0f,false,12),
+    	Saya1(true,200.0f,5.0f,false,6),
+    	Saya2(true,-200.0f,5.0f,false,12),
     	Battou(false,240.0f,0.0f,false,15),
     	Noutou(false,-210.0f,10.0f,false,12),
     	Kiriage(false,260.0f,70.0f,false,20),
     	Kiriorosi(false,-260.0f,70.0f,false,12),
-    	SlashDim(false,-220.0f,10.0f,true,12),
+    	SlashDim(false,-220.0f,10.0f,true,8),
+    	Iai(false,240.0f,0.0f,false,8),
     	;
 
 	    /**
@@ -150,38 +152,76 @@ public class ItemSlashBlade extends ItemSword {
 
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
-        if (par2EntityLivingBase instanceof EntityLivingBase){
+    	ComboSequence comboSec = getComboSequence(tag);
 
-        	ComboSequence comboSec = getComboSequence(tag);
+    	switch (comboSec) {
+		case Kiriage:
+			par2EntityLivingBase.motionX = 0;
+			par2EntityLivingBase.motionY = 0;
+			par2EntityLivingBase.motionZ = 0;
+			par2EntityLivingBase.addVelocity(0.0, 0.7D,0.0);
 
-        	switch (comboSec) {
-			case Kiriage:
-				par2EntityLivingBase.motionX = 0;
+			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
+			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
+
+			break;
+
+		case Kiriorosi:
+
+			if(0 < par2EntityLivingBase.motionY)
 				par2EntityLivingBase.motionY = 0;
-				par2EntityLivingBase.motionZ = 0;
-				par2EntityLivingBase.addVelocity(0.0, 0.7D,0.0);
 
-				par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
-				par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
+			par2EntityLivingBase.fallDistance += 4;
 
-				break;
 
-			case Kiriorosi:
-
-				if(0 < par2EntityLivingBase.motionY)
-					par2EntityLivingBase.motionY = 0;
-
-				par2EntityLivingBase.fallDistance += 4;
+			{
 				float knockbackFactor = 0.5f;
 				par2EntityLivingBase.addVelocity((double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), -0.2D, (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
-
-				break;
-
-			default:
-				break;
 			}
 
-        }
+			break;
+
+		case Battou:
+
+			{
+				float knockbackFactor = 0f;
+				if(par2EntityLivingBase instanceof EntityLivingBase)
+					knockbackFactor = EnchantmentHelper.getKnockbackModifier(par3EntityLivingBase, par2EntityLivingBase);
+
+				if(!(0 < knockbackFactor))
+					knockbackFactor = 1.5f;
+
+				par2EntityLivingBase.addVelocity((double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
+			}
+
+			break;
+
+		case Iai:
+			par2EntityLivingBase.motionX = 0;
+			par2EntityLivingBase.motionY = 0;
+			par2EntityLivingBase.motionZ = 0;
+			par2EntityLivingBase.addVelocity(0.0, 0.3D,0.0);
+
+			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
+			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
+
+			break;
+
+		case Saya1:
+		case Saya2:
+
+			par2EntityLivingBase.motionX = 0;
+			par2EntityLivingBase.motionY = 0;
+			par2EntityLivingBase.motionZ = 0;
+
+			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
+			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
+
+			break;
+
+		default:
+			break;
+		}
 
 		damageItem(1, par1ItemStack,par3EntityLivingBase);
 
@@ -232,22 +272,116 @@ public class ItemSlashBlade extends ItemSword {
 		return tag;
 	}
 
+	public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player){
+		ComboSequence result = ComboSequence.None;
+
+		if(isRightClick){
+
+			switch (current) {
+
+			case Saya1:
+				result = ComboSequence.Saya2;
+				break;
+
+			case Saya2:
+				result = ComboSequence.Battou;
+				break;
+
+			case Kiriage:
+				result = ComboSequence.Kiriorosi;
+				break;
+
+			case Iai:
+				result = ComboSequence.Battou;
+				break;
+
+			default:
+				if(!player.onGround){
+					result = ComboSequence.Iai;
+
+				}else{
+					result = ComboSequence.Saya1;
+				}
+
+				break;
+			}
+		}else{
+			switch (current) {
+
+			case Kiriage:
+				result = ComboSequence.Kiriorosi;
+				break;
+
+			case Iai:
+				result = ComboSequence.Battou;
+				break;
+
+			default:
+				if(!player.onGround){
+					result = ComboSequence.Iai;
+
+				}else{
+					result = ComboSequence.Kiriage;
+				}
+
+				break;
+			}
+		}
+
+		setPlayerEffect(itemStack,result,player);
+
+		return result;
+	}
+
+
+	public static final String onJumpAttackedStr = "onJumpAttacked";
+
+	public void setPlayerEffect(ItemStack itemStack, ComboSequence current, EntityPlayer player){
+
+		NBTTagCompound tag = getItemTagCompound(itemStack);
+
+		switch (current) {
+		case Iai:
+			player.fallDistance = 0;
+			if(!tag.getBoolean(onJumpAttackedStr)){
+				player.motionY = 0;
+				player.addVelocity(0.0, 0.2D,0.0);
+			}
+
+		case Battou:
+			if (!player.onGround){
+				if(!tag.getBoolean(onJumpAttackedStr)){
+					player.motionY = 0;
+					player.addVelocity(0.0, 0.2D,0.0);
+					tag.setBoolean(onJumpAttackedStr, true);
+				}
+			}
+
+			break;
+		default:
+
+			break;
+		}
+	}
+
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
 			Entity entity) {
 
+		entity.hurtResistantTime = 0;
+
 		NBTTagCompound tag = getItemTagCompound(stack);
 
-		if(!tag.getBoolean("onClick") ){ // onClick中は rightClickなので無視
+		if(!tag.getBoolean(onClickStr) ){ // onClick中は rightClickなので無視
 	        if (entity.canAttackWithItem()){
 	            if (!entity.hitByEntity(player) || entity instanceof EntityLivingBase){
 
 		        	ComboSequence comboSec = getComboSequence(tag);
-	        		if(!comboSec.equals(ComboSequence.Kiriage)){
-	        			setComboSequence(tag,ComboSequence.Kiriage);
-	        		}else{
-	        			setComboSequence(tag,ComboSequence.Kiriorosi);
-	        		}
+
+		        	comboSec = getNextComboSeq(stack, comboSec, false, player);
+
+		        	setComboSequence(tag, comboSec);
+
             		tag.setLong("prevAttackTime", player.worldObj.getTotalWorldTime());
 
 	            }
@@ -348,7 +482,7 @@ public class ItemSlashBlade extends ItemSword {
 				bb = bb.expand(2.0f, 0.25f, 2.0f);
 
 
-				tag.setBoolean("onClick", true);
+				tag.setBoolean(onClickStr, true);
 				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3EntityPlayer, bb);
 				list = targetFilter(list);
 				for(Entity curEntity : list){
@@ -358,7 +492,7 @@ public class ItemSlashBlade extends ItemSword {
 					par3EntityPlayer.attackTargetEntityWithCurrentItem(curEntity);
 	                par3EntityPlayer.onCriticalHit(curEntity);
 				}
-				tag.setBoolean("onClick", false);
+				tag.setBoolean(onClickStr, false);
 
 			}
 			setComboSequence(tag,ComboSequence.SlashDim);
@@ -366,7 +500,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
 		}else{
-			tag.setBoolean("onClick", true);
+			tag.setBoolean(onClickStr, true);
 		}
 
 	}
@@ -401,6 +535,8 @@ public class ItemSlashBlade extends ItemSword {
 
 		boolean isBewitched = sitem.hasDisplayName() && sitem.isItemEnchanted();
 
+
+
     	float tagAttackAmplifier = tag.getFloat("attackAmplifier");
 		float attackAmplifier = 0;
         if(!isBroken && isBewitched){
@@ -433,11 +569,13 @@ public class ItemSlashBlade extends ItemSword {
         if(isBewitched){
         	int nowExp = el.experienceTotal;
 
-        	if(!tag.hasKey("prevExp")){
+        	final String prevExpStr = "prevExp";
+
+        	if(!tag.hasKey(prevExpStr)){
         		tag.setInteger("prevExp", nowExp);
         	}
 
-        	int prevExp = tag.getInteger("prevExp");
+        	int prevExp = tag.getInteger(prevExpStr);
 
         	int repair = nowExp - prevExp;
         	if(repair < 0){
@@ -448,7 +586,7 @@ public class ItemSlashBlade extends ItemSword {
 
 			sitem.setItemDamage(Math.max(0,curDamage-repair));
 
-    		tag.setInteger("prevExp", el.experienceTotal);
+    		tag.setInteger(prevExpStr, el.experienceTotal);
         }
 
 		if(!isCurrent && !par2World.isRemote){
@@ -456,8 +594,6 @@ public class ItemSlashBlade extends ItemSword {
 
 				int idx = Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
 
-				//pl.experienceTotal = 0;
-				//pl.experience = 0;
 				if(0<= idx && idx < 9 && 0 < el.experienceLevel){
 					int repair;
 					int descExp;
@@ -492,6 +628,14 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
+		if(el.onGround && !el.isAirBorne && tag.getBoolean(onJumpAttackedStr)){
+			setComboSequence(tag, ComboSequence.None);
+		}
+
+		if(el.onGround && tag.getBoolean(onJumpAttackedStr))
+			tag.setBoolean(onJumpAttackedStr, false);
+
+
 		ComboSequence comboSeq = getComboSequence(tag);
 
 		long prevAttackTime = tag.getLong("prevAttackTime");
@@ -499,31 +643,12 @@ public class ItemSlashBlade extends ItemSword {
 
 		if(isCurrent){
 
-			if(tag.getBoolean("onClick")){
+			if(tag.getBoolean(onClickStr)){
 
 				//sitem.setItemDamage(1320);
 				if(prevAttackTime + ComboInterval < currentTime){
 
-
-					switch (comboSeq) {
-
-					case Saya1:
-						comboSeq = ComboSequence.Saya2;
-						break;
-
-					case Saya2:
-						comboSeq = ComboSequence.Battou;
-						break;
-
-					/*
-					case None:
-					case Battou:
-					*/
-					default:
-						comboSeq = ComboSequence.Saya1;
-						break;
-					}
-
+					comboSeq = getNextComboSeq(sitem, comboSeq, true, el);
 					setComboSequence(tag, comboSeq);
 
 					el.isSwingInProgress = true;
@@ -535,6 +660,12 @@ public class ItemSlashBlade extends ItemSword {
 
 					switch (comboSeq) {
 					case Battou:
+
+						if(!el.onGround){
+							el.fallDistance = 0;
+							el.motionY = 0.0f;
+							el.addVelocity(0.0, 0.2, 0.0);
+						}
 
 
 						if(isBroken){
@@ -569,7 +700,10 @@ public class ItemSlashBlade extends ItemSword {
 						bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
 						break;
 
+					case Kiriorosi:
 					default:
+						bb = bb.expand(1.2f, 0.25f, 1.2f);
+						bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
 						break;
 					}
 
@@ -615,25 +749,6 @@ public class ItemSlashBlade extends ItemSword {
 
 						if(el instanceof EntityPlayer ){
 							switch (comboSeq) {
-							case Battou:
-
-								curEntity.hurtResistantTime = 0;
-								((EntityPlayer)el).attackTargetEntityWithCurrentItem(curEntity);
-								((EntityPlayer)el).onCriticalHit(curEntity);
-
-
-								float knockbackFactor = 0f;
-
-								if(curEntity instanceof EntityLivingBase)
-									knockbackFactor = EnchantmentHelper.getKnockbackModifier(el, (EntityLivingBase)curEntity);
-
-								if(knockbackFactor < 1.5f)
-									knockbackFactor = 1.5f;
-
-								curEntity.addVelocity((double)(-MathHelper.sin(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(el.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
-
-								break;
-
 							case Saya1:
 							case Saya2:
 								float attack = 4.0f + EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
@@ -662,25 +777,21 @@ public class ItemSlashBlade extends ItemSword {
 								curEntity.hurtResistantTime = 0;
 								curEntity.attackEntityFrom(DamageSource.causeMobDamage(el), attack);
 
-								curEntity.motionX = 0;
-								curEntity.motionY = 0;
-								curEntity.motionZ = 0;
-
 
 				                if (curEntity instanceof EntityLivingBase){
-				                	((EntityLivingBase)curEntity).setRevengeTarget(null);
-
-				                	((EntityLivingBase)curEntity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
-				                	((EntityLivingBase)curEntity).addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
+				                	this.hitEntity(sitem, (EntityLivingBase)curEntity, el);
 				                }
+
 								break;
 
 							default:
+								((EntityPlayer)el).attackTargetEntityWithCurrentItem(curEntity);
+								((EntityPlayer)el).onCriticalHit(curEntity);
 								break;
 							}
 						}
 					}
-					tag.setBoolean("onClick", false);
+					tag.setBoolean(onClickStr, false);
 					tag.setLong("prevAttackTime", currentTime);
 				}
 			}else{
@@ -693,6 +804,7 @@ public class ItemSlashBlade extends ItemSword {
 					switch (comboSeq) {
 					case SlashDim:
 					case Noutou:
+					case Iai:
 							setComboSequence(tag, ComboSequence.None);
 							break;
 					default:
@@ -707,10 +819,25 @@ public class ItemSlashBlade extends ItemSword {
 					}
 				}
 			}
+
+
+
+			if(isBewitched){
+				AxisAlignedBB bb = el.boundingBox.copy();
+				bb = bb.expand(1, 1, 1);
+				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb);
+				if(0 < list.size() && el.isAirBorne){
+					el.onGround = true;
+					el.setJumping(false);
+				}
+			}
 		}else{
-			if(!comboSeq.equals(ComboSequence.None) && ((prevAttackTime + comboSeq.comboResetTicks) < currentTime))
+			if(!comboSeq.equals(ComboSequence.None) && ((prevAttackTime + comboSeq.comboResetTicks) < currentTime)){
 				setComboSequence(tag, ComboSequence.None);
+			}
 		}
+
+
 
 		if(par2World.isRemote && sitem.equals(el.getHeldItem())){
 

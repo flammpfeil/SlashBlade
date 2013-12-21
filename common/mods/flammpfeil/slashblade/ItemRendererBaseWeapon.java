@@ -262,9 +262,18 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		//progress = (player.ticksExisted % 10) / 10.0f;
 
+		switch(combo){
+		case Iai:
+			progress = 1.0f - (Math.abs(progress-0.5f) * 2.0f);
 
-		progress = 1.0f - progress;
-		progress = 1.0f - (float)Math.pow(progress,2.0);
+			break;
+
+		default :
+			progress = 1.0f - progress;
+			progress = 1.0f - (float)Math.pow(progress,2.0);
+
+			break;
+		}
 
 
 		model.isBroken = isBroken;
