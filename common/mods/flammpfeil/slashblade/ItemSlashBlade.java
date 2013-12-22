@@ -860,17 +860,22 @@ public class ItemSlashBlade extends ItemSword {
 						//※動かず納刀完了させ、敵に囲まれている場合にボーナス付与。
 
 						if(swordType.contains(SwordType.Bewitched)
-							&& 10 < sitem.getItemDamage()
 							&& tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posY + el.posZ) * 10.0)
 							){
 
 							AxisAlignedBB bb = el.boundingBox.copy();
 							bb = bb.expand(5, 3, 5);
 							List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
-							if(0 < list.size()){
-								int j1 = (int)Math.min(Math.ceil(list.size() * 0.5),5);
-						        dropXpOnBlockBreak(par2World, MathHelper.ceiling_double_int(el.posX), MathHelper.ceiling_double_int(el.posY), MathHelper.ceiling_double_int(el.posZ), j1);
 
+							if(0 < list.size()){
+								if(10 < sitem.getItemDamage()){
+									int j1 = (int)Math.min(Math.ceil(list.size() * 0.5),5);
+							        dropXpOnBlockBreak(par2World, MathHelper.ceiling_double_int(el.posX), MathHelper.ceiling_double_int(el.posY), MathHelper.ceiling_double_int(el.posZ), j1);
+								}
+
+
+								el.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),100,5,true));
+								el.addPotionEffect(new PotionEffect(Potion.resistance.getId(),100,5,true));
 							}
 
 						}
