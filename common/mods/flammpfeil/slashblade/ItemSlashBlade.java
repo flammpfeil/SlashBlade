@@ -17,6 +17,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -57,7 +58,7 @@ public class ItemSlashBlade extends ItemSword {
     	Saya1(true,200.0f,5.0f,false,6),
     	Saya2(true,-200.0f,5.0f,false,12),
     	Battou(false,240.0f,0.0f,false,15),
-    	Noutou(false,-210.0f,10.0f,false,12),
+    	Noutou(false,-210.0f,10.0f,false,5),
     	Kiriage(false,260.0f,70.0f,false,20),
     	Kiriorosi(false,-260.0f,70.0f,false,12),
     	SlashDim(false,-220.0f,10.0f,true,8),
@@ -702,8 +703,8 @@ public class ItemSlashBlade extends ItemSword {
 
 					case Kiriorosi:
 					default:
-						bb = bb.expand(1.2f, 0.25f, 1.2f);
-						bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
+						bb = bb.expand(1.2f, 1.25f, 1.2f);
+						bb = bb.offset(vec.xCoord*2.0f,0.5f,vec.zCoord*2.0f);
 						break;
 					}
 
@@ -802,8 +803,30 @@ public class ItemSlashBlade extends ItemSword {
 						){
 
 					switch (comboSeq) {
-					case SlashDim:
+					case None:
+						break;
+
 					case Noutou:
+						//※動かず納刀完了させ、敵に囲まれている場合にボーナス付与。
+
+						if(10 < sitem.getItemDamage()
+							&& tag.getInteger("lastPos") == (int)(el.posX + el.posY + el.posZ)
+							){
+
+							AxisAlignedBB bb = el.boundingBox.copy();
+							bb = bb.expand(5, 3, 5);
+							List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb);
+							list = targetFilter(list);
+							if(0 < list.size()){
+								int j1 = (int)Math.min(Math.ceil(list.size() * 0.5),5);
+						        dropXpOnBlockBreak(par2World, MathHelper.ceiling_double_int(el.posX), MathHelper.ceiling_double_int(el.posY), MathHelper.ceiling_double_int(el.posZ), j1);
+
+							}
+
+						}
+
+
+					case SlashDim:
 					case Iai:
 							setComboSequence(tag, ComboSequence.None);
 							break;
@@ -813,6 +836,9 @@ public class ItemSlashBlade extends ItemSword {
 							break;
 						}
 						setComboSequence(tag, ComboSequence.Noutou);
+
+
+						tag.setInteger("lastPos",(int)(el.posX + el.posY + el.posZ));
 						tag.setLong("prevAttackTime", currentTime);
 						el.swingItem();
 						break;
@@ -871,6 +897,19 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 	}
+
+    protected void dropXpOnBlockBreak(World par1World, int par2, int par3, int par4, int par5)
+    {
+        if (!par1World.isRemote)
+        {
+            while (par5 > 0)
+            {
+                int i1 = EntityXPOrb.getXPSplit(par5);
+                par5 -= i1;
+                par1World.spawnEntityInWorld(new EntityXPOrb(par1World, (double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, i1));
+            }
+        }
+    }
 
     /**
      * Changes pitch and yaw so that the entity calling the function is facing the entity provided as an argument.
