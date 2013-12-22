@@ -873,7 +873,7 @@ public class ItemSlashBlade extends ItemSword {
 							        dropXpOnBlockBreak(par2World, MathHelper.ceiling_double_int(el.posX), MathHelper.ceiling_double_int(el.posY), MathHelper.ceiling_double_int(el.posZ), j1);
 								}
 
-
+								el.onCriticalHit(el);
 								el.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),100,5,true));
 								el.addPotionEffect(new PotionEffect(Potion.resistance.getId(),100,5,true));
 							}
