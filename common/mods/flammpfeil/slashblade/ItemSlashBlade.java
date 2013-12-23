@@ -42,6 +42,7 @@ import com.google.common.collect.Multimap;
 public class ItemSlashBlade extends ItemSword {
 
 	public static IEntitySelector AttackableSelector = new EntitySelectorAttackable();
+	public static IEntitySelector BreakableSelector = new EntitySelectorBreakable();
 
 	static final class EntitySelectorAttackable implements IEntitySelector
 	{
@@ -188,6 +189,8 @@ public class ItemSlashBlade extends ItemSword {
     public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
     {
 
+		int damage = 1;
+
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
 		if(!par2EntityLivingBase.isEntityAlive() && par2EntityLivingBase.deathTime == 0){
@@ -265,13 +268,15 @@ public class ItemSlashBlade extends ItemSword {
 			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
 			par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.weakness.getId(),10,30,true));
 
+			damage = 0;
 			break;
 
 		default:
 			break;
 		}
 
-		damageItem(1, par1ItemStack,par3EntityLivingBase);
+    	if(0 < damage)
+    		damageItem(damage, par1ItemStack,par3EntityLivingBase);
 
 		return true;
     }
@@ -399,9 +404,6 @@ public class ItemSlashBlade extends ItemSword {
 			}
 
 			if(swordType.containsAll(SwordType.BewitchedPerfect)){
-
-				damageItem(10, itemStack, player);
-
 				Random rand =  player.getRNG();
 				for(int spread = 0 ; spread < 12 ;spread ++){
 					float xSp = rand.nextFloat() * 2 - 1.0f;
@@ -847,7 +849,12 @@ public class ItemSlashBlade extends ItemSword {
 						}
 					}
 					tag.setBoolean(onClickStr, false);
+
 					tag.setLong(lastActionTimeStr, currentTime);
+
+					if(swordType.containsAll(SwordType.BewitchedPerfect) && comboSeq.equals(ComboSequence.Battou)){
+						damageItem(10, sitem, el);
+					}
 				}
 			}else{
 				if(((prevAttackTime + comboSeq.comboResetTicks) < currentTime)
@@ -1065,7 +1072,7 @@ public class ItemSlashBlade extends ItemSword {
 					stack,
 					comboSeq,
 					entityLiving);
-			List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,IEntitySelector.selectAnything);
+			List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,BreakableSelector);
 			for(Entity curEntity : list){
 
 				if(curEntity instanceof IProjectile || curEntity instanceof EntityTNTPrimed){
