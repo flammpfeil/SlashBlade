@@ -912,8 +912,26 @@ public class ItemSlashBlade extends ItemSword {
 				bb = bb.expand(1, 1, 1);
 				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, this.AttackableSelector);
 				if(0 < list.size() && el.isAirBorne){
-					el.onGround = true;
-					el.setJumping(false);
+					Entity target = null;
+					float distance = 2.0f;
+					for(Entity curEntity : list){
+						float curDist = curEntity.getDistanceToEntity(el);
+						if(curDist < distance)
+						{
+							target = curEntity;
+							distance = curDist;
+						}
+					}
+
+					if(target != null){
+						el.onGround = true;
+						el.setJumping(false);
+
+						if(!target.onGround){
+							target.fallDistance += 4;
+							target.addVelocity(0.0, -0.3, 0.0);
+						}
+					}
 				}
 			}
 		}else{
