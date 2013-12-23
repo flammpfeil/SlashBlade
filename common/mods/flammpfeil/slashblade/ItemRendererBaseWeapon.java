@@ -275,6 +275,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			break;
 		}
 
+		if(!isBroken && isEnchanted && ItemSlashBlade.RequiredChargeTick < charge){
+			progress = 0.0f;
+			combo = ComboSequence.None;
+		}
+
 
 		model.isBroken = isBroken;
 		model.isEntity = false;
@@ -454,7 +459,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 				GL11.glPopMatrix();
 
-				if(isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || combo.isCharged)){
+				if(!isBroken && isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || combo.isCharged)){
 					GL11.glPushMatrix();
 						GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 

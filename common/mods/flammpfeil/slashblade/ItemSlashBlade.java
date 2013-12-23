@@ -187,11 +187,6 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
     public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
     {
-		//左の通常切り上げ攻撃だったら、ベクトル殺して打ち上げ
-		//左の２段切り下ろし攻撃だったら、ベクトル殺して打ち降ろしダメージ１以上の落下速度で
-
-		//右のときは、アイテム損耗だけでおｋ
-
 
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
@@ -206,6 +201,7 @@ public class ItemSlashBlade extends ItemSword {
 
     	switch (comboSec) {
 		case Kiriage:
+			par2EntityLivingBase.onGround = false;
 			par2EntityLivingBase.motionX = 0;
 			par2EntityLivingBase.motionY = 0;
 			par2EntityLivingBase.motionZ = 0;
@@ -228,6 +224,8 @@ public class ItemSlashBlade extends ItemSword {
 				float knockbackFactor = 0.5f;
 				par2EntityLivingBase.addVelocity((double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), -0.2D, (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
 			}
+
+			par2EntityLivingBase.hurtResistantTime = 0;
 
 			break;
 
@@ -325,7 +323,18 @@ public class ItemSlashBlade extends ItemSword {
 	public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player){
 		ComboSequence result = ComboSequence.None;
 
-		if(isRightClick){
+		if(!player.onGround){
+			switch (current) {
+			case Iai:
+				result = ComboSequence.Battou;
+				break;
+
+			default:
+				result = ComboSequence.Iai;
+				break;
+			}
+
+		}else if(isRightClick){
 
 			switch (current) {
 
@@ -341,17 +350,8 @@ public class ItemSlashBlade extends ItemSword {
 				result = ComboSequence.Kiriorosi;
 				break;
 
-			case Iai:
-				result = ComboSequence.Battou;
-				break;
-
 			default:
-				if(!player.onGround){
-					result = ComboSequence.Iai;
-
-				}else{
-					result = ComboSequence.Saya1;
-				}
+				result = ComboSequence.Saya1;
 
 				break;
 			}
@@ -362,18 +362,8 @@ public class ItemSlashBlade extends ItemSword {
 				result = ComboSequence.Kiriorosi;
 				break;
 
-			case Iai:
-				result = ComboSequence.Battou;
-				break;
-
 			default:
-				if(!player.onGround){
-					result = ComboSequence.Iai;
-
-				}else{
-					result = ComboSequence.Kiriage;
-				}
-
+				result = ComboSequence.Kiriage;
 				break;
 			}
 		}
@@ -382,6 +372,7 @@ public class ItemSlashBlade extends ItemSword {
 
 		return result;
 	}
+
 
 	public void setPlayerEffect(ItemStack itemStack, ComboSequence current, EntityPlayer player){
 
@@ -407,7 +398,7 @@ public class ItemSlashBlade extends ItemSword {
 				}
 			}
 
-			if(swordType.containsAll(EnumSet.of(SwordType.Perfect,SwordType.Bewitched))){
+			if(swordType.containsAll(SwordType.BewitchedPerfect)){
 
 				damageItem(10, itemStack, player);
 
@@ -436,13 +427,22 @@ public class ItemSlashBlade extends ItemSword {
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
 			Entity entity) {
 
-		entity.hurtResistantTime = 0;
-
 		NBTTagCompound tag = getItemTagCompound(stack);
 
 		if(!tag.getBoolean(onClickStr) ){ // onClick中は rightClickなので無視
 	        if (entity.canAttackWithItem()){
 	            if (!entity.hitByEntity(player) || entity instanceof EntityLivingBase){
+
+	            	//左クリック攻撃は無敵時間を考慮する コンボインターバルが入っている
+	            	if(entity instanceof EntityLivingBase
+	            			&& ((EntityLivingBase)entity).maxHurtTime != 0 && (ComboInterval > ((EntityLivingBase)entity).maxHurtTime - ((EntityLivingBase)entity).hurtTime))
+	            	{
+	            		//腕振りしない
+	            		player.swingProgressInt = 0;
+	            		player.swingProgress = 0.0f;
+	            		player.isSwingInProgress = false;
+	            		return true;
+	            	}
 
 		        	ComboSequence comboSec = getComboSequence(tag);
 
@@ -455,6 +455,9 @@ public class ItemSlashBlade extends ItemSword {
 	            }
 	        }
 		}
+		//無敵時間無視
+		entity.hurtResistantTime = 0;
+
 
 		return false;
 	}
@@ -477,7 +480,7 @@ public class ItemSlashBlade extends ItemSword {
 
 		EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
-		if(RequiredChargeTick < var6 && swordType.contains(SwordType.Enchanted)){
+		if(RequiredChargeTick < var6 && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
 
 			par3EntityPlayer.swingItem();
 
@@ -532,9 +535,6 @@ public class ItemSlashBlade extends ItemSword {
 				tag.setBoolean(onClickStr, true);
 				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3EntityPlayer, bb, AttackableSelector);
 				for(Entity curEntity : list){
-
-
-					curEntity.hurtResistantTime = 0;
 					par3EntityPlayer.attackTargetEntityWithCurrentItem(curEntity);
 	                par3EntityPlayer.onCriticalHit(curEntity);
 				}
@@ -580,7 +580,7 @@ public class ItemSlashBlade extends ItemSword {
 				bb = bb.expand(1.0f, 0.0f, 1.0f);
 				bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
 
-			}else if(swordType.containsAll(EnumSet.of(SwordType.Perfect,SwordType.Bewitched))){
+			}else if(swordType.containsAll(SwordType.BewitchedPerfect)){
 				bb = bb.expand(5.0f, 0.25f, 5.0f);
 			}else{
 				bb = bb.expand(2.0f, 0.25f, 2.0f);
@@ -616,6 +616,10 @@ public class ItemSlashBlade extends ItemSword {
     	Bewitched,
     	SoulEeater,
     	FiercerEdge,
+    	;
+
+    	public static final EnumSet<SwordType> BewitchedSoulEater = EnumSet.of(SwordType.SoulEeater,SwordType.Bewitched);
+    	public static final EnumSet<SwordType> BewitchedPerfect = EnumSet.of(SwordType.Perfect,SwordType.Bewitched);
     }
 
     public EnumSet<SwordType> getSwordType(ItemStack itemStack){
@@ -721,7 +725,7 @@ public class ItemSlashBlade extends ItemSword {
 			if(soul <= 999999999)
 				tag.setInteger(proudSoulStr, soul);
 
-        	if(repair > 0 && swordType.containsAll(EnumSet.of(SwordType.SoulEeater,SwordType.Bewitched)))
+        	if(repair > 0 && swordType.containsAll(SwordType.BewitchedSoulEater))
         		sitem.setItemDamage(Math.max(0,curDamage-repair));
 
     		tag.setInteger(prevExpStr, el.experienceTotal);
@@ -913,7 +917,7 @@ public class ItemSlashBlade extends ItemSword {
 				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, this.AttackableSelector);
 				if(0 < list.size() && el.isAirBorne){
 					Entity target = null;
-					float distance = 2.0f;
+					float distance = 10.0f;
 					for(Entity curEntity : list){
 						float curDist = curEntity.getDistanceToEntity(el);
 						if(curDist < distance)
@@ -926,11 +930,6 @@ public class ItemSlashBlade extends ItemSword {
 					if(target != null){
 						el.onGround = true;
 						el.setJumping(false);
-
-						if(!target.onGround){
-							target.fallDistance += 4;
-							target.addVelocity(0.0, -0.3, 0.0);
-						}
 					}
 				}
 			}
@@ -1092,6 +1091,12 @@ public class ItemSlashBlade extends ItemSword {
 					continue;
 				}
 			}
+
+
+			NBTTagCompound tag = getItemTagCompound(stack);
+			long prevAttackTime = tag.getLong(lastActionTimeStr);
+			long currentTime =entityLiving.worldObj.getTotalWorldTime();
+
 		}
 
 		return super.onEntitySwing(entityLiving, stack);
