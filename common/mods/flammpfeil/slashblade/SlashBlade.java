@@ -12,8 +12,11 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntityOwnable;
 import net.minecraft.entity.IMerchant;
+import net.minecraft.entity.IProjectile;
+import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -145,6 +148,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 
 
     static public Map<String,Boolean> attackableTargets = new HashMap<String,Boolean>();
+    static public Map<String,Boolean> destructableTargets = new HashMap<String,Boolean>();
 
 
     /**
@@ -171,36 +175,55 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 		try{
 			mainConfiguration.load();
 
-			ArrayList<String> targets = new ArrayList<String>();
 
 
 			for(Object key : EntityList.classToStringMapping.keySet()){
+				Class cls = (Class)key;
+
 				String name = (String)EntityList.classToStringMapping.get(key);
 				if(name == null || name.length() == 0)
 					continue;
+
 				Entity instance = null;
 
 				try{
 					instance = EntityList.createEntityByName(name, null);
 				}catch(Exception e){
+					instance = null;
 				}
 
-				if(instance == null || !(instance instanceof EntityLivingBase))
-					continue;
+
+				if(cls.isAssignableFrom(EntityLivingBase.class))
+				{
+					boolean attackable = true;
+
+					if(instance == null){
+						attackable = true;
+
+					}else if(instance instanceof IMob){
+						attackable = true;
+
+					}else if(instance instanceof IAnimals
+							||instance instanceof EntityOwnable
+							||instance instanceof IMerchant){
+						attackable = false;
+
+					}
+					attackableTargets.put(name, attackable);
+				}else{
+
+					boolean destructable = false;
+
+					if(instance instanceof IProjectile || instance instanceof EntityTNTPrimed || instance instanceof EntityFireball){
+						//allways destruction
+					}else{
+						destructableTargets.put(cls.getSimpleName(), destructable);
+
+					}
+
+				}
 
 
-				boolean attackable = true;
-
-				if(instance instanceof IMob)
-					attackable = true;
-				else
-				if(instance instanceof IAnimals
-					||instance instanceof EntityOwnable
-					||instance instanceof IMerchant)
-					attackable = false;
-
-
-				attackableTargets.put(name, attackable);
 			}
 
 			Property propAttackableTargets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "AttackableTargets" ,new String[]{});
@@ -216,16 +239,48 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				attackableTargets.put(name, attackable);
 			}
 
+			ArrayList<String> profAttackableTargets = new ArrayList<String>();
 			for(Object key : attackableTargets.keySet()){
 				Boolean name = (Boolean)attackableTargets.get(key);
 
 				String keyStr = (String)key;
-				targets.add(escape(String.format("%s:%b", keyStr ,name)));
+				profAttackableTargets.add(escape(String.format("%s:%b", keyStr ,name)));
 			}
-
-			String[] data = targets.toArray(new String[]{});
+			String[] data = profAttackableTargets.toArray(new String[]{});
 
 			propAttackableTargets.set(data);
+
+
+
+
+
+			Property propDestructableTargets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "DestructableTargets" ,new String[]{});
+
+			for(String curEntry : propDestructableTargets.getStringList()){
+				curEntry = unescape(curEntry);
+				int spliterIdx = curEntry.lastIndexOf(":");
+				String name = curEntry.substring(0, spliterIdx);
+				String attackableStr = curEntry.substring(spliterIdx + 1, curEntry.length());
+
+				boolean destructable = attackableStr.toLowerCase().equals("true");
+
+				destructableTargets.put(name, destructable);
+			}
+			ArrayList<String> profDestructableTargets = new ArrayList<String>();
+			for(Object key : destructableTargets.keySet()){
+				Boolean name = (Boolean)destructableTargets.get(key);
+
+				String keyStr = (String)key;
+				profAttackableTargets.add(escape(String.format("%s:%b", keyStr ,name)));
+			}
+			String[] data2 = profAttackableTargets.toArray(new String[]{});
+
+			propDestructableTargets.set(data2);
+
+
+
+
+
 		}
 		finally
 		{

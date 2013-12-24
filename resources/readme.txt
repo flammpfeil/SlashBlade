@@ -1,4 +1,4 @@
-SlashBlade mc1.6.2 r10
+SlashBlade mc1.6.2 @VERSION@
 
 ・概要
 鞘付きの直刀を追加します。
@@ -98,6 +98,9 @@ modsに入れてください。
 ・範囲攻撃はエンダードラゴンにも当たるけれど、かなり判定は狭いかつシビア
 
 ・履歴
+githubみて
+https://github.com/flammpfeil/SlashBlade/commits/beta
+
 mc1.6.2 r10
 mod:攻撃力限定解除条件を妖刀モードから分離 1000Killに
 mod:戦闘時修復解除条件を妖刀モードから分離 1000ProudSoul（吸収経験値量）に

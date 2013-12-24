@@ -42,7 +42,7 @@ import com.google.common.collect.Multimap;
 public class ItemSlashBlade extends ItemSword {
 
 	public static IEntitySelector AttackableSelector = new EntitySelectorAttackable();
-	public static IEntitySelector BreakableSelector = new EntitySelectorBreakable();
+	public static IEntitySelector DestructableSelector = new EntitySelectorDestructable();
 
 	static final class EntitySelectorAttackable implements IEntitySelector
 	{
@@ -61,14 +61,19 @@ public class ItemSlashBlade extends ItemSword {
 	    }
 	}
 
-	static final class EntitySelectorBreakable implements IEntitySelector
+	static final class EntitySelectorDestructable implements IEntitySelector
 	{
 	    public boolean isEntityApplicable(Entity par1Entity)
 	    {
 	    	boolean result = false;
 
-			if(par1Entity instanceof IProjectile || par1Entity instanceof EntityTNTPrimed || par1Entity instanceof EntityFireball)
+			if(par1Entity instanceof IProjectile || par1Entity instanceof EntityTNTPrimed || par1Entity instanceof EntityFireball){
 				result = par1Entity.isEntityAlive();
+			}else{
+				String className = par1Entity.getClass().getSimpleName();
+				if(SlashBlade.destructableTargets.containsKey(className) && SlashBlade.destructableTargets.get(className))
+					result = par1Entity.isEntityAlive();
+			}
 
 	        return result;
 	    }
@@ -1068,18 +1073,32 @@ public class ItemSlashBlade extends ItemSword {
 
 		if(!comboSeq.equals(ComboSequence.None))
 		{
+			int destructedCount = 0;
+
 			AxisAlignedBB bb = getBBofCombo(
 					stack,
 					comboSeq,
 					entityLiving);
-			List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,BreakableSelector);
+			List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,DestructableSelector);
 			for(Entity curEntity : list){
 
-				if(curEntity instanceof IProjectile || curEntity instanceof EntityTNTPrimed){
+				boolean isDestruction = true;
+
+				if(curEntity instanceof EntityFireball){
+					if(((EntityFireball)curEntity).shootingEntity == null
+							|| (((EntityFireball)curEntity).shootingEntity != null && !((EntityFireball)curEntity).shootingEntity.equals(entityLiving)))
+						isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity());
+
+					//reflectable is notDestruction
+					if(!isDestruction)
+						continue;
+				}
+
+				if(isDestruction){
 					curEntity.setVelocity(0, 0, 0);
 					curEntity.setDead();
 
-			        for (int var1 = 0; var1 < 20; ++var1)
+			        for (int var1 = 0; var1 < 10; ++var1)
 			        {
 			        	Random rand = entityLiving.getRNG();
 			            double var2 = rand.nextGaussian() * 0.02D;
@@ -1089,22 +1108,18 @@ public class ItemSlashBlade extends ItemSword {
 			            entityLiving.worldObj.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
 			        }
 
-					continue;
-				}
-
-				if(curEntity instanceof EntityFireball){
-					if(((EntityFireball)curEntity).shootingEntity == null
-							|| (((EntityFireball)curEntity).shootingEntity != null && !((EntityFireball)curEntity).shootingEntity.equals(entityLiving)))
-						curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),1);
-					continue;
+					destructedCount++;
 				}
 			}
 
-
+			if(0 < destructedCount){
+				damageItem(1, stack, entityLiving);
+			}
+/*
 			NBTTagCompound tag = getItemTagCompound(stack);
 			long prevAttackTime = tag.getLong(lastActionTimeStr);
 			long currentTime =entityLiving.worldObj.getTotalWorldTime();
-
+*/
 		}
 
 		return super.onEntitySwing(entityLiving, stack);
