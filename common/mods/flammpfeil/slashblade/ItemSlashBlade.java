@@ -1093,7 +1093,8 @@ public class ItemSlashBlade extends ItemSword {
 				}
 
 				if(curEntity instanceof EntityFireball){
-					if(!((EntityFireball)curEntity).shootingEntity.equals(entityLiving))
+					if(((EntityFireball)curEntity).shootingEntity == null
+							|| (((EntityFireball)curEntity).shootingEntity != null && !((EntityFireball)curEntity).shootingEntity.equals(entityLiving)))
 						curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),1);
 					continue;
 				}
