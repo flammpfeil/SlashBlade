@@ -23,6 +23,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -1065,6 +1066,44 @@ public class ItemSlashBlade extends ItemSword {
 		par3List.add(String.format("%sProudSoul : %d", swordType.contains(SwordType.SoulEeater)  ? "§5" : "", tag.getInteger(proudSoulStr)));
 	}
 
+	public void InductionProjecTile(Entity projecTile,EntityLivingBase player){
+		InductionProjecTile(projecTile,player,player.getLookVec());
+	}
+	public void InductionProjecTile(Entity projecTile,EntityLivingBase player,Vec3 dir){
+
+        if (dir != null)
+        {
+        	Vec3 vector = Vec3.createVectorHelper(projecTile.motionX,projecTile.motionY,projecTile.motionZ);
+
+        	projecTile.motionX = dir.xCoord;
+        	projecTile.motionY = dir.yCoord;
+        	projecTile.motionZ = dir.zCoord;
+
+        	if(projecTile instanceof EntityFireball){
+	        	((EntityFireball)projecTile).accelerationX = projecTile.motionX * 0.1D;
+	        	((EntityFireball)projecTile).accelerationY = projecTile.motionY * 0.1D;
+	        	((EntityFireball)projecTile).accelerationZ = projecTile.motionZ * 0.1D;
+        	}else if(projecTile instanceof EntityArrow){
+        		((EntityArrow)projecTile).motionX *= vector.lengthVector();
+        		((EntityArrow)projecTile).motionY *= vector.lengthVector();
+        		((EntityArrow)projecTile).motionZ *= vector.lengthVector();
+        		((EntityArrow)projecTile).setIsCritical(true);
+        	}else if(projecTile instanceof EntityThrowable){
+        		((EntityThrowable)projecTile).motionX *= vector.lengthVector();
+        		((EntityThrowable)projecTile).motionY *= vector.lengthVector();
+        		((EntityThrowable)projecTile).motionZ *= vector.lengthVector();
+        	}
+        }
+
+        if (player != null)
+        {
+        	if(projecTile instanceof EntityFireball)
+        		((EntityFireball)projecTile).shootingEntity = player;
+        	else if(projecTile instanceof EntityArrow)
+        		((EntityArrow)projecTile).shootingEntity = player;
+
+        }
+	}
 
 	@Override
 	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
@@ -1090,12 +1129,25 @@ public class ItemSlashBlade extends ItemSword {
 					}else
 						isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity());
 
-					//reflectable is notDestruction
-					if(!isDestruction)
-						continue;
+					if(isDestruction && stack.hasDisplayName() && stack.isItemEnchanted()){
+						InductionProjecTile(curEntity,entityLiving);
+						isDestruction = false;
+					}
+
+				}else if(curEntity instanceof EntityArrow){
+					if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.entityId == entityLiving.entityId)){
+						isDestruction = false;
+					}
+
+					if(isDestruction && stack.hasDisplayName() && stack.isItemEnchanted()){
+						InductionProjecTile(curEntity,entityLiving);
+						isDestruction = false;
+					}
 				}
 
-				if(isDestruction){
+				if(!isDestruction)
+					continue;
+				else{
 					curEntity.setVelocity(0, 0, 0);
 					curEntity.setDead();
 
