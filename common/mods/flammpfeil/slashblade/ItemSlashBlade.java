@@ -1085,9 +1085,9 @@ public class ItemSlashBlade extends ItemSword {
 				boolean isDestruction = true;
 
 				if(curEntity instanceof EntityFireball){
-					if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.equals(entityLiving))){
+					if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.entityId == entityLiving.entityId)){
 						isDestruction = false;
-					}else if(((EntityFireball)curEntity).shootingEntity == null)
+					}else
 						isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity());
 
 					//reflectable is notDestruction
