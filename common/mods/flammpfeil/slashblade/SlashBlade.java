@@ -228,54 +228,55 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 
 			{
 				Property propAttackableTargets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "AttackableTargets" ,new String[]{});
-	
+
 				for(String curEntry : propAttackableTargets.getStringList()){
 					curEntry = unescape(curEntry);
 					int spliterIdx = curEntry.lastIndexOf(":");
 					String name = curEntry.substring(0, spliterIdx);
 					String attackableStr = curEntry.substring(spliterIdx + 1, curEntry.length());
-	
+
 					boolean attackable = attackableStr.toLowerCase().equals("true");
-	
+
 					attackableTargets.put(name, attackable);
 				}
 
 				ArrayList<String> profAttackableTargets = new ArrayList<String>();
 				for(Object key : attackableTargets.keySet()){
 					Boolean name = (Boolean)attackableTargets.get(key);
-	
+
 					String keyStr = (String)key;
 					profAttackableTargets.add(escape(String.format("%s:%b", keyStr ,name)));
 				}
 				String[] data = profAttackableTargets.toArray(new String[]{});
-	
+
 				propAttackableTargets.set(data);
 			}
 
 
 			{
 				Property propDestructableTargets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "DestructableTargets" ,new String[]{});
-	
+
 				for(String curEntry : propDestructableTargets.getStringList()){
 					curEntry = unescape(curEntry);
 					int spliterIdx = curEntry.lastIndexOf(":");
 					String name = curEntry.substring(0, spliterIdx);
 					String attackableStr = curEntry.substring(spliterIdx + 1, curEntry.length());
-	
+
 					boolean destructable = attackableStr.toLowerCase().equals("true");
-	
+
 					destructableTargets.put(name, destructable);
 				}
+				
 				ArrayList<String> profDestructableTargets = new ArrayList<String>();
 				for(Object key : destructableTargets.keySet()){
 					Boolean name = (Boolean)destructableTargets.get(key);
-	
+
 					String keyStr = (String)key;
 					profDestructableTargets.add(escape(String.format("%s:%b", keyStr ,name)));
 				}
 				String[] data2 = profDestructableTargets.toArray(new String[]{});
-	
-				profDestructableTargets.set(data2);
+
+				propDestructableTargets.set(data2);
 			}
 
 
