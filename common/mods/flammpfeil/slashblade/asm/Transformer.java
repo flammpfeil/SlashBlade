@@ -16,6 +16,8 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+
 public class Transformer implements IClassTransformer , Opcodes
 {
     @Override
@@ -31,12 +33,12 @@ public class Transformer implements IClassTransformer , Opcodes
             {
                 System.out.println("Start SlashBlade asm:" + transformedName);
                 bytes = replaceClass(name, transformedName, bytes);
-                System.out.println("success SlashBlade asm:" + transformedName);
+                System.out.println("Success SlashBlade asm:" + transformedName);
             }else if(name.equals(pflmTarget)){
 
-                System.out.println("Start SlashBlade asm:" + transformedName);
+                System.out.println("Start SlashBlade Custom asm:" + transformedName);
                 bytes = replaceClass2(name, transformedName, bytes);
-                System.out.println("success SlashBlade asm:" + transformedName);
+                System.out.println("Success SlashBlade Custom asm:" + transformedName);
             }
         }
         catch (Exception e)
@@ -54,10 +56,11 @@ public class Transformer implements IClassTransformer , Opcodes
         ClassReader reader = new ClassReader(bytes);
         reader.accept(cnode, 0);
 
+		MethodNode mnode = null;
+
+/*
         String targetMethod = "a"; //doRender
 		String targetDesc = "(Lber;DDDFF)V";
-
-		MethodNode mnode = null;
 
 		for (MethodNode curMnode : (List<MethodNode>) cnode.methods)
 		{
@@ -68,6 +71,20 @@ public class Transformer implements IClassTransformer , Opcodes
 		        break;
 		    }
 		}
+*/
+
+        String targetMethodName = "func_130009_a"; //doRender
+		String targetMethodDesc = "(Lnet/minecraft/client/entity/AbstractClientPlayer;DDDFF)V";
+
+        for (MethodNode curMnode : (List<MethodNode>) cnode.methods)
+        {
+            if (targetMethodName.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(name, curMnode.name, curMnode.desc))
+                    && targetMethodDesc.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodDesc(curMnode.desc)))
+            {
+                mnode = curMnode;
+                break;
+            }
+        }
 
 
 		if (mnode != null)
@@ -105,10 +122,11 @@ public class Transformer implements IClassTransformer , Opcodes
         ClassReader reader = new ClassReader(bytes);
         reader.accept(cnode, 0);
 
+		MethodNode mnode = null;
+
+
         String targetMethod = "a"; //doRender
 		String targetDesc = "(Lnm;DDDFF)V";
-
-		MethodNode mnode = null;
 
 		for (MethodNode curMnode : (List<MethodNode>) cnode.methods)
 		{
@@ -119,7 +137,6 @@ public class Transformer implements IClassTransformer , Opcodes
 		        break;
 		    }
 		}
-
 
 		if (mnode != null)
 		{
@@ -137,7 +154,7 @@ public class Transformer implements IClassTransformer , Opcodes
 		    overrideList.add(new MethodInsnNode(INVOKESTATIC, "mods/flammpfeil/slashblade/ItemRendererBaseWeapon", "render", "(Lnet/minecraft/entity/player/EntityPlayer;F)V"));
 
 		    mnode.instructions.insert(overrideList);
-            System.out.println("Success SlashBlade asm:" + transformedName);
+            System.out.println("doTransform SlashBlade asm:" + transformedName);
 		}
 
 		// 改変したクラスファイルをバイト列に書き出します
