@@ -125,6 +125,7 @@ public class Transformer implements IClassTransformer , Opcodes
 		MethodNode mnode = null;
 
 
+		/*
         String targetMethod = "a"; //doRender
 		String targetDesc = "(Lnm;DDDFF)V";
 
@@ -137,6 +138,20 @@ public class Transformer implements IClassTransformer , Opcodes
 		        break;
 		    }
 		}
+		*/
+
+		String targetMethodName = "func_76986_a";
+		String targetMethodDesc = "(Lnet/minecraft/entity/Entity;DDDFF)V";
+
+        for (MethodNode curMnode : (List<MethodNode>) cnode.methods)
+        {
+            if (targetMethodName.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(name, curMnode.name, curMnode.desc))
+                    && targetMethodDesc.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodDesc(curMnode.desc)))
+            {
+                mnode = curMnode;
+                break;
+            }
+        }
 
 		if (mnode != null)
 		{
