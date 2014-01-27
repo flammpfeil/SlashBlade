@@ -9,7 +9,9 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.command.IEntitySelector;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -1066,6 +1068,63 @@ public class ItemSlashBlade extends ItemSword {
 		par3List.add(String.format("%sProudSoul : %d", swordType.contains(SwordType.SoulEeater)  ? "§5" : "", tag.getInteger(proudSoulStr)));
 	}
 
+
+    public Vec3 getEntityToEntityVec(Entity root, Entity target, float yawLimit, float pitchLimit)
+    {
+        double d0 = (target.posX + target.motionX) - root.posX;
+        double d1 = (target.posZ + target.motionZ) - root.posZ;
+        double d2;
+
+        if (target instanceof EntityLivingBase)
+        {
+            EntityLivingBase entitylivingbase = (EntityLivingBase)target;
+            d2 = entitylivingbase.posY + entitylivingbase.motionY + (double)entitylivingbase.getEyeHeight() - (root.posY + (double)root.getEyeHeight());
+        }
+        else
+        {
+            d2 = (target.boundingBox.minY+ target.boundingBox.maxY) / 2.0D  + target.motionY  - (root.posY + (double)root.getEyeHeight());
+        }
+
+        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+        float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
+        float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
+
+
+        double x,y,z;
+
+        double yaw = Math.atan2(d1, d0) - Math.PI / 2.0f;
+        double pitch = Math.atan2(d2, d3);
+
+        y = Math.sin(pitch);
+        x = -Math.sin(yaw);
+        z = Math.cos(yaw);
+
+        return Vec3.createVectorHelper(x, y, z).normalize();
+    }
+
+	public void ReflectionProjecTile(Entity projecTile,EntityLivingBase player){
+
+		Entity target = null;
+
+    	if(projecTile instanceof EntityFireball)
+    		target = ((EntityFireball)projecTile).shootingEntity;
+    	else if(projecTile instanceof EntityArrow)
+    		target = ((EntityArrow)projecTile).shootingEntity;
+
+
+    	if(target != null){
+    		Vec3 vec = this.getEntityToEntityVec(projecTile,target,360.0f,360.0f);
+			InductionProjecTile(projecTile,player,vec);
+    	}else{
+    		Vec3 vec = Vec3.createVectorHelper(-projecTile.motionX,-projecTile.motionY,-projecTile.motionZ);
+    		vec = vec.normalize();
+			InductionProjecTile(projecTile,player,vec);
+//    		InductionProjecTile(projecTile,player);
+    	}
+
+	}
+
+
 	public void InductionProjecTile(Entity projecTile,EntityLivingBase player){
 		InductionProjecTile(projecTile,player,player.getLookVec());
 	}
@@ -1073,6 +1132,8 @@ public class ItemSlashBlade extends ItemSword {
 
         if (dir != null)
         {
+        	//projecTile.velocityChanged = true;
+
         	Vec3 vector = Vec3.createVectorHelper(projecTile.motionX,projecTile.motionY,projecTile.motionZ);
 
         	projecTile.motionX = dir.xCoord;
@@ -1126,11 +1187,16 @@ public class ItemSlashBlade extends ItemSword {
 				if(curEntity instanceof EntityFireball){
 					if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.entityId == entityLiving.entityId)){
 						isDestruction = false;
-					}else
+					}else if(!stack.hasDisplayName() && !stack.isItemEnchanted()){
 						isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity());
+					}
 
 					if(isDestruction && stack.hasDisplayName() && stack.isItemEnchanted()){
-						InductionProjecTile(curEntity,entityLiving);
+						if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+							ReflectionProjecTile(curEntity,entityLiving);
+						}else{
+							InductionProjecTile(curEntity,entityLiving);
+						}
 						isDestruction = false;
 					}
 
@@ -1140,7 +1206,11 @@ public class ItemSlashBlade extends ItemSword {
 					}
 
 					if(isDestruction && stack.hasDisplayName() && stack.isItemEnchanted()){
-						InductionProjecTile(curEntity,entityLiving);
+						if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+							ReflectionProjecTile(curEntity,entityLiving);
+						}else{
+							InductionProjecTile(curEntity,entityLiving);
+						}
 						isDestruction = false;
 					}
 				}
