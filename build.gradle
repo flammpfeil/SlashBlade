@@ -1,0 +1,55 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+version = "mc1.7.2-r1"
+group= "mods.flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "SlashBlade"
+
+minecraft {
+    version = "1.7.2-10.12.0.1024"
+    assetDir = "eclipse/assets"
+}
+processResources
+{
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modname':"SlashBlade", 'modid':"flammpfeil.slashblade"
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+
+tasks.withType(Compile) {
+    options.encoding = 'UTF-8'
+}
+
+
+jar {
+    manifest {
+        attributes 'FMLCorePlugin': 'mods.flammpfeil.slashblade.asm.CorePlugin'
+        attributes 'FMLCorePluginContainsFMLMod': true
+    }
+}

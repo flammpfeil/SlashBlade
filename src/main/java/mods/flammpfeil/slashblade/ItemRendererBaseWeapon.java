@@ -10,11 +10,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.event.ForgeSubscribe;
 
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class ItemRendererBaseWeapon implements IItemRenderer {
 
@@ -201,7 +201,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 	static float ticks = 0.0f;
 
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void RenderPlayerEventPre(RenderPlayerEvent.Pre event){
 		float partialRenderTick = event.partialRenderTick;
 		EntityPlayer player = event.entityPlayer;
@@ -231,7 +231,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			return;
 		ItemStack item = player.getCurrentEquippedItem();
 
-		if(item == null || item.itemID != SlashBlade.weapon.itemID)
+		if(item == null || item.getItem() != SlashBlade.weapon)
 			return;
 
 		boolean isEnchanted = item.isItemEnchanted();

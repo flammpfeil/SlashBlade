@@ -10,11 +10,6 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 @TransformerExclusions(value = {"mods.flammpfeil.slashblade.asm"})
 public class CorePlugin implements IFMLLoadingPlugin, IFMLCallHook
 {
-    @Override
-    public String[] getLibraryRequestClass()
-    {
-        return null;
-    }
 
     @Override
     public String[] getASMTransformerClass()
@@ -53,4 +48,9 @@ public class CorePlugin implements IFMLLoadingPlugin, IFMLCallHook
     }
 
     public static File location;
+
+	@Override
+	public String getAccessTransformerClass() {
+		return null;
+	}
 }

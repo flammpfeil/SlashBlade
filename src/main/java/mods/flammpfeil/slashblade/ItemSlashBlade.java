@@ -7,11 +7,10 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -26,7 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.item.EnumToolMaterial;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,7 +54,7 @@ public class ItemSlashBlade extends ItemSword {
 
 			String entityStr = EntityList.getEntityString(par1Entity);
 			//含む
-			if(((entityStr != null && SlashBlade.attackableTargets.containsKey(entityStr) && SlashBlade.attackableTargets.get(entityStr))
+			if(((entityStr != null && SlashBlade.manager.attackableTargets.containsKey(entityStr) && SlashBlade.manager.attackableTargets.get(entityStr))
 				|| par1Entity instanceof EntityDragonPart
 				))
 				result = par1Entity.isEntityAlive();
@@ -74,7 +73,7 @@ public class ItemSlashBlade extends ItemSword {
 				result = par1Entity.isEntityAlive();
 			}else{
 				String className = par1Entity.getClass().getSimpleName();
-				if(SlashBlade.destructableTargets.containsKey(className) && SlashBlade.destructableTargets.get(className))
+				if(SlashBlade.manager.destructableTargets.containsKey(className) && SlashBlade.manager.destructableTargets.get(className))
 					result = par1Entity.isEntityAlive();
 			}
 
@@ -122,24 +121,24 @@ public class ItemSlashBlade extends ItemSword {
 	    /**
 	     * 抜刀フラグ trueなら鞘打ち
 	     */
-	    public final boolean useScabbard;
+	    public boolean useScabbard;
 
 	    /**
 	     * 振り幅 マイナスは振り切った状態から逆に振る
 	     */
-	    public final float swingAmplitude;
+	    public float swingAmplitude;
 
 	    /**
 	     * 振る方向 360度
 	     */
-	    public final float swingDirection;
+	    public float swingDirection;
 
 	    /**
 	     * チャージエフェクト
 	     */
-	    public final boolean isCharged;
+	    public boolean isCharged;
 
-	    public final int comboResetTicks;
+	    public int comboResetTicks;
 
 	    /**
 	     *
@@ -166,6 +165,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	static public int RequiredChargeTick = 15;
 	static public int ComboInterval = 4;
+
 
 	private void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
 
@@ -289,9 +289,11 @@ public class ItemSlashBlade extends ItemSword {
 		return true;
     }
 
-    public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World, int par3, int par4, int par5, int par6, EntityLivingBase par7EntityLivingBase)
+
+	@Override
+    public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World, Block par3, int par4, int par5, int par6, EntityLivingBase par7EntityLivingBase)
     {
-        if ((double)Block.blocksList[par3].getBlockHardness(par2World, par4, par5, par6) != 0.0D)
+        if ((double)par3.getBlockHardness(par2World, par4, par5, par6) != 0.0D)
         {
         	damageItem(1, par1ItemStack,par7EntityLivingBase);
         }
@@ -307,17 +309,17 @@ public class ItemSlashBlade extends ItemSword {
     {
         Multimap multimap = super.getItemAttributeModifiers();
         multimap.removeAll(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName());
-        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double)(4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity()), 0));
+        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double)(4.0F + Item.ToolMaterial.EMERALD.getDamageVsEntity()), 0));
         return multimap;
     }
 
 	@Override
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
         this.itemIcon = par1IconRegister.registerIcon("flammpfeil.slashblade:proudsoul");
 	}
 
-	public ItemSlashBlade(int par1, EnumToolMaterial par2EnumToolMaterial) {
-		super(par1, par2EnumToolMaterial);
+	public ItemSlashBlade(Item.ToolMaterial par2EnumToolMaterial) {
+		super(par2EnumToolMaterial);
         this.setMaxDamage(50);
 	}
 
@@ -707,8 +709,11 @@ public class ItemSlashBlade extends ItemSword {
 	    		tag.setTag("AttributeModifiers",attrTag);
 
 	        	attrTag.appendTag(
-	        			getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + 4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity()), 0))
+	        			getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + 4.0F + Item.ToolMaterial.EMERALD.getDamageVsEntity()), 0))
 	        			);
+
+	        	el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers());
+	        	el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
 	        }
 		}
 
@@ -820,9 +825,9 @@ public class ItemSlashBlade extends ItemSword {
 						switch (comboSeq) {
 						case Saya1:
 						case Saya2:
-							float attack = 4.0f + EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
+							float attack = 4.0f + Item.ToolMaterial.STONE.getDamageVsEntity(); //stone like
 							if(swordType.contains(SwordType.Broken))
-								attack = EnumToolMaterial.EMERALD.getDamageVsEntity();
+								attack = Item.ToolMaterial.EMERALD.getDamageVsEntity();
 							else if(swordType.contains(SwordType.Bewitched) && el instanceof EntityPlayer)
 			                	attack += (int)(((EntityPlayer)el).experienceLevel * 0.25);
 
@@ -972,7 +977,7 @@ public class ItemSlashBlade extends ItemSword {
 						float curDist = curEntity.getDistanceToEntity(el);
 						if(curDist < distance)
 						{
-							eId = curEntity.entityId;
+							eId = curEntity.getEntityId();
 							distance = curDist;
 						}
 					}
@@ -988,6 +993,7 @@ public class ItemSlashBlade extends ItemSword {
 		}
 	}
 
+
     protected void dropXpOnBlockBreak(World par1World, int par2, int par3, int par4, int par5)
     {
         if (!par1World.isRemote)
@@ -1001,9 +1007,6 @@ public class ItemSlashBlade extends ItemSword {
         }
     }
 
-    /**
-     * Changes pitch and yaw so that the entity calling the function is facing the entity provided as an argument.
-     */
     public void faceEntity(EntityLivingBase owner, Entity par1Entity, float par2, float par3)
     {
         double d0 = par1Entity.posX - owner.posX;
@@ -1185,10 +1188,10 @@ public class ItemSlashBlade extends ItemSword {
 				boolean isDestruction = true;
 
 				if(curEntity instanceof EntityFireball){
-					if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.entityId == entityLiving.entityId)){
+					if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
 						isDestruction = false;
 					}else if(!stack.hasDisplayName() && !stack.isItemEnchanted()){
-						isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity());
+						isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),4.0F + Item.ToolMaterial.EMERALD.getDamageVsEntity());
 					}
 
 					if(isDestruction && stack.hasDisplayName() && stack.isItemEnchanted()){
@@ -1201,7 +1204,7 @@ public class ItemSlashBlade extends ItemSword {
 					}
 
 				}else if(curEntity instanceof EntityArrow){
-					if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.entityId == entityLiving.entityId)){
+					if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
 						isDestruction = false;
 					}
 
