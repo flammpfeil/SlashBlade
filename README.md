@@ -3,26 +3,23 @@ SlashBlade
 srcの使い方
 ---------------------------------
 1.本プロジェクトをgitリポジトリCloneをあらかじめ用意するとかしとく
-親フォルダは、ビルド用Forgeや、packageされたjarが置かれる作業フォルダとなるため階層に注意
-
-_※フォルダ構成例_
-  root
-  +build ※ビルド用Forgeがbuild.xmlにより生成される。
-  　必要なライブラリなどはここに自動で揃うため、適宜開発環境のlibへコピー,及びビルドパス追加をする
-  +dist ※ビルドされpackage済みのjarがここに生成される。
-  +download ※ビルド環境作成用のtempフォルダ
-  +SlashBlade 本modポジトリフォルダ gitで管理する、このフォルダをリンクする
-
-2. ForgeDev＃871環境を用意する。（#953までであれば使えるかも　ASM部分は注意
-3. EclipseからSlashBladeフォルダを、Minecraftプロジェクト配下にリンクフォルダとして追加。
-  　新規＞フォルダー＞拡張＞リンクされたフォルダー
-4. リンクされたフォルダ中のcommon resourceを選択しソースフォルダとして登録
-  　右クリック＞ビルド･パス＞ソースフォルダーとして使用
-5. build.xmlをant実行する
-  　※ターゲットは、デフォルトのtestを利用するとBuild用ForgeのDLからjar作成まで全て行う
-  　※2回目以降のコンパイルは、install-dependenciesを除いた
-  　　recompile reobfcate package　を順に行えば短縮できる。
-6. Eclipseでデバッグする
-  ※ASM部分は考えずにデバッグする方法　Forgeイベントのエミュレーションを追加しているだけなので無視していいはず
-  InitProxyClientのコメントアウト行を有効にする
-  デバッグ起動できるはず。
+2. forgeGradle環境用意する。 eclipseのWorkSpaceの用意
+forgeフォルダ直下に適当なbatファイル作って
+gradlew.bat setupDevWorkspace eclipse
+とか書いて実行すれば環境完成。
+いつもどおり、eclipseフォルダを eclipseのworkSpaceとして読み込む。
+3. EclipseからgitポジトリCloneしてできたフォルダを、Minecraftプロジェクト配下にリンクフォルダとして追加
+  新規＞フォルダー＞拡張＞リンクされたフォルダー
+4. リンクされたフォルダ中のsrc/main/以下にある java と resourceを選択しソースフォルダとして登録
+  右クリック＞ビルド･パス＞ソースフォルダーとして使用
+5. Eclipseでデバッグする
+  ASM部分のデバッグは、面倒なので各々しらべて調べるがよろしい
+  実環境テストで済ませてます
+6.ビルド準備
+setup.batがポジトリの中にあるので実行する。
+ビルド用の初期設定、次回以降不要（1の作業と一緒だけどビルド用だから簡易になってる）
+7.ビルド
+build.batがポジトリの中にあるので実行
+build/libs にjarが生成されるはず
+8.バージョン表記とかの変更
+build.gradleみて。s
