@@ -3,7 +3,7 @@
     <property file="buildspecs.properties" prefix="buildspecs" />
 
 
-    <property name="mod.version" value="r8" />
+    <property name="mod.version" value="r17" />
     <property name="mod.modname" value="SlashBlade" />
 
     <property name="mod.modid" value="slashblade" />
@@ -135,9 +135,9 @@
         </copy>
 
         <!-- Replace Tokens-->
-        <replace dir="${src.dir}/workcommon" token="@VERSION@" value="${mod.version}" />
-        <replace dir="${src.dir}/workcommon" token="@BUILD_NUMBER@" value="${mod.build}" />
-        <replace dir="${src.dir}/workcommon" token="@MC_VERSION@" value="${mc.version}" />
+        <replace encoding="UTF-8" dir="${src.dir}/workcommon" token="@VERSION@" value="${mod.version}" />
+        <replace encoding="UTF-8" dir="${src.dir}/workcommon" token="@BUILD_NUMBER@" value="${mod.build}" />
+        <replace encoding="UTF-8" dir="${src.dir}/workcommon" token="@MC_VERSION@" value="${mc.version}" />
 
         <copy todir="${mcp.dir}/src/minecraft">
             <fileset dir="${src.dir}/workcommon" />
@@ -196,14 +196,14 @@
         </copy>
 
         <!-- Replace Tokens-->
-        <replace dir="${mcp.dir}/reobf/resources" token="@VERSION@" value="${mod.version}" />
-        <replace dir="${mcp.dir}/reobf/resources" token="@BUILD_NUMBER@" value="${mod.build}" />
-        <replace dir="${mcp.dir}/reobf/resources" token="@MC_VERSION@" value="${mc.version}" />
-        <replace dir="${mcp.dir}/reobf/resources" token="@FORGE_VERSION@" value="${forge.version}" />
-        <replace dir="${mcp.dir}/reobf/resources" token="@FMP_VERSION@" value="${fmp.version}" />
+        <replace encoding="UTF-8" dir="${mcp.dir}/reobf/resources" token="@VERSION@" value="${mod.version}" />
+        <replace encoding="UTF-8" dir="${mcp.dir}/reobf/resources" token="@BUILD_NUMBER@" value="${mod.build}" />
+        <replace encoding="UTF-8" dir="${mcp.dir}/reobf/resources" token="@MC_VERSION@" value="${mc.version}" />
+        <replace encoding="UTF-8" dir="${mcp.dir}/reobf/resources" token="@FORGE_VERSION@" value="${forge.version}" />
+        <replace encoding="UTF-8" dir="${mcp.dir}/reobf/resources" token="@FMP_VERSION@" value="${fmp.version}" />
 
-        <replace dir="${mcp.dir}/reobf/resources" token="@MODID@" value="${mod.fulldomain}" />
-        <replace dir="${mcp.dir}/reobf/resources" token="@MODNAME@" value="${mod.modname}" />
+        <replace encoding="UTF-8" dir="${mcp.dir}/reobf/resources" token="@MODID@" value="${mod.fulldomain}" />
+        <replace encoding="UTF-8" dir="${mcp.dir}/reobf/resources" token="@MODNAME@" value="${mod.modname}" />
 
         <fail message="Failed to reobfuscate">
             <condition>

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -62,7 +63,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		if(item.hasTagCompound()){
 			NBTTagCompound tag = item.getTagCompound();
 
-			isBroken = tag.getBoolean("isBroken");
+			isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
 		}
 		model.isBroken = isBroken;
 
@@ -236,25 +237,49 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		boolean isEnchanted = item.isItemEnchanted();
 		boolean isBewitched = item.hasDisplayName() && isEnchanted;
 
-		float progress = player.prevSwingProgress + (player.swingProgress - player.prevSwingProgress) * partialRenderTick;
 
 		int charge = player.getItemInUseDuration();
 
 		boolean isBroken = false;
-		int combo = 0;
+		ItemSlashBlade.ComboSequence combo = ComboSequence.None;
 		if(item.hasTagCompound()){
 			NBTTagCompound tag = item.getTagCompound();
 
-			isBroken = tag.getBoolean("isBroken");
+			isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
 
-			combo = tag.getInteger("comboSeq");
+			combo = ItemSlashBlade.getComboSequence(tag);
 		}
 
 
-		if(combo <= 2){
-		}else{
-			progress *= 1.2f;
+		float progress =  player.prevSwingProgress + (player.swingProgress - player.prevSwingProgress) * partialRenderTick;
+
+		if((!combo.equals(ComboSequence.None)) && player.swingProgress == 0.0f)
+			progress = 1.0f;
+
+		progress *= 1.2;
+		if(1.0f < progress)
+			progress = 1.0f;
+
+		//progress = (player.ticksExisted % 10) / 10.0f;
+
+		switch(combo){
+		case Iai:
+			progress = 1.0f - (Math.abs(progress-0.5f) * 2.0f);
+
+			break;
+
+		default :
+			progress = 1.0f - progress;
+			progress = 1.0f - (float)Math.pow(progress,2.0);
+
+			break;
 		}
+
+		if(!isBroken && isEnchanted && ItemSlashBlade.RequiredChargeTick < charge){
+			progress = 0.0f;
+			combo = ComboSequence.None;
+		}
+
 
 		model.isBroken = isBroken;
 		model.isEntity = false;
@@ -266,47 +291,115 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		GL11.glPushMatrix();{
 	        float f1 = interpolateRotation(player.prevRenderYawOffset, player.renderYawOffset, partialRenderTick);
-			GL11.glRotatef(f1, 0.0F, -1.0F, 0.0F);
-			GL11.glRotatef(180, 1.0F, 0.0F, 0.0F);
+
+	        //体の向き補正
+	        GL11.glRotatef(f1, 0.0F, -1.0F, 0.0F);
+
+	        //上下反転補正
+	        GL11.glRotatef(180, 1.0F, 0.0F, 0.0F);
 
 
 
+			//体格補正 configより
 			GL11.glTranslatef(SlashBlade.offsetX,SlashBlade.offsetY,SlashBlade.offsetZ);
+
+			//腰位置へ
+			GL11.glTranslatef(0.22f,0.6f,-0.3f);
+
+
+			{
+				//全体スケール補正
+				float scale = (float)(0.075f);
+				GL11.glScalef(scale, scale, scale);
+			}
+
+			//先を後ろへ
+			GL11.glRotatef(60.0f, 1, 0, 0);
+
+			//先を外へ
+			GL11.glRotatef(-20.0f, 0, 0, 1);
+
+			//刃を下に向ける（太刀差し
+			GL11.glRotatef(90.0f, 0, 1.0f, 0);
+
+
+			float xoffset = 10.0f;
+			float yoffset = 8.0f;
 
 			//-----------------------------------------------------------------------------------------------------------------------
 			GL11.glPushMatrix();{
-				/*
-				if(item.hasTagCompound()){
-					NBTTagCompound tag = item.getTagCompound();
 
-					int combo = tag.getInteger("comboSeq");
-					if(combo == 3){
-					}else{
+
+				if(!combo.equals(ComboSequence.None)){
+
+					float tmp = progress;
+
+					if(combo.swingAmplitude < 0){
+						progress = 1.0f - progress;
 					}
+					//GL11.glRotatef(-90, 0.0f, 1.0f, 0.0f);
+
+					if(combo.equals(ComboSequence.Kiriorosi)){
+						GL11.glRotatef(20.0f, -1.0f, 0, 0);
+						GL11.glRotatef(-30.0f, 0, 0, -1.0f);
+						GL11.glRotatef((90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
+
+						GL11.glRotatef((1.0f-progress) * -90.0f, 0.0f, 0.0f, -1.0f);
+						GL11.glTranslatef(0.0f, (1.0f-progress) * -5.0f, 0.0f);
+						GL11.glTranslatef((1.0f-progress) * 10.0f, 0.0f, 0.0f);
+
+						GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
+						GL11.glTranslatef(0.0f, -yoffset, 0.0f);
+
+						progress = 1.0f;
+
+						if(0 < combo.swingAmplitude){
+							GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+						}else{
+							GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+						}
+
+						GL11.glTranslatef(0.0f, yoffset, 0.0f);
+						GL11.glTranslatef(xoffset , 0.0f, 0.0f );
+					}else{
+
+						GL11.glRotatef(progress * 20.0f, -1.0f, 0, 0);
+						GL11.glRotatef(progress * -30.0f, 0, 0, -1.0f);
+
+
+						GL11.glRotatef(progress * (90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
+
+
+						GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
+
+
+						GL11.glTranslatef(0.0f, -yoffset, 0.0f);
+
+						if(0 < combo.swingAmplitude){
+							GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+						}else{
+							GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+						}
+
+						GL11.glTranslatef(0.0f, yoffset, 0.0f);
+						GL11.glTranslatef(xoffset , 0.0f, 0.0f );
+					}
+
+
+					progress = tmp;
 				}
-				*/
 
 
-				GL11.glRotatef(progress * 220.0f, -1.0f, 1.75f, 0f);
-				//if(progress > 0.5f)
-				//	progress = 1.0f - progress;
-				//progress *= 2;
+				//スケール補正 薄く、幅を狭く 長さそのまま
+				GL11.glScalef(0.75f, 1.0f, 0.5f);
 
-				GL11.glTranslatef(0.3f,0.5f,-0.3f);
 
-				GL11.glRotatef(60.0f, 1, 0, 0);
-				GL11.glRotatef(-20.0f, 0, 0, 1);
-
-				GL11.glRotatef(90.0f, 0, 1.0f, 0);
-				float scale = (float)(0.075f);
-				GL11.glScalef(scale*0.7f, scale, scale*0.5f);
-				GL11.glTranslatef(-1f,-5.5f,-0.5f);
-
+				//センター補正
+				GL11.glTranslatef(-1f,-6.5f,-0.5f);
 				engine().bindTexture(bladeTexture);
-
 				model.render(null, x, y, z, 0, 0, 1.0f);
 
-				if(isEnchanted && (0 < progress && !(combo <= 2))){
+				if(isEnchanted && (0 < progress && combo != ComboSequence.None)){
 					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 					GL11.glEnable(GL11.GL_BLEND);
 					GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
@@ -320,89 +413,105 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			GL11.glPushMatrix();{
 
-				if(combo <= 2){
-					GL11.glRotatef(progress * 220, -1.0f, 1.75f, 0f);
-				}else{
-					GL11.glTranslatef(0.0f,0.0f,-0.0f);
+
+				if((!combo.equals(ComboSequence.None)) && combo.useScabbard){
+
+
+					if(combo.swingAmplitude < 0){
+						progress = 1.0f - progress;
+					}
+
+					GL11.glRotatef(progress * 20.0f, -1.0f, 0, 0);
+					GL11.glRotatef(progress * -30.0f, 0, 0, -1.0f);
+
+
+					GL11.glRotatef(progress * (90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
+
+
+					GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
+
+
+					GL11.glTranslatef(0.0f, -yoffset, 0.0f);
+
+					if(0 < combo.swingAmplitude){
+						GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+					}else{
+						GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+					}
+
+					GL11.glTranslatef(0.0f, yoffset, 0.0f);
+					GL11.glTranslatef(xoffset , 0.0f, 0.0f );
+
 				}
 
-				GL11.glTranslatef(0.3f,0.5f,-0.3f);
-
-				GL11.glRotatef(60.0f, 1, 0, 0);
-				GL11.glRotatef(-20.0f, 0, 0, 1);
-
-				GL11.glRotatef(90.0f, 0, 1.0f, 0);
-
-				float scale = (float)(0.075f);
-				GL11.glScalef(scale, scale, scale);
-				GL11.glTranslatef(-1f,1.0f,-0.5f);
-
-				engine().bindTexture(scabbardTexture);
-				model2.render(null, x, y, z, 0, 0, 1.0f);
 
 
-				if(isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || (0 < progress && combo == 5))){
-					GL11.glPushMatrix();
-					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				//スケール補正 幅を狭く 長さそのまま 薄く
+				GL11.glScalef(1.0f, 0.9f, 0.8f);
 
 
-					float offsetX = -1.0f;
-					float offsetY = 0.0f;
-					float offsetZ = -0.5f;
-					float scaleX = 1.05f;
-					float scaleY = 1.0125f;
-					float scaleZ = 1.05f;
-					GL11.glPushMatrix();
-					GL11.glTranslatef(-offsetX,-offsetY,-offsetZ);
-					GL11.glScalef(scaleX, scaleY, scaleZ);
-					GL11.glTranslatef(offsetX,offsetY,offsetZ);
+				GL11.glPushMatrix();
 
-	                GL11.glEnable(GL11.GL_BLEND);
-	                float f4 = 3.0F;
-	                GL11.glColor4f(f4, f4, f4, 3.0F);
-	                GL11.glDisable(GL11.GL_LIGHTING);
-	                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-
+					engine().bindTexture(scabbardTexture);
+					//センター補正
+					GL11.glTranslatef(-1f,0.0f,-0.5f);
 					model2.render(null, x, y, z, 0, 0, 1.0f);
 
-	                GL11.glEnable(GL11.GL_LIGHTING);
-	                GL11.glDisable(GL11.GL_BLEND);
-					GL11.glPopMatrix();
+				GL11.glPopMatrix();
 
-					offsetX = -1.0f;
-					offsetY = 0.0f;
-					offsetZ = -0.5f;
-					scaleX = 1.5f;
-					scaleY = 1.025f;
-					scaleZ = 1.5f;
+				if(!isBroken && isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || combo.isCharged)){
+					GL11.glPushMatrix();
+						GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
-					GL11.glTranslatef(-offsetX,-offsetY,-offsetZ);
-					GL11.glScalef(scaleX, scaleY, scaleZ);
-					GL11.glTranslatef(offsetX,offsetY,offsetZ);
+						float scaleX = 1.05f;
+						float scaleY = 1.0125f;
+						float scaleZ = 1.05f;
+						GL11.glPushMatrix();
+							GL11.glScalef(scaleX, scaleY, scaleZ);
 
-	                float ff1 = (float)player.ticksExisted + partialRenderTick;
-	                engine().bindTexture(armoredCreeperTextures);
-	                GL11.glMatrixMode(GL11.GL_TEXTURE);
-	                GL11.glLoadIdentity();
-	                float f2 = ff1 * 0.01F;
-	                float f3 = ff1 * 0.01F;
-	                GL11.glTranslatef(f2, f3, 0.0F);
-	                GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	                GL11.glEnable(GL11.GL_BLEND);
-	                f4 = 1.0F;
-	                GL11.glColor4f(f4, f4, f4, 1.0F);
-	                GL11.glDisable(GL11.GL_LIGHTING);
-	                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+			                GL11.glEnable(GL11.GL_BLEND);
+			                float f4 = 3.0F;
+			                GL11.glColor4f(f4, f4, f4, 3.0F);
+			                GL11.glDisable(GL11.GL_LIGHTING);
+			                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
-					model2.render(null, x, y, z, 0, 0, 1.0f);
+							GL11.glTranslatef(-1f,0.0f,-0.5f);
+							model2.render(null, x, y, z, 0, 0, 1.0f);
 
-	                GL11.glMatrixMode(GL11.GL_TEXTURE);
-	                GL11.glLoadIdentity();
-	                GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	                GL11.glEnable(GL11.GL_LIGHTING);
-	                GL11.glDisable(GL11.GL_BLEND);
+			                GL11.glEnable(GL11.GL_LIGHTING);
+			                GL11.glDisable(GL11.GL_BLEND);
+						GL11.glPopMatrix();
 
-					GL11.glPopAttrib();
+						scaleX = 1.5f;
+						scaleY = 1.025f;
+						scaleZ = 1.5f;
+
+						GL11.glScalef(scaleX, scaleY, scaleZ);
+
+		                float ff1 = (float)player.ticksExisted + partialRenderTick;
+		                engine().bindTexture(armoredCreeperTextures);
+		                GL11.glMatrixMode(GL11.GL_TEXTURE);
+		                GL11.glLoadIdentity();
+		                float f2 = ff1 * 0.01F;
+		                float f3 = ff1 * 0.01F;
+		                GL11.glTranslatef(f2, f3, 0.0F);
+		                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		                GL11.glEnable(GL11.GL_BLEND);
+		                f4 = 1.0F;
+		                GL11.glColor4f(f4, f4, f4, 1.0F);
+		                GL11.glDisable(GL11.GL_LIGHTING);
+		                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+
+						GL11.glTranslatef(-1f,0.0f,-0.5f);
+						model2.render(null, x, y, z, 0, 0, 1.0f);
+
+		                GL11.glMatrixMode(GL11.GL_TEXTURE);
+		                GL11.glLoadIdentity();
+		                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		                GL11.glEnable(GL11.GL_LIGHTING);
+		                GL11.glDisable(GL11.GL_BLEND);
+
+						GL11.glPopAttrib();
 					GL11.glPopMatrix();
 				}
 			}GL11.glPopMatrix();
