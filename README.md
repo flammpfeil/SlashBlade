@@ -1,25 +1,25 @@
 SlashBlade
 ==========
-src�̎g����
+srcの使い方
 ---------------------------------
-1.�{�v���W�F�N�g��git���|�W�g��Clone�����炩���ߗp�ӂ���Ƃ����Ƃ�
-2. forgeGradle���p�ӂ���B eclipse��WorkSpace�̗p��
-forge�t�H���_�����ɓK����bat�t�@�C�������
-gradlew.bat setupDevWorkspace eclipse
-�Ƃ������Ď��s����Ί������B
-�����ǂ���Aeclipse�t�H���_�� eclipse��workSpace�Ƃ��ēǂݍ��ށB
-3. Eclipse����git�|�W�g��Clone���Ăł����t�H���_���AMinecraft�v���W�F�N�g�z���Ƀ����N�t�H���_�Ƃ��Ēǉ�
-  �V�K���t�H���_�[���g���������N���ꂽ�t�H���_�[
-4. �����N���ꂽ�t�H���_����src/main/�ȉ��ɂ��� java �� resource��I�����\�[�X�t�H���_�Ƃ��ēo�^
-  �E�N���b�N���r���h��p�X���\�[�X�t�H���_�[�Ƃ��Ďg�p
-5. Eclipse�Ńf�o�b�O����
-  ASM�����̃f�o�b�O�́A�ʓ|�Ȃ̂Ŋe�X����ׂĒ��ׂ邪��낵��
-  �����e�X�g�ōς܂��Ă܂�
-6.�r���h����
-setup.bat���|�W�g���̒��ɂ���̂Ŏ��s����B
-�r���h�p�̏����ݒ�A����ȍ~�s�v�i1�̍�Ƃƈꏏ�����ǃr���h�p������ȈՂɂȂ��Ă�j
-7.�r���h
-build.bat���|�W�g���̒��ɂ���̂Ŏ��s
-build/libs ��jar�����������͂�
-8.�o�[�W�����\�L�Ƃ��̕ύX
-build.gradle�݂āBs
+ 1. 本プロジェクトをgitリポジトリCloneをあらかじめ用意するとかしとく
+ 2. forgeGradle環境用意する。 eclipseのWorkSpaceの用意  
+  forgeフォルダ直下に適当なbatファイル作って  
+    gradlew.bat setupDevWorkspace eclipse  
+  とか書いて実行すれば環境完成。  
+  いつもどおり、eclipseフォルダを eclipseのworkSpaceとして読み込む。
+ 3. EclipseからgitポジトリCloneしてできたフォルダを、Minecraftプロジェクト配下にリンクフォルダとして追加  
+  新規＞フォルダー＞拡張＞リンクされたフォルダー  
+ 4. リンクされたフォルダ中のsrc/main/以下にある java と resourceを選択しソースフォルダとして登録  
+  右クリック＞ビルド･パス＞ソースフォルダーとして使用  
+ 5. Eclipseでデバッグする  
+  ASM部分のデバッグは、面倒なので各々しらべて調べるがよろしい  
+  実環境テストで済ませてます  
+ 6. ビルド準備  
+  setup.batがポジトリの中にあるので実行する。  
+  ビルド用の初期設定、次回以降不要（1の作業と一緒だけどビルド用だから簡易になってる）  
+ 7. ビルド  
+  build.batがポジトリの中にあるので実行  
+  build/libs にjarが生成されるはず  
+ 8. バージョン表記とかの変更  
+  build.gradleみて。
