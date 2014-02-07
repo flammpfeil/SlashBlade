@@ -17,7 +17,6 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(name="SlashBlade",modid="flammpfeil.slashblade",useMetadata=false,version="@VERSION@")
 public class SlashBlade implements IFuelHandler{
@@ -66,26 +65,12 @@ public class SlashBlade implements IFuelHandler{
 
 		GameRegistry.registerItem(weapon, "slashblade");
 
-		LanguageRegistry.instance().addName(weapon,"SlashBlade");
-		LanguageRegistry.instance().addNameForObject(weapon,"ja_JP","太刀");
-
 		proudSoul = (new ItemSWaeponMaterial())
 				.setUnlocalizedName("flammpfeil.slashblade.proudsoul")
 				.setTextureName("flammpfeil.slashblade:proudsoul")
 				.setCreativeTab(CreativeTabs.tabMaterials);
 
 		GameRegistry.registerItem(proudSoul,"proudsoul");
-
-		LanguageRegistry.instance().addName(proudSoul,"ProudSoul");
-		LanguageRegistry.instance().addNameForObject(proudSoul,"ja_JP","刀の魂片");
-
-
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.bewitched", "bewitched");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.magic", "enchanted");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.noname", "sealed");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.bewitched","ja_JP", "妖");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.magic","ja_JP", "印");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.noname","ja_JP", "封");
 
 		GameRegistry.addRecipe(new ItemStack(weapon),new Object[]{"#I","#I","ZX",
 			'#',Blocks.lapis_block,
