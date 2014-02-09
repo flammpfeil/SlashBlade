@@ -9,4 +9,4 @@ nopublish
 .gradle
 build
 eclipse
-.iml
+*.iml
