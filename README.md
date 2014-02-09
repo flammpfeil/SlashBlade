@@ -1,25 +1,95 @@
 SlashBlade
 ==========
-srcの使い方
----------------------------------
- 1. 本プロジェクトをgitリポジトリCloneをあらかじめ用意するとかしとく
- 2. forgeGradle環境用意する。 eclipseのWorkSpaceの用意  
-  forgeフォルダ直下に適当なbatファイル作って  
-    gradlew.bat setupDevWorkspace eclipse  
-  とか書いて実行すれば環境完成。  
-  いつもどおり、eclipseフォルダを eclipseのworkSpaceとして読み込む。
- 3. EclipseからgitポジトリCloneしてできたフォルダを、Minecraftプロジェクト配下にリンクフォルダとして追加  
-  新規＞フォルダー＞拡張＞リンクされたフォルダー  
- 4. リンクされたフォルダ中のsrc/main/以下にある java と resourceを選択しソースフォルダとして登録  
-  右クリック＞ビルド･パス＞ソースフォルダーとして使用  
- 5. Eclipseでデバッグする  
-  ASM部分のデバッグは、面倒なので各々しらべて調べるがよろしい  
-  実環境テストで済ませてます  
- 6. ビルド準備  
-  setup.batがポジトリの中にあるので実行する。  
-  ビルド用の初期設定、次回以降不要（1の作業と一緒だけどビルド用だから簡易になってる）  
- 7. ビルド  
-  build.batがポジトリの中にあるので実行  
-  build/libs にjarが生成されるはず  
- 8. バージョン表記とかの変更  
-  build.gradleみて。
+
+本リポジトリの使い方
+---------
+0. 開発環境の作成
+    * 用意できてるなら不要です。
+    1. 初期設定
+        * 必要なファイルのDL、デコンパイル等をします
+        * 後述をコマンドプロンプトやbatファイル等で実行しましょう
+            * Eclipseなら
+
+            ~~~bat:setup.bat
+            call gradlew.bat setupDevWorkspace setupDecompWorkspace eclipse
+            pause
+            ~~~
+
+            * Intellij IDEAなら
+
+            ~~~bat:setup.bat
+            call gradlew.bat setupDevWorkspace setupDecompWorkspace idea
+            pause
+            ~~~
+
+    2. S/Cの設定
+        1. server設定
+            * サーバを起動してみます。
+            * eclipse/server.properties が生成されます
+            * online-mode=false と書き換えましょう  これでデバッグ環境でローカルサーバに入れます。
+        2. client設定
+            * clientを起動します。
+            * サーバ接続設定を追加します
+
+            > Multiplayer > Add server > Server Address > localhost:25565
+
+            * サーバ名は任意で
+
+1. eclipse編
+    1. デバッグまで
+        1. リポジトリーCloneを作る
+            * ビューを開いて、URLをCtrl+V辺りでペースト等、任意のディレクトリにClone作成します
+            * ※ビューの開き方例 ウィンドウ>ビュー>その他 "Gitリポジトリー"
+        2. プロジェクトにリンクフォルダとして追加
+
+            > 新規＞フォルダー＞拡張＞リンクされたフォルダー
+
+            * 1で作成した作業フォルダを指定します。
+
+        3. ソースフォルダ指定
+            * src/main/以下にある java と resourceを選択しソースフォルダとして登録
+            * 右クリック＞ビルド･パス＞ソースフォルダーとして使用
+        4. ライブラリの準備
+            * setup.batを実行します
+            * 自動で基本的に必要なライブラリのDLや初期設定がされます
+            * ※本modでは特に追加ライブラリは無いので実行だけすれば終わりです。
+        5. デバッグ実行
+            c/s起動できるか試します。
+    2. ビルド
+        * build.batを実行します
+        * build/libs 配下にjarが生成されます。
+
+2. inteliJ IDEA編
+    1. デバッグまで
+        1. リポジトリーCloneを作る
+            * ※あらかじめgitのコマンドラインツールをインストール＆登録しておいてください。
+
+                > setting > "git"で検索 > git > git.exeの欄に自環境のパスを
+
+                * ※パスが通っている場合は不要
+                * 適宜githubアカウント設定など
+
+                    > VCS>Checkout from Version Control>git
+
+            * プロジェクトとして開くか聞かれるかもしれませんが No で
+        2. Moduleのインポート
+
+            > File > Import Module
+
+            * 1でCloneしたリポジトリーの作業ディレクトリから build.gradleを開きましょう
+        3. 依存関係の設定
+            * Gradleタスクから setupDevWorkSpaceを実行します。
+            * 自動で基本的に必要なライブラリのDLや初期設定がされます
+            * ※本modでは特に追加ライブラリは無いので実行だけすれば終わりです。
+
+            > View > ToolWindow > Gradle > all tasks > リポジトリ名 > setupDevWorkSpace
+
+            * デバッグの起動設定等をもつ、メインのForgeモジュールで読み込むようにします。
+
+            > ForgeのModuleSettings > Dependenciesタブ > + > ModuleDependency > 2でインポートしたModule
+
+        4. デバッグ実行
+            * Runから適宜 server / client 実行します。
+    5. ビルド
+        * Gradleタスクから build を実行します。
+        * build/libs 配下にjarが生成されます。
