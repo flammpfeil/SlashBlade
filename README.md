@@ -83,12 +83,6 @@ SlashBlade
             > File > Import Module
 
         4. 依存関係の設定
-            * Gradleタスクから setupDevWorkSpaceを実行します。
-            * 自動で基本的に必要なライブラリのDLや初期設定がされます
-            * ※本modでは特に追加ライブラリは無いので実行だけすれば終わりです。
-
-            > View > ToolWindow > Gradle > all tasks > リポジトリ名 > setupDevWorkSpace
-
             * デバッグの起動設定等をもつ、メインのForgeモジュールで読み込むようにします。
 
             > ForgeのModuleSettings > Dependenciesタブ > + > ModuleDependency > 2でインポートしたModule
