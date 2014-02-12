@@ -17,12 +17,12 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "mc1.7.2-r2"
+version = "mc1.7.2-r3"
 group= "mods.flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
 minecraft {
-    version = "1.7.2-10.12.0.1025"
+    version = "1.7.2-10.12.0.1027"
     assetDir = "eclipse/assets"
 }
 processResources

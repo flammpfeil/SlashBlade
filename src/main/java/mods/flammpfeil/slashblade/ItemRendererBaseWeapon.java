@@ -75,8 +75,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         switch (type) {
             case ENTITY:
             {
-                GL11.glTranslatef(-0.9f, -0.3f, 0.05f);
-                float scale = 0.006f;
+                GL11.glTranslatef(0.0f, 0.32f, 0.04f);
+                float scale = 0.01f;
                 GL11.glScalef(scale, scale, scale);
 
                 isHandled = true;
@@ -84,9 +84,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             }
             case INVENTORY:
             {
-                GL11.glTranslatef(-7, 18, 0);
+                GL11.glTranslatef(08.0f, 8.0f, 0.0f);
                 GL11.glRotatef(180, 0, 0, 1);
-                float scale = 0.10f;
+                float scale = 0.13f;
                 GL11.glScalef(-scale,scale,scale);
 
                 isHandled = true;
@@ -210,6 +210,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		int charge = player.getItemInUseDuration();
 
+
+        float ax = 0;
+        float ay = 0;
+        float az = 0;
+
 		boolean isBroken = false;
 		ItemSlashBlade.ComboSequence combo = ComboSequence.None;
 		if(item.hasTagCompound()){
@@ -218,6 +223,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
 
 			combo = ItemSlashBlade.getComboSequence(tag);
+
+            ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
+            ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
+            az = -tag.getFloat(ItemSlashBlade.adjustZStr)/10.0f;
 		}
 
 
@@ -267,7 +276,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 
 			//体格補正 configより
-			GL11.glTranslatef(SlashBlade.offsetX,SlashBlade.offsetY,SlashBlade.offsetZ);
+			GL11.glTranslatef(ax,ay,az);
 
 			//腰位置へ
 			GL11.glTranslatef(0.22f,0.6f,-0.3f);

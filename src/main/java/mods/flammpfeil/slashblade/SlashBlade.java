@@ -18,14 +18,14 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(name="SlashBlade",modid="flammpfeil.slashblade",useMetadata=false,version="@VERSION@")
+@Mod(name="SlashBlade",modid="flammpfeil.slashblade",useMetadata=false,version="1.7.2 r3")
 public class SlashBlade implements IFuelHandler{
 
 
 	public static Item weapon;
 	public static Item proudSoul;
 
-	public static float offsetX,offsetY,offsetZ;
+//	public static float offsetX,offsetY,offsetZ;
 
 	public static Map<String,Boolean> attackDisabled = new HashMap<String,Boolean>();
 
@@ -39,7 +39,7 @@ public class SlashBlade implements IFuelHandler{
 
 		try{
 			mainConfiguration.load();
-
+/*
 			Property propOffsets;
 			propOffsets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "OffsetX", 0.0);
 			offsetX = (float)propOffsets.getDouble(0.0);
@@ -49,7 +49,7 @@ public class SlashBlade implements IFuelHandler{
 
 			propOffsets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "OffsetZ", 0.0);
 			offsetZ = (float)propOffsets.getDouble(0.0);
-
+*/
 		}
 		finally
 		{
@@ -86,6 +86,8 @@ public class SlashBlade implements IFuelHandler{
 		manager = new ConfigEntityListManager();
 
         FMLCommonHandler.instance().bus().register(manager);
+
+        GameRegistry.addRecipe(new RecipeAdjustPos());
 	}
 
 	@Override
