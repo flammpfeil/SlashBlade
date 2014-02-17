@@ -275,6 +275,11 @@ public class ItemSlashBlade extends ItemSword {
 			damage = 0;
 			break;
 
+        case SlashDim:
+            par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),20,30,true));
+            par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.weakness.getId(),20,30,true));
+            break;
+
 		default:
 			break;
 		}
@@ -559,9 +564,16 @@ public class ItemSlashBlade extends ItemSword {
                 if(!AttackableSelector.isEntityApplicable(target))
                     list.add(target);
 
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
+                float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 5.0)) : 0;
 				for(Entity curEntity : list){
 					par3EntityPlayer.attackTargetEntityWithCurrentItem(curEntity);
 	                par3EntityPlayer.onCriticalHit(curEntity);
+
+                    if(0.0 < magicDamage){
+                        DamageSource ds = new EntityDamageSource("directMagic",par3EntityPlayer).setDamageBypassesArmor().setMagicDamage();
+                        curEntity.attackEntityFrom(ds, magicDamage);
+                    }
 				}
 				tag.setBoolean(onClickStr, false);
 
@@ -841,8 +853,8 @@ public class ItemSlashBlade extends ItemSword {
 							float attack = 4.0f + Item.ToolMaterial.STONE.getDamageVsEntity(); //stone like
 							if(swordType.contains(SwordType.Broken))
 								attack = Item.ToolMaterial.EMERALD.getDamageVsEntity();
-							else if(swordType.contains(SwordType.Bewitched) && el instanceof EntityPlayer)
-			                	attack += (int)(((EntityPlayer)el).experienceLevel * 0.25);
+							else if(swordType.contains(SwordType.FiercerEdge) && el instanceof EntityPlayer)
+			                	attack += tag.getFloat(attackAmplifierStr) * 0.5f;
 
 							if (curEntity instanceof EntityLivingBase)
 			                {
