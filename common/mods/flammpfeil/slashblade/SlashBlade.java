@@ -303,7 +303,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				"XIX",
 				"XXX",
 				'I',Item.glassBottle,
-				'X',new ItemStack(proudSoul,1,0)));
+				'X',itemProudSoul));
 
         GameRegistry.addRecipe(new RecipeAdjustPos());
 

@@ -69,31 +69,98 @@ modsに入れてください。
 持った状態でShift押してる間、最も近い敵にカメラロック
 ※ロック後は20くらいはなれ無い＆Shift話さないかぎりロック継続
 
-・レシピ
-青：ラピスブロック
-鉄：鉄インゴット
-剣：鉄剣
 
-青鉄
-青鉄
-　剣
+・レシピ他各性能解説
+bladeWood　木刀（攻撃力:木剣 耐久:60 補修:原木　折れると消失
+　"  #",
+　" # ",
+　"X  ",
+　'#',"logWood",
+　'X',new ItemStack(Item.swordWood,1,1) ※木の剣で耐久が１消費済みのもの（１回だけ殴ったもの）
 
-・その他
-金床で鉄消費で修繕可能。
+bladeBambooLight　竹光（攻撃力：石剣 耐久:50 補修:竹　折れると消失
+　"  #",
+　" # ",
+　"X  ",
+　'#',"bamboo",
+　'X', bladeWood　※木刀 耐久は減っててもいい
 
-◆何かしらエンチャントするとSlashDimension開放（右クリ貯め攻撃）
-攻撃力は3段と同等、射程約20ブロックほど、視線方向の最も近いターゲットを中心に範囲攻撃、消耗(5+巻き込んだ敵数)
+bladeSilverBambooLight　銀紙竹光（攻撃力：鉄剣 耐久:40 補修：竹　折れると消失
+　" TI",
+　"SXK",
+　"PS ",
+　'T', Item.egg,
+　'I', Item.ingotIron / 銀粉 / 銀インゴット
+　'S', Item.silk,
+　'X', bladeBambooLight　※竹光 耐久は減っててもいい
+　'K', "dyeBlack",
+　'P', Item.paper
 
-◆エンチャントと名を付けると、自己修復が付く妖刀モード。
-・メインインベントリ中で手持ち状態以外の時、毎秒Expと満腹度を消費して自己修復
-・耐久値全快の完品時３段目抜刀攻撃が自身を中心とした広範囲攻撃になる。
+bladeWhiteSheath　白鞘の太刀（攻撃力：鉄剣 耐久:70 補修：鉄、スチール、スチールナゲット　折れても残る
+　"  #",
+　" # ",
+　"XG ",
+　'#', Item.ingotIron※初期耐久2/3 or スチールインゴット※初期耐久3/4 or 刀の魂塊※後述の特殊インゴット 完品で完成
+　'G', Item.ingotGold,
+　'X', bladeWood　※木刀 耐久は減っててもいい
 
-◆KillCountが1000超えると、攻撃力限定解除（
-・自Lvが特定の割合で攻撃力に加算。
+SlashBlade 大太刀「」※無銘無名の大太刀（攻撃力：ダイヤ剣 耐久:50 補修：鉄、スチール、スチールナゲット　折れても残る
+　" BI",
+　"L#C",
+　"SG ",
+　'L', Block.blockLapis,
+　'C', Block.coalBlock,
+　'I', itemSphereBladeSoul 刀の魂珠※後述の特殊な玉鋼
+　'B', Item.blazeRod,
+　'G', Item.ingotGold,
+　'S', Item.silk,
+　'#', brokenBladeWhite
 
-◆ProudSoulが1000を超えると、戦闘時修復能力開放
-・手持ち中に経験値を拾うとそのぶん自己修復。
-※ProudSoul自体は、手持ち中に経験値改修したり、妖刀時の自己修復で吸収される経験値で増えていく。
+
+itemIngotBladeSoul　刀の魂塊
+　"PPP",
+　"PIP",
+　"PPP",
+　'I', Item.ingotIron,
+　'P', itemProudSoul　刀の魂片※刀が折れた際に入手
+
+itemIngotBladeSoul　刀の魂塊　スチールを使ったお得Recipe
+　" P ",
+　"PIP",
+　" P ",
+　'I', "ingotSteel",
+　'P', itemProudSoul　刀の魂片※刀が折れた際に入手
+
+Item.expBottle　経験値ボトル
+　"XXX",
+　"XIX",
+　"XXX",
+　'I',Item.glassBottle,
+　'X',proudSoul※刀が折れた際に入手
+
+※精錬Recipe
+itemSphereBladeSoul　刀の魂珠
+itemIngotBladeSoul　刀の魂塊を精錬する。
+
+
+　◇KillCountが1000超えると、攻撃力限定解除（
+　　・自Lvが特定の割合で攻撃力に加算。
+
+◆大太刀「」のみの特殊能力
+
+　◇何かしらエンチャントするとSlashDimension開放（右クリ貯め攻撃）
+　　攻撃力は3段と同等、射程約20ブロックほど、視線方向の最も近いターゲットを中心に範囲攻撃、消耗(5+巻き込んだ敵数)
+
+　◇エンチャントと名を付けると、自己修復が付く妖刀モード。
+　　・メインインベントリ中で手持ち状態以外の時、毎秒Expと満腹度を消費して自己修復
+　　・耐久値全快の完品時３段目抜刀攻撃が自身を中心とした広範囲攻撃になる。
+
+　◇KillCountが1000超えると、攻撃力限定解除（
+　　・自Lvが特定の割合で攻撃力に加算。
+
+　◇ProudSoulが1000を超えると、戦闘時修復能力開放
+　　・手持ち中に経験値を拾うとそのぶん自己修復。
+　　※ProudSoul自体は、手持ち中に経験値改修したり、妖刀時の自己修復で吸収される経験値で増えていく。
 
 ・範囲攻撃はエンダードラゴンにも当たるけれど、かなり判定は狭いかつシビア
 
