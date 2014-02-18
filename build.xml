@@ -3,7 +3,7 @@
     <property file="buildspecs.properties" prefix="buildspecs" />
 
 
-    <property name="mod.version" value="r17" />
+    <property name="mod.version" value="r18" />
     <property name="mod.modname" value="SlashBlade" />
 
     <property name="mod.modid" value="slashblade" />
@@ -12,6 +12,7 @@
 
     <property name="mod.packagetarget" value="**/mods/${mod.mydomain}/${mod.modid}/*.class" />
     <property name="mod.packagetargetasm" value="**/mods/${mod.mydomain}/${mod.modid}/asm/*.class" />
+    <property name="mod.packagetargethelper" value="**/net/minecraft/util/DamageSourceAccessHelper.class" />
 
     <condition property="mod.build" value="${env.BUILD_NUMBER}" else="0">
         <isset property="env.BUILD_NUMBER" />
@@ -219,7 +220,7 @@
         <!-- Packaging Main -->
         <echo message="Packaging Main" />
         <jar destfile="${jar.dir}/${mod.name.base}" manifest="${mcp.dir}/reobf/resources/MANIFEST.MF">
-            <fileset dir="${mcp.dir}/reobf/minecraft" includes="${mod.packagetarget},${mod.packagetargetasm}" />
+            <fileset dir="${mcp.dir}/reobf/minecraft" includes="${mod.packagetarget},${mod.packagetargetasm},${mod.packagetargethelper}" />
 
         	<!--, path , **/mods/** -->
 

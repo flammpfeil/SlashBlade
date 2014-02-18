@@ -91,17 +91,21 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 	public void init(FMLInitializationEvent evt){
 
 		weapon = (new ItemSlashBlade(itemid, EnumToolMaterial.IRON))
-				.setUnlocalizedName("flammpfeil.slashblade:slashblade")
+				.setUnlocalizedName("flammpfeil.slashblade")
 				.setTextureName("flammpfeil.slashblade:blade")
 				.setCreativeTab(CreativeTabs.tabCombat);
+
+		GameRegistry.registerItem(weapon, "slashblade");
 
 		LanguageRegistry.instance().addName(weapon,"SlashBlade");
 		LanguageRegistry.instance().addNameForObject(weapon,"ja_JP","太刀");
 
 		proudSoul = (new ItemSWaeponMaterial(itemid2))
-				.setUnlocalizedName("flammpfeil.slashblade:proudsoul")
+				.setUnlocalizedName("flammpfeil.proudsoul")
 				.setTextureName("flammpfeil.slashblade:proudsoul")
 				.setCreativeTab(CreativeTabs.tabMaterials);
+
+		GameRegistry.registerItem(proudSoul,"proudsoul");
 
 		LanguageRegistry.instance().addName(proudSoul,"ProudSoul");
 		LanguageRegistry.instance().addNameForObject(proudSoul,"ja_JP","刀の魂片");
@@ -120,6 +124,8 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 			'X',Item.swordIron});
 
 		GameRegistry.addRecipe(new ShapelessOreRecipe(Item.expBottle,Item.glassBottle,proudSoul));
+
+        GameRegistry.addRecipe(new RecipeAdjustPos());
 
 		GameRegistry.registerFuelHandler(this);
 

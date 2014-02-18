@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -20,6 +19,7 @@ import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +27,7 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.EnumToolMaterial;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,7 +36,10 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.DamageSourceAccessHelper;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -82,6 +86,10 @@ public class ItemSlashBlade extends ItemSword {
 	    }
 	}
 
+    public static final String adjustXStr = "adjustX";
+    public static final String adjustYStr = "adjustY";
+    public static final String adjustZStr = "adjustZ";
+
 	public static final String comboSeqStr = "comboSeq";
 	public static final String isBrokenStr = "isBroken";
 	public static final String onClickStr = "onClick";
@@ -91,6 +99,7 @@ public class ItemSlashBlade extends ItemSword {
 	public static final String attackAmplifierStr = "attackAmplifier";
 	public static final String killCountStr = "killCount";
 	public static final String proudSoulStr = "ProudSoul";
+    public static final String TargetEntityStr = "TargetEntity";
 
 	public static void setComboSequence(NBTTagCompound tag,ComboSequence comboSeq){
 		tag.setInteger(comboSeqStr, comboSeq.ordinal());
@@ -122,24 +131,24 @@ public class ItemSlashBlade extends ItemSword {
 	    /**
 	     * 抜刀フラグ trueなら鞘打ち
 	     */
-	    public final boolean useScabbard;
+	    public boolean useScabbard;
 
 	    /**
 	     * 振り幅 マイナスは振り切った状態から逆に振る
 	     */
-	    public final float swingAmplitude;
+	    public float swingAmplitude;
 
 	    /**
 	     * 振る方向 360度
 	     */
-	    public final float swingDirection;
+	    public float swingDirection;
 
 	    /**
 	     * チャージエフェクト
 	     */
-	    public final boolean isCharged;
+	    public boolean isCharged;
 
-	    public final int comboResetTicks;
+	    public int comboResetTicks;
 
 	    /**
 	     *
@@ -279,6 +288,11 @@ public class ItemSlashBlade extends ItemSword {
 			damage = 0;
 			break;
 
+        case SlashDim:
+            par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),20,30,true));
+            par2EntityLivingBase.addPotionEffect(new PotionEffect(Potion.weakness.getId(),20,30,true));
+            break;
+
 		default:
 			break;
 		}
@@ -289,6 +303,8 @@ public class ItemSlashBlade extends ItemSword {
 		return true;
     }
 
+
+	@Override
     public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World, int par3, int par4, int par5, int par6, EntityLivingBase par7EntityLivingBase)
     {
         if ((double)Block.blocksList[par3].getBlockHardness(par2World, par4, par5, par6) != 0.0D)
@@ -399,6 +415,12 @@ public class ItemSlashBlade extends ItemSword {
 			if(!tag.getBoolean(onJumpAttackedStr)){
 				player.motionY = 0;
 				player.addVelocity(0.0, 0.3D,0.0);
+
+
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+                if(0 < level){
+	                player.fallDistance *= Math.max(0,(4.0-level)/4.0);
+                }
 			}
 			break;
 
@@ -408,6 +430,12 @@ public class ItemSlashBlade extends ItemSword {
 					player.motionY = 0;
 					player.addVelocity(0.0, 0.2D,0.0);
 					tag.setBoolean(onJumpAttackedStr, true);
+
+
+	                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+	                if(0 < level){
+		                player.fallDistance *= Math.max(0,(4.0-level)/4.0);
+	                }
 				}
 			}
 
@@ -445,7 +473,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	            	//左クリック攻撃は無敵時間を考慮する コンボインターバルが入っている
 	            	if(entity instanceof EntityLivingBase
-	            			&& ((EntityLivingBase)entity).maxHurtTime != 0 && (ComboInterval > ((EntityLivingBase)entity).maxHurtTime - ((EntityLivingBase)entity).hurtTime))
+	            			&& ((EntityLivingBase)entity).maxHurtTime != 0 && ((ComboInterval + 2) > ((EntityLivingBase)entity).maxHurtTime - ((EntityLivingBase)entity).hurtTime))
 	            	{
 	            		//腕振りしない
 	            		player.swingProgressInt = 0;
@@ -494,28 +522,39 @@ public class ItemSlashBlade extends ItemSword {
 
 			par3EntityPlayer.swingItem();
 
-			Entity target = null;
+            float distance = 30.0f;
+            Entity target = null;
 
-			float distance = 30.0f;
-			for(int dist = 2; dist < 20; dist+=2){
-				AxisAlignedBB bb = par3EntityPlayer.boundingBox.copy();
-				Vec3 vec = par3EntityPlayer.getLookVec();
-				vec = vec.normalize();
-				bb = bb.expand(2.0f, 0.25f, 2.0f);
-				bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);
+            int eId = tag.getInteger(TargetEntityStr);
 
-				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3EntityPlayer, bb, AttackableSelector);
-				for(Entity curEntity : list){
-					float curDist = curEntity.getDistanceToEntity(par3EntityPlayer);
-					if(curDist < distance)
-					{
-						target = curEntity;
-						distance = curDist;
-					}
-				}
-				if(target != null)
-					break;
-			}
+            if(eId != 0){
+                Entity tmp = par2World.getEntityByID(eId);
+                if(tmp != null){
+                    if(tmp.getDistanceToEntity(par3EntityPlayer) < 30.0f)
+                        target = tmp;
+                }
+            }
+
+            if(target == null)
+                for(int dist = 2; dist < 20; dist+=2){
+                    AxisAlignedBB bb = par3EntityPlayer.boundingBox.copy();
+                    Vec3 vec = par3EntityPlayer.getLookVec();
+                    vec = vec.normalize();
+                    bb = bb.expand(2.0f, 0.25f, 2.0f);
+                    bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);
+
+                    List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3EntityPlayer, bb, AttackableSelector);
+                    for(Entity curEntity : list){
+                        float curDist = curEntity.getDistanceToEntity(par3EntityPlayer);
+                        if(curDist < distance)
+                        {
+                            target = curEntity;
+                            distance = curDist;
+                        }
+                    }
+                    if(target != null)
+                        break;
+                }
 
 			if(target != null){
 
@@ -544,9 +583,20 @@ public class ItemSlashBlade extends ItemSword {
 
 				tag.setBoolean(onClickStr, true);
 				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3EntityPlayer, bb, AttackableSelector);
+
+                if(!AttackableSelector.isEntityApplicable(target))
+                    list.add(target);
+
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
+                float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 5.0)) : 0;
 				for(Entity curEntity : list){
 					par3EntityPlayer.attackTargetEntityWithCurrentItem(curEntity);
 	                par3EntityPlayer.onCriticalHit(curEntity);
+
+                    if(0.0 < magicDamage){
+                        DamageSource ds = DamageSourceAccessHelper.setDamageBypassesArmor(new EntityDamageSource("directMagic",par3EntityPlayer)).setMagicDamage();
+                        curEntity.attackEntityFrom(ds, magicDamage);
+                    }
 				}
 				tag.setBoolean(onClickStr, false);
 
@@ -709,6 +759,9 @@ public class ItemSlashBlade extends ItemSword {
 	        	attrTag.appendTag(
 	        			getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + 4.0F + EnumToolMaterial.EMERALD.getDamageVsEntity()), 0))
 	        			);
+
+	        	el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers());
+	        	el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
 	        }
 		}
 
@@ -823,8 +876,8 @@ public class ItemSlashBlade extends ItemSword {
 							float attack = 4.0f + EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
 							if(swordType.contains(SwordType.Broken))
 								attack = EnumToolMaterial.EMERALD.getDamageVsEntity();
-							else if(swordType.contains(SwordType.Bewitched) && el instanceof EntityPlayer)
-			                	attack += (int)(((EntityPlayer)el).experienceLevel * 0.25);
+							else if(swordType.contains(SwordType.FiercerEdge) && el instanceof EntityPlayer)
+			                	attack += tag.getFloat(attackAmplifierStr) * 0.5f;
 
 							if (curEntity instanceof EntityLivingBase)
 			                {
@@ -956,35 +1009,84 @@ public class ItemSlashBlade extends ItemSword {
 
 
 
-		if(par2World.isRemote && sitem.equals(el.getHeldItem())){
+		if(sitem.equals(el.getHeldItem())){
 
-			final String TargetEntityStr = "TargetEntity";
+            if(!el.worldObj.isRemote){
+                int eId = tag.getInteger(TargetEntityStr);
 
-			int eId = tag.getInteger(TargetEntityStr);
+                if(el.isSneaking()){
+                    if(eId == 0){
 
-			if(el.isSneaking()){
-				if(eId == 0){
-					AxisAlignedBB bb = el.boundingBox.copy();
-					bb = bb.expand(10, 5, 10);
-					float distance = 20.0f;
-					List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
-					for(Entity curEntity : list){
-						float curDist = curEntity.getDistanceToEntity(el);
-						if(curDist < distance)
-						{
-							eId = curEntity.entityId;
-							distance = curDist;
-						}
-					}
-					tag.setInteger(TargetEntityStr, eId);
-				}
-				Entity target = par2World.getEntityByID(eId);
-				if(target != null)
-					this.faceEntity(el,target, 1000.0f,1000.0f);
 
-			}else if(eId != 0){
-				tag.setInteger(TargetEntityStr, 0);
-			}
+
+                        Entity rayEntity = getRayTrace(el,10.0f);
+
+                        if(rayEntity !=null){
+                            if(!AttackableSelector.isEntityApplicable(rayEntity)){
+
+                            }
+                        }
+
+
+                        if(rayEntity != null){
+                            eId = rayEntity.entityId;
+
+                        }else{
+                            AxisAlignedBB bb = el.boundingBox.copy();
+                            bb = bb.expand(10, 5, 10);
+                            float distance = 20.0f;
+
+                            List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
+                            for(Entity curEntity : list){
+                                float curDist = curEntity.getDistanceToEntity(el);
+                                if(curDist < distance)
+                                {
+                                    eId = curEntity.entityId;
+                                    distance = curDist;
+                                }
+                            }
+                        }
+                        tag.setInteger(TargetEntityStr, eId);
+                    }else{
+
+                        if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, sitem)){
+                            Entity target = par2World.getEntityByID(eId);
+                            if(target != null && target instanceof EntityWither
+                                    && 10 > el.getDistanceToEntity(target)
+                                    && ((EntityWither)target).getHealth() / ((EntityWither)target).getMaxHealth() > 0.5)
+                            {
+
+
+                                Vec3 vec = el.getLookVec();
+
+                                double y = -vec.yCoord * 2.0;
+                                if(target.posY <= el.posY + 5.0)
+                                    y = 0;
+
+                                target.addVelocity(vec.xCoord,y,vec.zCoord);
+                            }
+                        }
+                    }
+
+                    /*
+                    Entity target = par2World.getEntityByID(eId);
+                    if(target != null)
+                        this.faceEntity(el,target, 1000.0f,1000.0f);
+                        */
+                }else if(eId != 0){
+                    tag.setInteger(TargetEntityStr, 0);
+                }
+            }else{
+
+                int eId = tag.getInteger(TargetEntityStr);
+                if(eId != 0){
+                    Entity target = par2World.getEntityByID(eId);
+                    if(target != null)
+                        this.faceEntity(el,target, 1000.0f,1000.0f);
+                }
+            }
+
+
 		}
 	}
 
@@ -1024,6 +1126,8 @@ public class ItemSlashBlade extends ItemSword {
         float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
         float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
         owner.rotationPitch = this.updateRotation(owner.rotationPitch, f3, par3);
+        owner.rotationPitch = (float)Math.min(Math.max(owner.rotationPitch,-30), 60);
+
         owner.rotationYaw = this.updateRotation(owner.rotationYaw, f2, par2);
     }
 
@@ -1065,7 +1169,13 @@ public class ItemSlashBlade extends ItemSword {
 		EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
 		par3List.add(String.format("%sKillCount : %d", swordType.contains(SwordType.FiercerEdge) ? "§4" : "", tag.getInteger(killCountStr)));
-		par3List.add(String.format("%sProudSoul : %d", swordType.contains(SwordType.SoulEeater)  ? "§5" : "", tag.getInteger(proudSoulStr)));
+        par3List.add(String.format("%sProudSoul : %d", swordType.contains(SwordType.SoulEeater)  ? "§5" : "", tag.getInteger(proudSoulStr)));
+        if(tag.hasKey(adjustXStr)){
+            float ax = tag.getFloat(adjustXStr);
+            float ay = tag.getFloat(adjustYStr);
+            float az = tag.getFloat(adjustZStr);
+            par3List.add(String.format("adjust x:%.1f y:%.1f z:%.1f", ax,ay,az));
+        }
 	}
 
 
@@ -1248,4 +1358,76 @@ public class ItemSlashBlade extends ItemSword {
 		return super.onEntitySwing(entityLiving, stack);
 	}
 
+
+    public MovingObjectPosition rayTrace(EntityLivingBase owner, double par1, float par3)
+    {
+        Vec3 vec3 = getPosition(owner);
+        Vec3 vec31 = owner.getLook(par3);
+        Vec3 vec32 = vec3.addVector(vec31.xCoord * par1, vec31.yCoord * par1, vec31.zCoord * par1);
+        return owner.worldObj.rayTraceBlocks_do_do(vec3, vec32, false, false);
+    }
+    public Vec3 getPosition(EntityLivingBase owner)
+    {
+        return owner.worldObj.getWorldVec3Pool().getVecFromPool(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
+    }
+
+    public Entity getRayTrace(EntityLivingBase owner, double reachMax){
+        Entity pointedEntity;
+        float par1 = 1.0f;
+
+        MovingObjectPosition objectMouseOver = rayTrace(owner, reachMax, par1);
+        double reachMin = reachMax;
+        Vec3 entityPos = getPosition(owner);
+
+        if (objectMouseOver != null)
+        {
+            reachMin = objectMouseOver.hitVec.distanceTo(entityPos);
+        }
+
+        Vec3 lookVec = owner.getLook(par1);
+        Vec3 reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
+        pointedEntity = null;
+        float expandFactor = 1.0F;
+        List<Entity> list = owner.worldObj.getEntitiesWithinAABBExcludingEntity(owner, owner.boundingBox.addCoord(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax).expand((double)expandFactor, (double)expandFactor, (double)expandFactor));
+        double tmpDistance = reachMin;
+
+        for(Entity entity : list){
+            if (entity == null || !entity.canBeCollidedWith()) continue;
+
+            float borderSize = entity.getCollisionBorderSize();
+            AxisAlignedBB axisalignedbb = entity.boundingBox.expand((double)borderSize, (double)borderSize, (double)borderSize);
+            MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
+
+            if (axisalignedbb.isVecInside(entityPos))
+            {
+                if (0.0D < tmpDistance || tmpDistance == 0.0D)
+                {
+                    pointedEntity = entity;
+                    tmpDistance = 0.0D;
+                }
+            }
+            else if (movingobjectposition != null)
+            {
+                double d3 = entityPos.distanceTo(movingobjectposition.hitVec);
+
+                if (d3 < tmpDistance || tmpDistance == 0.0D)
+                {
+                    if (entity == owner.ridingEntity && !entity.canRiderInteract())
+                    {
+                        if (tmpDistance == 0.0D)
+                        {
+                            pointedEntity = entity;
+                        }
+                    }
+                    else
+                    {
+                        pointedEntity = entity;
+                        tmpDistance = d3;
+                    }
+                }
+            }
+        }
+
+        return pointedEntity;
+    }
 }
