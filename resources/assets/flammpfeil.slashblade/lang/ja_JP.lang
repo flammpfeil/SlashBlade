@@ -1,5 +1,12 @@
-item.flammpfeil.slashblade.name=太刀
+item.flammpfeil.slashblade.name=大太刀「」
 item.flammpfeil.slashblade.proudsoul.name=刀の魂片
+item.flammpfeil.slashblade.proudsoul.ingot.name=刀の魂塊
+item.flammpfeil.slashblade.proudsoul.sphere.name=刀の魂珠
 flammpfeil.swaepon.info.bewitched=妖
 flammpfeil.swaepon.info.magic=印
 flammpfeil.swaepon.info.noname=封
+item.flammpfeil.slashblade.wood.name=無銘刀「木偶」
+item.flammpfeil.slashblade.bamboo.name=無銘刀「竹光」
+item.flammpfeil.slashblade.silverbamboo.name=名刀「銀紙竹光」
+item.flammpfeil.slashblade.white.name=利刀「白鞘」
+item.flammpfeil.slashblade.yamato.name=魔剣「閻魔刀」

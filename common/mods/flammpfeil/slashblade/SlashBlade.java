@@ -5,6 +5,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.spi.RegisterableService;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -19,10 +21,15 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.ITickHandler;
@@ -38,18 +45,30 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(name="SlashBlade",modid="flammpfeil.slashblade",useMetadata=false,version="@VERSION@")
+@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,useMetadata=false,version="@VERSION@")
 @NetworkMod(clientSideRequired=true)
 public class SlashBlade implements IFuelHandler ,ITickHandler{
 
+	public static final String modname = "SlashBlade";
+	public static final String modid = "flammpfeil.slashblade";
 
-	public static Item weapon;
+	public static final String BrokenBladeWhiteStr = "BrokenBladeWhite";
+
+	public static ItemSlashBlade weapon;
+	public static ItemSlashBladeDetune bladeWood;
+	public static ItemSlashBladeDetune bladeBambooLight;
+	public static ItemSlashBladeDetune bladeSilverBambooLight;
+	public static ItemSlashBladeDetune bladeWhiteSheath;
+
 	public static Item proudSoul;
 
 	public static int itemid = 22802;
 	public static int itemid2 = 22803;
 
-	public static float offsetX,offsetY,offsetZ;
+	public static int itemidWood = 22804;
+	public static int itemidBamboo = 22805;
+	public static int itemidSilverBamboo = 22806;
+	public static int itemidWhite = 22807;
 
 	public static Map<String,Boolean> attackDisabled = new HashMap<String,Boolean>();
 
@@ -62,23 +81,37 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 		try{
 			mainConfiguration.load();
 
-			Property propShiftItemId;
-			propShiftItemId = mainConfiguration.getItem(Configuration.CATEGORY_ITEM, "BaseWeapon", itemid);
-			itemid= propShiftItemId.getInt();
+			{
+				Property propShiftItemId;
+				propShiftItemId = mainConfiguration.getItem(Configuration.CATEGORY_ITEM, "BaseWeapon", itemid);
+				itemid= propShiftItemId.getInt();
+			}
 
 			Property propShiftItemId2;
 			propShiftItemId2 = mainConfiguration.getItem(Configuration.CATEGORY_ITEM, "ProudSoul", itemid2);
 			itemid2= propShiftItemId2.getInt();
 
-			Property propOffsets;
-			propOffsets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "OffsetX", 0.0);
-			offsetX = (float)propOffsets.getDouble(0.0);
 
-			propOffsets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "OffsetY", 0.0);
-			offsetY = (float)propOffsets.getDouble(0.0);
-
-			propOffsets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "OffsetZ", 0.0);
-			offsetZ = (float)propOffsets.getDouble(0.0);
+			{
+				Property propShiftItemId;
+				propShiftItemId = mainConfiguration.getItem("BladeWood", itemidWood);
+				itemidWood = propShiftItemId.getInt();
+			}
+			{
+				Property propShiftItemId;
+				propShiftItemId = mainConfiguration.getItem("BladeBambooLight", itemidBamboo);
+				itemidBamboo = propShiftItemId.getInt();
+			}
+			{
+				Property propShiftItemId;
+				propShiftItemId = mainConfiguration.getItem("BladeSilverBambooLight", itemidSilverBamboo);
+				itemidSilverBamboo = propShiftItemId.getInt();
+			}
+			{
+				Property propShiftItemId;
+				propShiftItemId = mainConfiguration.getItem("BladeWhiteSheath", itemidWhite);
+				itemidWhite = propShiftItemId.getInt();
+			}
 
 		}
 		finally
@@ -86,44 +119,191 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 			mainConfiguration.save();
 		}
 	}
+	public static final String ProudSoulStr = "proudsoul";
+	public static final String IngotBladeSoulStr = "ingot_bladesoul";
+	public static final String SphereBladeSoulStr = "sphere_bladesoul";
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt){
 
-		weapon = (new ItemSlashBlade(itemid, EnumToolMaterial.IRON))
-				.setUnlocalizedName("flammpfeil.slashblade")
-				.setTextureName("flammpfeil.slashblade:blade")
-				.setCreativeTab(CreativeTabs.tabCombat);
-
-		GameRegistry.registerItem(weapon, "slashblade");
-
-		LanguageRegistry.instance().addName(weapon,"SlashBlade");
-		LanguageRegistry.instance().addNameForObject(weapon,"ja_JP","太刀");
-
 		proudSoul = (new ItemSWaeponMaterial(itemid2))
-				.setUnlocalizedName("flammpfeil.proudsoul")
+				.setUnlocalizedName("flammpfeil.slashblade.proudsoul")
 				.setTextureName("flammpfeil.slashblade:proudsoul")
 				.setCreativeTab(CreativeTabs.tabMaterials);
-
 		GameRegistry.registerItem(proudSoul,"proudsoul");
 
-		LanguageRegistry.instance().addName(proudSoul,"ProudSoul");
-		LanguageRegistry.instance().addNameForObject(proudSoul,"ja_JP","刀の魂片");
+		ItemStack itemProudSoul = new ItemStack(proudSoul,1,0);
+		itemProudSoul.setRepairCost(-10);
+		GameRegistry.registerCustomItemStack(ProudSoulStr , itemProudSoul);
+		ItemStack itemIngotBladeSoul = new ItemStack(proudSoul,1,1);
+		itemIngotBladeSoul.setRepairCost(-25);
+		GameRegistry.registerCustomItemStack(IngotBladeSoulStr , itemIngotBladeSoul);
+		ItemStack itemSphereBladeSoul = new ItemStack(proudSoul,1,2);
+		itemSphereBladeSoul.setRepairCost(-50);
+		GameRegistry.registerCustomItemStack(SphereBladeSoulStr , itemSphereBladeSoul);
+
+		weapon = (ItemSlashBlade)(new ItemSlashBlade(itemid, EnumToolMaterial.IRON, 4 + EnumToolMaterial.EMERALD.getDamageVsEntity()))
+				.setRepairMaterial(new ItemStack(Item.ingotIron))
+				.setRepairMaterialOreDic("ingotSteel","nuggetSteel")
+				.setUnlocalizedName("flammpfeil.slashblade")
+				.setTextureName("flammpfeil.slashblade:proudsoul")
+				.setCreativeTab(CreativeTabs.tabCombat);
+		GameRegistry.registerItem(weapon, "slashblade");
+
+		bladeWood = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(itemidWood, EnumToolMaterial.WOOD, 4 + EnumToolMaterial.WOOD.getDamageVsEntity()))
+				.setDestructable(true)
+				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/wood.png"))
+				.setRepairMaterialOreDic("logWood")
+				.setMaxDamage(60)
+				.setUnlocalizedName("flammpfeil.slashblade.wood")
+				.setTextureName("flammpfeil.slashblade:proudsoul")
+				.setCreativeTab(CreativeTabs.tabCombat);
+		GameRegistry.registerItem(bladeWood, "slashbladeWood");
+
+		bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(itemidBamboo, EnumToolMaterial.WOOD, 4 + EnumToolMaterial.STONE.getDamageVsEntity()))
+				.setDestructable(true)
+				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/banboo.png"))
+				.setRepairMaterialOreDic("bamboo")
+				.setMaxDamage(50)
+				.setUnlocalizedName("flammpfeil.slashblade.bamboo")
+				.setTextureName("flammpfeil.slashblade:proudsoul")
+				.setCreativeTab(CreativeTabs.tabCombat);
+		GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
+
+		bladeSilverBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(itemidSilverBamboo, EnumToolMaterial.WOOD, 4 + EnumToolMaterial.IRON.getDamageVsEntity()))
+				.setDestructable(true)
+				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/silverbanboo.png"))
+				.setRepairMaterialOreDic("bamboo")
+				.setMaxDamage(40)
+				.setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
+				.setTextureName("flammpfeil.slashblade:proudsoul")
+				.setCreativeTab(CreativeTabs.tabCombat);
+		GameRegistry.registerItem(bladeSilverBambooLight, "slashbladeSilverBambooLight");
 
 
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.bewitched", "bewitched");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.magic", "enchanted");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.noname", "sealed");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.bewitched","ja_JP", "妖");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.magic","ja_JP", "印");
-		LanguageRegistry.instance().addStringLocalization("flammpfeil.swaepon.info.noname","ja_JP", "封");
+		bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(itemidWhite, EnumToolMaterial.IRON, 4 + EnumToolMaterial.IRON.getDamageVsEntity()))
+				.setDestructable(false)
+				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/white.png"))
+				.setRepairMaterial(new ItemStack(Item.ingotIron))
+				.setRepairMaterialOreDic("ingotSteel","nuggetSteel")
+				.setMaxDamage(70)
+				.setUnlocalizedName("flammpfeil.slashblade.white")
+				.setTextureName("flammpfeil.slashblade:proudsoul")
+				.setCreativeTab(CreativeTabs.tabCombat);
+		GameRegistry.registerItem(bladeWhiteSheath, "slashbladeWhite");
 
-		GameRegistry.addRecipe(new ItemStack(weapon),new Object[]{"#I","#I","ZX",
-			'#',Block.blockLapis,
-			'I',Item.ingotIron,
-			'X',Item.swordIron});
 
-		GameRegistry.addRecipe(new ShapelessOreRecipe(Item.expBottle,Item.glassBottle,proudSoul));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWood),
+				"  #",
+				" # ",
+				"X  ",
+				'#',"logWood",
+				'X',new ItemStack(Item.swordWood,1,1)));
+
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeBambooLight),
+				"  #",
+				" # ",
+				"X  ",
+				'#',"bamboo",
+				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+				" TI",
+				"SXK",
+				"PS ",
+				'T', Item.egg,
+				'I', Item.ingotIron,
+				'S', Item.silk,
+				'X', new ItemStack(bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
+				'K', "dyeBlack",
+				'P', Item.paper //S
+				));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+				" TI",
+				"SXK",
+				"PS ",
+				'T', Item.egg,
+				'I', "dustSilver",
+				'S', Item.silk, 'X', new ItemStack(bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
+				'K', "dyeBlack",
+				'P', Item.paper
+				));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+				" TI",
+				"SXK",
+				"PS ",
+				'T', Item.egg,
+				'I', "ingotSilver",
+				'S', Item.silk, 'X', new ItemStack(bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
+				'K', "dyeBlack",
+				'P', Item.paper
+				));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 3),
+				"  #",
+				" # ",
+				"XG ",
+				'#', Item.ingotIron,
+				'G', Item.ingotGold,
+				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 4),
+				"  #",
+				" # ",
+				"XG ",
+				'#', "ingotSteel",
+				'G', Item.ingotGold,
+				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1),
+				"  #",
+				" # ",
+				"XG ",
+				'#', itemIngotBladeSoul,
+				'G', Item.ingotGold,
+				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+
+		ItemStack brokenBladeWhite = new ItemStack(bladeWhiteSheath,1,0);
+		brokenBladeWhite.setItemDamage(brokenBladeWhite.getMaxDamage());
+		brokenBladeWhite.setItemName("BrokenBladeWhite");
+		brokenBladeWhite.getTagCompound().setBoolean(ItemSlashBlade.isBrokenStr, true);
+		GameRegistry.registerCustomItemStack(BrokenBladeWhiteStr, brokenBladeWhite);
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(weapon),
+				" BI",
+				"L#C",
+				"SG ",
+				'L', Block.blockLapis,
+				'C', Block.coalBlock,
+				'I', itemSphereBladeSoul,
+				'B', Item.blazeRod,
+				'G', Item.ingotGold,
+				'S', Item.silk,
+				'#', brokenBladeWhite
+				));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
+				"PPP",
+				"PIP",
+				"PPP",
+				'I', Item.ingotIron,
+				'P', itemProudSoul));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
+				" P ",
+				"PIP",
+				" P ",
+				'I', "ingotSteel",
+				'P', itemProudSoul));
+
+        FurnaceRecipes.smelting().addSmelting(itemIngotBladeSoul.itemID, itemIngotBladeSoul.getItemDamage() , itemSphereBladeSoul, 2.0F);
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Item.expBottle),
+				"XXX",
+				"XIX",
+				"XXX",
+				'I',Item.glassBottle,
+				'X',new ItemStack(proudSoul,1,0)));
 
         GameRegistry.addRecipe(new RecipeAdjustPos());
 
@@ -134,7 +314,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 
 	@Override
 	public int getBurnTime(ItemStack fuel) {
-		return fuel.itemID == this.proudSoul.itemID ? 20000 : 0;
+		return (fuel.itemID == this.proudSoul.itemID && fuel.getItemDamage() == 0) ? 20000 : 0;
 	}
 
 

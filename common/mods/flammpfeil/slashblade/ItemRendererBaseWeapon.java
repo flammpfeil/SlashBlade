@@ -7,9 +7,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.EnumSet;
 import java.util.Stack;
 
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
+import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.Resource;
@@ -43,7 +45,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
     static IModelCustom modelBlade = null;
 
     static ResourceLocation resourceModel = new ResourceLocation("flammpfeil.slashblade","model/blade.obj");
-    static ResourceLocation resourceTexture = new ResourceLocation("flammpfeil.slashblade","model/blade.png");
 
     public ItemRendererBaseWeapon(){
 		modelLoader = new ObjModelLoader();
@@ -151,6 +152,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
         }
+
+        ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture();
 
         boolean isHandled = false;
 
@@ -283,11 +286,18 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			return;
 		ItemStack item = player.getCurrentEquippedItem();
 
-		if(item == null || item.getItem() != SlashBlade.weapon)
+		if(item == null || !(item.getItem() instanceof ItemSlashBlade))
 			return;
 
-		boolean isEnchanted = item.isItemEnchanted();
-		boolean isBewitched = item.hasDisplayName() && isEnchanted;
+
+		ItemSlashBlade iSlashBlade = ((ItemSlashBlade)item.getItem());
+
+        ResourceLocation resourceTexture = iSlashBlade.getModelTexture();
+
+		EnumSet<SwordType> swordType = iSlashBlade.getSwordType(item);
+
+		boolean isEnchanted = swordType.contains(SwordType.Enchanted);
+		boolean isBewitched = swordType.contains(SwordType.Bewitched);
 
 
 		int charge = player.getItemInUseDuration();
@@ -297,14 +307,13 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         float ay = 0;
         float az = 0;
 
-		boolean isBroken = false;
+		boolean isBroken = swordType.contains(SwordType.Broken);
+
 		ItemSlashBlade.ComboSequence combo = ComboSequence.None;
 		if(item.hasTagCompound()){
 			NBTTagCompound tag = item.getTagCompound();
 
-			isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
-
-			combo = ItemSlashBlade.getComboSequence(tag);
+			combo = iSlashBlade.getComboSequence(tag);
 
             ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
             ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
