@@ -24,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
@@ -306,6 +307,11 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'X',itemProudSoul));
 
         GameRegistry.addRecipe(new RecipeAdjustPos());
+        
+        RecipeInstantRepair recipeRepair = new RecipeInstantRepair();
+        GameRegistry.addRecipe(recipeRepair);
+        GameRegistry.registerCraftingHandler(recipeRepair);
+        
 
 		GameRegistry.registerFuelHandler(this);
 

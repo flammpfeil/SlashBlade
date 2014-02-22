@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -112,6 +113,9 @@ public class ItemSlashBlade extends ItemSword {
 	public static final String killCountStr = "killCount";
 	public static final String proudSoulStr = "ProudSoul";
     public static final String TargetEntityStr = "TargetEntity";
+
+
+	public static int AnvilRepairBonus = 100;
 
 	public void setComboSequence(NBTTagCompound tag,ComboSequence comboSeq){
 		tag.setInteger(comboSeqStr, comboSeq.ordinal());
@@ -584,7 +588,16 @@ public class ItemSlashBlade extends ItemSword {
 
 			if(target != null){
 
-				damageItem(5, par1ItemStack, par3EntityPlayer);
+				int soul = tag.getInteger(proudSoulStr);
+
+				final int sdCost = 20;
+
+				if(sdCost <= soul){
+					soul -= sdCost;
+					tag.setInteger(proudSoulStr, soul);
+				}else{
+					damageItem(10, par1ItemStack, par3EntityPlayer);
+				}
 
 				//target.spawnExplosionParticle();
 	            par2World.spawnParticle("largeexplode",
@@ -792,9 +805,20 @@ public class ItemSlashBlade extends ItemSword {
 
 		updateAttackAmplifier(swordType, tag ,el, sitem);
 
+
 		{
 			int cost = sitem.getRepairCost();
 			if(cost != 0){
+				Map map = EnchantmentHelper.getEnchantments(sitem);
+
+				cost = map.size() + 1;
+				cost *= AnvilRepairBonus;
+
+				int soul = tag.getInteger(proudSoulStr);
+				soul = Math.min(soul + cost, 999999999);
+				if(soul <= 999999999)
+					tag.setInteger(proudSoulStr, soul);
+
 				sitem.setRepairCost(0);
 			}
 		}
@@ -811,19 +835,23 @@ public class ItemSlashBlade extends ItemSword {
         	int prevExp = tag.getInteger(prevExpStr);
 
         	int repair = nowExp - prevExp;
-        	if(repair < 0){
-        		repair = 0;
-        	}else if(10 < repair ){
-        		repair = 11;
+
+
+        	if(0 < curDamage && repair > 0 && swordType.containsAll(SwordType.BewitchedSoulEater)){
+            	if(repair < 0){
+            		repair = 0;
+            	}else if(10 < repair ){
+            		repair = 11;
+            	}
+        		sitem.setItemDamage(Math.max(0,curDamage-repair));
+
+        	}else{
+    			int soul = tag.getInteger(proudSoulStr);
+    			soul = Math.min(soul + repair, 999999999);
+    			if(soul <= 999999999)
+    				tag.setInteger(proudSoulStr, soul);
         	}
 
-			int soul = tag.getInteger(proudSoulStr);
-			soul = Math.min(soul + repair, 999999999);
-			if(soul <= 999999999)
-				tag.setInteger(proudSoulStr, soul);
-
-        	if(repair > 0 && swordType.containsAll(SwordType.BewitchedSoulEater))
-        		sitem.setItemDamage(Math.max(0,curDamage-repair));
 
     		tag.setInteger(prevExpStr, el.experienceTotal);
         }
