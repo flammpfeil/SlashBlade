@@ -48,7 +48,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
 	            			NBTTagCompound tag = target.getTagCompound();
 	            			int proudSoul = tag.getInteger(ItemSlashBlade.proudSoulStr);
 
-	            			if(0 < proudSoul){
+	            			if(RepairProudSoulCount < proudSoul){
 	            				hasBlade = true;
 	            			}
 	            		}
