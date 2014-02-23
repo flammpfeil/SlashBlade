@@ -823,7 +823,7 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
-        if(!par2World.isRemote && 0 < curDamage && par2World.getTotalWorldTime() % 20 == 0){
+        if(!par2World.isRemote && isCurrent && par2World.getTotalWorldTime() % 20 == 0){
         	int nowExp = el.experienceTotal;
 
         	final String prevExpStr = "prevExp";
@@ -837,19 +837,19 @@ public class ItemSlashBlade extends ItemSword {
         	int repair = nowExp - prevExp;
 
 
-        	if(0 < curDamage && repair > 0 && swordType.containsAll(SwordType.BewitchedSoulEater)){
-            	if(repair < 0){
-            		repair = 0;
-            	}else if(10 < repair ){
-            		repair = 11;
-            	}
-        		sitem.setItemDamage(Math.max(0,curDamage-repair));
+        	if(0 < repair){
+            	if(0 < curDamage && swordType.containsAll(SwordType.BewitchedSoulEater)){
+                	if(10 < repair ){
+                		repair = 11;
+                	}
+            		sitem.setItemDamage(Math.max(0,curDamage-repair));
 
-        	}else{
-    			int soul = tag.getInteger(proudSoulStr);
-    			soul = Math.min(soul + repair, 999999999);
-    			if(soul <= 999999999)
-    				tag.setInteger(proudSoulStr, soul);
+            	}else{
+        			int soul = tag.getInteger(proudSoulStr);
+        			soul = Math.min(soul + repair, 999999999);
+        			if(soul <= 999999999)
+        				tag.setInteger(proudSoulStr, soul);
+            	}
         	}
 
 
