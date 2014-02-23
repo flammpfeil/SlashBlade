@@ -84,7 +84,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
         		if(itemstack.hasTagCompound()){
         			NBTTagCompound tag = itemstack.getTagCompound();
         			int proudSoul = tag.getInteger(ItemSlashBlade.proudSoulStr);
-        			int repairPoints = proudSoul / 10;
+        			int repairPoints = proudSoul / RepairProudSoulCount;
 
         			if(0 < proudSoul){
         				int damage = itemstack.getItemDamage();
@@ -107,12 +107,20 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
 	@Override
 	public void onCrafting(EntityPlayer player, ItemStack item,
 			IInventory craftMatrix) {
+
 		NBTTagCompound tag = item.getTagCompound();
 		int repair = tag.getInteger(RepairCountStr);
 		tag.removeTag(RepairCountStr);
 
 		ItemStack stone = craftMatrix.getStackInSlot(1);
-		stone.stackSize -= repair;
+		if(stone.stackSize < repair){
+			int overDamage = repair - stone.stackSize;
+			item.setItemDamage(item.getItemDamage()+overDamage);
+			stone.stackSize = 0;
+		}else{
+			stone.stackSize -= repair;
+		}
+
 	}
 
 	@Override
