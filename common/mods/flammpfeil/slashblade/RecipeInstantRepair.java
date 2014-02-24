@@ -108,17 +108,38 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
 	public void onCrafting(EntityPlayer player, ItemStack item,
 			IInventory craftMatrix) {
 
-		NBTTagCompound tag = item.getTagCompound();
-		int repair = tag.getInteger(RepairCountStr);
-		tag.removeTag(RepairCountStr);
+		if(item != null){
+	        if(item.getItem().itemID == SlashBlade.weapon.itemID
+	    		|| item.getItem().itemID == SlashBlade.bladeWood.itemID
+	    		|| item.getItem().itemID == SlashBlade.bladeBambooLight.itemID
+	    		|| item.getItem().itemID == SlashBlade.bladeSilverBambooLight.itemID
+	    		|| item.getItem().itemID == SlashBlade.bladeWhiteSheath.itemID
+	    		){
 
-		ItemStack stone = craftMatrix.getStackInSlot(1);
-		if(stone.stackSize < repair){
-			int overDamage = repair - stone.stackSize;
-			item.setItemDamage(item.getItemDamage()+overDamage);
-			stone.stackSize = 0;
-		}else{
-			stone.stackSize -= repair;
+	        	if(item.hasTagCompound()){
+
+	        		NBTTagCompound tag = item.getTagCompound();
+	        		if(tag.hasKey(RepairCountStr)){
+	            		int repair = tag.getInteger(RepairCountStr);
+	            		tag.removeTag(RepairCountStr);
+
+	            		try{
+		            		ItemStack stone = craftMatrix.getStackInSlot(1);
+		            		if(stone != null && stone.itemID == Block.cobblestone.blockID){
+		                		if(stone.stackSize < repair){
+		                			int overDamage = repair - stone.stackSize;
+		                			item.setItemDamage(item.getItemDamage()+overDamage);
+		                			stone.stackSize = 0;
+		                		}else{
+		                			stone.stackSize -= repair;
+		                		}
+		            		}
+	            		}catch(Throwable e){
+
+	            		}
+	        		}
+	        	}
+	        }
 		}
 
 	}
