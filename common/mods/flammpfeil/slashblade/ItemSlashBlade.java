@@ -299,7 +299,11 @@ public class ItemSlashBlade extends ItemSword {
 				if(!(0 < knockbackFactor))
 					knockbackFactor = 1.5f;
 
+				par2EntityLivingBase.motionX = 0;
+				par2EntityLivingBase.motionY = 0;
+				par2EntityLivingBase.motionZ = 0;
 				par2EntityLivingBase.addVelocity((double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
+
 			}
 
 			break;
@@ -327,12 +331,13 @@ public class ItemSlashBlade extends ItemSword {
 			break;
 
         case SlashDim:
-			par2EntityLivingBase.addVelocity(0, 0.1D, 0);
 
 			int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, par1ItemStack);
 			if(0 < level){
-    			par2EntityLivingBase.motionX = -par2EntityLivingBase.motionX * (double)level;
-    			par2EntityLivingBase.motionZ = -par2EntityLivingBase.motionZ * (double)level;
+    			par2EntityLivingBase.addVelocity(
+    					(double)(MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)level * 0.5F),
+    					0.2D,
+    					(double)(-MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)level * 0.5F));
         	}
 
 			setDaunting(par2EntityLivingBase);
@@ -604,6 +609,7 @@ public class ItemSlashBlade extends ItemSword {
                         break;
                 }
 
+			setComboSequence(tag,ComboSequence.SlashDim);
 			if(target != null){
 
 				int soul = tag.getInteger(proudSoulStr);
@@ -659,7 +665,6 @@ public class ItemSlashBlade extends ItemSword {
 				tag.setBoolean(onClickStr, false);
 
 			}
-			setComboSequence(tag,ComboSequence.SlashDim);
     		tag.setLong(lastActionTimeStr, par3EntityPlayer.worldObj.getTotalWorldTime());
 
 
