@@ -1657,6 +1657,7 @@ public class ItemSlashBlade extends ItemSword {
     		item.addEnchantment(Enchantment.thorns, 1);
     		item.addEnchantment(Enchantment.featherFalling, 4);
     		item.addEnchantment(Enchantment.power, 5);
+    		item.addEnchantment(Enchantment.punch, 2);
     		NBTTagCompound tag = getItemTagCompound(item);
 			tag.setInteger(killCountStr, 1000);
 			tag.setInteger(proudSoulStr, 1000);
