@@ -42,6 +42,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -307,11 +308,11 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'X',itemProudSoul));
 
         GameRegistry.addRecipe(new RecipeAdjustPos());
-        
+
         RecipeInstantRepair recipeRepair = new RecipeInstantRepair();
         GameRegistry.addRecipe(recipeRepair);
         GameRegistry.registerCraftingHandler(recipeRepair);
-        
+
 
 		GameRegistry.registerFuelHandler(this);
 
@@ -409,7 +410,10 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 
 						boolean destructable = false;
 
-						if(instance instanceof IProjectile || instance instanceof EntityTNTPrimed || instance instanceof EntityFireball){
+						if(instance instanceof IProjectile
+								|| instance instanceof EntityTNTPrimed
+								|| instance instanceof EntityFireball
+								|| instance instanceof IThrowableEntity){
 							//allways destruction
 						}else{
 							destructableTargets.put(cls.getSimpleName(), destructable);
