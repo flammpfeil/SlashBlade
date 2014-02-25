@@ -61,7 +61,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
     }
 
     public static final String RepairCountStr = "RepairCount";
-    public static int RepairProudSoulCount = 20;
+    public static int RepairProudSoulCount = 10;
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting cInv)

@@ -221,7 +221,7 @@ public class ItemSlashBlade extends ItemSword {
 						proudSouls = (proudSouls/3) * 2;
 					}else{
 						count = proudSouls / 100;
-						proudSouls = proudSouls % 300;
+						proudSouls = proudSouls % 100;
 					}
 
 					proudSouls = Math.max(0,Math.min(999999999, proudSouls));
