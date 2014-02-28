@@ -22,7 +22,7 @@ public class Transformer implements IClassTransformer , Opcodes
             	System.out.println("start transform SlashBlade > RenderPlayer");
                 ClassReader classReader = new ClassReader(bytes);
                 ClassWriter classWriter = new ClassWriter(1);
-                classReader.accept(new RenderPlayerVisitor(targetClassName,classWriter), 8);
+                classReader.accept(new RenderPlayerVisitor(name,classWriter), 8);
                 return classWriter.toByteArray();
             }
         }
@@ -44,7 +44,7 @@ public class Transformer implements IClassTransformer , Opcodes
     	}
 
     	static final String targetMethodName = "func_77029_c"; //renderEquippedItems
-    	static final String targetMethodDesc = "(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V";
+    	static final String targetMethodDesc = "(Lnet/minecraft/client/entity/EntityLivingBase;F)V";
 
     	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
     	{
@@ -54,11 +54,13 @@ public class Transformer implements IClassTransformer , Opcodes
     		{
     			MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
 
-    			//mv.visitCode();
+    			mv.visitCode();
 
     			mv.visitVarInsn(ALOAD, 1);
     			mv.visitVarInsn(ALOAD, 2);
-    			mv.visitMethodInsn(INVOKESTATIC, "mods/flammpfeil/slashblade/ItemRendererBaseWeapon", "render", "(Lnet/minecraft/entity/player/EntityPlayer;F)V");
+    			mv.visitMethodInsn(INVOKESTATIC, "mods/flammpfeil/slashblade/ItemRendererBaseWeapon", "render", "(Lnet/minecraft/entity/EntityLivingBase;F)V");
+
+                mv.visitEnd();
 
     			return mv;
     		}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import cpw.mods.fml.common.registry.IThrowableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -92,7 +93,10 @@ public class ConfigEntityListManager {
 
 						boolean destructable = false;
 
-						if(instance instanceof IProjectile || instance instanceof EntityTNTPrimed || instance instanceof EntityFireball){
+						if(instance instanceof IProjectile
+								|| instance instanceof EntityTNTPrimed
+								|| instance instanceof EntityFireball
+								|| instance instanceof IThrowableEntity){
 							//allways destruction
 						}else{
 							destructableTargets.put(cls.getSimpleName(), destructable);

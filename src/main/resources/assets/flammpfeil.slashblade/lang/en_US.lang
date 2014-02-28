@@ -1,5 +1,12 @@
-item.flammpfeil.slashblade.name=SlashBlade
+item.flammpfeil.slashblade.name=SlashBlade--
 item.flammpfeil.slashblade.proudsoul.name=ProudSoul
+item.flammpfeil.slashblade.proudsoul.ingot.name=BladeSoulIngot
+item.flammpfeil.slashblade.proudsoul.sphere.name=BladeSoulSphere
 flammpfeil.swaepon.info.bewitched=bewitched
 flammpfeil.swaepon.info.magic=enchanted
 flammpfeil.swaepon.info.noname=sealed
+item.flammpfeil.slashblade.wood.name=Unsigned-Wood-
+item.flammpfeil.slashblade.bamboo.name=Unsigned-BambooLight-
+item.flammpfeil.slashblade.silverbamboo.name=Noted-SilverBambooLight-
+item.flammpfeil.slashblade.white.name=Sharpness-White-
+item.flammpfeil.slashblade.yamato.name=YAMATOOo!
