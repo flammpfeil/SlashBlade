@@ -43,8 +43,8 @@ public class Transformer implements IClassTransformer , Opcodes
     		this.owner = owner;
     	}
 
-    	static final String targetMethodName = "func_76986_a"; //doRender
-    	static final String targetMethodDesc = "(Lnet/minecraft/client/entity/AbstractClientPlayer;DDDFF)V";
+    	static final String targetMethodName = "func_77029_c"; //renderEquippedItems
+    	static final String targetMethodDesc = "(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V";
 
     	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
     	{
@@ -57,7 +57,7 @@ public class Transformer implements IClassTransformer , Opcodes
     			//mv.visitCode();
 
     			mv.visitVarInsn(ALOAD, 1);
-    			mv.visitVarInsn(ALOAD, 9);
+    			mv.visitVarInsn(ALOAD, 2);
     			mv.visitMethodInsn(INVOKESTATIC, "mods/flammpfeil/slashblade/ItemRendererBaseWeapon", "render", "(Lnet/minecraft/entity/player/EntityPlayer;F)V");
 
     			return mv;
