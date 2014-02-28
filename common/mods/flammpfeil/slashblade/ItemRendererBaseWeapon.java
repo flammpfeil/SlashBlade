@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.Resource;
 import net.minecraft.client.resources.ResourceManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -280,10 +281,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         return par1 + par3 * f3;
     }
 
-	static public void render(EntityPlayer player,float partialRenderTick)
+	static public void render(EntityLivingBase entity,float partialRenderTick)
 	{
-		if(player == null)
+        if(entity == null || !(entity instanceof EntityPlayer))
 			return;
+        EntityPlayer player = (EntityPlayer)entity;
 		ItemStack item = player.getCurrentEquippedItem();
 
 		if(item == null || !(item.getItem() instanceof ItemSlashBlade))
@@ -355,22 +357,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
         String renderTarget;
 
-		GL11.glPushMatrix();{
-	        float f1 = interpolateRotation(player.prevRenderYawOffset, player.renderYawOffset, partialRenderTick);
-
-	        //体の向き補正
-	        GL11.glRotatef(f1, 0.0F, -1.0F, 0.0F);
-
-	        //上下反転補正
-	        GL11.glRotatef(180, 1.0F, 0.0F, 0.0F);
-
-
+		GL11.glPushMatrix();
+        {
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
 			//体格補正 configより
-			GL11.glTranslatef(ax,ay,az);
+            GL11.glTranslatef(ax,ay,az);
 
 			//腰位置へ
-			GL11.glTranslatef(0.22f,0.6f,-0.3f);
+			GL11.glTranslatef(0.25f,0.4f,-0.5f);
 
 
 			{
@@ -462,7 +457,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTarget = "blade";
 
 
-            GL11.glTranslatef(0,-3,0);
             float scaleLocal = 0.095f;
             GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
@@ -542,8 +536,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 				GL11.glPushMatrix();
 
-            float offsetLocal = -3.0f;
-            GL11.glTranslatef(0,offsetLocal,0);
             float scaleLocal = 0.095f;
             GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
@@ -601,8 +593,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 
                             GL11.glPushMatrix();
-
-                                GL11.glTranslatef(0,offsetLocal,0);
                                 GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
                                 GL11.glRotatef(-90.0f, 0, 0, 1);
                                 modelBlade.renderPart("sheath");
@@ -630,8 +620,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                         //GL11.glTranslatef(-1f, 0.0f, -0.5f);
 
                         GL11.glPushMatrix();
-
-                            GL11.glTranslatef(0,offsetLocal,0);
                             GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
                             GL11.glRotatef(-90.0f,0,0,1);
                             modelBlade.renderPart("effect");

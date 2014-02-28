@@ -470,10 +470,8 @@ public class ItemSlashBlade extends ItemSword {
 				player.addVelocity(0.0, 0.3D,0.0);
 
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
-                if(0 < level){
-	                player.fallDistance *= Math.max(0,(4.0-level)/4.0);
-                }
+                int level = 1 + EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+                player.fallDistance *= Math.max(0,(4.5-level)/5.0);
 			}
 			break;
 
@@ -485,10 +483,9 @@ public class ItemSlashBlade extends ItemSword {
 					tag.setBoolean(onJumpAttackedStr, true);
 
 
-	                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
-	                if(0 < level){
-		                player.fallDistance *= Math.max(0,(4.0-level)/4.0);
-	                }
+	                int level = 1 + EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+	                player.fallDistance *= Math.max(0,(4.5-level)/5.0);
+	                
 				}
 			}
 

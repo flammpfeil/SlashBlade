@@ -47,7 +47,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,useMetadata=false,version="@VERSION@")
+@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="@VERSION@")
 @NetworkMod(clientSideRequired=true)
 public class SlashBlade implements IFuelHandler ,ITickHandler{
 
