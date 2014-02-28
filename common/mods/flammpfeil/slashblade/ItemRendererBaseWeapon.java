@@ -257,7 +257,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 
 	@ForgeSubscribe
-	public void RenderPlayerEventPre(RenderPlayerEvent.Pre event){
+	public void RenderPlayerEventPre(RenderPlayerEvent.Specials.Pre event){
 		float partialRenderTick = event.partialRenderTick;
 		EntityPlayer player = event.entityPlayer;
 		render(player,partialRenderTick);
