@@ -14,6 +14,7 @@ import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -22,7 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r4")
+@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r5.1")
 public class SlashBlade implements IFuelHandler{
 
 
@@ -30,8 +31,6 @@ public class SlashBlade implements IFuelHandler{
 	public static final String modid = "flammpfeil.slashblade";
 
 	public static final String BrokenBladeWhiteStr = "BrokenBladeWhite";
-
-    public static Set<Item> blades = new HashSet<Item>();
 
 	public static ItemSlashBlade weapon;
 	public static ItemSlashBladeDetune bladeWood;
@@ -53,12 +52,19 @@ public class SlashBlade implements IFuelHandler{
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
 	public static final String SphereBladeSoulStr = "sphere_bladesoul";
 
+    public static boolean useDetuneBlades = true;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
 		mainConfiguration = new Configuration(evt.getSuggestedConfigurationFile());
 
 		try{
 			mainConfiguration.load();
+            {
+                Property prop;
+                prop = mainConfiguration.get(Configuration.CATEGORY_GENERAL,"useDettuneBlades",useDetuneBlades);
+                useDetuneBlades = prop.getBoolean(useDetuneBlades);
+            }
 /*
 			Property propOffsets;
 			propOffsets = mainConfiguration.get(Configuration.CATEGORY_GENERAL, "OffsetX", 0.0);
@@ -101,155 +107,174 @@ public class SlashBlade implements IFuelHandler{
 
 		GameRegistry.registerItem(weapon, "slashblade");
 
-		bladeWood = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.WOOD.getDamageVsEntity()))
-				.setDestructable(true)
-				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/wood.png"))
-				.setRepairMaterialOreDic("logWood")
-				.setMaxDamage(60)
-				.setUnlocalizedName("flammpfeil.slashblade.wood")
-				.setTextureName("flammpfeil.slashblade:proudsoul")
-				.setCreativeTab(CreativeTabs.tabCombat);
-		GameRegistry.registerItem(bladeWood, "slashbladeWood");
+        if(useDetuneBlades){
 
-		bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
-				.setDestructable(true)
-				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/banboo.png"))
-				.setRepairMaterialOreDic("bamboo")
-				.setMaxDamage(50)
-				.setUnlocalizedName("flammpfeil.slashblade.bamboo")
-				.setTextureName("flammpfeil.slashblade:proudsoul")
-				.setCreativeTab(CreativeTabs.tabCombat);
-		GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
+            bladeWood = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.WOOD.getDamageVsEntity()))
+                    .setDestructable(true)
+                    .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/wood.png"))
+                    .setRepairMaterialOreDic("logWood")
+                    .setMaxDamage(60)
+                    .setUnlocalizedName("flammpfeil.slashblade.wood")
+                    .setTextureName("flammpfeil.slashblade:proudsoul")
+                    .setCreativeTab(CreativeTabs.tabCombat);
+            GameRegistry.registerItem(bladeWood, "slashbladeWood");
 
-		bladeSilverBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
-				.setDestructable(true)
-				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/silverbanboo.png"))
-				.setRepairMaterialOreDic("bamboo")
-				.setMaxDamage(40)
-				.setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
-				.setTextureName("flammpfeil.slashblade:proudsoul")
-				.setCreativeTab(CreativeTabs.tabCombat);
-		GameRegistry.registerItem(bladeSilverBambooLight, "slashbladeSilverBambooLight");
+            bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
+                    .setDestructable(true)
+                    .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/banboo.png"))
+                    .setRepairMaterialOreDic("bamboo")
+                    .setMaxDamage(50)
+                    .setUnlocalizedName("flammpfeil.slashblade.bamboo")
+                    .setTextureName("flammpfeil.slashblade:proudsoul")
+                    .setCreativeTab(CreativeTabs.tabCombat);
+            GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
 
-		bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
-				.setDestructable(false)
-				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/white.png"))
-				.setRepairMaterial(new ItemStack(Items.iron_ingot))
-				.setRepairMaterialOreDic("ingotSteel","nuggetSteel")
-				.setMaxDamage(70)
-				.setUnlocalizedName("flammpfeil.slashblade.white")
-				.setTextureName("flammpfeil.slashblade:proudsoul")
-				.setCreativeTab(CreativeTabs.tabCombat);
-		GameRegistry.registerItem(bladeWhiteSheath, "slashbladeWhite");
+            bladeSilverBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
+                    .setDestructable(true)
+                    .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/silverbanboo.png"))
+                    .setRepairMaterialOreDic("bamboo")
+                    .setMaxDamage(40)
+                    .setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
+                    .setTextureName("flammpfeil.slashblade:proudsoul")
+                    .setCreativeTab(CreativeTabs.tabCombat);
+            GameRegistry.registerItem(bladeSilverBambooLight, "slashbladeSilverBambooLight");
 
-        blades.add(weapon);
-        blades.add(bladeWood);
-        blades.add(bladeBambooLight);
-        blades.add(bladeSilverBambooLight);
-        blades.add(bladeWhiteSheath);
+            bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
+                    .setDestructable(false)
+                    .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/white.png"))
+                    .setRepairMaterial(new ItemStack(Items.iron_ingot))
+                    .setRepairMaterialOreDic("ingotSteel","nuggetSteel")
+                    .setMaxDamage(70)
+                    .setUnlocalizedName("flammpfeil.slashblade.white")
+                    .setTextureName("flammpfeil.slashblade:proudsoul")
+                    .setCreativeTab(CreativeTabs.tabCombat);
+            GameRegistry.registerItem(bladeWhiteSheath, "slashbladeWhite");
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWood),
-                "  #",
-                " # ",
-                "X  ",
-                '#', "logWood",
-                'X', new ItemStack(Items.wooden_sword, 1, 1)));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWood),
+                    "  #",
+                    " # ",
+                    "X  ",
+                    '#', "logWood",
+                    'X', new ItemStack(Items.wooden_sword, 1, 1)));
 
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeBambooLight),
-				"  #",
-				" # ",
-				"X  ",
-				'#',"bamboo",
-				'X', new ItemStack(bladeWood,1, OreDictionary.WILDCARD_VALUE)));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeBambooLight),
+                    "  #",
+                    " # ",
+                    "X  ",
+                    '#',"bamboo",
+                    'X', new ItemStack(bladeWood,1, OreDictionary.WILDCARD_VALUE)));
 
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
-				" TI",
-				"SXK",
-				"PS ",
-				'T', Items.egg,
-				'I', Items.iron_ingot,
-				'S', Items.string,
-				'X', new ItemStack(bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
-				'K', "dyeBlack",
-				'P', Items.paper //S
-				));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
-				" TI",
-				"SXK",
-				"PS ",
-				'T', Items.egg,
-				'I', "ingotSilver",
-				'S', Items.string,
-                'X', new ItemStack(bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
-				'K', "dyeBlack",
-				'P', Items.paper
-				));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+                    " TI",
+                    "SXK",
+                    "PS ",
+                    'T', Items.egg,
+                    'I', Items.iron_ingot,
+                    'S', Items.string,
+                    'X', new ItemStack(bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
+                    'K', "dyeBlack",
+                    'P', Items.paper //S
+                    ));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+                    " TI",
+                    "SXK",
+                    "PS ",
+                    'T', Items.egg,
+                    'I', "ingotSilver",
+                    'S', Items.string,
+                    'X', new ItemStack(bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
+                    'K', "dyeBlack",
+                    'P', Items.paper
+                    ));
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 3),
-				"  #",
-				" # ",
-				"XG ",
-				'#', Items.iron_ingot,
-				'G', Items.gold_ingot,
-				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 4),
-				"  #",
-				" # ",
-				"XG ",
-				'#', "ingotSteel",
-				'G', Items.gold_ingot,
-				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1),
-				"  #",
-				" # ",
-				"XG ",
-				'#', itemIngotBladeSoul,
-				'G', Items.gold_ingot,
-				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 3),
+                    "  #",
+                    " # ",
+                    "XG ",
+                    '#', Items.iron_ingot,
+                    'G', Items.gold_ingot,
+                    'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 4),
+                    "  #",
+                    " # ",
+                    "XG ",
+                    '#', "ingotSteel",
+                    'G', Items.gold_ingot,
+                    'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1),
+                    "  #",
+                    " # ",
+                    "XG ",
+                    '#', itemIngotBladeSoul,
+                    'G', Items.gold_ingot,
+                    'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
 
-		ItemStack brokenBladeWhite = new ItemStack(bladeWhiteSheath,1,0);
-		brokenBladeWhite.setItemDamage(brokenBladeWhite.getMaxDamage());
-		brokenBladeWhite.setStackDisplayName("BrokenBladeWhite");
-		brokenBladeWhite.getTagCompound().setBoolean(ItemSlashBlade.isBrokenStr, true);
-		GameRegistry.registerCustomItemStack(BrokenBladeWhiteStr, brokenBladeWhite);
+            ItemStack brokenBladeWhite = new ItemStack(bladeWhiteSheath,1,0);
+            brokenBladeWhite.setItemDamage(brokenBladeWhite.getMaxDamage());
+            brokenBladeWhite.setStackDisplayName("BrokenBladeWhite");
+            brokenBladeWhite.getTagCompound().setBoolean(ItemSlashBlade.isBrokenStr, true);
+            GameRegistry.registerCustomItemStack(BrokenBladeWhiteStr, brokenBladeWhite);
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(weapon),
-				" BI",
-				"L#C",
-				"SG ",
-				'L', Blocks.lapis_block,
-				'C', Blocks.coal_block,
-				'I', itemSphereBladeSoul,
-				'B', Items.blaze_rod,
-				'G', Items.gold_ingot,
-				'S', Items.string,
-				'#', brokenBladeWhite
-				));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(weapon),
+                    " BI",
+                    "L#C",
+                    "SG ",
+                    'L', Blocks.lapis_block,
+                    'C', Blocks.coal_block,
+                    'I', itemSphereBladeSoul,
+                    'B', Items.blaze_rod,
+                    'G', Items.gold_ingot,
+                    'S', Items.string,
+                    '#', brokenBladeWhite
+                    ));
+        }else{
+            ItemStack damagedIronSword = new ItemStack(Items.iron_sword);
+            damagedIronSword.setItemDamage(damagedIronSword.getMaxDamage()-1);
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
-				"PPP",
-				"PIP",
-				"PPP",
-				'I', Items.iron_ingot,
-				'P', itemProudSoul));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(weapon),
+                    " BI",
+                    "L#C",
+                    "SG ",
+                    'L', Blocks.lapis_block,
+                    'C', Blocks.coal_block,
+                    'I', "logWood",
+                    'B', Items.blaze_rod,
+                    'G', Items.gold_ingot,
+                    'S', Items.string,
+                    '#', damagedIronSword
+                ));
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
-				" P ",
-				"PIP",
-				" P ",
-				'I', "ingotSteel",
-				'P', itemProudSoul));
+            ItemStack brokenBladeWhite = new ItemStack(weapon,1,0);
+            brokenBladeWhite.setItemDamage(brokenBladeWhite.getMaxDamage());
+            brokenBladeWhite.setStackDisplayName("BrokenBlade");
+            brokenBladeWhite.getTagCompound().setBoolean(ItemSlashBlade.isBrokenStr, true);
+            GameRegistry.registerCustomItemStack(BrokenBladeWhiteStr, brokenBladeWhite);
+        }
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
+                "PPP",
+                "PIP",
+                "PPP",
+                'I', Items.iron_ingot,
+                'P', itemProudSoul));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
+                " P ",
+                "PIP",
+                " P ",
+                'I', "ingotSteel",
+                'P', itemProudSoul));
 
         GameRegistry.addSmelting(itemIngotBladeSoul , itemSphereBladeSoul, 2.0F);
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.experience_bottle),
-				"XXX",
-				"XIX",
-				"XXX",
-				'I',Items.glass_bottle,
-				'X',itemProudSoul));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.experience_bottle),
+                "XXX",
+                "XIX",
+                "XXX",
+                'I',Items.glass_bottle,
+                'X',itemProudSoul));
 
         GameRegistry.addRecipe(new RecipeAdjustPos());
 

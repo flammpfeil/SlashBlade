@@ -60,13 +60,7 @@ public class RecipeAdjustPos extends ShapedRecipes
 
 
             ItemStack target = cInv.getStackInRowAndColumn(1, 1);
-            if(target != null &&
-            		(target.getItem() == SlashBlade.weapon
-            		|| target.getItem() == SlashBlade.bladeWood
-            		|| target.getItem() == SlashBlade.bladeBambooLight
-            		|| target.getItem() == SlashBlade.bladeSilverBambooLight
-            		|| target.getItem() == SlashBlade.bladeWhiteSheath
-            		) )
+            if(target != null && target.getItem() instanceof ItemSlashBlade)
                 itemstack = target;
 
 
@@ -100,13 +94,7 @@ public class RecipeAdjustPos extends ShapedRecipes
 
 
         ItemStack target = cInv.getStackInRowAndColumn(1, 1);
-        if(target != null &&
-        		(target.getItem() == SlashBlade.weapon
-        		|| target.getItem() == SlashBlade.bladeWood
-        		|| target.getItem() == SlashBlade.bladeBambooLight
-        		|| target.getItem() == SlashBlade.bladeSilverBambooLight
-        		|| target.getItem() == SlashBlade.bladeWhiteSheath
-        		))
+        if(target != null && target.getItem() instanceof ItemSlashBlade)
             itemstack = target;
 
         itemstack = itemstack.copy();

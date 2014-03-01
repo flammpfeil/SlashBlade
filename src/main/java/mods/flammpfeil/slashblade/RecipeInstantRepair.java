@@ -37,7 +37,7 @@ public class RecipeInstantRepair extends ShapedRecipes
         	if(hasGrindstone){
 
 	            ItemStack target = cInv.getStackInRowAndColumn(0, 1);
-	            if(target != null && SlashBlade.blades.contains(target.getItem())){
+	            if(target != null && target.getItem() instanceof ItemSlashBlade){
 
 	            	if(0 < target.getItemDamage()){
 	            		if(target.hasTagCompound()){
@@ -68,7 +68,7 @@ public class RecipeInstantRepair extends ShapedRecipes
 
         ItemStack itemstack = target.copy();
 
-        if(target != null && SlashBlade.blades.contains(target.getItem())){
+        if(target != null && target.getItem() instanceof ItemSlashBlade){
 
         	if(0 < itemstack.getItemDamage()){
         		if(itemstack.hasTagCompound()){
@@ -101,7 +101,7 @@ public class RecipeInstantRepair extends ShapedRecipes
 		IInventory craftMatrix = event.craftMatrix;
 
 		if(item != null){
-	        if(SlashBlade.blades.contains(item.getItem())){
+	        if(item.getItem() instanceof ItemSlashBlade){
 
 	        	if(item.hasTagCompound()){
 
