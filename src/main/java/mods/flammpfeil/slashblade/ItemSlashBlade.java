@@ -287,7 +287,10 @@ public class ItemSlashBlade extends ItemSword {
 				par2EntityLivingBase.motionX = 0;
 				par2EntityLivingBase.motionY = 0;
 				par2EntityLivingBase.motionZ = 0;
-				par2EntityLivingBase.addVelocity((double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
+				par2EntityLivingBase.addVelocity(
+                        (double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F),
+                        0.2D,
+                        (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
 			}
 
 			break;
@@ -1483,7 +1486,9 @@ public class ItemSlashBlade extends ItemSword {
 				if(!isDestruction)
 					continue;
 				else{
-					curEntity.setVelocity(0, 0, 0);
+					curEntity.motionX = 0;
+                    curEntity.motionY = 0;
+                    curEntity.motionZ = 0;
 					curEntity.setDead();
 
 			        for (int var1 = 0; var1 < 10; ++var1)
