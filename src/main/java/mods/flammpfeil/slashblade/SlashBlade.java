@@ -57,6 +57,7 @@ public class SlashBlade implements IFuelHandler{
 
     public static boolean useDetuneBlades = true;
     public static boolean useWrapBlades = true;
+    public static int scabbardRecipeLevel = 1;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
@@ -73,6 +74,11 @@ public class SlashBlade implements IFuelHandler{
                 Property prop;
                 prop = mainConfiguration.get(Configuration.CATEGORY_GENERAL,"useWrapBlades",useWrapBlades);
                 useWrapBlades = prop.getBoolean(useWrapBlades);
+            }
+            {
+                Property prop;
+                prop = mainConfiguration.get(Configuration.CATEGORY_GENERAL,"scabbardRecipeLevel",scabbardRecipeLevel,"value:0 or 1 , only work useWrapBlades:true");
+                scabbardRecipeLevel = prop.getInt();
             }
 /*
 			Property propOffsets;
@@ -272,12 +278,28 @@ public class SlashBlade implements IFuelHandler{
                     .setCreativeTab(CreativeTabs.tabCombat);
             GameRegistry.registerItem(wrapBlade, "slashbladeWrapper");
 
-            GameRegistry.addRecipe(new ShapedOreRecipe(wrapBlade,
-                    "##L",
-                    "#I#",
-                    "L##",
-                    'I', proudSoul,
-                    'L', "logWood"));
+            switch(scabbardRecipeLevel){
+                case 0:
+                    GameRegistry.addRecipe(new ShapedOreRecipe(wrapBlade,
+                            "##L",
+                            "#I#",
+                            "L##",
+                            'I', proudSoul,
+                            'L', "logWood"));
+                    break;
+                default:
+                    GameRegistry.addRecipe(new ShapedOreRecipe(wrapBlade,
+                            "RBL",
+                            "CIC",
+                            "LBR",
+                            'C', Blocks.coal_block,
+                            'R', Blocks.lapis_block,
+                            'B', Blocks.obsidian,
+                            'I', itemSphereBladeSoul,
+                            'L', "logWood"));
+                    break;
+            }
+
 
             GameRegistry.addRecipe(new RecipeWrapBlade());
         }
