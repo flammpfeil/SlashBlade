@@ -12,7 +12,8 @@ public class InitProxyClient extends InitProxy{
 		MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeWood, renderer);
 		MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeBambooLight, renderer);
 		MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeSilverBambooLight, renderer);
-		MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeWhiteSheath, renderer);
+        MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeWhiteSheath, renderer);
+        MinecraftForgeClient.registerItemRenderer(SlashBlade.wrapBlade, renderer);
 		MinecraftForge.EVENT_BUS.register(renderer);
 	}
 }

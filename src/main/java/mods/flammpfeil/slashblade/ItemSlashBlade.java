@@ -45,6 +45,29 @@ public class ItemSlashBlade extends ItemSword {
 		return texture;
 	}
 
+    static public Map<String,ResourceLocation> textureMap = new HashMap<String, ResourceLocation>();
+
+
+    final public static String TextureNameStr = "TextureName";
+
+    public ResourceLocation getModelTexture(ItemStack par1ItemStack){
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+        if(par1ItemStack.getItem() instanceof ItemSlashBladeWrapper && tag.hasKey(TextureNameStr)){
+            String textureName = tag.getString(TextureNameStr);
+            ResourceLocation loc;
+            if(!textureMap.containsKey(textureName))
+            {
+                loc = new ResourceLocation("flammpfeil.slashblade","model/" + textureName + ".png");
+                textureMap.put(textureName,loc);
+            }else{
+                loc = textureMap.get(textureName);
+            }
+            return loc;
+        }
+        return ((ItemSlashBlade)par1ItemStack.getItem()).getModelTexture();
+    }
+
+
     @Override
     public EnumAction getItemUseAction(ItemStack par1ItemStack) {
         return EnumAction.none;
@@ -658,7 +681,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	}
 
-    private NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier)
+    public NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier)
     {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         nbttagcompound.setString("AttributeName",attrName);
@@ -974,6 +997,9 @@ public class ItemSlashBlade extends ItemSword {
 			                }
 
 							break;
+
+                        case None:
+                            break;
 
 						default:
 							((EntityPlayer)el).attackTargetEntityWithCurrentItem(curEntity);

@@ -3,7 +3,10 @@ package mods.flammpfeil.slashblade;
 import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -73,7 +76,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
         }
 
-        ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture();
+        ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture(item);
 
         boolean isHandled = false;
 
@@ -108,6 +111,19 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         }
 
         if(isHandled){
+
+
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+            GL11.glEnable(GL11.GL_BLEND);
+            OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+            GL11.glDisable(GL11.GL_CULL_FACE);
+
+            GL11.glColor4f(1, 1, 1, 1.0F);
+
+            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+
             engine().bindTexture(resourceTexture);
 
             String renderTarget;
@@ -117,6 +133,13 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTarget = "item_blade";
 
             modelBlade.renderPart(renderTarget);
+
+            GL11.glDisable(GL11.GL_ALPHA_TEST);
+            GL11.glEnable(GL11.GL_LIGHTING);
+
+            GL11.glEnable(GL11.GL_CULL_FACE);
+
+            GL11.glPopAttrib();
 
             if (item.hasEffect(0))
             {
@@ -150,6 +173,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glDepthFunc(GL11.GL_LEQUAL);
                 GL11.glPopAttrib();
             }
+
         }
         else
         {
@@ -169,7 +193,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
         GL11.glPushMatrix();
 
-        renderItemLocal(type,item,data);
+        renderItemLocal(type, item, data);
 
         GL11.glPopMatrix();
 	}
@@ -215,7 +239,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		ItemSlashBlade iSlashBlade = ((ItemSlashBlade)item.getItem());
 
-        ResourceLocation resourceTexture = iSlashBlade.getModelTexture();
+        ResourceLocation resourceTexture = iSlashBlade.getModelTexture(item);
 
 		EnumSet<SwordType> swordType = iSlashBlade.getSwordType(item);
 

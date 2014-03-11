@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r5.1")
+@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r6")
 public class SlashBlade implements IFuelHandler{
 
 
@@ -37,6 +37,9 @@ public class SlashBlade implements IFuelHandler{
 	public static ItemSlashBladeDetune bladeBambooLight;
 	public static ItemSlashBladeDetune bladeSilverBambooLight;
 	public static ItemSlashBladeDetune bladeWhiteSheath;
+
+    public static ItemSlashBladeWrapper wrapBlade;
+
 	public static Item proudSoul;
 
 //	public static float offsetX,offsetY,offsetZ;
@@ -53,6 +56,7 @@ public class SlashBlade implements IFuelHandler{
 	public static final String SphereBladeSoulStr = "sphere_bladesoul";
 
     public static boolean useDetuneBlades = true;
+    public static boolean useWrapBlades = true;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
@@ -64,6 +68,11 @@ public class SlashBlade implements IFuelHandler{
                 Property prop;
                 prop = mainConfiguration.get(Configuration.CATEGORY_GENERAL,"useDettuneBlades",useDetuneBlades);
                 useDetuneBlades = prop.getBoolean(useDetuneBlades);
+            }
+            {
+                Property prop;
+                prop = mainConfiguration.get(Configuration.CATEGORY_GENERAL,"useWrapBlades",useWrapBlades);
+                useWrapBlades = prop.getBoolean(useWrapBlades);
             }
 /*
 			Property propOffsets;
@@ -251,6 +260,26 @@ public class SlashBlade implements IFuelHandler{
             brokenBladeWhite.setStackDisplayName("BrokenBlade");
             brokenBladeWhite.getTagCompound().setBoolean(ItemSlashBlade.isBrokenStr, true);
             GameRegistry.registerCustomItemStack(BrokenBladeWhiteStr, brokenBladeWhite);
+        }
+
+        if(useWrapBlades){
+            wrapBlade = (ItemSlashBladeWrapper)(new ItemSlashBladeWrapper(ToolMaterial.IRON))
+                    .setRepairMaterial(new ItemStack(Items.iron_ingot))
+                    .setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
+                    .setMaxDamage(40)
+                    .setUnlocalizedName("flammpfeil.slashblade.wrapper")
+                    .setTextureName("flammpfeil.slashblade:proudsoul")
+                    .setCreativeTab(CreativeTabs.tabCombat);
+            GameRegistry.registerItem(wrapBlade, "slashbladeWrapper");
+
+            GameRegistry.addRecipe(new ShapedOreRecipe(wrapBlade,
+                    "##L",
+                    "#I#",
+                    "L##",
+                    'I', proudSoul,
+                    'L', "logWood"));
+
+            GameRegistry.addRecipe(new RecipeWrapBlade());
         }
 
         GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
