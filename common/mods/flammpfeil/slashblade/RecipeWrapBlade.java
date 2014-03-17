@@ -1,0 +1,99 @@
+package mods.flammpfeil.slashblade;
+
+import com.google.common.collect.Maps;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
+
+import java.util.Map;
+
+/**
+ * Created by Furia on 14/03/11.
+ */
+public class RecipeWrapBlade extends ShapedRecipes {
+    ItemStack proudSoul;
+    private static Map<String,String> wrapableTextureNames = Maps.newHashMap();
+    private static Map<String,Float> wrapableBaseAttackModifiers = Maps.newHashMap();
+    public RecipeWrapBlade()
+    {
+        super(3, 3, new ItemStack[] {
+                null, null, GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1),
+                null, new ItemStack(SlashBlade.wrapBlade, 1, 0), null ,
+                new ItemStack(Item.swordWood), null, null }
+                , new ItemStack(SlashBlade.wrapBlade, 1, 0));
+
+        proudSoul = new ItemStack(SlashBlade.proudSoul,1,0);
+
+        RegisterWrapable("BambooMod:katana", "BambooKatana", 4.0f);
+        //RegisterWrapable("Minecraft:wood_sword", "BambooKatana", 4.0f);
+    }
+
+    static public void RegisterWrapable(String name,String texture,float attackModifier){
+        wrapableTextureNames.put(name, texture);
+        wrapableBaseAttackModifiers.put(name, attackModifier);
+    }
+
+
+    @Override
+    public boolean matches(InventoryCrafting cInv, World par2World)
+    {
+        {
+            ItemStack ps = cInv.getStackInRowAndColumn(2, 0);
+            boolean hasProudSuol = (ps != null && ps.isItemEqual(proudSoul));
+            ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
+            boolean hasScabbard = (sc != null && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc));
+
+            boolean hasTarget = false;
+
+            ItemStack target = cInv.getStackInRowAndColumn(0, 2);
+            if(target != null){
+            	UniqueIdentifier targetUI = GameRegistry.findUniqueIdentifierFor(target.getItem());
+    			//Item.itemRegistry.getNameForObject(target.getItem());
+            	if(targetUI != null){
+                	String targetName = String.format("%s:%s", targetUI.modId , targetUI.name);
+
+                    hasTarget = wrapableTextureNames.containsKey(targetName);
+            	}
+            }
+
+            return hasProudSuol && hasScabbard && hasTarget;
+        }
+    }
+
+    @Override
+    public ItemStack getCraftingResult(InventoryCrafting cInv)
+    {
+        ItemStack scabbard = cInv.getStackInRowAndColumn(1, 1);
+        if(scabbard == null) return null;
+        scabbard = scabbard.copy();
+
+        ItemStack target = cInv.getStackInRowAndColumn(0, 2);
+        if(target == null) return null;
+        target = target.copy();
+
+
+    	UniqueIdentifier targetUI = GameRegistry.findUniqueIdentifierFor(target.getItem());
+		String targetName = String.format("%s:%s", targetUI.modId , targetUI.name);
+
+
+        SlashBlade.wrapBlade.setWrapItem(scabbard,target);
+
+        scabbard.setItemName(String.format(StatCollector.translateToLocal("item.flammpfeil.slashblade.wrapformat").trim(),target.getDisplayName()));
+        NBTTagCompound tag = scabbard.getTagCompound();
+        tag.setString(ItemSlashBlade.TextureNameStr, wrapableTextureNames.get(targetName));
+        tag.setFloat(ItemSlashBladeWrapper.BaseAttackModifiersStr,wrapableBaseAttackModifiers.get(targetName));
+
+        if(target.isItemEnchanted()){
+            tag.setTag("ench",target.getTagCompound().getTag("ench"));
+        }
+
+        return scabbard;
+    }
+}

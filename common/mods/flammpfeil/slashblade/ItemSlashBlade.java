@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -29,6 +30,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -65,6 +67,33 @@ public class ItemSlashBlade extends ItemSword {
 		return texture;
 	}
 
+    static public Map<String,ResourceLocation> textureMap = new HashMap<String, ResourceLocation>();
+
+
+    final public static String TextureNameStr = "TextureName";
+
+    public ResourceLocation getModelTexture(ItemStack par1ItemStack){
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+        if(par1ItemStack.getItem() instanceof ItemSlashBladeWrapper && tag.hasKey(TextureNameStr)){
+            String textureName = tag.getString(TextureNameStr);
+            ResourceLocation loc;
+            if(!textureMap.containsKey(textureName))
+            {
+                loc = new ResourceLocation("flammpfeil.slashblade","model/" + textureName + ".png");
+                textureMap.put(textureName,loc);
+            }else{
+                loc = textureMap.get(textureName);
+            }
+            return loc;
+        }
+        return ((ItemSlashBlade)par1ItemStack.getItem()).getModelTexture();
+    }
+
+
+    @Override
+    public EnumAction getItemUseAction(ItemStack par1ItemStack) {
+        return EnumAction.none;
+    }
 
 	static final class EntitySelectorAttackable implements IEntitySelector
 	{
@@ -122,11 +151,11 @@ public class ItemSlashBlade extends ItemSword {
 
 	public static int AnvilRepairBonus = 100;
 
-	public void setComboSequence(NBTTagCompound tag,ComboSequence comboSeq){
+	public static void setComboSequence(NBTTagCompound tag,ComboSequence comboSeq){
 		tag.setInteger(comboSeqStr, comboSeq.ordinal());
 	}
 
-	public ComboSequence getComboSequence(NBTTagCompound tag){
+	public static ComboSequence getComboSequence(NBTTagCompound tag){
 		return ComboSequence.get(tag.getInteger(comboSeqStr));
 	}
 
@@ -215,7 +244,7 @@ public class ItemSlashBlade extends ItemSword {
 
 				if(!par3EntityLivingBase.worldObj.isRemote){
 					int proudSouls = tag.getInteger(proudSoulStr);
-					int count = 1;
+					int count = 0;
 					if(proudSouls > 1000){
 						count = (proudSouls / 3) / 100;
 						proudSouls = (proudSouls/3) * 2;
@@ -223,6 +252,7 @@ public class ItemSlashBlade extends ItemSword {
 						count = proudSouls / 100;
 						proudSouls = proudSouls % 100;
 					}
+					count++;
 
 					proudSouls = Math.max(0,Math.min(999999999, proudSouls));
 					tag.setInteger(proudSoulStr, proudSouls);
@@ -302,8 +332,10 @@ public class ItemSlashBlade extends ItemSword {
 				par2EntityLivingBase.motionX = 0;
 				par2EntityLivingBase.motionY = 0;
 				par2EntityLivingBase.motionZ = 0;
-				par2EntityLivingBase.addVelocity((double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F), 0.2D, (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
-
+				par2EntityLivingBase.addVelocity(
+                        (double)(-MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F),
+                        0.2D,
+                        (double)(MathHelper.cos(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)knockbackFactor * 0.5F));
 			}
 
 			break;
@@ -485,7 +517,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	                int level = 1 + EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
 	                player.fallDistance *= Math.max(0,(4.5-level)/5.0);
-	                
+
 				}
 			}
 
@@ -671,7 +703,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	}
 
-    private NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier)
+    public NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier)
     {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         nbttagcompound.setString("AttributeName",attrName);
@@ -946,7 +978,8 @@ public class ItemSlashBlade extends ItemSword {
 					comboSeq = getNextComboSeq(sitem, comboSeq, true, el);
 					setComboSequence(tag, comboSeq);
 
-					el.isSwingInProgress = true;
+                    if(el.worldObj.isRemote)
+					    el.isSwingInProgress = true;
 					onEntitySwing(el,sitem);
 
 					AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, el);
@@ -987,6 +1020,9 @@ public class ItemSlashBlade extends ItemSword {
 
 							break;
 
+                        case None:
+                            break;
+
 						default:
 							((EntityPlayer)el).attackTargetEntityWithCurrentItem(curEntity);
 							((EntityPlayer)el).onCriticalHit(curEntity);
@@ -1015,8 +1051,7 @@ public class ItemSlashBlade extends ItemSword {
 					case Noutou:
 						//※動かず納刀完了させ、敵に囲まれている場合にボーナス付与。
 
-						if(tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posY + el.posZ) * 10.0)
-							){
+						if(tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posY + el.posZ) * 10.0)){
 
 							AxisAlignedBB bb = el.boundingBox.copy();
 							bb = bb.expand(10, 5, 10);
@@ -1502,7 +1537,9 @@ public class ItemSlashBlade extends ItemSword {
 				if(!isDestruction)
 					continue;
 				else{
-					curEntity.setVelocity(0, 0, 0);
+					curEntity.motionX = 0;
+					curEntity.motionY = 0;
+					curEntity.motionZ = 0;
 					curEntity.setDead();
 
 			        for (int var1 = 0; var1 < 10; ++var1)

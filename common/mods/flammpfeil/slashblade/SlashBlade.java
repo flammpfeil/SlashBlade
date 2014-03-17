@@ -62,6 +62,8 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 	public static ItemSlashBladeDetune bladeSilverBambooLight;
 	public static ItemSlashBladeDetune bladeWhiteSheath;
 
+    public static ItemSlashBladeWrapper wrapBlade;
+
 	public static Item proudSoul;
 
 	public static int itemid = 22802;
@@ -72,10 +74,15 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 	public static int itemidSilverBamboo = 22806;
 	public static int itemidWhite = 22807;
 
+	public static int itemidWrap = 22808;
+
 	public static Map<String,Boolean> attackDisabled = new HashMap<String,Boolean>();
 
 	public static Configuration mainConfiguration;
 
+	public static final String ProudSoulStr = "proudsoul";
+	public static final String IngotBladeSoulStr = "ingot_bladesoul";
+	public static final String SphereBladeSoulStr = "sphere_bladesoul";
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
 		mainConfiguration = new Configuration(evt.getSuggestedConfigurationFile());
@@ -115,15 +122,18 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				itemidWhite = propShiftItemId.getInt();
 			}
 
+			{
+				Property propShiftItemId;
+				propShiftItemId = mainConfiguration.getItem("BladeSheath", itemidWrap);
+				itemidWrap = propShiftItemId.getInt();
+			}
+
 		}
 		finally
 		{
 			mainConfiguration.save();
 		}
 	}
-	public static final String ProudSoulStr = "proudsoul";
-	public static final String IngotBladeSoulStr = "ingot_bladesoul";
-	public static final String SphereBladeSoulStr = "sphere_bladesoul";
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt){
@@ -203,7 +213,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'X',new ItemStack(Item.swordWood,1,1)));
 
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeBambooLight),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeBambooLight),
 				"  #",
 				" # ",
 				"X  ",
@@ -211,7 +221,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
 
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeSilverBambooLight),
 				" TI",
 				"SXK",
 				"PS ",
@@ -222,7 +232,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'K', "dyeBlack",
 				'P', Item.paper //S
 				));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeSilverBambooLight),
 				" TI",
 				"SXK",
 				"PS ",
@@ -232,7 +242,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'K', "dyeBlack",
 				'P', Item.paper
 				));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeSilverBambooLight),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeSilverBambooLight),
 				" TI",
 				"SXK",
 				"PS ",
@@ -243,21 +253,21 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'P', Item.paper
 				));
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 3),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 3),
 				"  #",
 				" # ",
 				"XG ",
 				'#', Item.ingotIron,
 				'G', Item.ingotGold,
 				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 4),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 4),
 				"  #",
 				" # ",
 				"XG ",
 				'#', "ingotSteel",
 				'G', Item.ingotGold,
 				'X', new ItemStack(bladeWood,1,OreDictionary.WILDCARD_VALUE)));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(bladeWhiteSheath, 1),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeWhiteSheath, 1),
 				"  #",
 				" # ",
 				"XG ",
@@ -271,7 +281,7 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 		brokenBladeWhite.getTagCompound().setBoolean(ItemSlashBlade.isBrokenStr, true);
 		GameRegistry.registerCustomItemStack(BrokenBladeWhiteStr, brokenBladeWhite);
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(weapon),
+		GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(weapon),
 				" BI",
 				"L#C",
 				"SG ",
@@ -283,6 +293,21 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
 				'S', Item.silk,
 				'#', brokenBladeWhite
 				));
+
+
+        wrapBlade = (ItemSlashBladeWrapper)(new ItemSlashBladeWrapper(itemidWrap,EnumToolMaterial.IRON))
+                .setRepairMaterial(new ItemStack(Item.swordIron))
+                .setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
+                .setMaxDamage(40)
+                .setUnlocalizedName("flammpfeil.slashblade.wrapper")
+                .setTextureName("flammpfeil.slashblade:proudsoul")
+                .setCreativeTab(CreativeTabs.tabCombat);
+        GameRegistry.registerItem(wrapBlade, "slashbladeWrapper");
+
+
+        GameRegistry.addRecipe(new RecipeWrapBlade());
+
+
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
 				"PPP",
@@ -329,6 +354,34 @@ public class SlashBlade implements IFuelHandler ,ITickHandler{
     public void modsLoaded(FMLPostInitializationEvent evt)
     {
         TickRegistry.registerTickHandler(this, Side.SERVER);
+
+        ArrayList<ItemStack> items = OreDictionary.getOres("bamboo");
+        if(0 == items.size()){
+        	ItemStack itemSphereBladeSoul = GameRegistry.findItemStack(this.modid, SphereBladeSoulStr, 1);
+
+            GameRegistry.addRecipe(new ShapedOreRecipe(wrapBlade,
+                    "RBL",
+                    "CIC",
+                    "LBR",
+                    'C', Block.coalBlock,
+                    'R', Block.blockLapis,
+                    'B', Block.obsidian,
+                    'I', itemSphereBladeSoul,
+                    'L', "logWood"));
+        }else{
+            for(int idx = Block.blocksList.length; idx < Item.itemsList.length; idx++){
+            	Item curItem = Item.itemsList[idx];
+            	if(curItem != null){
+            		if(curItem.getClass().getName() == "ruby.bamboo.item.ItemKatana"){
+            			GameRegistry.registerItem(curItem, "katana", "BambooMod");
+            			break;
+            		}
+            	}
+            }
+        }
+        /*
+        GameRegistry.registerItem(Item.swordWood, "wood_sword","Minecraft");
+        /**/
     }
 
 

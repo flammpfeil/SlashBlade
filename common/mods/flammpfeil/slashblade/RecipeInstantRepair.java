@@ -35,13 +35,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
         	if(hasGrindstone){
 
 	            ItemStack target = cInv.getStackInRowAndColumn(0, 1);
-	            if(target != null &&
-	            		(target.getItem().itemID == SlashBlade.weapon.itemID
-	            		|| target.getItem().itemID == SlashBlade.bladeWood.itemID
-	            		|| target.getItem().itemID == SlashBlade.bladeBambooLight.itemID
-	            		|| target.getItem().itemID == SlashBlade.bladeSilverBambooLight.itemID
-	            		|| target.getItem().itemID == SlashBlade.bladeWhiteSheath.itemID
-	            		) ){
+	            if(target != null && target.getItem() instanceof ItemSlashBlade){
 
 	            	if(0 < target.getItemDamage()){
 	            		if(target.hasTagCompound()){
@@ -61,7 +55,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
     }
 
     public static final String RepairCountStr = "RepairCount";
-    public static int RepairProudSoulCount = 10;
+    public static int RepairProudSoulCount = 2;
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting cInv)
@@ -72,13 +66,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
 
         ItemStack itemstack = target.copy();
 
-        if(target != null &&
-        		(target.getItem().itemID == SlashBlade.weapon.itemID
-        		|| target.getItem().itemID == SlashBlade.bladeWood.itemID
-        		|| target.getItem().itemID == SlashBlade.bladeBambooLight.itemID
-        		|| target.getItem().itemID == SlashBlade.bladeSilverBambooLight.itemID
-        		|| target.getItem().itemID == SlashBlade.bladeWhiteSheath.itemID
-        		) ){
+        if(target != null && target.getItem() instanceof ItemSlashBlade){
 
         	if(0 < itemstack.getItemDamage()){
         		if(itemstack.hasTagCompound()){
@@ -109,12 +97,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
 			IInventory craftMatrix) {
 
 		if(item != null){
-	        if(item.getItem().itemID == SlashBlade.weapon.itemID
-	    		|| item.getItem().itemID == SlashBlade.bladeWood.itemID
-	    		|| item.getItem().itemID == SlashBlade.bladeBambooLight.itemID
-	    		|| item.getItem().itemID == SlashBlade.bladeSilverBambooLight.itemID
-	    		|| item.getItem().itemID == SlashBlade.bladeWhiteSheath.itemID
-	    		){
+	        if(item.getItem() instanceof ItemSlashBlade){
 
 	        	if(item.hasTagCompound()){
 

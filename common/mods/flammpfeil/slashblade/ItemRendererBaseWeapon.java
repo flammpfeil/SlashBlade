@@ -154,7 +154,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
         }
 
-        ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture();
+        ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture(item);
 
         boolean isHandled = false;
 
@@ -189,6 +189,19 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         }
 
         if(isHandled){
+
+
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(770, 771);
+            GL11.glDisable(GL11.GL_CULL_FACE);
+
+            GL11.glColor4f(1, 1, 1, 1.0F);
+
+            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+
             engine().bindTexture(resourceTexture);
 
             String renderTarget;
@@ -198,6 +211,13 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTarget = "item_blade";
 
             modelBlade.renderPart(renderTarget);
+
+            GL11.glDisable(GL11.GL_ALPHA_TEST);
+            GL11.glEnable(GL11.GL_LIGHTING);
+
+            GL11.glEnable(GL11.GL_CULL_FACE);
+
+            GL11.glPopAttrib();
 
             if (item.hasEffect(0))
             {
@@ -294,7 +314,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		ItemSlashBlade iSlashBlade = ((ItemSlashBlade)item.getItem());
 
-        ResourceLocation resourceTexture = iSlashBlade.getModelTexture();
+        ResourceLocation resourceTexture = iSlashBlade.getModelTexture(item);
 
 		EnumSet<SwordType> swordType = iSlashBlade.getSwordType(item);
 
