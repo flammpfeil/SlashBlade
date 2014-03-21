@@ -1,2 +1,3 @@
-call gradlew.bat setupDevWorkspace idea
+call gradlew.bat setupDevWorkspace
+call gradlew.bat idea
 pause

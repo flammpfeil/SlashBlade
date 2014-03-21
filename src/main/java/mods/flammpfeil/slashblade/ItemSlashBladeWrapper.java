@@ -5,15 +5,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by Furia on 14/03/11.
@@ -46,7 +45,6 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
         NBTTagCompound tag = getItemTagCompound(stack);
         if(tag.hasKey(WrapItemStr))     tag.removeTag(WrapItemStr);
         if(tag.hasKey(TextureNameStr))  tag.removeTag(TextureNameStr);
-        if(tag.hasKey("ench"))          tag.removeTag("ench");
         if(tag.hasKey("display"))       tag.removeTag("display");
         if(tag.hasKey(isBrokenStr))     tag.removeTag(isBrokenStr);
         if(tag.hasKey(BaseAttackModifiersStr)) tag.removeTag(BaseAttackModifiersStr);
@@ -110,7 +108,11 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
             try{
                 NBTTagCompound tag = getItemTagCompound(par1ItemStack);
                 wrapItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag(WrapItemStr));
-                setWrapItem(par1ItemStack,wrapItem);
+                if(wrapItem != null)
+                    setWrapItem(par1ItemStack,wrapItem);
+                else
+                    removeWrapItem(par1ItemStack);
+
             }catch(Throwable e){
                 removeWrapItem(par1ItemStack);
                 wrapItem = null;
@@ -167,7 +169,75 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
     @Override
     protected void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
         if(hasWrapedItem(par1ItemStack)){
-            super.damageItem(damage,par1ItemStack,par3EntityLivingBase);
+
+        	NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
+    		if(par1ItemStack.getItemDamage() == 0){
+    			tag.setBoolean(isBrokenStr, false);
+    		}
+
+    		if(par1ItemStack.attemptDamageItem(damage, par3EntityLivingBase.getRNG())){
+
+    			removeWrapItem(par1ItemStack);
+
+				par3EntityLivingBase.renderBrokenItemStack(par1ItemStack);
+
+				if(!par3EntityLivingBase.worldObj.isRemote){
+					int proudSouls = tag.getInteger(proudSoulStr);
+					int count = 0;
+					if(proudSouls > 1000){
+						count = (proudSouls / 3) / 100;
+						proudSouls = (proudSouls/3) * 2;
+					}else{
+						count = proudSouls / 100;
+						proudSouls = proudSouls % 100;
+					}
+					count++;
+
+					proudSouls = Math.max(0,Math.min(999999999, proudSouls));
+					tag.setInteger(proudSoulStr, proudSouls);
+					par3EntityLivingBase.entityDropItem(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, count), 0.0F);
+				}
+    		}
         }
+    }
+
+
+    @Override
+    public boolean getIsRepairable(ItemStack par1ItemStack, ItemStack par2ItemStack)
+    {
+        boolean result = super.getIsRepairable(par1ItemStack,par2ItemStack);
+
+        if(!result){
+            ItemStack wrapedItem = getWrapedItem(par1ItemStack);
+            if(wrapedItem != null)
+                result = wrapedItem.getItem().getIsRepairable(wrapedItem,par2ItemStack);
+        }
+
+        return result;
+
+        /*
+        if(par2ItemStack.getItem() == SlashBlade.proudSoul){
+            result = true;
+        }
+
+        if(!result && this.repairMaterial != null)
+            result =par2ItemStack.isItemEqual(this.repairMaterial);
+
+        if(!result && this.repairMaterialOreDic != null)
+        {
+            for(String oreName : this.repairMaterialOreDic){
+                List<ItemStack> list = OreDictionary.getOres(oreName);
+                for(ItemStack curItem : list){
+                    result = curItem.isItemEqual(par2ItemStack);
+                    if(result)
+                        break;
+                }
+            }
+        }
+        return result;
+        */
+
+        //return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
     }
 }

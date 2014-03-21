@@ -31,6 +31,14 @@ public class RecipeWrapBlade extends ShapedRecipes {
         proudSoul = new ItemStack(SlashBlade.proudSoul,1,0);
 
         RegisterWrapable("BambooMod:katana", "BambooKatana", 4.0f);
+
+        RegisterWrapable("weaponmod:katana.wood",  "BalkonWood", 2.0f);
+        RegisterWrapable("weaponmod:katana.stone", "BalkonStone", 4.0f);
+        RegisterWrapable("weaponmod:katana.iron",  "BalkonIron", 6.0f);
+        RegisterWrapable("weaponmod:katana.diamond", "BalkonDiamond", 8.0f);
+        RegisterWrapable("weaponmod:katana.gold",  "BalkonGold", 2.0f);
+
+        //RegisterWrapable("Minecraft:wood_sword", "BambooKatana", 4.0f);
     }
 
     static public void RegisterWrapable(String name,String texture,float attackModifier){

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -58,8 +59,35 @@ public class ItemSlashBladeDetune extends ItemSlashBlade {
 				tag.setBoolean(isBrokenStr, true);
 				par3EntityLivingBase.renderBrokenItemStack(par1ItemStack);
 
-				if(!par3EntityLivingBase.worldObj.isRemote)
-					par3EntityLivingBase.entityDropItem(new ItemStack(SlashBlade.proudSoul,1), 0.0F);
+
+				if(!par3EntityLivingBase.worldObj.isRemote){
+					int proudSouls = tag.getInteger(proudSoulStr);
+					int count = 0;
+					if(proudSouls > 1000){
+						count = (proudSouls / 3) / 100;
+						proudSouls = (proudSouls/3) * 2;
+					}else{
+						count = proudSouls / 100;
+						proudSouls = proudSouls % 100;
+					}
+					count++;
+
+					proudSouls = Math.max(0,Math.min(999999999, proudSouls));
+					tag.setInteger(proudSoulStr, proudSouls);
+					par3EntityLivingBase.entityDropItem(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, count), 0.0F);
+
+					if(par1ItemStack.getItem() == SlashBlade.bladeSilverBambooLight){
+						int killCount = tag.getInteger(killCountStr);
+						if(100 <= killCount && SlashBlade.wrapBlade != null){
+							ItemStack sheath = new ItemStack(SlashBlade.wrapBlade,1);
+
+							NBTTagCompound copyTag = (NBTTagCompound)tag.copy();
+							copyTag.removeTag(isBrokenStr);
+							sheath.setTagCompound(copyTag);
+							par3EntityLivingBase.entityDropItem(sheath, 0.0F);
+						}
+					}
+				}
 			}
 		}
 	}

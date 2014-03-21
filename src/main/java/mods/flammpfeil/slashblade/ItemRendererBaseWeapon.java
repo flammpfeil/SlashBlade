@@ -1,12 +1,12 @@
 package mods.flammpfeil.slashblade;
 
-import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
+import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,13 +14,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.EnumSet;
 
@@ -52,6 +49,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			return true;
 		case INVENTORY:
 			return true;
+        case EQUIPPED_FIRST_PERSON:
+            return true;
 		default:
 			return false;
 		}
@@ -60,12 +59,33 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 	@Override
 	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
 			ItemRendererHelper helper) {
-		switch (helper) {
-		case ENTITY_ROTATION:
-			return true;
-		default:
-			return false;
-		}
+        boolean result = false;
+
+        switch (helper) {
+            case ENTITY_ROTATION:
+                result = true;
+                break;
+            case INVENTORY_BLOCK:
+                result = false;
+                break;
+            default:
+                break;
+        }
+        if(!result){
+            switch (type){
+                case ENTITY:
+                    result = false;
+                    break;
+                case INVENTORY:
+                    result = false;
+                    break;
+                default:
+                    result = true;
+                    break;
+            }
+        }
+
+        return result;
 	}
 
     private void renderItemLocal(ItemRenderType type, ItemStack item, Object... data) {
@@ -105,6 +125,29 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                     return;
                 }
                 break;
+
+            case EQUIPPED_FIRST_PERSON:
+            {
+                engine().bindTexture(resourceTexture);
+                GL11.glPopMatrix();
+                GL11.glPopMatrix();
+                GL11.glPopMatrix();
+                GL11.glPopMatrix();
+                GL11.glPushMatrix();
+                GL11.glPushMatrix();
+                GL11.glPushMatrix();
+                GL11.glPushMatrix();
+
+                GL11.glTranslatef(-0.35F,-0.1f,-0.8f);
+                //GL11.glRotatef(-10.0F, 0.0F, 0.0F, 1.0F);
+                GL11.glRotatef(-3.0F, 1.0F, 0.0F, 0.0f);
+                GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+
+                float partialRenderTick = ticks;
+                EntityPlayer player = (EntityPlayer)data[1];
+                render(player, partialRenderTick,false);
+                return;
+            }
 
             default:
                 break;
@@ -183,8 +226,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             float scale = 0.008f;
             GL11.glScalef(scale,scale,scale);
             GL11.glRotatef(-60, 0, 0, 1);
-            modelBlade.renderOnly("sheath", "blade");
 
+            String renderTargets[];
+            if(data[1] instanceof EntityPlayer){
+                renderTargets = new String[]{"blade"};
+            }else{
+                renderTargets = new String[]{"sheath", "blade"};
+            }
+
+            modelBlade.renderOnly(renderTargets);
         }
 
     }
@@ -198,7 +248,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         GL11.glPopMatrix();
 	}
 	static float ticks = 0.0f;
-
+    @SubscribeEvent
+    public void HandleRenderWorldLastEvent(RenderWorldLastEvent event){
+        ticks = event.partialTicks;
+    }
 
 	@SubscribeEvent
 	public void RenderPlayerEventPre(RenderPlayerEvent.Specials.Pre event){
@@ -206,6 +259,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		EntityPlayer player = event.entityPlayer;
 		render(player,partialRenderTick);
 	}
+
 
     static private float interpolateRotation(float par1, float par2, float par3)
     {
@@ -224,7 +278,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         return par1 + par3 * f3;
     }
 
-	static public void render(EntityLivingBase entity,float partialRenderTick)
+    static public void render(EntityLivingBase entity,float partialRenderTick){
+        render(entity,partialRenderTick,false);
+    }
+	static public void render(EntityLivingBase entity,float partialRenderTick, boolean adjust)
 	{
         if(entity == null || !(entity instanceof EntityPlayer))
 			return;
@@ -261,9 +318,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			combo = iSlashBlade.getComboSequence(tag);
 
-            ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
-            ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
-            az = -tag.getFloat(ItemSlashBlade.adjustZStr)/10.0f;
+            if(adjust){
+                ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
+                ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
+                az = -tag.getFloat(ItemSlashBlade.adjustZStr)/10.0f;
+            }
 		}
 
 
@@ -345,8 +404,17 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 					//GL11.glRotatef(-90, 0.0f, 1.0f, 0.0f);
 
 					if(combo.equals(ComboSequence.Kiriorosi)){
+
+
 						GL11.glRotatef(20.0f, -1.0f, 0, 0);
 						GL11.glRotatef(-30.0f, 0, 0, -1.0f);
+
+
+                        GL11.glTranslatef(0.0f,0.0f,-8.0f);
+                        GL11.glRotatef(20.0f ,0,1,0);
+                        //GL11.glRotatef(-30.0f,1,0,0);
+
+
 						GL11.glRotatef((90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
 
 						GL11.glRotatef((1.0f-progress) * -90.0f, 0.0f, 0.0f, -1.0f);

@@ -223,7 +223,7 @@ public class ItemSlashBlade extends ItemSword {
 
 				if(!par3EntityLivingBase.worldObj.isRemote){
 					int proudSouls = tag.getInteger(proudSoulStr);
-					int count = 1;
+					int count = 0;
 					if(proudSouls > 1000){
 						count = (proudSouls / 3) / 100;
 						proudSouls = (proudSouls/3) * 2;
@@ -231,6 +231,7 @@ public class ItemSlashBlade extends ItemSword {
 						count = proudSouls / 100;
 						proudSouls = proudSouls % 100;
 					}
+					count++;
 
 					proudSouls = Math.max(0,Math.min(999999999, proudSouls));
 					tag.setInteger(proudSoulStr, proudSouls);
@@ -1669,7 +1670,10 @@ public class ItemSlashBlade extends ItemSword {
     		par3List.add(item);
 
     		ItemStack itemBrokenWhite = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.BrokenBladeWhiteStr, 1);
-    		par3List.add(itemBrokenWhite);
+            if(itemBrokenWhite != null) par3List.add(itemBrokenWhite);
+
+    		ItemStack itemHundredKill = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.HundredKillSilverBambooLightStr, 1);
+            if(itemHundredKill != null) par3List.add(itemHundredKill);
     	}
     }
 }

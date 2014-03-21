@@ -2,7 +2,6 @@ package mods.flammpfeil.slashblade;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -57,7 +56,7 @@ public class RecipeInstantRepair extends ShapedRecipes
     }
 
     public static final String RepairCountStr = "RepairCount";
-    public static int RepairProudSoulCount = 10;
+    public static int RepairProudSoulCount = 2;
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting cInv)
