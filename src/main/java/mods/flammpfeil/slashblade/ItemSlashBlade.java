@@ -957,8 +957,8 @@ public class ItemSlashBlade extends ItemSword {
 					comboSeq = getNextComboSeq(sitem, comboSeq, true, el);
 					setComboSequence(tag, comboSeq);
 
-                    if(el.worldObj.isRemote)
-    					el.isSwingInProgress = true;
+                    //if(el.worldObj.isRemote)
+    				el.isSwingInProgress = true;
 					onEntitySwing(el,sitem);
 
 					AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, el);
@@ -1071,7 +1071,7 @@ public class ItemSlashBlade extends ItemSword {
 					}
 				}
 
-				if(el.swingProgressInt != 0 && !comboSeq.equals(ComboSequence.None)){
+				if(!comboSeq.equals(ComboSequence.None) && el.swingProgressInt != 0 && currentTime < (prevAttackTime + comboSeq.comboResetTicks)){
 					onEntitySwing(el,sitem);
 				}
 			}
