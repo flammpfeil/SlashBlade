@@ -76,6 +76,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 case ENTITY:
                     result = false;
                     break;
+                case EQUIPPED_FIRST_PERSON:
+                    result = false;
+                    break;
+                case EQUIPPED:
+                    result = false;
+                    break;
                 case INVENTORY:
                     result = false;
                     break;
@@ -90,11 +96,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
     private void renderItemLocal(ItemRenderType type, ItemStack item, Object... data) {
         boolean isBroken = false;
-        if(item.hasTagCompound()){
-            NBTTagCompound tag = item.getTagCompound();
-
-            isBroken = tag.getBoolean(ItemSlashBlade.isBrokenStr);
-        }
+        EnumSet<SwordType> types = ((ItemSlashBlade)item.getItem()).getSwordType(item);
+        isBroken = types.contains(SwordType.Broken);
 
         ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture(item);
 
@@ -121,32 +124,35 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 break;
             }
             case EQUIPPED:
-                if(data[1] instanceof EntityPlayer){
+                if(data[1] instanceof EntityPlayer
+                        && !types.contains(SwordType.NoScabbard)){
                     return;
                 }
                 break;
 
             case EQUIPPED_FIRST_PERSON:
             {
-                engine().bindTexture(resourceTexture);
-                GL11.glPopMatrix();
-                GL11.glPopMatrix();
-                GL11.glPopMatrix();
-                GL11.glPopMatrix();
-                GL11.glPushMatrix();
-                GL11.glPushMatrix();
-                GL11.glPushMatrix();
-                GL11.glPushMatrix();
+                if(!types.contains(SwordType.NoScabbard)){
+                    engine().bindTexture(resourceTexture);
+                    GL11.glPopMatrix();
+                    GL11.glPopMatrix();
+                    GL11.glPopMatrix();
+                    GL11.glPopMatrix();
+                    GL11.glPushMatrix();
+                    GL11.glPushMatrix();
+                    GL11.glPushMatrix();
+                    GL11.glPushMatrix();
 
-                GL11.glTranslatef(-0.35F,-0.1f,-0.8f);
-                //GL11.glRotatef(-10.0F, 0.0F, 0.0F, 1.0F);
-                GL11.glRotatef(-3.0F, 1.0F, 0.0F, 0.0f);
-                GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+                    GL11.glTranslatef(-0.35F,-0.1f,-0.8f);
+                    //GL11.glRotatef(-10.0F, 0.0F, 0.0F, 1.0F);
+                    GL11.glRotatef(-3.0F, 1.0F, 0.0F, 0.0f);
+                    GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 
-                float partialRenderTick = ticks;
-                EntityPlayer player = (EntityPlayer)data[1];
-                render(player, partialRenderTick,false);
-                return;
+                    float partialRenderTick = ticks;
+                    EntityPlayer player = (EntityPlayer)data[1];
+                    render(player, partialRenderTick,false);
+                    return;
+                }
             }
 
             default:
@@ -172,8 +178,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             String renderTarget;
             if(isBroken)
                 renderTarget = "item_damaged";
-            else
+            else if(!types.contains(SwordType.NoScabbard)){
                 renderTarget = "item_blade";
+            }else{
+                renderTarget = "item_bladens";
+            }
 
             modelBlade.renderPart(renderTarget);
 
@@ -228,8 +237,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glRotatef(-60, 0, 0, 1);
 
             String renderTargets[];
-            if(data[1] instanceof EntityPlayer){
-                renderTargets = new String[]{"blade"};
+            if(data[1] instanceof EntityPlayer
+                    || types.contains(SwordType.NoScabbard)){
+
+                if(isBroken){
+                    renderTargets = new String[]{"blade_damaged"};
+                }else{
+                    renderTargets = new String[]{"blade"};
+                }
             }else{
                 renderTargets = new String[]{"sheath", "blade"};
             }
@@ -299,6 +314,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         ResourceLocation resourceTexture = iSlashBlade.getModelTexture(item);
 
 		EnumSet<SwordType> swordType = iSlashBlade.getSwordType(item);
+
+        if(swordType.contains(SwordType.NoScabbard)){
+            return;
+        }
 
 		boolean isEnchanted = swordType.contains(SwordType.Enchanted);
 		boolean isBewitched = swordType.contains(SwordType.Bewitched);

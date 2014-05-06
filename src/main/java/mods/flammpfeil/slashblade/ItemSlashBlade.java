@@ -125,6 +125,7 @@ public class ItemSlashBlade extends ItemSword {
 	public static final String killCountStr = "killCount";
 	public static final String proudSoulStr = "ProudSoul";
     public static final String TargetEntityStr = "TargetEntity";
+    public static final String isNoScabbardStr = "isNoScabbard";
 
 
 	public static int AnvilRepairBonus = 100;
@@ -401,7 +402,7 @@ public class ItemSlashBlade extends ItemSword {
         this.baseAttackModifiers = baseAttackModifiers;
 	}
 
-	NBTTagCompound getItemTagCompound(ItemStack stack){
+    static NBTTagCompound getItemTagCompound(ItemStack stack){
 		NBTTagCompound tag;
 		if(stack.hasTagCompound()){
 			tag = stack.getTagCompound();
@@ -416,7 +417,10 @@ public class ItemSlashBlade extends ItemSword {
 	public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player){
 		ComboSequence result = ComboSequence.None;
 
-		if(!player.onGround){
+        EnumSet<SwordType> types = getSwordType(itemStack);
+        if(types.contains(SwordType.NoScabbard)){
+            result = ComboSequence.None;
+        }else if(!player.onGround){
 			switch (current) {
 			case Iai:
 				result = ComboSequence.Battou;
@@ -747,6 +751,7 @@ public class ItemSlashBlade extends ItemSword {
     	Bewitched,
     	SoulEeater,
     	FiercerEdge,
+        NoScabbard,
     	;
 
     	public static final EnumSet<SwordType> BewitchedSoulEater = EnumSet.of(SwordType.SoulEeater,SwordType.Bewitched);
@@ -782,6 +787,10 @@ public class ItemSlashBlade extends ItemSword {
 
     	if(1000 < tag.getInteger(killCountStr))
     		result.add(SwordType.FiercerEdge);
+
+        if(tag.getBoolean(isNoScabbardStr)){
+            result.add(SwordType.NoScabbard);
+        }
 
     	return result;
     }
@@ -1667,7 +1676,11 @@ public class ItemSlashBlade extends ItemSword {
 			tag.setInteger(killCountStr, 1000);
 			tag.setInteger(proudSoulStr, 1000);
 
-    		par3List.add(item);
+            par3List.add(item.copy());
+
+            tag.setBoolean(isNoScabbardStr,true);
+            item.setStackDisplayName(item.getDisplayName() + "-NS");
+            par3List.add(item.copy());
 
     		ItemStack itemBrokenWhite = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.BrokenBladeWhiteStr, 1);
             if(itemBrokenWhite != null) par3List.add(itemBrokenWhite);
