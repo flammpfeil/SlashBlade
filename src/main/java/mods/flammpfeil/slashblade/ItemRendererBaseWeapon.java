@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import com.google.common.collect.Maps;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
@@ -17,9 +18,11 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
+import net.minecraftforge.client.model.ModelFormatException;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumSet;
+import java.util.Map;
 
 public class ItemRendererBaseWeapon implements IItemRenderer {
 
@@ -37,6 +40,24 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
     public ItemRendererBaseWeapon(){
         if(modelBlade == null)
             modelBlade = AdvancedModelLoader.loadModel(resourceModel);
+    }
+
+    static public Map<ResourceLocation,IModelCustom> models= Maps.newHashMap();
+    static public IModelCustom getModel(ResourceLocation loc){
+        IModelCustom result;
+        if(models.containsKey(loc)){
+            result = models.get(loc);
+        }else{
+            try{
+                result = AdvancedModelLoader.loadModel(loc);
+            }catch(ModelFormatException e){
+                result = null;
+            }
+
+            models.put(loc,result);
+        }
+
+        return result != null ? result : modelBlade;
     }
 
 	@Override
@@ -99,6 +120,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         EnumSet<SwordType> types = ((ItemSlashBlade)item.getItem()).getSwordType(item);
         isBroken = types.contains(SwordType.Broken);
 
+        IModelCustom model = getModel(ItemSlashBlade.getModelLocation(item));
         ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture(item);
 
         boolean isHandled = false;
@@ -184,7 +206,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTarget = "item_bladens";
             }
 
-            modelBlade.renderPart(renderTarget);
+            model.renderPart(renderTarget);
 
             GL11.glDisable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_LIGHTING);
@@ -210,14 +232,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 float f9 = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F * 8.0F;
                 GL11.glTranslatef(f9, 0.0F, 0.0F);
                 GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
-                modelBlade.renderPart(renderTarget);
+                model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glPushMatrix();
                 GL11.glScalef(f8, f8, f8);
                 f9 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F * 8.0F;
                 GL11.glTranslatef(-f9, 0.0F, 0.0F);
                 GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
-                modelBlade.renderPart(renderTarget);
+                model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
                 GL11.glDisable(GL11.GL_BLEND);
@@ -249,7 +271,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTargets = new String[]{"sheath", "blade"};
             }
 
-            modelBlade.renderOnly(renderTargets);
+            model.renderOnly(renderTargets);
         }
 
     }
@@ -305,13 +327,16 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 		ItemStack item = player.getCurrentEquippedItem();
 
+
 		if(item == null || !(item.getItem() instanceof ItemSlashBlade))
 			return;
 
 
 		ItemSlashBlade iSlashBlade = ((ItemSlashBlade)item.getItem());
 
-        ResourceLocation resourceTexture = iSlashBlade.getModelTexture(item);
+        IModelCustom model = getModel(ItemSlashBlade.getModelLocation(item));
+
+        ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(item);
 
 		EnumSet<SwordType> swordType = iSlashBlade.getSwordType(item);
 
@@ -492,7 +517,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
             engine().bindTexture(resourceTexture);
-            modelBlade.renderPart(renderTarget);
+            model.renderPart(renderTarget);
 
             if (item.hasEffect(0))
             {
@@ -511,14 +536,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 float f9 = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F * 8.0F;
                 GL11.glTranslatef(f9, 0.0F, 0.0F);
                 GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
-                modelBlade.renderPart(renderTarget);
+                model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glPushMatrix();
                 GL11.glScalef(f8, f8, f8);
                 f9 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F * 8.0F;
                 GL11.glTranslatef(-f9, 0.0F, 0.0F);
                 GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
-                modelBlade.renderPart(renderTarget);
+                model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
                 GL11.glDisable(GL11.GL_BLEND);
@@ -573,7 +598,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             engine().bindTexture(resourceTexture);
 
             renderTarget = "sheath";
-            modelBlade.renderPart(renderTarget);
+            model.renderPart(renderTarget);
 
             if (item.hasEffect(0))
             {
@@ -592,14 +617,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 float f9 = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F * 8.0F;
                 GL11.glTranslatef(f9, 0.0F, 0.0F);
                 GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
-                modelBlade.renderPart(renderTarget);
+                model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glPushMatrix();
                 GL11.glScalef(f8, f8, f8);
                 f9 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F * 8.0F;
                 GL11.glTranslatef(-f9, 0.0F, 0.0F);
                 GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
-                modelBlade.renderPart(renderTarget);
+                model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
                 GL11.glDisable(GL11.GL_BLEND);
@@ -626,7 +651,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                             GL11.glPushMatrix();
                                 GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
                                 GL11.glRotatef(-90.0f, 0, 0, 1);
-                                modelBlade.renderPart("sheath");
+                                model.renderPart("sheath");
 
                             GL11.glPopMatrix();
 
@@ -653,7 +678,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                         GL11.glPushMatrix();
                             GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
                             GL11.glRotatef(-90.0f,0,0,1);
-                            modelBlade.renderPart("effect");
+                            model.renderPart("effect");
 
                         GL11.glPopMatrix();
 

@@ -30,6 +30,8 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.AdvancedModelLoader;
+import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
@@ -44,15 +46,12 @@ public class ItemSlashBlade extends ItemSword {
 	public ResourceLocation getModelTexture(){
 		return texture;
 	}
-
     static public Map<String,ResourceLocation> textureMap = new HashMap<String, ResourceLocation>();
 
-
     final public static String TextureNameStr = "TextureName";
-
-    public ResourceLocation getModelTexture(ItemStack par1ItemStack){
+    static public ResourceLocation getModelTexture(ItemStack par1ItemStack){
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
-        if(par1ItemStack.getItem() instanceof ItemSlashBladeWrapper && tag.hasKey(TextureNameStr)){
+        if(tag.hasKey(TextureNameStr)){
             String textureName = tag.getString(TextureNameStr);
             ResourceLocation loc;
             if(!textureMap.containsKey(textureName))
@@ -66,6 +65,30 @@ public class ItemSlashBlade extends ItemSword {
         }
         return ((ItemSlashBlade)par1ItemStack.getItem()).getModelTexture();
     }
+
+
+    private ResourceLocation model =  new ResourceLocation("flammpfeil.slashblade","model/blade.obj");
+    public ResourceLocation getModel(){ return model; }
+    static public Map<String,ResourceLocation> modelMap = new HashMap<String, ResourceLocation>();
+
+    final public static String ModelNameStr = "ModelName";
+    static public ResourceLocation getModelLocation(ItemStack par1ItemStack){
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+        if(tag.hasKey(ModelNameStr)){
+            String modelName = tag.getString(ModelNameStr);
+            ResourceLocation loc;
+            if(!modelMap.containsKey(modelName))
+            {
+                loc = new ResourceLocation("flammpfeil.slashblade","model/" + modelName + ".obj");
+                modelMap.put(modelName,loc);
+            }else{
+                loc = modelMap.get(modelName);
+            }
+            return loc;
+        }
+        return ((ItemSlashBlade)par1ItemStack.getItem()).getModel();
+    }
+
 
 
     @Override
