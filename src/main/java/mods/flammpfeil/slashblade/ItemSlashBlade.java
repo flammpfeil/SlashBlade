@@ -149,6 +149,7 @@ public class ItemSlashBlade extends ItemSword {
 	public static final String proudSoulStr = "ProudSoul";
     public static final String TargetEntityStr = "TargetEntity";
     public static final String isNoScabbardStr = "isNoScabbard";
+    public static final String isSealedStr = "isSealed";
 
 
 	public static int AnvilRepairBonus = 100;
@@ -775,6 +776,7 @@ public class ItemSlashBlade extends ItemSword {
     	SoulEeater,
     	FiercerEdge,
         NoScabbard,
+        Sealed,
     	;
 
     	public static final EnumSet<SwordType> BewitchedSoulEater = EnumSet.of(SwordType.SoulEeater,SwordType.Bewitched);
@@ -797,13 +799,17 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
-    	if(itemStack.isItemEnchanted()){
-    		result.add(SwordType.Enchanted);
+        if(tag.getBoolean(isSealedStr)){
+            result.add(SwordType.Sealed);
+        }else{
+            if(itemStack.isItemEnchanted()){
+                result.add(SwordType.Enchanted);
 
-    		if(itemStack.hasDisplayName()){
-    			result.add(SwordType.Bewitched);
-    		}
-    	}
+                if(itemStack.hasDisplayName()){
+                    result.add(SwordType.Bewitched);
+                }
+            }
+        }
 
     	if(1000 < tag.getInteger(proudSoulStr))
     		result.add(SwordType.SoulEeater);
