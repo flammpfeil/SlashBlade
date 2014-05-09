@@ -150,6 +150,7 @@ public class ItemSlashBlade extends ItemSword {
     public static final String isSealedStr = "isSealed";
     public static final String isChargedStr = "isCharged";
     public static final String SpecialAttackTypeStr = "SpecialAttackType";
+    public static final String RepairCounterStr = "RepairCounter";
 
 
 	public static int AnvilRepairBonus = 100;
@@ -1008,6 +1009,11 @@ public class ItemSlashBlade extends ItemSword {
 				soul += cost;
 				soul = Math.max(0,Math.min(999999999, soul));
 				tag.setInteger(proudSoulStr, soul);
+
+                int cnt = tag.getInteger(RepairCounterStr);
+                cnt += 1;
+                cnt = Math.min(999999999, cnt);
+                tag.setInteger(RepairCounterStr,cnt);
 
 				sitem.setRepairCost(0);
 			}

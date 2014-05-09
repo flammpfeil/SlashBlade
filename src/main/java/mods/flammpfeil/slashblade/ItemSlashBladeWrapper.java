@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by Furia on 14/03/11.
  */
-public class ItemSlashBladeWrapper extends ItemSlashBlade {
+public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
 
     public ItemSlashBladeWrapper(ToolMaterial par2EnumToolMaterial){
         super(par2EnumToolMaterial, 4.0f);
@@ -30,7 +30,6 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
     }
 
     static final String WrapItemStr = "WrapItem";
-    static final String BaseAttackModifiersStr = "baseAttackModifiers";
 
     public void setWrapItem(ItemStack base,ItemStack wrapTarget){
         NBTTagCompound tag = getItemTagCompound(base);
@@ -48,6 +47,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
         if(tag.hasKey("display"))       tag.removeTag("display");
         if(tag.hasKey(isBrokenStr))     tag.removeTag(isBrokenStr);
         if(tag.hasKey(BaseAttackModifiersStr)) tag.removeTag(BaseAttackModifiersStr);
+        if(tag.hasKey(CurrentItemNameStr))     tag.removeTag(CurrentItemNameStr);
         stack.setItemDamage(0);
     }
 
