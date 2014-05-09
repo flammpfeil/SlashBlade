@@ -455,7 +455,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 
                         GL11.glTranslatef(0.0f,0.0f,-8.0f);
-                        GL11.glRotatef(20.0f ,0,1,0);
                         //GL11.glRotatef(-30.0f,1,0,0);
 
 

@@ -148,12 +148,17 @@ public class ItemSlashBlade extends ItemSword {
     public static final String TargetEntityStr = "TargetEntity";
     public static final String isNoScabbardStr = "isNoScabbard";
     public static final String isSealedStr = "isSealed";
+    public static final String isChargedStr = "isCharged";
+    public static final String SpecialAttackTypeStr = "SpecialAttackType";
 
 
 	public static int AnvilRepairBonus = 100;
 
 	public static void setComboSequence(NBTTagCompound tag,ComboSequence comboSeq){
 		tag.setInteger(comboSeqStr, comboSeq.ordinal());
+        if(comboSeq == ComboSequence.None){
+            tag.setBoolean(isChargedStr,false);
+        }
 	}
 
 	public static ComboSequence getComboSequence(NBTTagCompound tag){
@@ -170,7 +175,7 @@ public class ItemSlashBlade extends ItemSword {
     	Battou(false,240.0f,0.0f,false,12),
     	Noutou(false,-210.0f,10.0f,false,5),
     	Kiriage(false,260.0f,70.0f,false,20),
-    	Kiriorosi(false,-260.0f,70.0f,false,12),
+    	Kiriorosi(false,-260.0f,90.0f,false,12),
     	SlashDim(false,-220.0f,10.0f,true,8),
     	Iai(false,240.0f,0.0f,false,8),
     	;
@@ -546,6 +551,15 @@ public class ItemSlashBlade extends ItemSword {
 
 			break;
 		}
+
+        if(!current.useScabbard){
+            if(tag.getBoolean(isChargedStr)){
+                tag.setBoolean(isChargedStr,false);
+                if(player instanceof EntityPlayer){
+                    procDrive(itemStack,player.worldObj,(EntityPlayer)player,current);
+                }
+            }
+        }
 	}
 
 	@Override
@@ -594,7 +608,8 @@ public class ItemSlashBlade extends ItemSword {
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
 
-    public void procChargeAttack(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer){
+    public void procSlashDim(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer){
+
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
         float distance = 30.0f;
@@ -680,6 +695,7 @@ public class ItemSlashBlade extends ItemSword {
                 par3EntityPlayer.onCriticalHit(curEntity);
 
                 if(0.0 < magicDamage){
+                    curEntity.hurtResistantTime = 0;
                     DamageSource ds = new EntityDamageSource("directMagic",par3EntityPlayer).setDamageBypassesArmor().setMagicDamage();
                     curEntity.attackEntityFrom(ds, magicDamage);
                 }
@@ -687,6 +703,105 @@ public class ItemSlashBlade extends ItemSword {
             tag.setBoolean(onClickStr, false);
 
         }
+    }
+
+    public void procDrive(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, ComboSequence setCombo){
+
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
+        if(!par2World.isRemote){
+
+            int soul = tag.getInteger(proudSoulStr);
+
+            final int sdCost = 10;
+
+            if(sdCost <= soul){
+                soul -= sdCost;
+                soul = Math.max(0,Math.min(999999999, soul));
+                tag.setInteger(proudSoulStr, soul);
+            }else{
+                damageItem(5, par1ItemStack, par3EntityPlayer);
+            }
+
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
+            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 5.0)) : 0;
+
+            EntityDrive entityDrive = new EntityDrive(par2World, par3EntityPlayer, magicDamage,false,90.0f - setCombo.swingDirection);
+            if (entityDrive != null) {
+                par2World.spawnEntityInWorld(entityDrive);
+            }
+
+            setComboSequence(tag, setCombo);
+            return;
+        }
+    }
+
+
+    public void procRindou(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer){
+
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
+        if(!par2World.isRemote){
+
+            int soul = tag.getInteger(proudSoulStr);
+
+            final int sdCost = 20;
+
+            if(sdCost <= soul){
+                soul -= sdCost;
+                soul = Math.max(0,Math.min(999999999, soul));
+                tag.setInteger(proudSoulStr, soul);
+            }else{
+                damageItem(10, par1ItemStack, par3EntityPlayer);
+            }
+
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
+            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 10.0)) : 0;
+
+            final float[] speeds = {0.25f,0.3f,0.35f};
+            for(int i = 0; i < speeds.length;i++){
+                EntityDrive entityDrive = new EntityDrive(par2World, par3EntityPlayer, magicDamage,false,0);
+                entityDrive.setInitialSpeed(speeds[i]);
+                if (entityDrive != null) {
+                    par2World.spawnEntityInWorld(entityDrive);
+                }
+            }
+            {
+                EntityDrive entityDrive = new EntityDrive(par2World, par3EntityPlayer, magicDamage,true,0);
+                entityDrive.setInitialSpeed(0.225f);
+                if (entityDrive != null) {
+                    par2World.spawnEntityInWorld(entityDrive);
+                }
+            }
+
+
+            setComboSequence(tag, ComboSequence.Kiriage);
+            return;
+        }
+    }
+
+
+    public void procChargeAttack(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer){
+
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+        int sat = tag.getInteger(SpecialAttackTypeStr);
+
+        switch (sat){
+            case 1:
+                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Kiriage);
+                break;
+
+            case 2:
+                procRindou(par1ItemStack,par2World,par3EntityPlayer);
+                break;
+
+            default:
+                procSlashDim(par1ItemStack,par2World,par3EntityPlayer);
+                break;
+        }
+
+        tag.setBoolean(isChargedStr,true);
+
     }
 
 	@Override
@@ -1314,12 +1429,33 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void addInformationProudSoul(ItemStack par1ItemStack,
-    		EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-    	EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
-		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
-		par3List.add(String.format("%sProudSoul : %d", swordType.contains(SwordType.SoulEeater)  ? "§5" : "", tag.getInteger(proudSoulStr)));
+        par3List.add(String.format("%sProudSoul : %d", swordType.contains(SwordType.SoulEeater)  ? "§5" : "", tag.getInteger(proudSoulStr)));
 
+    }
+
+    public void addInformationSpecialAttack(ItemStack par1ItemStack,
+                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+
+        if(swordType.contains(SwordType.Bewitched)){
+            NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+            int sat = tag.getInteger(SpecialAttackTypeStr);
+
+            final String[] keys = {
+                    "flammpfeil.slashblade.specialattack.slashdimension",
+                    "flammpfeil.slashblade.specialattack.drive",
+                    "flammpfeil.slashblade.specialattack.rindou"
+                };
+
+            String key = (0 <= sat && sat < keys.length) ? keys[sat] : keys[0];
+
+
+            par3List.add(String.format("SA:%s",  StatCollector.translateToLocal(key)));
+        }
     }
     
 	@Override
@@ -1334,6 +1470,8 @@ public class ItemSlashBlade extends ItemSword {
 		addInformationKillCount(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		addInformationProudSoul(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        addInformationSpecialAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(tag.hasKey(adjustXStr)){
