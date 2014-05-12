@@ -1,8 +1,12 @@
 package mods.flammpfeil.slashblade;
 
+import com.google.common.collect.Lists;
+import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +29,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     static final String BaseAttackModifiersStr = "baseAttackModifiers";
     static final String TrueItemNameStr = "TrueItemName";
     static final String CurrentItemNameStr = "CurrentItemName";
+    static final String CustomMaxDamageStr = "CustomMaxDamage";
 
     @Override
     public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
@@ -63,7 +69,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
 
     @Override
     public String getUnlocalizedName(ItemStack par1ItemStack) {
-        String result = super.getUnlocalizedName(par1ItemStack)
+        String result = super.getUnlocalizedName(par1ItemStack);
         if(par1ItemStack.hasTagCompound()){
             NBTTagCompound tag = par1ItemStack.getTagCompound();
             if(tag.hasKey(CurrentItemNameStr)){
@@ -71,5 +77,29 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
             }
         }
         return result;
+    }
+
+
+    @Override
+    public int getMaxDamage(ItemStack stack) {
+        NBTTagCompound tag = this.getItemTagCompound(stack);
+        if(tag.hasKey(CustomMaxDamageStr))
+            return tag.getInteger(CustomMaxDamageStr);
+        else
+            return super.getMaxDamage(stack);
+    }
+
+    public static List<String> BladeNames =Lists.newArrayList();
+
+    @Override
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
+                            List par3List) {
+
+        if(this == SlashBlade.bladeNamed){
+            for(String bladename : BladeNames){
+                ItemStack blade = GameRegistry.findItemStack(SlashBlade.modid, bladename, 1);
+                par3List.add(blade);
+            }
+        }
     }
 }

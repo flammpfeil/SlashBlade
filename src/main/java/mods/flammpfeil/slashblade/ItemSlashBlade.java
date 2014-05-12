@@ -151,6 +151,7 @@ public class ItemSlashBlade extends ItemSword {
     public static final String isChargedStr = "isCharged";
     public static final String SpecialAttackTypeStr = "SpecialAttackType";
     public static final String RepairCounterStr = "RepairCounter";
+    public static final String StandbyRenderTypeStr = "StandbyRenderType";
 
 
 	public static int AnvilRepairBonus = 100;
