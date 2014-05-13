@@ -91,14 +91,22 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
 
     public static List<String> BladeNames =Lists.newArrayList();
 
+    public static ItemStack getCustomBlade(String key){
+        ItemStack blade = GameRegistry.findItemStack(SlashBlade.modid, key, 1);
+        if(blade != null && key.endsWith(".youtou")){
+            blade.setStackDisplayName(blade.getDisplayName());
+        }
+        return blade;
+    }
+
     @Override
     public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
                             List par3List) {
 
         if(this == SlashBlade.bladeNamed){
             for(String bladename : BladeNames){
-                ItemStack blade = GameRegistry.findItemStack(SlashBlade.modid, bladename, 1);
-                par3List.add(blade);
+                ItemStack blade = getCustomBlade(bladename);
+                if(blade != null) par3List.add(blade);
             }
         }
     }

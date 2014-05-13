@@ -239,7 +239,9 @@ public class ItemSlashBlade extends ItemSword {
 
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
-		if(par1ItemStack.getItemDamage() == 0){
+        EnumSet<SwordType> types = getSwordType(par1ItemStack);
+
+		if(par1ItemStack.getItemDamage() == 0 && !types.contains(SwordType.Sealed)){
 			tag.setBoolean(isBrokenStr, false);
 		}
 
@@ -910,16 +912,6 @@ public class ItemSlashBlade extends ItemSword {
 
 		NBTTagCompound tag = getItemTagCompound(itemStack);
 
-		if(itemStack.getItemDamage() == 0)
-			result.add(SwordType.Perfect);
-
-		if(tag.getBoolean(isBrokenStr)){
-			if(result.contains(SwordType.Perfect)){
-				tag.setBoolean(isBrokenStr, false);
-			}else{
-				result.add(SwordType.Broken);
-			}
-		}
 
         if(tag.getBoolean(isSealedStr)){
             result.add(SwordType.Sealed);
@@ -932,6 +924,17 @@ public class ItemSlashBlade extends ItemSword {
                 }
             }
         }
+
+		if(itemStack.getItemDamage() == 0 && !result.contains(SwordType.Sealed))
+			result.add(SwordType.Perfect);
+
+		if(tag.getBoolean(isBrokenStr)){
+			if(result.contains(SwordType.Perfect)){
+				tag.setBoolean(isBrokenStr, false);
+			}else{
+				result.add(SwordType.Broken);
+			}
+		}
 
     	if(1000 < tag.getInteger(proudSoulStr))
     		result.add(SwordType.SoulEeater);
@@ -1837,35 +1840,5 @@ public class ItemSlashBlade extends ItemSword {
     	return result;
 
         //return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
-    }
-
-    @Override
-    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
-    		List par3List) {
-    	super.getSubItems(par1, par2CreativeTabs, par3List);
-
-    	if(this == SlashBlade.weapon){
-    		ItemStack item = new ItemStack(this);
-    		item.setStackDisplayName(StatCollector.translateToLocal("item.flammpfeil.slashblade.yamato.name").trim());
-    		item.addEnchantment(Enchantment.thorns, 1);
-    		item.addEnchantment(Enchantment.featherFalling, 4);
-    		item.addEnchantment(Enchantment.power, 5);
-    		item.addEnchantment(Enchantment.punch, 2);
-    		NBTTagCompound tag = getItemTagCompound(item);
-			tag.setInteger(killCountStr, 1000);
-			tag.setInteger(proudSoulStr, 1000);
-
-            par3List.add(item.copy());
-
-            tag.setBoolean(isNoScabbardStr,true);
-            item.setStackDisplayName(item.getDisplayName() + "-NS");
-            par3List.add(item.copy());
-
-    		ItemStack itemBrokenWhite = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.BrokenBladeWhiteStr, 1);
-            if(itemBrokenWhite != null) par3List.add(itemBrokenWhite);
-
-    		ItemStack itemHundredKill = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.HundredKillSilverBambooLightStr, 1);
-            if(itemHundredKill != null) par3List.add(itemHundredKill);
-    	}
     }
 }
