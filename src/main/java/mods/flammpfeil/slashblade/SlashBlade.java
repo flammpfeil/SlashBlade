@@ -22,10 +22,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.*;
+
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
 @Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r6")
 public class SlashBlade implements IFuelHandler{
@@ -315,16 +319,22 @@ public class SlashBlade implements IFuelHandler{
         GameRegistry.registerItem(bladeNamed, "slashbladeNamed");
 
         {
-            ItemStack customblade = new ItemStack(bladeNamed,0,1);
+            ItemStack customblade = new ItemStack(bladeNamed,1,0);
             NBTTagCompound tag = new NBTTagCompound();
             customblade.setTagCompound(tag);
+
+            customblade.addEnchantment(Enchantment.unbreaking,3);
+            customblade.addEnchantment(Enchantment.smite,3);
 
             tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.tagayasan");
             tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,70);
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr,4 + ToolMaterial.IRON.getDamageVsEntity());
+            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
             tag.setString(ItemSlashBlade.TextureNameStr,"named/tagayasan");
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,1);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
+
+            tag.setString(ItemSlashBladeNamed.RepairMaterialNameStr,"iron_ingot");
 
             String name = "slashblade.named.tagayasan";
             GameRegistry.registerCustomItemStack(name, customblade);
@@ -333,7 +343,7 @@ public class SlashBlade implements IFuelHandler{
 
         {
 
-            ItemStack customblade = new ItemStack(bladeNamed,0,1);
+            ItemStack customblade = new ItemStack(bladeNamed,1,0);
             NBTTagCompound tag = new NBTTagCompound();
             customblade.setTagCompound(tag);
 
@@ -346,6 +356,7 @@ public class SlashBlade implements IFuelHandler{
 
             tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
+            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
             tag.setString(ItemSlashBlade.TextureNameStr, "named/yamato");
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr, 0);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
@@ -361,13 +372,14 @@ public class SlashBlade implements IFuelHandler{
 
         {
 
-            ItemStack customblade = new ItemStack(bladeNamed,0,1);
+            ItemStack customblade = new ItemStack(bladeNamed,1,0);
             NBTTagCompound tag = new NBTTagCompound();
             customblade.setTagCompound(tag);
             tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.yamato.broken");
 
             tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
+            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
             tag.setString(ItemSlashBlade.TextureNameStr, "named/yamato");
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr, 0);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
@@ -384,7 +396,7 @@ public class SlashBlade implements IFuelHandler{
         }
 
         {
-            ItemStack customblade = new ItemStack(bladeNamed,0,1);
+            ItemStack customblade = new ItemStack(bladeNamed,1,0);
             NBTTagCompound tag = new NBTTagCompound();
             customblade.setTagCompound(tag);
 
@@ -396,13 +408,30 @@ public class SlashBlade implements IFuelHandler{
 
             tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
+            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
             tag.setString(ItemSlashBlade.TextureNameStr,"named/yuzukitukumo");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,0);
+            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,3);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
 
             String name = "slashblade.named.yuzukitukumo.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
+        }
+        {
+            ItemStack customblade = new ItemStack(weapon,1,0);
+
+            NBTTagCompound tag = new NBTTagCompound();
+            customblade.setTagCompound(tag);
+
+            customblade.addEnchantment(Enchantment.fireAspect, 1);
+
+            tag.setInteger(ItemSlashBlade.killCountStr, 1000);
+
+            String name = "slashblade.thousandkill.youtou";
+            GameRegistry.registerCustomItemStack(name, customblade);
+            ItemSlashBladeNamed.BladeNames.add(name);
+
+            GameRegistry.addRecipe(new RecipeAwakeTukumoBlade());
         }
 
         ItemSlashBladeNamed.BladeNames.add(SlashBlade.BrokenBladeWhiteStr);
@@ -424,6 +453,13 @@ public class SlashBlade implements IFuelHandler{
 		manager = new ConfigEntityListManager();
 
         FMLCommonHandler.instance().bus().register(manager);
+
+
+        RecipeSorter.register("flammpfeil.slashblade:upgrade", RecipeUpgradeBlade.class, SHAPED, "after:forge:shaped");
+        RecipeSorter.register("flammpfeil.slashblade:wrap", RecipeWrapBlade.class, SHAPED, "after:forge:shaped");
+        RecipeSorter.register("flammpfeil.slashblade:adjust", RecipeAdjustPos.class, SHAPED, "after:forge:shaped");
+        RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
+        RecipeSorter.register("flammpfeil.slashblade:tukumo", RecipeAwakeTukumoBlade.class, SHAPED, "after:forge:shaped");
     }
 
     @EventHandler

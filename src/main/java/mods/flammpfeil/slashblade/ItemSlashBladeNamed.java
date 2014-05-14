@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -26,10 +27,12 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     }
 
 
-    static final String BaseAttackModifiersStr = "baseAttackModifiers";
-    static final String TrueItemNameStr = "TrueItemName";
-    static final String CurrentItemNameStr = "CurrentItemName";
-    static final String CustomMaxDamageStr = "CustomMaxDamage";
+    static public final String BaseAttackModifiersStr = "baseAttackModifiers";
+    static public final String TrueItemNameStr = "TrueItemName";
+    static public final String CurrentItemNameStr = "CurrentItemName";
+    static public final String CustomMaxDamageStr = "CustomMaxDamage";
+    static public final String RepairOreDicMaterialStr = "RepairOreDicMaterial";
+    static public final String RepairMaterialNameStr = "RepairMaterialName";
 
     @Override
     public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
@@ -109,5 +112,37 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
                 if(blade != null) par3List.add(blade);
             }
         }
+    }
+
+
+    @Override
+    public boolean getIsRepairable(ItemStack par1ItemStack, ItemStack par2ItemStack)
+    {
+        Boolean result = super.getIsRepairable(par1ItemStack,par2ItemStack);
+
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
+        if(!result && tag.hasKey(RepairOreDicMaterialStr))
+        {
+            String oreName = tag.getString(RepairOreDicMaterialStr);
+            List<ItemStack> list = OreDictionary.getOres(oreName);
+            for(ItemStack curItem : list){
+                result = curItem.isItemEqual(par2ItemStack);
+                if(result)
+                    break;
+            }
+        }
+
+        if(!result && tag.hasKey(RepairMaterialNameStr))
+        {
+            String matName = tag.getString(RepairMaterialNameStr);
+            Item material = (Item)Item.itemRegistry.getObject(matName);
+            if(material != null)
+                result = par2ItemStack.getItem() == material;
+        }
+
+        return result;
+
+        //return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
     }
 }

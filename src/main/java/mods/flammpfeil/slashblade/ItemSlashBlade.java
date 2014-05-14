@@ -692,8 +692,8 @@ public class ItemSlashBlade extends ItemSword {
             if(!AttackableSelector.isEntityApplicable(target))
                 list.add(target);
 
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
-            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 5.0)) : 0;
+            int level = 1 + EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
+            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 6.0)) : 0;
             for(Entity curEntity : list){
                 par3EntityPlayer.attackTargetEntityWithCurrentItem(curEntity);
                 par3EntityPlayer.onCriticalHit(curEntity);
@@ -727,8 +727,8 @@ public class ItemSlashBlade extends ItemSword {
                 damageItem(5, par1ItemStack, par3EntityPlayer);
             }
 
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
-            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 5.0)) : 0;
+            int level = 1+EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
+            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 6.0)) : 0;
 
             EntityDrive entityDrive = new EntityDrive(par2World, par3EntityPlayer, magicDamage,false,90.0f - setCombo.swingDirection);
             if (entityDrive != null) {
@@ -759,7 +759,7 @@ public class ItemSlashBlade extends ItemSword {
                 damageItem(10, par1ItemStack, par3EntityPlayer);
             }
 
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
+            int level = 1+EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
             float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 10.0)) : 0;
 
             final float[] speeds = {0.25f,0.3f,0.35f};
@@ -797,6 +797,10 @@ public class ItemSlashBlade extends ItemSword {
 
             case 2:
                 procRindou(par1ItemStack,par2World,par3EntityPlayer);
+                break;
+
+            case 3:
+                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Iai);
                 break;
 
             default:
@@ -936,10 +940,10 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
-    	if(1000 < tag.getInteger(proudSoulStr))
+    	if(1000 <= tag.getInteger(proudSoulStr))
     		result.add(SwordType.SoulEeater);
 
-    	if(1000 < tag.getInteger(killCountStr))
+    	if(1000 <= tag.getInteger(killCountStr))
     		result.add(SwordType.FiercerEdge);
 
         if(tag.getBoolean(isNoScabbardStr)){
@@ -1458,7 +1462,8 @@ public class ItemSlashBlade extends ItemSword {
             final String[] keys = {
                     "flammpfeil.slashblade.specialattack.slashdimension",
                     "flammpfeil.slashblade.specialattack.drive",
-                    "flammpfeil.slashblade.specialattack.rindou"
+                    "flammpfeil.slashblade.specialattack.rindou",
+                    "flammpfeil.slashblade.specialattack.drive"
                 };
 
             String key = (0 <= sat && sat < keys.length) ? keys[sat] : keys[0];
