@@ -377,6 +377,9 @@ public class ItemSlashBlade extends ItemSword {
 
 			int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, par1ItemStack);
 			if(0 < level){
+                par2EntityLivingBase.motionX = 0;
+                par2EntityLivingBase.motionY = 0;
+                par2EntityLivingBase.motionZ = 0;
     			par2EntityLivingBase.addVelocity(
     					(double)(MathHelper.sin(par3EntityLivingBase.rotationYaw * (float)Math.PI / 180.0F) * (float)level * 0.5F),
     					0.2D,
@@ -702,6 +705,8 @@ public class ItemSlashBlade extends ItemSword {
                     curEntity.hurtResistantTime = 0;
                     DamageSource ds = new EntityDamageSource("directMagic",par3EntityPlayer).setDamageBypassesArmor().setMagicDamage();
                     curEntity.attackEntityFrom(ds, magicDamage);
+                    if(curEntity instanceof EntityLivingBase)
+                    this.hitEntity(par1ItemStack,(EntityLivingBase)curEntity,par3EntityPlayer);
                 }
             }
             tag.setBoolean(onClickStr, false);
