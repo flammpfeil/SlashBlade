@@ -12,6 +12,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -29,6 +30,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
      * ★撃った人
      */
     protected Entity thrower;
+
+    protected ItemStack blade = null;
 
     /**
      * ★多段Hit防止用List
@@ -67,6 +70,11 @@ public class EntityDrive extends Entity implements IThrowableEntity {
 
         //■撃った人
         thrower = entityLiving;
+
+        blade = entityLiving.getHeldItem();
+        if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = null;
+        }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
         alreadyHitEntity.clear();
@@ -240,6 +248,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                         curEntity.hurtResistantTime = 0;
                         DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
                         curEntity.attackEntityFrom(ds, magicDamage);
+                        if(blade != null && curEntity instanceof EntityLivingBase)
+                            ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                     }
                 }
             }

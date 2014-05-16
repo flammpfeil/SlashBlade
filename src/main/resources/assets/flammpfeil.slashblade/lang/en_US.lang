@@ -1,3 +1,4 @@
+itemGroup.flammpfeil.slashblade=SlashBlade
 item.flammpfeil.slashblade.name=SlashBlade--
 item.flammpfeil.slashblade.proudsoul.name=ProudSoul
 item.flammpfeil.slashblade.proudsoul.ingot.name=BladeSoulIngot
@@ -35,3 +36,8 @@ item.flammpfeil.slashblade.named.tagayasan.name=hardwood-tagayasan-
 freftext.item.flammpfeil.slashblade.named.tagayasan=タガヤサンを用いた木刀\n幾多を叩き伏せなお折れなかった木刀を寄り代とし、食らった魂と呼応し鉄の名を冠する堅木を喚び変転した
 item.flammpfeil.slashblade.named.yuzukitukumo.name=yuzuki-tukumo-
 freftext.item.flammpfeil.slashblade.named.yuzukitukumo=とある一族の名を冠した一振り\nその有り様の一端を表す名を持つ\n荒ぶれば神仏悪鬼両断せしむる妖刀\n和ぎれば憑き物退ける守り刀
+item.flammpfeil.slashblade.named.agito.rust.name=agito rust
+item.flammpfeil.slashblade.named.agito.name=agito
+item.flammpfeil.slashblade.named.orotiagito.rust.name=agito rust
+item.flammpfeil.slashblade.named.orotiagito.seald.name=agito
+item.flammpfeil.slashblade.named.orotiagito.name=orotiagito
