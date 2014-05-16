@@ -560,7 +560,7 @@ public class ItemSlashBlade extends ItemSword {
             if(tag.getBoolean(isChargedStr)){
                 tag.setBoolean(isChargedStr,false);
                 if(player instanceof EntityPlayer){
-                    procDrive(itemStack,player.worldObj,(EntityPlayer)player,current);
+                    procDrive(itemStack,player.worldObj,(EntityPlayer)player,current,false);
                 }
             }
         }
@@ -709,7 +709,7 @@ public class ItemSlashBlade extends ItemSword {
         }
     }
 
-    public void procDrive(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, ComboSequence setCombo){
+    public void procDrive(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, ComboSequence setCombo,boolean multihit){
 
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
@@ -730,7 +730,7 @@ public class ItemSlashBlade extends ItemSword {
             int level = 1+EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
             float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 6.0)) : 0;
 
-            EntityDrive entityDrive = new EntityDrive(par2World, par3EntityPlayer, magicDamage,false,90.0f - setCombo.swingDirection);
+            EntityDrive entityDrive = new EntityDrive(par2World, par3EntityPlayer, magicDamage,multihit,90.0f - setCombo.swingDirection);
             if (entityDrive != null) {
                 par2World.spawnEntityInWorld(entityDrive);
             }
@@ -792,7 +792,7 @@ public class ItemSlashBlade extends ItemSword {
 
         switch (sat){
             case 1:
-                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Kiriage);
+                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Kiriage,false);
                 break;
 
             case 2:
@@ -800,7 +800,7 @@ public class ItemSlashBlade extends ItemSword {
                 break;
 
             case 3:
-                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Iai);
+                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Iai,true);
                 break;
 
             default:

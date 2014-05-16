@@ -78,8 +78,10 @@ public class RenderDrive extends Render {
         GL11.glScalef(0.25f, 1, 1);
 
         //■スタート
+        float lifetime = entityDrive.getLifeTime();
+        float ticks = entityDrive.ticksExisted;
         tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F(0.2F, 0.2F, 1.0F, (float)Math.pow((20.0f - Math.min(20.0f,entityDrive.ticksExisted)) / 20.0f,2.0f));
+        tessellator.setColorRGBA_F(0.2F, 0.2F, 1.0F, (float)Math.pow((lifetime - Math.min(lifetime,ticks)) / lifetime,2.0f));
 
         //◆頂点登録 開始
         double dScale = 1.0;

@@ -105,6 +105,9 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         //Roll
         this.getDataWatcher().addObject(5, 0.0f);
 
+        //lifetime
+        this.getDataWatcher().addObject(6, 20);
+
     }
 
     public boolean getIsMultiHit(){
@@ -119,6 +122,13 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     }
     public void setRoll(float roll){
         this.getDataWatcher().updateObject(5,roll);
+    }
+
+    public int getLifeTime(){
+        return this.getDataWatcher().getWatchableObjectInt(6);
+    }
+    public void setLifeTime(int lifetime){
+        this.getDataWatcher().updateObject(6,lifetime);
     }
 
     public void setInitialSpeed(float f){
