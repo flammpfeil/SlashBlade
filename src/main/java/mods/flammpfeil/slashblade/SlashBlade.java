@@ -33,7 +33,7 @@ import java.util.*;
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
-@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r6")
+@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r9.3")
 public class SlashBlade implements IFuelHandler{
 
 
@@ -67,6 +67,8 @@ public class SlashBlade implements IFuelHandler{
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
     public static final String SphereBladeSoulStr = "sphere_bladesoul";
     public static final String TinyBladeSoulStr = "tiny_bladesoul";
+
+    public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade");
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
@@ -108,10 +110,11 @@ public class SlashBlade implements IFuelHandler{
 			mainConfiguration.save();
 		}
 
+
 		proudSoul = (new ItemSWaeponMaterial())
 				.setUnlocalizedName("flammpfeil.slashblade.proudsoul")
 				.setTextureName("flammpfeil.slashblade:proudsoul")
-				.setCreativeTab(CreativeTabs.tabMaterials);
+				.setCreativeTab(tab);
 		GameRegistry.registerItem(proudSoul,"proudsoul");
 
 		ItemStack itemProudSoul = new ItemStack(proudSoul,1,0);
@@ -133,7 +136,7 @@ public class SlashBlade implements IFuelHandler{
 				.setRepairMaterialOreDic("ingotSteel","nuggetSteel")
 				.setUnlocalizedName("flammpfeil.slashblade")
 				.setTextureName("flammpfeil.slashblade:proudsoul")
-				.setCreativeTab(CreativeTabs.tabCombat);
+				.setCreativeTab(tab);
 
 		GameRegistry.registerItem(weapon, "slashblade");
 
@@ -146,7 +149,7 @@ public class SlashBlade implements IFuelHandler{
                 .setMaxDamage(60)
                 .setUnlocalizedName("flammpfeil.slashblade.wood")
                 .setTextureName("flammpfeil.slashblade:proudsoul")
-                .setCreativeTab(CreativeTabs.tabCombat);
+                .setCreativeTab(tab);
         GameRegistry.registerItem(bladeWood, "slashbladeWood");
 
         bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
@@ -156,7 +159,7 @@ public class SlashBlade implements IFuelHandler{
                 .setMaxDamage(50)
                 .setUnlocalizedName("flammpfeil.slashblade.bamboo")
                 .setTextureName("flammpfeil.slashblade:proudsoul")
-                .setCreativeTab(CreativeTabs.tabCombat);
+                .setCreativeTab(tab);
         GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
 
         bladeSilverBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
@@ -166,7 +169,7 @@ public class SlashBlade implements IFuelHandler{
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
                 .setTextureName("flammpfeil.slashblade:proudsoul")
-                .setCreativeTab(CreativeTabs.tabCombat);
+                .setCreativeTab(tab);
         GameRegistry.registerItem(bladeSilverBambooLight, "slashbladeSilverBambooLight");
 
         bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
@@ -177,7 +180,7 @@ public class SlashBlade implements IFuelHandler{
                 .setMaxDamage(70)
                 .setUnlocalizedName("flammpfeil.slashblade.white")
                 .setTextureName("flammpfeil.slashblade:proudsoul")
-                .setCreativeTab(CreativeTabs.tabCombat);
+                .setCreativeTab(tab);
         GameRegistry.registerItem(bladeWhiteSheath, "slashbladeWhite");
 
         //==================================================================================================================================
@@ -317,7 +320,7 @@ public class SlashBlade implements IFuelHandler{
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.named")
                 .setTextureName("flammpfeil.slashblade:proudsoul")
-                .setCreativeTab(CreativeTabs.tabCombat);
+                .setCreativeTab(tab);
         GameRegistry.registerItem(bladeNamed, "slashbladeNamed");
 
         {
@@ -338,18 +341,33 @@ public class SlashBlade implements IFuelHandler{
 
             tag.setString(ItemSlashBladeNamed.RepairMaterialNameStr,"iron_ingot");
 
-            String name = "slashblade.named.tagayasan";
+            String name = "flammpfeil.slashblade.named.tagayasan";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
 
-            GameRegistry.addRecipe(new RecipeAwakeBlade(customblade,
-                    "XEX",
-                    "PBP",
-                    "XEX",
-                    'X',itemSphereBladeSoul,
-                    'B',bladeWood,
-                    'P',new ItemStack(Items.ender_pearl),
-                    'E',new ItemStack(Items.ender_eye)));
+
+            {
+                ItemStack reqiredBlade = new ItemStack(bladeWood);
+                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                reqTag.setInteger(ItemSlashBlade.killCountStr,1000);
+
+                reqiredBlade.setStackDisplayName("thousandkill woodblade");
+
+                name = "flammpfeil.slashblade.tagayasan.reqired";
+                GameRegistry.registerCustomItemStack(name, reqiredBlade);
+                ItemSlashBladeNamed.BladeNames.add(name);
+
+                GameRegistry.addRecipe(new RecipeAwakeBlade(customblade,
+                        true,
+                        reqiredBlade,
+                        "XEX",
+                        "PBP",
+                        "XEX",
+                        'X',itemSphereBladeSoul,
+                        'B',reqiredBlade,
+                        'P',new ItemStack(Items.ender_pearl),
+                        'E',new ItemStack(Items.ender_eye)));
+            }
         }
 
         {
@@ -369,13 +387,14 @@ public class SlashBlade implements IFuelHandler{
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
             tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
             tag.setString(ItemSlashBlade.TextureNameStr, "named/yamato");
+            tag.setString(ItemSlashBlade.ModelNameStr,"named/yamato");
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr, 0);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
 
             tag.setInteger(ItemSlashBlade.killCountStr, 1000);
             tag.setInteger(ItemSlashBlade.proudSoulStr, 1000);
 
-            String name = "slashblade.named.yamato.youtou";
+            String name = "flammpfeil.slashblade.named.yamato.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
 
@@ -392,6 +411,7 @@ public class SlashBlade implements IFuelHandler{
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
             tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
             tag.setString(ItemSlashBlade.TextureNameStr, "named/yamato");
+            tag.setString(ItemSlashBlade.ModelNameStr,"named/yamato");
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr, 0);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
 
@@ -400,10 +420,31 @@ public class SlashBlade implements IFuelHandler{
             tag.setBoolean(ItemSlashBlade.isSealedStr,true);
             tag.setString(ItemSlashBladeNamed.TrueItemNameStr, "slashblade.named.yamato");
 
-            String name = "slashblade.named.yamato.broken";
+            String name = "flammpfeil.slashblade.named.yamato.broken";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
 
+            {
+                ItemStack reqiredBlade = customblade.copy();
+                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                reqTag.setInteger(ItemSlashBlade.proudSoulStr,1000);
+
+                reqiredBlade.setStackDisplayName("thousandProudSouls");
+
+                name = "flammpfeil.slashblade.named.yamato.reqired";
+                GameRegistry.registerCustomItemStack(name, reqiredBlade);
+                ItemSlashBladeNamed.BladeNames.add(name);
+
+                ItemStack yamato = GameRegistry.findItemStack(modid,"flammpfeil.slashblade.named.yamato.youtou",1);
+                GameRegistry.addRecipe(new RecipeAwakeBlade(yamato,
+                        true,
+                        reqiredBlade,
+                        "XXX",
+                        "XBX",
+                        "XXX",
+                        'X',itemSphereBladeSoul,
+                        'B',reqiredBlade));
+            }
         }
 
         {
@@ -424,7 +465,7 @@ public class SlashBlade implements IFuelHandler{
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,3);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
 
-            String name = "slashblade.named.yuzukitukumo.youtou";
+            String name = "flammpfeil.slashblade.named.yuzukitukumo.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
         }
@@ -438,11 +479,26 @@ public class SlashBlade implements IFuelHandler{
 
             tag.setInteger(ItemSlashBlade.killCountStr, 1000);
 
-            String name = "slashblade.thousandkill.youtou";
+            String name = "flammpfeil.slashblade.thousandkill.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
 
-            GameRegistry.addRecipe(new RecipeAwakeTukumoBlade());
+            GameRegistry.addRecipe(new RecipeAwakeBlade(ItemSlashBladeNamed.getCustomBlade("flammpfeil.slashblade.named.yuzukitukumo.youtou"),
+                    true,
+                    customblade,
+                    "ESD",
+                    "RBL",
+                    "ISG",
+                    'E', new ItemStack(Blocks.emerald_block),
+                    'D', new ItemStack(Blocks.diamond_block),
+                    'R', new ItemStack(Blocks.redstone_block),
+                    'L', new ItemStack(Blocks.lapis_block),
+                    'I', new ItemStack(Blocks.iron_block),
+                    'G', new ItemStack(Blocks.gold_block),
+                    'S', GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1),
+                    'B', customblade));
+
+            //GameRegistry.addRecipe(new RecipeAwakeTukumoBlade());
         }
 
         ItemSlashBladeNamed.BladeNames.add(SlashBlade.BrokenBladeWhiteStr);
@@ -468,7 +524,7 @@ public class SlashBlade implements IFuelHandler{
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,2);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
 
-            String name = "slashblade.named.agito";
+            String name = "flammpfeil.slashblade.named.agito";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
         }
@@ -490,11 +546,35 @@ public class SlashBlade implements IFuelHandler{
 
             tag.setBoolean(ItemSlashBlade.isSealedStr,true);
 
-            tag.setString(ItemSlashBladeNamed.TrueItemNameStr,"slashblade.named.agito");
+            tag.setString(ItemSlashBladeNamed.TrueItemNameStr,"flammpfeil.slashblade.named.agito");
 
-            String name = "slashblade.named.agito.rust";
+            String name = "flammpfeil.slashblade.named.agito.rust";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
+
+
+            {
+                ItemStack reqiredBlade = customblade.copy();
+                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                reqTag.setInteger(ItemSlashBlade.killCountStr,100);
+                reqTag.setInteger(ItemSlashBlade.RepairCounterStr,1);
+
+                reqiredBlade.setStackDisplayName("agito rust");
+
+                name = "flammpfeil.slashblade.named.agito.reqired";
+                GameRegistry.registerCustomItemStack(name, reqiredBlade);
+                ItemSlashBladeNamed.BladeNames.add(name);
+
+                ItemStack destBlade = GameRegistry.findItemStack(modid,tag.getString(ItemSlashBladeNamed.TrueItemNameStr),1);
+                GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
+                        true,
+                        reqiredBlade,
+                        " X ",
+                        "XBX",
+                        " X ",
+                        'X',itemProudSoul,
+                        'B',reqiredBlade));
+            }
         }
         //------------- true
         {
@@ -512,7 +592,7 @@ public class SlashBlade implements IFuelHandler{
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,2);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
 
-            String name = "slashblade.named.orotiagito";
+            String name = "flammpfeil.slashblade.named.orotiagito";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
         }
@@ -532,11 +612,37 @@ public class SlashBlade implements IFuelHandler{
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,2);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
 
-            tag.setString(ItemSlashBladeNamed.TrueItemNameStr,"slashblade.named.orotiagito");
+            tag.setString(ItemSlashBladeNamed.TrueItemNameStr,"flammpfeil.slashblade.named.orotiagito");
 
-            String name = "slashblade.named.orotiagito.seald";
+            String name = "flammpfeil.slashblade.named.orotiagito.seald";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
+
+
+            {
+                ItemStack reqiredBlade = customblade.copy();
+                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                reqTag.setInteger(ItemSlashBlade.killCountStr,1000);
+                reqTag.setInteger(ItemSlashBlade.proudSoulStr,1000);
+                reqTag.setInteger(ItemSlashBlade.RepairCounterStr,10);
+
+                reqiredBlade.setStackDisplayName("orotiagito seald");
+
+                name = "flammpfeil.slashblade.named.orotiagito.reqired";
+                GameRegistry.registerCustomItemStack(name, reqiredBlade);
+                ItemSlashBladeNamed.BladeNames.add(name);
+
+                ItemStack destBlade = GameRegistry.findItemStack(modid,tag.getString(ItemSlashBladeNamed.TrueItemNameStr),1);
+                GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
+                        true,
+                        reqiredBlade,
+                        "PXP",
+                        "XBX",
+                        "PXP",
+                        'X',itemSphereBladeSoul,
+                        'P',itemProudSoul,
+                        'B',reqiredBlade));
+            }
         }
 
         {
@@ -556,11 +662,34 @@ public class SlashBlade implements IFuelHandler{
 
             tag.setBoolean(ItemSlashBlade.isSealedStr, true);
 
-            tag.setString(ItemSlashBladeNamed.TrueItemNameStr, "slashblade.named.orotiagito.seald");
+            tag.setString(ItemSlashBladeNamed.TrueItemNameStr, "flammpfeil.slashblade.named.orotiagito.seald");
 
-            String name = "slashblade.named.orotiagito.rust";
+            String name = "flammpfeil.slashblade.named.orotiagito.rust";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
+
+            {
+                ItemStack reqiredBlade = customblade.copy();
+                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                reqTag.setInteger(ItemSlashBlade.killCountStr,100);
+                reqTag.setInteger(ItemSlashBlade.RepairCounterStr,1);
+
+                reqiredBlade.setStackDisplayName("orotiagito rust");
+
+                name = "flammpfeil.slashblade.named.orotiagito.seald.reqired";
+                GameRegistry.registerCustomItemStack(name, reqiredBlade);
+                ItemSlashBladeNamed.BladeNames.add(name);
+
+                ItemStack destBlade = GameRegistry.findItemStack(modid,tag.getString(ItemSlashBladeNamed.TrueItemNameStr),1);
+                GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
+                        true,
+                        reqiredBlade,
+                        " X ",
+                        "XBX",
+                        " X ",
+                        'X',itemProudSoul,
+                        'B',reqiredBlade));
+            }
         }
 
         //==================================================================================================================================
@@ -585,7 +714,6 @@ public class SlashBlade implements IFuelHandler{
         RecipeSorter.register("flammpfeil.slashblade:wrap", RecipeWrapBlade.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:adjust", RecipeAdjustPos.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
-        RecipeSorter.register("flammpfeil.slashblade:tukumo", RecipeAwakeTukumoBlade.class, SHAPED, "after:forge:shaped");
     }
 
     @EventHandler
@@ -595,8 +723,9 @@ public class SlashBlade implements IFuelHandler{
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
 
-        DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 1.0f, GameRegistry.findItemStack(modid, "slashblade.named.orotiagito.rust", 1));
-        DropEventHandler.registerEntityDrop("TwilightForest.Naga",1.0f,GameRegistry.findItemStack(modid,"slashblade.named.agito.rust",1));
+        DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.yamato.broken", 1));
+        DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, GameRegistry.findItemStack(modid, "slashblade.named.orotiagito.rust", 1));
+        DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,GameRegistry.findItemStack(modid,"slashblade.named.agito.rust",1));
     }
 
     @EventHandler

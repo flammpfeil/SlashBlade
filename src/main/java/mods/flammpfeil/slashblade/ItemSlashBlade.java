@@ -1472,6 +1472,16 @@ public class ItemSlashBlade extends ItemSword {
             par3List.add(String.format("SA:%s",  StatCollector.translateToLocal(key)));
         }
     }
+
+    public void addInformationRepairCount(ItemStack par1ItemStack,
+                                          EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+        int repair = tag.getInteger(RepairCounterStr);
+        if(0 < repair){
+            par3List.add(String.format("Repair : %d", repair));
+        }
+    }
     
 	@Override
 	public void addInformation(ItemStack par1ItemStack,
@@ -1487,6 +1497,8 @@ public class ItemSlashBlade extends ItemSword {
 		addInformationProudSoul(par1ItemStack, par2EntityPlayer, par3List, par4);
 
         addInformationSpecialAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        addInformationRepairCount(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(tag.hasKey(adjustXStr)){

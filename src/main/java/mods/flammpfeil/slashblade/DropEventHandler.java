@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.*;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.EntityList;
@@ -36,6 +37,7 @@ public class DropEventHandler {
         drops.put(rate, item);
     }
 
+    @SubscribeEvent
     public void LivingDrops(LivingDropsEvent event){
         String key = EntityList.getEntityString(event.entityLiving);
 
