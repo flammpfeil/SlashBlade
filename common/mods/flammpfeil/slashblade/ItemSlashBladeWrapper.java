@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by Furia on 14/03/11.
  */
-public class ItemSlashBladeWrapper extends ItemSlashBlade {
+public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
 
     public ItemSlashBladeWrapper(int id,EnumToolMaterial par2EnumToolMaterial){
         super(id,par2EnumToolMaterial, 4.0f);
@@ -32,7 +32,6 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
     }
 
     static final String WrapItemStr = "WrapItem";
-    static final String BaseAttackModifiersStr = "baseAttackModifiers";
 
     public void setWrapItem(ItemStack base,ItemStack wrapTarget){
         NBTTagCompound tag = getItemTagCompound(base);
@@ -50,6 +49,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
         if(tag.hasKey("display"))       tag.removeTag("display");
         if(tag.hasKey(isBrokenStr))     tag.removeTag(isBrokenStr);
         if(tag.hasKey(BaseAttackModifiersStr)) tag.removeTag(BaseAttackModifiersStr);
+        if(tag.hasKey(CurrentItemNameStr))     tag.removeTag(CurrentItemNameStr);
         stack.setItemDamage(0);
     }
 
@@ -110,7 +110,11 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
             try{
                 NBTTagCompound tag = getItemTagCompound(par1ItemStack);
                 wrapItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag(WrapItemStr));
-                setWrapItem(par1ItemStack,wrapItem);
+                if(wrapItem != null)
+                    setWrapItem(par1ItemStack,wrapItem);
+                else
+                    removeWrapItem(par1ItemStack);
+
             }catch(Throwable e){
                 removeWrapItem(par1ItemStack);
                 wrapItem = null;
@@ -165,7 +169,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
     }
 
     @Override
-    public void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
+	public void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
         if(hasWrapedItem(par1ItemStack)){
 
         	NBTTagCompound tag = getItemTagCompound(par1ItemStack);
@@ -199,5 +203,44 @@ public class ItemSlashBladeWrapper extends ItemSlashBlade {
 				}
     		}
         }
+    }
+
+
+    @Override
+    public boolean getIsRepairable(ItemStack par1ItemStack, ItemStack par2ItemStack)
+    {
+        boolean result = super.getIsRepairable(par1ItemStack,par2ItemStack);
+
+        if(!result){
+            ItemStack wrapedItem = getWrapedItem(par1ItemStack);
+            if(wrapedItem != null)
+                result = wrapedItem.getItem().getIsRepairable(wrapedItem,par2ItemStack);
+        }
+
+        return result;
+
+        /*
+        if(par2ItemStack.getItem() == SlashBlade.proudSoul){
+            result = true;
+        }
+
+        if(!result && this.repairMaterial != null)
+            result =par2ItemStack.isItemEqual(this.repairMaterial);
+
+        if(!result && this.repairMaterialOreDic != null)
+        {
+            for(String oreName : this.repairMaterialOreDic){
+                List<ItemStack> list = OreDictionary.getOres(oreName);
+                for(ItemStack curItem : list){
+                    result = curItem.isItemEqual(par2ItemStack);
+                    if(result)
+                        break;
+                }
+            }
+        }
+        return result;
+        */
+
+        //return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
     }
 }

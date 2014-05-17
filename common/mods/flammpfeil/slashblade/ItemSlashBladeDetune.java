@@ -84,12 +84,15 @@ public class ItemSlashBladeDetune extends ItemSlashBlade {
 					par3EntityLivingBase.entityDropItem(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, count), 0.0F);
 
 					if(par1ItemStack.getItem() == SlashBlade.bladeSilverBambooLight){
-						ItemStack sheath = new ItemStack(SlashBlade.wrapBlade,1);
+						int killCount = tag.getInteger(killCountStr);
+						if(100 <= killCount && SlashBlade.wrapBlade != null){
+							ItemStack sheath = new ItemStack(SlashBlade.wrapBlade,1);
 
-						NBTTagCompound copyTag = (NBTTagCompound)tag.copy();
-						copyTag.removeTag(isBrokenStr);
-						sheath.setTagCompound(copyTag);
-						par3EntityLivingBase.entityDropItem(sheath, 0.0F);
+							NBTTagCompound copyTag = (NBTTagCompound)tag.copy();
+							copyTag.removeTag(isBrokenStr);
+							sheath.setTagCompound(copyTag);
+							par3EntityLivingBase.entityDropItem(sheath, 0.0F);
+						}
 					}
 				}
 			}

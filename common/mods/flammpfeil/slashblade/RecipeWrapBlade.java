@@ -32,6 +32,13 @@ public class RecipeWrapBlade extends ShapedRecipes {
         proudSoul = new ItemStack(SlashBlade.proudSoul,1,0);
 
         RegisterWrapable("BambooMod:katana", "BambooKatana", 4.0f);
+
+        RegisterWrapable("weaponmod:katana.wood",  "BalkonWood", 2.0f);
+        RegisterWrapable("weaponmod:katana.stone", "BalkonStone", 4.0f);
+        RegisterWrapable("weaponmod:katana.iron",  "BalkonIron", 6.0f);
+        RegisterWrapable("weaponmod:katana.diamond", "BalkonDiamond", 8.0f);
+        RegisterWrapable("weaponmod:katana.gold",  "BalkonGold", 2.0f);
+
         //RegisterWrapable("Minecraft:wood_sword", "BambooKatana", 4.0f);
     }
 
@@ -58,6 +65,8 @@ public class RecipeWrapBlade extends ShapedRecipes {
     			//Item.itemRegistry.getNameForObject(target.getItem());
             	if(targetUI != null){
                 	String targetName = String.format("%s:%s", targetUI.modId , targetUI.name);
+
+                	//System.out.println(String.format("getUniqueIdentifire : %s",targetName));
 
                     hasTarget = wrapableTextureNames.containsKey(targetName);
             	}
@@ -87,6 +96,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
         scabbard.setItemName(String.format(StatCollector.translateToLocal("item.flammpfeil.slashblade.wrapformat").trim(),target.getDisplayName()));
         NBTTagCompound tag = scabbard.getTagCompound();
+        tag.setString(ItemSlashBladeNamed.CurrentItemNameStr, "wrap." + targetName.replace(':','.'));
         tag.setString(ItemSlashBlade.TextureNameStr, wrapableTextureNames.get(targetName));
         tag.setFloat(ItemSlashBladeWrapper.BaseAttackModifiersStr,wrapableBaseAttackModifiers.get(targetName));
 

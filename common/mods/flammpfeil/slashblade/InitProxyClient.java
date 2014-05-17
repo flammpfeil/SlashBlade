@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -14,6 +15,9 @@ public class InitProxyClient extends InitProxy{
 		MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeSilverBambooLight.itemID, renderer);
 		MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeWhiteSheath.itemID, renderer);
         MinecraftForgeClient.registerItemRenderer(SlashBlade.wrapBlade.itemID, renderer);
+        MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeNamed.itemID, renderer);
 		MinecraftForge.EVENT_BUS.register(renderer);
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, new RenderDrive());
 	}
 }
