@@ -516,35 +516,12 @@ public class SlashBlade implements IFuelHandler{
             tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + EnumToolMaterial.EMERALD.getDamageVsEntity());
             tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/yuzukitukumo");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,3);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
-
-            String name = "flammpfeil.slashblade.named.yuzukitukumo.youtou";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
-        }
-
-        {
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
-
-            customblade.addEnchantment(Enchantment.sharpness, 4);
-            customblade.addEnchantment(Enchantment.unbreaking, 3);
-            customblade.addEnchantment(Enchantment.fireAspect, 2);
-
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.yuzukitukumo");
-
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + EnumToolMaterial.EMERALD.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
             tag.setString(ItemSlashBlade.TextureNameStr,"named/a_tukumo");
             tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,3);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
 
-            String name = "flammpfeil.slashblade.named.yuzukitukumo.true.youtou";
+            String name = "flammpfeil.slashblade.named.yuzukitukumo.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.BladeNames.add(name);
         }
