@@ -85,8 +85,20 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                 NBTTagCompound oldTag = curIs.getTagCompound();
 				oldTag = (NBTTagCompound)oldTag.copy();
 
-                if(oldTag.hasKey(ItemSlashBladeNamed.TrueItemNameStr)){
-                    result = ItemSlashBladeNamed.getCustomBlade(oldTag.getString(ItemSlashBladeNamed.TrueItemNameStr));
+                {
+                    NBTTagCompound newTag;
+                    newTag = ItemSlashBlade.getItemTagCompound(result);
+
+                    if(newTag.hasKey(ItemSlashBladeNamed.CurrentItemNameStr)){
+                        ItemStack tmp;
+                        String key = newTag.getString(ItemSlashBladeNamed.CurrentItemNameStr);
+                        tmp = ItemSlashBladeNamed.getCustomBlade(key);
+                        if(tmp == null)
+                            tmp = ItemSlashBladeNamed.getCustomBlade(key + ".youtou");
+
+                        if(tmp != null)
+                            result = tmp;
+                    }
                 }
 
                 if(isYoutou)
