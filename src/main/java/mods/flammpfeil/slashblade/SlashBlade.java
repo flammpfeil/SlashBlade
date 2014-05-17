@@ -461,13 +461,14 @@ public class SlashBlade implements IFuelHandler{
             tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
             tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
             tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/yuzukitukumo");
+            tag.setString(ItemSlashBlade.TextureNameStr,"named/a_tukumo");
+            tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
             tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,3);
             tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
 
             String name = "flammpfeil.slashblade.named.yuzukitukumo.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
-            //ItemSlashBladeNamed.BladeNames.add(name);
+            ItemSlashBladeNamed.BladeNames.add(name);
         }
         {
             ItemStack customblade = new ItemStack(weapon,1,0);

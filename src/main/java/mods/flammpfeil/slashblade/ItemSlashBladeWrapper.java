@@ -167,7 +167,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     }
 
     @Override
-    protected void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
+    public void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
         if(hasWrapedItem(par1ItemStack)){
 
         	NBTTagCompound tag = getItemTagCompound(par1ItemStack);
