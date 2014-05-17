@@ -482,7 +482,7 @@ public class SlashBlade implements IFuelHandler{
 
             String name = "flammpfeil.slashblade.thousandkill.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
-            //ItemSlashBladeNamed.BladeNames.add(name);
+            ItemSlashBladeNamed.BladeNames.add(name);
 
             GameRegistry.addRecipe(new RecipeAwakeBlade(ItemSlashBladeNamed.getCustomBlade("flammpfeil.slashblade.named.yuzukitukumo.youtou"),
                     true,
