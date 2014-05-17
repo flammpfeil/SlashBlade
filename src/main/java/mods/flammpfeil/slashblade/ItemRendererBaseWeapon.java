@@ -346,6 +346,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
 
             renderType = tag.getInteger(ItemSlashBlade.StandbyRenderTypeStr);
+
+            if(tag.getBoolean(ItemSlashBlade.isNoScabbardStr))
+                renderType = 0;
         }
 
         if(renderType == 0){
