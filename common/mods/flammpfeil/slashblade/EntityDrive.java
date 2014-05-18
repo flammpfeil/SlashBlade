@@ -184,7 +184,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         {
 
             {
-                double dAmbit = 1.0D;
+                double dAmbit = 1.5D;
                 AxisAlignedBB bb = AxisAlignedBB.getAABBPool().getAABB(posX - dAmbit, posY - dAmbit, posZ - dAmbit, posX + dAmbit, posY + dAmbit, posZ + dAmbit);
 
                 if(this.getThrower() instanceof EntityLivingBase){
@@ -237,7 +237,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                     }
                 }
 
-                if(this.ticksExisted % 2 == 0){
+                //if(this.ticksExisted % 2 == 0){
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
                     list.removeAll(alreadyHitEntity);
 
@@ -253,7 +253,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                         if(blade != null && curEntity instanceof EntityLivingBase)
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                     }
-                }
+                //}
             }
 
             //■ブロック
@@ -303,7 +303,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         setPosition(posX, posY, posZ);
 
         //■死亡チェック
-        if(ticksExisted >= 20) {
+        if(ticksExisted >= this.getLifeTime()) {
             alreadyHitEntity.clear();
             alreadyHitEntity = null;
             setDead();
