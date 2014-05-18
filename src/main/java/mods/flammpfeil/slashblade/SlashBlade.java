@@ -33,7 +33,7 @@ import java.util.*;
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
-@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r9.3")
+@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r9.6")
 public class SlashBlade implements IFuelHandler{
 
 

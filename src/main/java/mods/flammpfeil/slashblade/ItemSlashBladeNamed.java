@@ -27,48 +27,11 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     }
 
 
-    static public final String BaseAttackModifiersStr = "baseAttackModifiers";
     static public final String TrueItemNameStr = "TrueItemName";
     static public final String CurrentItemNameStr = "CurrentItemName";
     static public final String CustomMaxDamageStr = "CustomMaxDamage";
     static public final String RepairOreDicMaterialStr = "RepairOreDicMaterial";
     static public final String RepairMaterialNameStr = "RepairMaterialName";
-
-    @Override
-    public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
-        float tagAttackAmplifier = tag.getFloat(attackAmplifierStr);
-
-        float attackAmplifier = 0;
-
-        if(swordType.contains(SwordType.Broken)){
-            attackAmplifier = -4;
-        }else if(swordType.contains(SwordType.FiercerEdge)){
-            float tmp = el.experienceLevel;
-            tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
-            attackAmplifier = tmp;
-        }
-
-        if(tagAttackAmplifier != attackAmplifier)
-        {
-            tag.setFloat(attackAmplifierStr, attackAmplifier);
-
-            NBTTagList attrTag = null;
-
-            attrTag = new NBTTagList();
-            tag.setTag("AttributeModifiers",attrTag);
-
-            float baseModif = this.baseAttackModifiers;
-            if(tag.hasKey(BaseAttackModifiersStr)){
-                baseModif = tag.getFloat(BaseAttackModifiersStr);
-            }
-            attrTag.appendTag(
-                    getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + baseModif), 0))
-            );
-
-            el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers());
-            el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
-        }
-    }
 
     @Override
     public String getUnlocalizedName(ItemStack par1ItemStack) {

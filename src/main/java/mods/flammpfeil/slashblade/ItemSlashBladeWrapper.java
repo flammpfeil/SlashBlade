@@ -52,42 +52,6 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     }
 
     @Override
-    public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
-        float tagAttackAmplifier = tag.getFloat(attackAmplifierStr);
-
-        float attackAmplifier = 0;
-
-        if(swordType.contains(SwordType.Broken) || !hasWrapedItem(sitem)){
-            attackAmplifier = -4;
-        }else if(swordType.contains(SwordType.FiercerEdge)){
-            float tmp = el.experienceLevel;
-            tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
-            attackAmplifier = tmp;
-        }
-
-        if(tagAttackAmplifier != attackAmplifier)
-        {
-            tag.setFloat(attackAmplifierStr, attackAmplifier);
-
-            NBTTagList attrTag = null;
-
-            attrTag = new NBTTagList();
-            tag.setTag("AttributeModifiers",attrTag);
-
-            float baseModif = this.baseAttackModifiers;
-            if(tag.hasKey(BaseAttackModifiersStr)){
-                baseModif = tag.getFloat(BaseAttackModifiersStr);
-            }
-            attrTag.appendTag(
-                    getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + baseModif), 0))
-            );
-
-            el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers());
-            el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
-        }
-    }
-
-    @Override
     public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player) {
 
         if(hasWrapedItem(itemStack)){
@@ -129,6 +93,8 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
         }else{
             EnumSet<SwordType> set =  EnumSet.noneOf(SwordType.class);
             set.add(SwordType.Perfect);
+            set.add(SwordType.Sealed);
+            set.remove(SwordType.FiercerEdge);
             return set;
         }
     }
