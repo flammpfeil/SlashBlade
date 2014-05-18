@@ -47,7 +47,7 @@ public class DropEventHandler {
             Map<Float,ItemStack> drops = dropData.get(key);
 
             for(Map.Entry<Float,ItemStack> drop : drops.entrySet()){
-                if(drop.getKey() > rand.nextFloat()){
+                if(drop.getKey() > rand.nextFloat() && drop.getValue() != null){
                     ItemStack dropitem = drop.getValue().copy();
 
                     dropitem.stackSize = Math.max(1,(int)Math.round((float)dropitem.stackSize * rand.nextFloat()));

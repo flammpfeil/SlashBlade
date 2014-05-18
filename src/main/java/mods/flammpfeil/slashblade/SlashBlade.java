@@ -33,7 +33,7 @@ import java.util.*;
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
-@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r9.6")
+@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r9.8")
 public class SlashBlade implements IFuelHandler{
 
 
@@ -725,8 +725,8 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
 
         DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.yamato.broken", 1));
-        DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, GameRegistry.findItemStack(modid, "slashblade.named.orotiagito.rust", 1));
-        DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,GameRegistry.findItemStack(modid,"slashblade.named.agito.rust",1));
+        DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
+        DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,GameRegistry.findItemStack(modid,"flammpfeil.slashblade.named.agito.rust",1));
     }
 
     @EventHandler
