@@ -1,7 +1,5 @@
 package mods.flammpfeil.slashblade;
 
-import java.util.List;
-
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -9,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 
+import java.util.List;
 public class ItemSWaeponMaterial extends Item {
 
 	public ItemSWaeponMaterial(int par1) {

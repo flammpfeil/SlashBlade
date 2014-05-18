@@ -14,7 +14,7 @@
     <property name="mod.packagetargetasm" value="**/mods/${mod.mydomain}/${mod.modid}/asm/*.class" />
     <property name="mod.packagetargethelper" value="**/net/minecraft/util/DamageSourceAccessHelper.class" />
 
-    <condition property="mod.build" value="${env.BUILD_NUMBER}" else="2">
+    <condition property="mod.build" value="${env.BUILD_NUMBER}" else="4">
         <isset property="env.BUILD_NUMBER" />
     </condition>
     <property name="mc.version" value="1.6.2" />

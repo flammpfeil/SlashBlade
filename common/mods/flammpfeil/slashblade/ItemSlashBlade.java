@@ -176,6 +176,8 @@ public class ItemSlashBlade extends ItemSword {
     public static final String SpecialAttackTypeStr = "SpecialAttackType";
     public static final String RepairCounterStr = "RepairCounter";
     public static final String StandbyRenderTypeStr = "StandbyRenderType";
+    static public final String BaseAttackModifiersStr = "baseAttackModifiers";
+    public static final float RefineBase = 5.0f;
 
 
 	public static int AnvilRepairBonus = 100;
@@ -982,33 +984,40 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
-    	float tagAttackAmplifier = tag.getFloat(attackAmplifierStr);
+        float tagAttackAmplifier = tag.getFloat(attackAmplifierStr);
 
-		float attackAmplifier = 0;
+        float attackAmplifier = 0;
 
-		if(swordType.contains(SwordType.Broken)){
-        	attackAmplifier = -4;
-		}else if(swordType.contains(SwordType.FiercerEdge)){
-        	float tmp = el.experienceLevel;
-        	tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
-        	attackAmplifier = tmp;
-		}
+        if(swordType.contains(SwordType.Broken) || swordType.contains(SwordType.Sealed)){
+            attackAmplifier = -4;
+        }else if(swordType.contains(SwordType.FiercerEdge)){
+            float tmp = el.experienceLevel;
+            tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
+
+            float max = RefineBase + tag.getInteger(RepairCounterStr)/2.0f;
+
+            attackAmplifier = Math.min(tmp, max);
+        }
 
         if(tagAttackAmplifier != attackAmplifier)
         {
-        	tag.setFloat(attackAmplifierStr, attackAmplifier);
+            tag.setFloat(attackAmplifierStr, attackAmplifier);
 
-        	NBTTagList attrTag = null;
+            NBTTagList attrTag = null;
 
-    		attrTag = new NBTTagList();
-    		tag.setTag("AttributeModifiers",attrTag);
+            attrTag = new NBTTagList();
+            tag.setTag("AttributeModifiers",attrTag);
 
-        	attrTag.appendTag(
-        			getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + baseAttackModifiers), 0))
-        			);
+            float baseModif = this.baseAttackModifiers;
+            if(tag.hasKey(BaseAttackModifiersStr)){
+                baseModif = tag.getFloat(BaseAttackModifiersStr);
+            }
+            attrTag.appendTag(
+                    getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + baseModif), 0))
+            );
 
-        	el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers());
-        	el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
+            el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers());
+            el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
         }
     }
 
@@ -1510,10 +1519,25 @@ public class ItemSlashBlade extends ItemSword {
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         int repair = tag.getInteger(RepairCounterStr);
         if(0 < repair){
-            par3List.add(String.format("Repair : %d", repair));
+            par3List.add(String.format("Refine : %d", repair));
         }
     }
 
+    public void addInformationMaxAttack(ItemStack par1ItemStack,
+                                          EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+        float repair = tag.getInteger(RepairCounterStr);
+        EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+        if(swordType.contains(SwordType.FiercerEdge)){
+            float baseModif = this.baseAttackModifiers;
+            if(tag.hasKey(BaseAttackModifiersStr)){
+                baseModif = tag.getFloat(BaseAttackModifiersStr);
+            }
+            par3List.add(String.format("§4+%.1f Max Attack Damage", (baseModif + RefineBase + repair/2.0f)));
+        }
+    }
+    
 	@Override
 	public void addInformation(ItemStack par1ItemStack,
 			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
@@ -1524,6 +1548,7 @@ public class ItemSlashBlade extends ItemSword {
 		addInformationSwordClass(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		addInformationKillCount(par1ItemStack, par2EntityPlayer, par3List, par4);
+        addInformationMaxAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		addInformationProudSoul(par1ItemStack, par2EntityPlayer, par3List, par4);
 

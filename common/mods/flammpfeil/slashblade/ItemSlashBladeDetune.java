@@ -1,8 +1,5 @@
 package mods.flammpfeil.slashblade;
 
-import java.util.EnumSet;
-import java.util.List;
-
 import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -16,6 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.EnumSet;
+import java.util.List;
 
 public class ItemSlashBladeDetune extends ItemSlashBlade {
 

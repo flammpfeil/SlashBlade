@@ -13,6 +13,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -44,7 +45,6 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -53,6 +53,7 @@ import cpw.mods.fml.relauncher.Side;
 @Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="@VERSION@")
 @NetworkMod(clientSideRequired=true)
 public class SlashBlade implements IFuelHandler{
+
 
 	public static final String modname = "SlashBlade";
 	public static final String modid = "flammpfeil.slashblade";
@@ -67,7 +68,7 @@ public class SlashBlade implements IFuelHandler{
     public static ItemSlashBladeDetune bladeWhiteSheath;
     public static ItemSlashBladeNamed bladeNamed;
 
-    public static ItemSlashBladeWrapper wrapBlade;
+    public static ItemSlashBladeWrapper wrapBlade = null;
 
 	public static Item proudSoul;
 
@@ -369,6 +370,7 @@ public class SlashBlade implements IFuelHandler{
 				'X',itemProudSoul));
 
         //==================================================================================================================================
+
 
         bladeNamed = (ItemSlashBladeNamed)(new ItemSlashBladeNamed(itemidNamed,EnumToolMaterial.IRON, 4.0f))
                 .setMaxDamage(40)
