@@ -153,7 +153,7 @@ public class ItemSlashBlade extends ItemSword {
     public static final String RepairCounterStr = "RepairCounter";
     public static final String StandbyRenderTypeStr = "StandbyRenderType";
     static public final String BaseAttackModifiersStr = "baseAttackModifiers";
-    public static final float RefineBase = 5.0f;
+    public static final float RefineBase = 10.0f;
 
 
 	public static int AnvilRepairBonus = 100;
@@ -717,6 +717,10 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void procDrive(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, ComboSequence setCombo,boolean multihit){
+        procDrive(par1ItemStack, par2World, par3EntityPlayer, setCombo, multihit,0.75f,20);
+    }
+
+    public void procDrive(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, ComboSequence setCombo,boolean multihit,float speed,int lifetime){
 
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
@@ -734,11 +738,17 @@ public class ItemSlashBlade extends ItemSword {
                 damageItem(5, par1ItemStack, par3EntityPlayer);
             }
 
-            int level = 1+EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
-            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 6.0)) : 0;
+            float baseModif = this.baseAttackModifiers;
+            if(tag.hasKey(BaseAttackModifiersStr)){
+                baseModif = tag.getFloat(BaseAttackModifiersStr);
+            }
+            int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack));
+            float magicDamage = baseModif + (float)(tag.getFloat(attackAmplifierStr) * (0.5f + (level /5.0f)));
 
             EntityDrive entityDrive = new EntityDrive(par2World, par3EntityPlayer, magicDamage,multihit,90.0f - setCombo.swingDirection);
             if (entityDrive != null) {
+                entityDrive.setInitialSpeed(speed);
+                entityDrive.setLifeTime(lifetime);
                 par2World.spawnEntityInWorld(entityDrive);
             }
 
@@ -766,8 +776,12 @@ public class ItemSlashBlade extends ItemSword {
                 damageItem(10, par1ItemStack, par3EntityPlayer);
             }
 
-            int level = 1+EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack);
-            float magicDamage = 0 < level ? 1.0f + (float)(tag.getFloat(attackAmplifierStr) * (level / 10.0)) : 0;
+            float baseModif = this.baseAttackModifiers;
+            if(tag.hasKey(BaseAttackModifiersStr)){
+                baseModif = tag.getFloat(BaseAttackModifiersStr);
+            }
+            int level = Math.max(1,EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, par1ItemStack));
+            float magicDamage = (baseModif/2.0f) + (float)(tag.getFloat(attackAmplifierStr) * (0.25f + (level /5.0f)));
 
             final float[] speeds = {0.25f,0.3f,0.35f};
             for(int i = 0; i < speeds.length;i++){
@@ -807,7 +821,7 @@ public class ItemSlashBlade extends ItemSword {
                 break;
 
             case 3:
-                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Iai,true);
+                procDrive(par1ItemStack, par2World, par3EntityPlayer, ComboSequence.Iai,true,1.5f,10);
                 break;
 
             default:
@@ -972,7 +986,7 @@ public class ItemSlashBlade extends ItemSword {
             float tmp = el.experienceLevel;
             tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
 
-            float max = RefineBase + tag.getInteger(RepairCounterStr)/2.0f;
+            float max = RefineBase + tag.getInteger(RepairCounterStr);
 
             attackAmplifier = Math.min(tmp, max);
         }
@@ -1510,7 +1524,7 @@ public class ItemSlashBlade extends ItemSword {
             if(tag.hasKey(BaseAttackModifiersStr)){
                 baseModif = tag.getFloat(BaseAttackModifiersStr);
             }
-            par3List.add(String.format("§4+%.1f Max Attack Damage", (baseModif + RefineBase + repair/2.0f)));
+            par3List.add(String.format("§4+%.1f Max Attack Damage", (baseModif + RefineBase + repair)));
         }
     }
     
