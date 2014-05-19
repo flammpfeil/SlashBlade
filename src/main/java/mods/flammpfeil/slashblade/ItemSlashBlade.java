@@ -833,6 +833,17 @@ public class ItemSlashBlade extends ItemSword {
 
     }
 
+
+    @Override
+    public void onUsingTick(ItemStack stack, EntityPlayer player, int count)
+    {
+        EnumSet<SwordType> swordType = getSwordType(stack);
+        int charge = this.getMaxItemUseDuration(stack) - count;
+        if(RequiredChargeTick == charge && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
+            player.onCriticalHit(player);
+        }
+    }
+
 	@Override
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
