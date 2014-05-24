@@ -396,8 +396,10 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
     public void setDead() {
         if(this.thrower instanceof EntityPlayer)
             ((EntityPlayer)thrower).onCriticalHit(this);
+        /*
         if(!this.worldObj.isRemote)
             System.out.println("dead" + this.ticksExisted);
+            */
         super.setDead();
     }
 
