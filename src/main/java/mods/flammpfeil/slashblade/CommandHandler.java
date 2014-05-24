@@ -43,22 +43,24 @@ public class CommandHandler implements ICommand {
                 if(item.getItem() instanceof ItemSlashBlade){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(item);
 
-
-                    int ps = tag.getInteger(ItemSlashBlade.proudSoulStr);
-                    if(1 <= ps){
-                        ps-=1;
-                        tag.setInteger(ItemSlashBlade.proudSoulStr,ps);
-
+                    if(((ItemSlashBlade)item.getItem()).getSwordType(item).contains(ItemSlashBlade.SwordType.Bewitched)){
+                        int ps = tag.getInteger(ItemSlashBlade.proudSoulStr);
                         int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
-                        float magicDamage = 1 + level * 2;
+                        if(1 <= ps && 0 < level){
+                            ps-=1;
+                            tag.setInteger(ItemSlashBlade.proudSoulStr,ps);
 
-                        EntityDrive entityDrive = new EntityDrive(w, pl, magicDamage,false,90.0f);
-                        if (entityDrive != null) {
-                            entityDrive.setInitialSpeed(1.75f);
-                            entityDrive.setLifeTime(20);
-                            w.spawnEntityInWorld(entityDrive);
+                            float magicDamage = 1 + level;
+
+                            EntityPhantomSword entityDrive = new EntityPhantomSword(w, pl, magicDamage,90.0f);
+                            if (entityDrive != null) {
+                                entityDrive.setInitialSpeed(1.75f);
+                                entityDrive.setLifeTime(30);
+                                w.spawnEntityInWorld(entityDrive);
+                            }
                         }
                     }
+
                 }
             }
 //				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("required BlockID or Metadata /uim [id][:meta]",""));

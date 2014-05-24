@@ -56,6 +56,9 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(requiredStateBlade);
                     NBTTagCompound srcTag = ItemSlashBlade.getItemTagCompound(curIs);
 
+                    if(!curIs.getUnlocalizedName().equals(requiredStateBlade.getUnlocalizedName()))
+                        return false;
+
                     if(0 < tagValueCompareInteger(ItemSlashBlade.proudSoulStr,reqTag,srcTag))
                         return false;
                     if(0 < tagValueCompareInteger(ItemSlashBlade.killCountStr,reqTag,srcTag))
@@ -110,6 +113,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
 
                 newTag.setInteger(ItemSlashBlade.killCountStr,oldTag.getInteger(ItemSlashBlade.killCountStr));
                 newTag.setInteger(ItemSlashBlade.proudSoulStr,oldTag.getInteger(ItemSlashBlade.proudSoulStr));
+                newTag.setInteger(ItemSlashBlade.RepairCounterStr,oldTag.getInteger(ItemSlashBlade.RepairCounterStr));
 
                 if(oldTag.hasKey(ItemSlashBlade.adjustXStr))
                     newTag.setFloat(ItemSlashBlade.adjustXStr,oldTag.getFloat(ItemSlashBlade.adjustXStr));

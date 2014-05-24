@@ -726,6 +726,7 @@ public class SlashBlade implements IFuelHandler{
     @EventHandler
     public void init(FMLInitializationEvent evt){
         EntityRegistry.registerModEntity(EntityDrive.class, "Drive", 1, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", 2, this, 250, 1, true);
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
