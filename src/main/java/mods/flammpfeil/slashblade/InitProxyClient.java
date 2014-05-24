@@ -23,7 +23,7 @@ public class InitProxyClient extends InitProxy{
         RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, new RenderDrive());
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSword.class, new RenderPhantomSword());
 
-        KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"PhantomSword"){
+        KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override
             public void upkey(int count) {
                 Minecraft mc = Minecraft.getMinecraft();
