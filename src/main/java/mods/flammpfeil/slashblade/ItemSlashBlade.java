@@ -501,8 +501,6 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
-		setPlayerEffect(itemStack,result,player);
-
 		return result;
 	}
 
@@ -516,7 +514,7 @@ public class ItemSlashBlade extends ItemSword {
 		switch (current) {
 		case Iai:
 			player.fallDistance = 0;
-			if(!tag.getBoolean(onJumpAttackedStr)){
+			if(!player.onGround && !tag.getBoolean(onJumpAttackedStr)){
 				player.motionY = 0;
 				player.addVelocity(0.0, 0.3D,0.0);
 
@@ -595,7 +593,7 @@ public class ItemSlashBlade extends ItemSword {
 		        	ComboSequence comboSec = getComboSequence(tag);
 
 		        	comboSec = getNextComboSeq(stack, comboSec, false, player);
-
+                    setPlayerEffect(stack,comboSec,player);
 		        	setComboSequence(tag, comboSec);
 
             		tag.setLong(lastActionTimeStr, player.worldObj.getTotalWorldTime());
@@ -857,7 +855,11 @@ public class ItemSlashBlade extends ItemSword {
 
 		if(RequiredChargeTick < var6 && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
 
-			par3EntityPlayer.swingItem();
+            EntityLivingBase el = par3EntityPlayer;
+            if(el.worldObj.isRemote){
+                el.isSwingInProgress = true;
+                el.swingItem();
+            }
 
             procChargeAttack(par1ItemStack, par2World, par3EntityPlayer);
 
@@ -866,6 +868,7 @@ public class ItemSlashBlade extends ItemSword {
 
 		}else{
 			tag.setBoolean(onClickStr, true);
+            tag.setBoolean("isRightClick",true);
 		}
 
 	}
@@ -1167,11 +1170,13 @@ public class ItemSlashBlade extends ItemSword {
 				if(prevAttackTime + ComboInterval < currentTime){
 
 					comboSeq = getNextComboSeq(sitem, comboSeq, true, el);
+                    setPlayerEffect(sitem,comboSeq,el);
 					setComboSequence(tag, comboSeq);
 
-                    //if(el.worldObj.isRemote)
-    				el.isSwingInProgress = true;
-					onEntitySwing(el,sitem);
+                    if(el.worldObj.isRemote){
+                        el.isSwingInProgress = true;
+                        el.swingItem();
+                    }
 
 					AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, el);
 
@@ -1229,9 +1234,10 @@ public class ItemSlashBlade extends ItemSword {
 					}
 				}
 			}else{
-				if(((prevAttackTime + comboSeq.comboResetTicks) < currentTime)
+				if(comboSeq != ComboSequence.None
+                        && ((prevAttackTime + (comboSeq.comboResetTicks - (el.worldObj.isRemote ? 1 : 0))) < currentTime)
 						&& (comboSeq.useScabbard
-					       || el.swingProgressInt == 0)
+					       || !el.isSwingInProgress /*swingProgress <= 0.0f*/)
 					    && (!el.isUsingItem())
 						){
 					switch (comboSeq) {
@@ -1271,14 +1277,15 @@ public class ItemSlashBlade extends ItemSword {
 					default:
 						if(comboSeq.useScabbard){
 							setComboSequence(tag, ComboSequence.None);
-							break;
-						}
-						setComboSequence(tag, ComboSequence.Noutou);
-
-
-						tag.setInteger(lastPosHashStr,(int)((el.posX + el.posY + el.posZ) * 10.0));
-						tag.setLong(lastActionTimeStr, currentTime);
-						el.swingItem();
+						}else{
+                            tag.setInteger(lastPosHashStr,(int)((el.posX + el.posY + el.posZ) * 10.0));
+                            tag.setLong(lastActionTimeStr, currentTime);
+                            setComboSequence(tag, ComboSequence.Noutou);
+                            if(el.worldObj.isRemote){
+                                el.isSwingInProgress = true;
+                                el.swingItem();
+                            }
+                        }
 						break;
 					}
 				}
@@ -1684,127 +1691,149 @@ public class ItemSlashBlade extends ItemSword {
         }
 	}
 
-	@Override
-	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+    @Override
+    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+        /*if(!entityLiving.worldObj.isRemote)
+        {
+            NBTTagCompound tag = getItemTagCompound(stack);
+            ComboSequence combo = getComboSequence(tag);
 
-		ComboSequence comboSeq = getComboSequence(getItemTagCompound(stack));
+            if(combo.equals(ComboSequence.Noutou)){
+                System.out.println("None");
+            }else if(tag.getBoolean(isChargedStr) && !tag.getBoolean(onClickStr)){
+                System.out.println("Charged");
+            }else if(tag.getBoolean("isRightClick")){
+                System.out.println("Right");
+                tag.setBoolean("isRightClick",false);
+            }else if(entityLiving instanceof EntityPlayer && ((EntityPlayer) entityLiving).isUsingItem()){
+                if(entityLiving.swingProgressInt == 0)
+                    System.out.println("RL locker");
+            }else{
+                System.out.println("Left");
+                //タイムセットで、startUsingで規定時間内に開始されたらロッカー？　でも右コンボへ派生できない
+            }
+        }
+*/
+        return super.onEntitySwing(entityLiving, stack);
+    } 
+    public void DestructEntity(EntityLivingBase entityLiving, ItemStack stack) {
 
-		if(!comboSeq.equals(ComboSequence.None))
-		{
-			int destructedCount = 0;
+        ComboSequence comboSeq = getComboSequence(getItemTagCompound(stack));
 
-			AxisAlignedBB bb = getBBofCombo(
-					stack,
-					comboSeq,
-					entityLiving);
-			List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,DestructableSelector);
-			for(Entity curEntity : list){
+        if(!comboSeq.equals(ComboSequence.None))
+        {
+            int destructedCount = 0;
 
-				boolean isDestruction = true;
+            AxisAlignedBB bb = getBBofCombo(
+                    stack,
+                    comboSeq,
+                    entityLiving);
+            List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,DestructableSelector);
+            for(Entity curEntity : list){
 
-				EnumSet<SwordType> swordType =getSwordType(stack);
+                boolean isDestruction = true;
 
-				if(curEntity instanceof EntityFireball){
-					if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
-						isDestruction = false;
-					}else if(!swordType.contains(SwordType.Bewitched)){
-						isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),this.baseAttackModifiers);
-					}
+                EnumSet<SwordType> swordType =getSwordType(stack);
 
-					if(isDestruction && swordType.contains(SwordType.Bewitched)){
-						if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
-							ReflectionProjecTile(curEntity,entityLiving);
-						}else{
-							InductionProjecTile(curEntity,entityLiving);
-						}
-						isDestruction = false;
-					}
+                if(curEntity instanceof EntityFireball){
+                    if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
+                        isDestruction = false;
+                    }else if(!swordType.contains(SwordType.Bewitched)){
+                        isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving),this.baseAttackModifiers);
+                    }
 
-				}else if(curEntity instanceof EntityArrow){
-					if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
-						isDestruction = false;
-					}
+                    if(isDestruction && swordType.contains(SwordType.Bewitched)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                            ReflectionProjecTile(curEntity,entityLiving);
+                        }else{
+                            InductionProjecTile(curEntity,entityLiving);
+                        }
+                        isDestruction = false;
+                    }
 
-					if(isDestruction && swordType.contains(SwordType.Bewitched)){
-						if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
-							ReflectionProjecTile(curEntity,entityLiving);
-						}else{
-							Entity target = null;
+                }else if(curEntity instanceof EntityArrow){
+                    if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
+                        isDestruction = false;
+                    }
 
-							NBTTagCompound tag = stack.getTagCompound();
-							int eId = tag.getInteger(TargetEntityStr);
-				            if(eId != 0){
-				                Entity tmp = entityLiving.worldObj.getEntityByID(eId);
-				                if(tmp != null){
-				                    if(tmp.getDistanceToEntity(entityLiving) < 30.0f)
-				                        target = tmp;
-				                }
-				            }
-							if(target != null && target instanceof EntityCreeper){
-								InductionProjecTile(curEntity, null, entityLiving.getLookVec());
-							}else{
-								InductionProjecTile(curEntity, entityLiving);
-							}
-						}
-						isDestruction = false;
-					}
-				}else if(curEntity instanceof IThrowableEntity){
-					if((((IThrowableEntity)curEntity).getThrower() != null && ((IThrowableEntity)curEntity).getThrower().getEntityId() == entityLiving.getEntityId())){
-						isDestruction = false;
-					}
+                    if(isDestruction && swordType.contains(SwordType.Bewitched)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                            ReflectionProjecTile(curEntity,entityLiving);
+                        }else{
+                            Entity target = null;
 
-					if(isDestruction && swordType.contains(SwordType.Bewitched)){
-						if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
-							ReflectionProjecTile(curEntity,entityLiving);
-						}else{
-							InductionProjecTile(curEntity,entityLiving);
-						}
-						isDestruction = false;
-					}
-				}else if(curEntity instanceof EntityThrowable){
-					if((((EntityThrowable)curEntity).getThrower() != null && ((EntityThrowable)curEntity).getThrower().getEntityId() == entityLiving.getEntityId())){
-						isDestruction = false;
-					}
+                            NBTTagCompound tag = stack.getTagCompound();
+                            int eId = tag.getInteger(TargetEntityStr);
+                            if(eId != 0){
+                                Entity tmp = entityLiving.worldObj.getEntityByID(eId);
+                                if(tmp != null){
+                                    if(tmp.getDistanceToEntity(entityLiving) < 30.0f)
+                                        target = tmp;
+                                }
+                            }
+                            if(target != null && target instanceof EntityCreeper){
+                                InductionProjecTile(curEntity, null, entityLiving.getLookVec());
+                            }else{
+                                InductionProjecTile(curEntity, entityLiving);
+                            }
+                        }
+                        isDestruction = false;
+                    }
+                }else if(curEntity instanceof IThrowableEntity){
+                    if((((IThrowableEntity)curEntity).getThrower() != null && ((IThrowableEntity)curEntity).getThrower().getEntityId() == entityLiving.getEntityId())){
+                        isDestruction = false;
+                    }
 
-					if(isDestruction && swordType.contains(SwordType.Bewitched)){
-						if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
-							ReflectionProjecTile(curEntity,entityLiving);
-						}else{
-							InductionProjecTile(curEntity,entityLiving);
-						}
-						isDestruction = false;
-					}
-				}
+                    if(isDestruction && swordType.contains(SwordType.Bewitched)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                            ReflectionProjecTile(curEntity,entityLiving);
+                        }else{
+                            InductionProjecTile(curEntity,entityLiving);
+                        }
+                        isDestruction = false;
+                    }
+                }else if(curEntity instanceof EntityThrowable){
+                    if((((EntityThrowable)curEntity).getThrower() != null && ((EntityThrowable)curEntity).getThrower().getEntityId() == entityLiving.getEntityId())){
+                        isDestruction = false;
+                    }
 
-				if(!isDestruction)
-					continue;
-				else{
-					curEntity.motionX = 0;
+                    if(isDestruction && swordType.contains(SwordType.Bewitched)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                            ReflectionProjecTile(curEntity,entityLiving);
+                        }else{
+                            InductionProjecTile(curEntity,entityLiving);
+                        }
+                        isDestruction = false;
+                    }
+                }
+
+                if(!isDestruction)
+                    continue;
+                else{
+                    curEntity.motionX = 0;
                     curEntity.motionY = 0;
                     curEntity.motionZ = 0;
-					curEntity.setDead();
+                    curEntity.setDead();
 
-			        for (int var1 = 0; var1 < 10; ++var1)
-			        {
-			        	Random rand = entityLiving.getRNG();
-			            double var2 = rand.nextGaussian() * 0.02D;
-			            double var4 = rand.nextGaussian() * 0.02D;
-			            double var6 = rand.nextGaussian() * 0.02D;
-			            double var8 = 10.0D;
-			            entityLiving.worldObj.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
-			        }
+                    for (int var1 = 0; var1 < 10; ++var1)
+                    {
+                        Random rand = entityLiving.getRNG();
+                        double var2 = rand.nextGaussian() * 0.02D;
+                        double var4 = rand.nextGaussian() * 0.02D;
+                        double var6 = rand.nextGaussian() * 0.02D;
+                        double var8 = 10.0D;
+                        entityLiving.worldObj.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
+                    }
 
-					destructedCount++;
-				}
-			}
+                    destructedCount++;
+                }
+            }
 
-			if(0 < destructedCount){
-				damageItem(1, stack, entityLiving);
-			}
-		}
-
-		return super.onEntitySwing(entityLiving, stack);
-	}
+            if(0 < destructedCount){
+                damageItem(1, stack, entityLiving);
+            }
+        }
+    }
 
 
     public MovingObjectPosition rayTrace(EntityLivingBase owner, double par1, float par3)

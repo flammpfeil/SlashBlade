@@ -7,9 +7,11 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
@@ -18,11 +20,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -717,12 +721,25 @@ public class SlashBlade implements IFuelHandler{
         RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
     }
 
+    StatManager statManager;
+
     @EventHandler
     public void init(FMLInitializationEvent evt){
         EntityRegistry.registerModEntity(EntityDrive.class, "Drive", 1, this, 250, 1, true);
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
+
+        statManager = new StatManager();
+        MinecraftForge.EVENT_BUS.register(statManager);
+
+        statManager.registerItemStat(weapon, weapon, "SlashBlade");
+        statManager.registerItemStat(bladeWood, weapon, "SlashBlade");
+        statManager.registerItemStat(bladeBambooLight, weapon, "SlashBlade");
+        statManager.registerItemStat(bladeSilverBambooLight, weapon, "SlashBlade");
+        statManager.registerItemStat(bladeWhiteSheath, weapon, "SlashBlade");
+        statManager.registerItemStat(wrapBlade, weapon, "SlashBlade");
+        statManager.registerItemStat(bladeNamed, weapon, "SlashBlade");
 
         DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.yamato.broken", 1));
         DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
@@ -754,6 +771,16 @@ public class SlashBlade implements IFuelHandler{
 	public int getBurnTime(ItemStack fuel) {
 		return (fuel.getItem() == this.proudSoul && fuel.getItemDamage() == 0) ? 20000 : 0;
 	}
+
+
+
+    ICommand command;
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent evt)
+    {
+        command = new CommandHandler();
+        evt.registerServerCommand(command);
+    }
 
 
 }
