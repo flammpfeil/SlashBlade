@@ -13,8 +13,10 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -767,6 +769,7 @@ public class SlashBlade implements IFuelHandler{
         TickRegistry.registerTickHandler(manager, Side.SERVER);
 
         EntityRegistry.registerModEntity(EntityDrive.class, "Drive", 1, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", 2, this, 250, 1, true);
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
@@ -809,6 +812,15 @@ public class SlashBlade implements IFuelHandler{
 		return (fuel.itemID == this.proudSoul.itemID && fuel.getItemDamage() == 0) ? 20000 : 0;
 	}
 
+
+
+    ICommand command;
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent evt)
+    {
+        command = new CommandHandler();
+        evt.registerServerCommand(command);
+    }
 
 
 }
