@@ -878,11 +878,7 @@ public class ItemSlashBlade extends ItemSword {
 
 		if(RequiredChargeTick < var6 && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
 
-            EntityLivingBase el = par3EntityPlayer;
-            if(el.worldObj.isRemote){
-                el.isSwingInProgress = true;
-                el.swingItem();
-            }
+            doSwing(par3EntityPlayer);
 
             procChargeAttack(par1ItemStack, par2World, par3EntityPlayer);
 
@@ -1195,10 +1191,7 @@ public class ItemSlashBlade extends ItemSword {
                     setPlayerEffect(sitem,comboSeq,el);
 					setComboSequence(tag, comboSeq);
 
-                    if(el.worldObj.isRemote){
-                        el.isSwingInProgress = true;
-                        el.swingItem();
-                    }
+                    doSwing(el);
 
 					AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, el);
 
@@ -1305,17 +1298,14 @@ public class ItemSlashBlade extends ItemSword {
                             tag.setInteger(lastPosHashStr,(int)((el.posX + el.posY + el.posZ) * 10.0));
                             tag.setLong(lastActionTimeStr, currentTime);
                             setComboSequence(tag, ComboSequence.Noutou);
-                            if(el.worldObj.isRemote){
-                                el.isSwingInProgress = true;
-                                el.swingItem();
-                            }
+                            doSwing(el);
                         }
 						break;
 					}
 				}
 
 				if(!comboSeq.equals(ComboSequence.None) && el.swingProgressInt != 0 && currentTime < (prevAttackTime + comboSeq.comboResetTicks)){
-					onEntitySwing(el,sitem);
+                    DestructEntity(el,sitem);
 				}
 			}
 
@@ -1967,5 +1957,12 @@ public class ItemSlashBlade extends ItemSword {
     	return result;
 
         //return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
+    }
+
+    public void doSwing(EntityLivingBase entity){
+        if(entity.worldObj.isRemote){
+            entity.isSwingInProgress = true;
+            entity.swingItem();
+        }
     }
 }
