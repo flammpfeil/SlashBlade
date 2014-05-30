@@ -40,22 +40,20 @@ public class CommandHandler implements ICommand {
             if(astring.length >= 1 && astring[0].equals("ps")){
                 EntityPlayer pl = w.getPlayerEntityByName(icommandsender.getCommandSenderName());
                 ItemStack item = pl.getHeldItem();
-                if(item.getItem() instanceof ItemSlashBlade){
+                if(item != null && item.getItem() instanceof ItemSlashBlade){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(item);
 
                     if(((ItemSlashBlade)item.getItem()).getSwordType(item).contains(ItemSlashBlade.SwordType.Bewitched)){
-                        int ps = tag.getInteger(ItemSlashBlade.proudSoulStr);
                         int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
-                        if(1 <= ps && 0 < level){
-                            ps-=1;
-                            tag.setInteger(ItemSlashBlade.proudSoulStr,ps);
-
+                        if(0 < level && ItemSlashBlade.ProudSoul.tryAdd(tag,-1,false)){
                             float magicDamage = 1 + level;
-
                             EntityPhantomSword entityDrive = new EntityPhantomSword(w, pl, magicDamage,90.0f);
                             if (entityDrive != null) {
-                                entityDrive.setInitialSpeed(1.75f);
                                 entityDrive.setLifeTime(30);
+
+                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                                entityDrive.setTargetEntityId(targetid);
+
                                 w.spawnEntityInWorld(entityDrive);
                             }
                         }

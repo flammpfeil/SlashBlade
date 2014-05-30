@@ -87,9 +87,9 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
         scabbard.setStackDisplayName(String.format(StatCollector.translateToLocal("item.flammpfeil.slashblade.wrapformat").trim(),target.getDisplayName()));
         NBTTagCompound tag = scabbard.getTagCompound();
-        tag.setString(ItemSlashBladeNamed.CurrentItemNameStr, "wrap." + targetName.replace(':','.'));
-        tag.setString(ItemSlashBlade.TextureNameStr, wrapableTextureNames.get(targetName));
-        tag.setFloat(ItemSlashBladeWrapper.BaseAttackModifiersStr,wrapableBaseAttackModifiers.get(targetName));
+        ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + targetName.replace(':','.'));
+        ItemSlashBladeNamed.TextureName.set(tag,wrapableTextureNames.get(targetName));
+        ItemSlashBladeNamed.BaseAttackModifier.set(tag,wrapableBaseAttackModifiers.get(targetName));
 
         if(target.isItemEnchanted()){
             tag.setTag("ench",target.getTagCompound().getTag("ench"));

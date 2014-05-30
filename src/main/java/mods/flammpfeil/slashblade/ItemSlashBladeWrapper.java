@@ -1,15 +1,19 @@
 package mods.flammpfeil.slashblade;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
+import org.omg.CORBA.Current;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -43,11 +47,11 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     public void removeWrapItem(ItemStack stack){
         NBTTagCompound tag = getItemTagCompound(stack);
         if(tag.hasKey(WrapItemStr))     tag.removeTag(WrapItemStr);
-        if(tag.hasKey(TextureNameStr))  tag.removeTag(TextureNameStr);
+        TextureName.remove(tag);
         if(tag.hasKey("display"))       tag.removeTag("display");
-        if(tag.hasKey(isBrokenStr))     tag.removeTag(isBrokenStr);
-        if(tag.hasKey(BaseAttackModifiersStr)) tag.removeTag(BaseAttackModifiersStr);
-        if(tag.hasKey(CurrentItemNameStr))     tag.removeTag(CurrentItemNameStr);
+        IsBroken.remove(tag);
+        BaseAttackModifier.remove(tag);
+        CurrentItemName.remove(tag);
         stack.setItemDamage(0);
     }
 
@@ -133,41 +137,18 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     }
 
     @Override
-    public void damageItem(int damage, ItemStack par1ItemStack, EntityLivingBase par3EntityLivingBase){
-        if(hasWrapedItem(par1ItemStack)){
-
-        	NBTTagCompound tag = getItemTagCompound(par1ItemStack);
-
-    		if(par1ItemStack.getItemDamage() == 0){
-    			tag.setBoolean(isBrokenStr, false);
-    		}
-
-    		if(par1ItemStack.attemptDamageItem(damage, par3EntityLivingBase.getRNG())){
-
-    			removeWrapItem(par1ItemStack);
-
-				par3EntityLivingBase.renderBrokenItemStack(par1ItemStack);
-
-				if(!par3EntityLivingBase.worldObj.isRemote){
-					int proudSouls = tag.getInteger(proudSoulStr);
-					int count = 0;
-					if(proudSouls > 1000){
-						count = (proudSouls / 3) / 100;
-						proudSouls = (proudSouls/3) * 2;
-					}else{
-						count = proudSouls / 100;
-						proudSouls = proudSouls % 100;
-					}
-					count++;
-
-					proudSouls = Math.max(0,Math.min(999999999, proudSouls));
-					tag.setInteger(proudSoulStr, proudSouls);
-					par3EntityLivingBase.entityDropItem(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, count), 0.0F);
-				}
-    		}
-        }
+    public void setDamage(ItemStack stack, int damage) {
+        NBTTagCompound tag = getItemTagCompound(stack);
+        super.setDamage(stack,damage);
+        IsBroken.set(tag,false);
     }
 
+    @Override
+    public void dropItemDestructed(Entity entity, ItemStack stack) {
+        super.dropItemDestructed(entity, stack);
+
+        removeWrapItem(stack);
+    }
 
     @Override
     public boolean getIsRepairable(ItemStack par1ItemStack, ItemStack par2ItemStack)
@@ -181,29 +162,10 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
         }
 
         return result;
+    }
 
-        /*
-        if(par2ItemStack.getItem() == SlashBlade.proudSoul){
-            result = true;
-        }
-
-        if(!result && this.repairMaterial != null)
-            result =par2ItemStack.isItemEqual(this.repairMaterial);
-
-        if(!result && this.repairMaterialOreDic != null)
-        {
-            for(String oreName : this.repairMaterialOreDic){
-                List<ItemStack> list = OreDictionary.getOres(oreName);
-                for(ItemStack curItem : list){
-                    result = curItem.isItemEqual(par2ItemStack);
-                    if(result)
-                        break;
-                }
-            }
-        }
-        return result;
-        */
-
-        //return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
+    @Override
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
+        par3List.add(new ItemStack(par1, 1, 0));
     }
 }

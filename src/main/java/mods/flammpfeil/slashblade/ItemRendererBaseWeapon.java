@@ -318,6 +318,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
     static public void render(EntityLivingBase entity,float partialRenderTick){
         render(entity,partialRenderTick,true);
     }
+    static public void renderPFLM(Object entity,float partialRenderTick){
+        if(entity instanceof  EntityLivingBase)
+            render((EntityLivingBase)entity,partialRenderTick,true);
+    }
 
     static public void renderBack(ItemStack item, EntityPlayer player){
         ItemSlashBlade iSlashBlade = ((ItemSlashBlade)item.getItem());
@@ -345,14 +349,28 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             NBTTagCompound tag = item.getTagCompound();
             ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
 
-            renderType = tag.getInteger(ItemSlashBlade.StandbyRenderTypeStr);
+            renderType = ItemSlashBlade.StandbyRenderType.get(tag);
 
-            if(tag.getBoolean(ItemSlashBlade.isNoScabbardStr))
+            if(isNoScabbard)
                 renderType = 0;
         }
 
         if(renderType == 0){
             return;
+        }
+
+        if(item.hasTagCompound()){
+            NBTTagCompound tag = item.getTagCompound();
+
+
+            ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
+            ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
+            az = -tag.getFloat(ItemSlashBlade.adjustZStr)/10.0f;
+        }
+
+        if(renderType != 1){
+            ax = 0;
+            az = 0;
         }
 
         String renderTarget;

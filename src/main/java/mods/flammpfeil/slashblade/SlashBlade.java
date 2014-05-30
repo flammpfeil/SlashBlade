@@ -9,7 +9,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,13 +19,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -35,7 +30,6 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import java.util.*;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
 @Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r9.8")
 public class SlashBlade implements IFuelHandler{
@@ -166,7 +160,7 @@ public class SlashBlade implements IFuelHandler{
                 .setCreativeTab(tab);
         GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
 
-        bladeSilverBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
+        bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(true)
                 .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/silverbanboo.png"))
                 .setRepairMaterialOreDic("bamboo")
@@ -232,7 +226,7 @@ public class SlashBlade implements IFuelHandler{
         ItemStack hundredKillSilverBambooLight = new ItemStack(bladeSilverBambooLight,1,0);
         hundredKillSilverBambooLight.setItemDamage(hundredKillSilverBambooLight.getMaxDamage());
         hundredKillSilverBambooLight.setStackDisplayName("HundredKillSBL");
-        hundredKillSilverBambooLight.getTagCompound().setInteger(ItemSlashBlade.killCountStr, 100);
+        ItemSlashBlade.KillCount.set(hundredKillSilverBambooLight.getTagCompound(), 100);
         GameRegistry.registerCustomItemStack(HundredKillSilverBambooLightStr, hundredKillSilverBambooLight);
 
         GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(bladeWhiteSheath, 1, bladeWhiteSheath.getMaxDamage() / 3),
@@ -260,7 +254,7 @@ public class SlashBlade implements IFuelHandler{
         ItemStack brokenBladeWhite = new ItemStack(bladeWhiteSheath,1,0);
         brokenBladeWhite.setItemDamage(brokenBladeWhite.getMaxDamage());
         brokenBladeWhite.setStackDisplayName("BrokenBladeWhite");
-        brokenBladeWhite.getTagCompound().setBoolean(ItemSlashBlade.isBrokenStr, true);
+        ItemSlashBlade.IsBroken.set(brokenBladeWhite.getTagCompound(), true);
         GameRegistry.registerCustomItemStack(BrokenBladeWhiteStr, brokenBladeWhite);
 
         GameRegistry.addRecipe(new RecipeUpgradeBlade(new ItemStack(weapon),
@@ -282,7 +276,7 @@ public class SlashBlade implements IFuelHandler{
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.wrapper")
                 .setTextureName("flammpfeil.slashblade:proudsoul")
-                .setCreativeTab(CreativeTabs.tabCombat);
+                .setCreativeTab(tab);
         GameRegistry.registerItem(wrapBlade, "slashbladeWrapper");
 
 
@@ -334,35 +328,31 @@ public class SlashBlade implements IFuelHandler{
 
             customblade.addEnchantment(Enchantment.unbreaking,3);
             customblade.addEnchantment(Enchantment.smite,3);
-
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.tagayasan");
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,70);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr,4 + ToolMaterial.IRON.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/tagayasan");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,1);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
+            String name = "flammpfeil.slashblade.named.tagayasan";
+            ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
+            ItemSlashBladeNamed.CurrentItemName.set(tag, name);
+            ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.TextureName.set(tag,"named/tagayasan");
+            ItemSlashBlade.SpecialAttackType.set(tag, 1);
+            ItemSlashBlade.StandbyRenderType.set(tag, 1);
 
             tag.setString(ItemSlashBladeNamed.RepairMaterialNameStr,"iron_ingot");
 
-            String name = "flammpfeil.slashblade.named.tagayasan";
             GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
-
-
+            ItemSlashBladeNamed.NamedBlades.add(name);
             {
                 ItemStack reqiredBlade = new ItemStack(bladeWood);
                 NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
-                reqTag.setInteger(ItemSlashBlade.killCountStr,1000);
+                ItemSlashBlade.KillCount.set(reqTag,1000);
 
                 reqiredBlade.setStackDisplayName("thousandkill woodblade");
 
                 name = "flammpfeil.slashblade.tagayasan.reqired";
                 GameRegistry.registerCustomItemStack(name, reqiredBlade);
-                ItemSlashBladeNamed.BladeNames.add(name);
+                ItemSlashBladeNamed.NamedBlades.add(name);
 
                 GameRegistry.addRecipe(new RecipeAwakeBlade(customblade,
-                        true,
                         reqiredBlade,
                         "XEX",
                         "PBP",
@@ -375,79 +365,76 @@ public class SlashBlade implements IFuelHandler{
         }
 
         {
+            String nameTrue = "flammpfeil.slashblade.named.yamato";
+            {
 
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
+                ItemStack customblade = new ItemStack(bladeNamed,1,0);
+                NBTTagCompound tag = new NBTTagCompound();
+                customblade.setTagCompound(tag);
 
-            customblade.addEnchantment(Enchantment.thorns, 1);
-            customblade.addEnchantment(Enchantment.featherFalling, 4);
-            customblade.addEnchantment(Enchantment.power, 5);
-            customblade.addEnchantment(Enchantment.punch, 2);
+                customblade.addEnchantment(Enchantment.thorns, 1);
+                customblade.addEnchantment(Enchantment.featherFalling, 4);
+                customblade.addEnchantment(Enchantment.power, 5);
+                customblade.addEnchantment(Enchantment.punch, 2);
 
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr, "flammpfeil.slashblade.named.yamato");
+                ItemSlashBladeNamed.CurrentItemName.set(tag, nameTrue);
+                ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
+                ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
+                ItemSlashBlade.TextureName.set(tag,"named/yamato");
+                ItemSlashBlade.ModelName.set(tag,"named/yamato");
+                ItemSlashBlade.SpecialAttackType.set(tag, 0);
+                ItemSlashBlade.StandbyRenderType.set(tag, 1);
 
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr, "named/yamato");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/yamato");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr, 0);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
-
-            tag.setInteger(ItemSlashBlade.killCountStr, 1000);
-            tag.setInteger(ItemSlashBlade.proudSoulStr, 1000);
-
-            String name = "flammpfeil.slashblade.named.yamato.youtou";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
-
-        }
-
-        {
-
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.yamato.broken");
-
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr, "named/yamato");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/yamato");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr, 0);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
-
-            tag.setBoolean(ItemSlashBlade.isBrokenStr,true);
-            tag.setBoolean(ItemSlashBlade.isNoScabbardStr,true);
-            tag.setBoolean(ItemSlashBlade.isSealedStr,true);
-            tag.setString(ItemSlashBladeNamed.TrueItemNameStr, "slashblade.named.yamato");
-
-            String name = "flammpfeil.slashblade.named.yamato.broken";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
+                ItemSlashBlade.KillCount.set(tag,1000);
+                ItemSlashBlade.ProudSoul.set(tag, 1000);
+                GameRegistry.registerCustomItemStack(nameTrue,customblade);
+                ItemSlashBladeNamed.NamedBlades.add(nameTrue);
+            }
 
             {
-                ItemStack reqiredBlade = customblade.copy();
-                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
-                reqTag.setInteger(ItemSlashBlade.proudSoulStr,1000);
 
-                reqiredBlade.setStackDisplayName("thousandProudSouls");
+                ItemStack customblade = new ItemStack(bladeNamed,1,0);
+                NBTTagCompound tag = new NBTTagCompound();
+                customblade.setTagCompound(tag);
 
-                name = "flammpfeil.slashblade.named.yamato.reqired";
-                GameRegistry.registerCustomItemStack(name, reqiredBlade);
-                ItemSlashBladeNamed.BladeNames.add(name);
+                String nameBrokend = nameTrue + ".broken";
+                ItemSlashBladeNamed.CurrentItemName.set(tag, nameBrokend);
 
-                ItemStack yamato = GameRegistry.findItemStack(modid,"flammpfeil.slashblade.named.yamato.youtou",1);
-                GameRegistry.addRecipe(new RecipeAwakeBlade(yamato,
-                        true,
-                        reqiredBlade,
-                        "XXX",
-                        "XBX",
-                        "XXX",
-                        'X',itemSphereBladeSoul,
-                        'B',reqiredBlade));
+                ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
+                ItemSlashBlade.TextureName.set(tag, "named/yamato");
+                ItemSlashBlade.ModelName.set(tag, "named/yamato");
+                ItemSlashBlade.SpecialAttackType.set(tag, 0);
+                ItemSlashBlade.StandbyRenderType.set(tag, 1);
+
+                ItemSlashBlade.IsBroken.set(tag, true);
+                ItemSlashBlade.IsNoScabbard.set(tag, true);
+                ItemSlashBlade.IsSealed.set(tag, true);
+                ItemSlashBladeNamed.TrueItemName.set(tag, nameTrue);
+                GameRegistry.registerCustomItemStack(nameBrokend, customblade);
+                ItemSlashBladeNamed.NamedBlades.add(nameBrokend);
+
+                {
+                    ItemStack reqiredBlade = customblade.copy();
+                    NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                    ItemSlashBlade.ProudSoul.set(reqTag, 1000);
+
+                    reqiredBlade.setStackDisplayName("thousandProudSouls");
+
+                    String nameReqired = nameTrue + ".reqired";
+                    GameRegistry.registerCustomItemStack(nameReqired, reqiredBlade);
+                    ItemSlashBladeNamed.NamedBlades.add(nameReqired);
+
+                    ItemStack yamato = GameRegistry.findItemStack(modid,nameTrue,1);
+                    GameRegistry.addRecipe(new RecipeAwakeBlade(yamato,
+                            reqiredBlade,
+                            "XXX",
+                            "XBX",
+                            "XXX",
+                            'X',itemSphereBladeSoul,
+                            'B',reqiredBlade));
+                }
             }
         }
 
@@ -460,243 +447,245 @@ public class SlashBlade implements IFuelHandler{
             customblade.addEnchantment(Enchantment.unbreaking, 3);
             customblade.addEnchantment(Enchantment.fireAspect, 2);
 
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.yuzukitukumo");
+            String name = "flammpfeil.slashblade.named.yuzukitukumo";
+            ItemSlashBladeNamed.CurrentItemName.set(tag, name);
+            ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
+            ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
+            ItemSlashBlade.TextureName.set(tag, "named/a_tukumo");
+            ItemSlashBlade.ModelName.set(tag, "named/agito");
+            ItemSlashBlade.SpecialAttackType.set(tag, 3);
+            ItemSlashBlade.StandbyRenderType.set(tag, 1);
 
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr,40);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/a_tukumo");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,3);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,1);
-
-            String name = "flammpfeil.slashblade.named.yuzukitukumo.youtou";
             GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
-        }
-        {
-            ItemStack customblade = new ItemStack(weapon,1,0);
+            ItemSlashBladeNamed.NamedBlades.add(name);
 
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
+            {
+                ItemStack custombladeReqired = new ItemStack(weapon,1,0);
 
-            customblade.addEnchantment(Enchantment.fireAspect, 1);
+                NBTTagCompound tagReqired = new NBTTagCompound();
+                custombladeReqired.setTagCompound(tagReqired);
 
-            tag.setInteger(ItemSlashBlade.killCountStr, 1000);
+                custombladeReqired.addEnchantment(Enchantment.fireAspect, 1);
 
-            String name = "flammpfeil.slashblade.thousandkill.youtou";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
+                ItemSlashBlade.KillCount.set(tagReqired, 1000);
 
-            GameRegistry.addRecipe(new RecipeAwakeBlade(ItemSlashBladeNamed.getCustomBlade("flammpfeil.slashblade.named.yuzukitukumo.youtou"),
-                    true,
-                    customblade,
-                    "ESD",
-                    "RBL",
-                    "ISG",
-                    'E', new ItemStack(Blocks.emerald_block),
-                    'D', new ItemStack(Blocks.diamond_block),
-                    'R', new ItemStack(Blocks.redstone_block),
-                    'L', new ItemStack(Blocks.lapis_block),
-                    'I', new ItemStack(Blocks.iron_block),
-                    'G', new ItemStack(Blocks.gold_block),
-                    'S', GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1),
-                    'B', customblade));
+                String nameReqired = "flammpfeil.slashblade.thousandkill";
+                GameRegistry.registerCustomItemStack(nameReqired, custombladeReqired);
+                ItemSlashBladeNamed.NamedBlades.add(nameReqired);
 
-            //GameRegistry.addRecipe(new RecipeAwakeTukumoBlade());
+                GameRegistry.addRecipe(new RecipeAwakeBlade(customblade,
+                        custombladeReqired,
+                        "ESD",
+                        "RBL",
+                        "ISG",
+                        'E', new ItemStack(Blocks.emerald_block),
+                        'D', new ItemStack(Blocks.diamond_block),
+                        'R', new ItemStack(Blocks.redstone_block),
+                        'L', new ItemStack(Blocks.lapis_block),
+                        'I', new ItemStack(Blocks.iron_block),
+                        'G', new ItemStack(Blocks.gold_block),
+                        'S', GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1),
+                        'B', custombladeReqired));
+
+            }
         }
 
-        ItemSlashBladeNamed.BladeNames.add(SlashBlade.BrokenBladeWhiteStr);
-        ItemSlashBladeNamed.BladeNames.add(SlashBlade.HundredKillSilverBambooLightStr);
+        ItemSlashBladeNamed.NamedBlades.add(SlashBlade.BrokenBladeWhiteStr);
+        ItemSlashBladeNamed.NamedBlades.add(SlashBlade.HundredKillSilverBambooLightStr);
 
 
         //==================================================================================================================================
 
-
-        //------------- false
         {
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
+            //------------- false
+            String nameAgito = "flammpfeil.slashblade.named.agito";
+            String nameAgitoRust = nameAgito + ".rust";
+            String nameAgitoReqired = nameAgito + ".reqired";
+            {
+                ItemStack customblade = new ItemStack(bladeNamed,1,0);
+                NBTTagCompound tag = new NBTTagCompound();
+                customblade.setTagCompound(tag);
 
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.agito");
+                ItemSlashBladeNamed.CurrentItemName.set(tag, nameAgito);
+                ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.IRON.getDamageVsEntity());
+                ItemSlashBlade.TextureName.set(tag, "named/agito_false");
+                ItemSlashBlade.ModelName.set(tag, "named/agito");
+                ItemSlashBlade.SpecialAttackType.set(tag, 2);
+                ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr, 60);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.IRON.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/agito_false");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,2);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
-
-            String name = "flammpfeil.slashblade.named.agito";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
-        }
-
-        {
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
-
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.agito.rust");
-
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr, 60);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.STONE.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/agito_rust");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,2);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
-
-            tag.setBoolean(ItemSlashBlade.isSealedStr,true);
-
-            tag.setString(ItemSlashBladeNamed.TrueItemNameStr,"flammpfeil.slashblade.named.agito");
-
-            String name = "flammpfeil.slashblade.named.agito.rust";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
+                GameRegistry.registerCustomItemStack(nameAgito, customblade);
+                ItemSlashBladeNamed.NamedBlades.add(nameAgito);
+            }
 
 
             {
-                ItemStack reqiredBlade = customblade.copy();
-                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
-                reqTag.setInteger(ItemSlashBlade.killCountStr,100);
-                reqTag.setInteger(ItemSlashBlade.RepairCounterStr,1);
+                ItemStack customblade = new ItemStack(bladeNamed,1,0);
+                NBTTagCompound tag = new NBTTagCompound();
+                customblade.setTagCompound(tag);
 
-                reqiredBlade.setStackDisplayName("agito rust");
+                ItemSlashBladeNamed.CurrentItemName.set(tag, nameAgitoRust);
 
-                name = "flammpfeil.slashblade.named.agito.reqired";
-                GameRegistry.registerCustomItemStack(name, reqiredBlade);
-                ItemSlashBladeNamed.BladeNames.add(name);
+                ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.STONE.getDamageVsEntity());
+                ItemSlashBlade.TextureName.set(tag, "named/agito_rust");
+                ItemSlashBlade.ModelName.set(tag, "named/agito");
+                ItemSlashBlade.SpecialAttackType.set(tag, 2);
+                ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
-                ItemStack destBlade = GameRegistry.findItemStack(modid,tag.getString(ItemSlashBladeNamed.TrueItemNameStr),1);
-                GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
-                        true,
-                        reqiredBlade,
-                        " X ",
-                        "XBX",
-                        " X ",
-                        'X',itemProudSoul,
-                        'B',reqiredBlade));
+                ItemSlashBlade.IsSealed.set(tag, true);
+
+                ItemSlashBladeNamed.TrueItemName.set(tag, nameAgito);
+
+                GameRegistry.registerCustomItemStack(nameAgitoRust, customblade);
+                ItemSlashBladeNamed.NamedBlades.add(nameAgitoRust);
+
+
+                {
+                    ItemStack reqiredBlade = customblade.copy();
+                    NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                    ItemSlashBlade.KillCount.set(reqTag,100);
+                    ItemSlashBlade.RepairCount.set(reqTag,1);
+
+                    reqiredBlade.setStackDisplayName("agito rust");
+
+                    GameRegistry.registerCustomItemStack(nameAgitoReqired, reqiredBlade);
+                    ItemSlashBladeNamed.NamedBlades.add(nameAgitoReqired);
+
+                    ItemStack destBlade = GameRegistry.findItemStack(modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
+                    GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
+                            reqiredBlade,
+                            " X ",
+                            "XBX",
+                            " X ",
+                            'X',itemProudSoul,
+                            'B',reqiredBlade));
+                }
             }
         }
+
         //------------- true
         {
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
-
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.orotiagito");
-
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr, 60);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/orotiagito");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,2);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
-
-            String name = "flammpfeil.slashblade.named.orotiagito";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
-        }
-
-        {
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
-
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.orotiagito.seald");
-
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr, 60);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.IRON.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr,"named/agito_true");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr,2);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
-
-            tag.setString(ItemSlashBladeNamed.TrueItemNameStr,"flammpfeil.slashblade.named.orotiagito");
-
-            String name = "flammpfeil.slashblade.named.orotiagito.seald";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
+            String nameOrotiagito = "flammpfeil.slashblade.named.orotiagito";
+            String nameOrotiagitoSeald = nameOrotiagito + ".seald";
+            String nameOrotiagitoReqired = nameOrotiagito + ".reqired";
+            String nameOrotiagitoRust = nameOrotiagito + ".rust";
+            String nameOrotiagitoSealdReqired = nameOrotiagitoSeald + ".reqired";
 
 
             {
-                ItemStack reqiredBlade = customblade.copy();
-                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
-                reqTag.setInteger(ItemSlashBlade.killCountStr,1000);
-                reqTag.setInteger(ItemSlashBlade.proudSoulStr,1000);
-                reqTag.setInteger(ItemSlashBlade.RepairCounterStr,10);
+                ItemStack customblade = new ItemStack(bladeNamed,1,0);
+                NBTTagCompound tag = new NBTTagCompound();
+                customblade.setTagCompound(tag);
 
-                reqiredBlade.setStackDisplayName("orotiagito seald");
+                ItemSlashBladeNamed.CurrentItemName.set(tag, nameOrotiagito);
 
-                name = "flammpfeil.slashblade.named.orotiagito.reqired";
-                GameRegistry.registerCustomItemStack(name, reqiredBlade);
-                ItemSlashBladeNamed.BladeNames.add(name);
+                ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.EMERALD.getDamageVsEntity());
+                ItemSlashBlade.TextureName.set(tag, "named/orotiagito");
+                ItemSlashBlade.ModelName.set(tag, "named/agito");
+                ItemSlashBlade.SpecialAttackType.set(tag, 2);
+                ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
-                ItemStack destBlade = GameRegistry.findItemStack(modid,tag.getString(ItemSlashBladeNamed.TrueItemNameStr),1);
-                GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
-                        true,
-                        reqiredBlade,
-                        "PXP",
-                        "XBX",
-                        "PXP",
-                        'X',itemSphereBladeSoul,
-                        'P',itemProudSoul,
-                        'B',reqiredBlade));
+                GameRegistry.registerCustomItemStack(nameOrotiagito, customblade);
+                ItemSlashBladeNamed.NamedBlades.add(nameOrotiagito);
+
+                String brokableTest = nameOrotiagito + ".damaged";
+                ItemStack brokable = customblade.copy();
+                brokable.setItemDamage(brokable.getMaxDamage());
+                GameRegistry.registerCustomItemStack(brokableTest, brokable);
+                ItemSlashBladeNamed.NamedBlades.add(brokableTest);
             }
-        }
-
-        {
-            ItemStack customblade = new ItemStack(bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
-
-            tag.setString(ItemSlashBladeNamed.CurrentItemNameStr,"flammpfeil.slashblade.named.orotiagito.rust");
-
-            tag.setInteger(ItemSlashBladeNamed.CustomMaxDamageStr, 60);
-            tag.setFloat(ItemSlashBladeNamed.BaseAttackModifiersStr, 4 + ToolMaterial.STONE.getDamageVsEntity());
-            tag.setFloat(ItemSlashBlade.attackAmplifierStr,0.01f);
-            tag.setString(ItemSlashBlade.TextureNameStr, "named/agito_rust_true");
-            tag.setString(ItemSlashBlade.ModelNameStr,"named/agito");
-            tag.setInteger(ItemSlashBlade.SpecialAttackTypeStr, 2);
-            tag.setInteger(ItemSlashBlade.StandbyRenderTypeStr,2);
-
-            tag.setBoolean(ItemSlashBlade.isSealedStr, true);
-
-            tag.setString(ItemSlashBladeNamed.TrueItemNameStr, "flammpfeil.slashblade.named.orotiagito.seald");
-
-            String name = "flammpfeil.slashblade.named.orotiagito.rust";
-            GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.BladeNames.add(name);
 
             {
-                ItemStack reqiredBlade = customblade.copy();
-                NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
-                reqTag.setInteger(ItemSlashBlade.killCountStr,100);
-                reqTag.setInteger(ItemSlashBlade.RepairCounterStr,1);
+                ItemStack customblade = new ItemStack(bladeNamed,1,0);
+                NBTTagCompound tag = new NBTTagCompound();
+                customblade.setTagCompound(tag);
 
-                reqiredBlade.setStackDisplayName("orotiagito rust");
+                ItemSlashBladeNamed.CurrentItemName.set(tag, nameOrotiagitoSeald);
 
-                name = "flammpfeil.slashblade.named.orotiagito.seald.reqired";
-                GameRegistry.registerCustomItemStack(name, reqiredBlade);
-                ItemSlashBladeNamed.BladeNames.add(name);
+                ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.IRON.getDamageVsEntity());
+                ItemSlashBlade.TextureName.set(tag,"named/agito_true");
+                ItemSlashBlade.ModelName.set(tag,"named/agito");
+                ItemSlashBlade.SpecialAttackType.set(tag, 2);
+                ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
-                ItemStack destBlade = GameRegistry.findItemStack(modid,tag.getString(ItemSlashBladeNamed.TrueItemNameStr),1);
-                GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
-                        true,
-                        reqiredBlade,
-                        " X ",
-                        "XBX",
-                        " X ",
-                        'X',itemProudSoul,
-                        'B',reqiredBlade));
+                ItemSlashBladeNamed.TrueItemName.set(tag, nameOrotiagito);
+
+                GameRegistry.registerCustomItemStack(nameOrotiagitoSeald, customblade);
+                ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoSeald);
+
+
+                {
+                    ItemStack reqiredBlade = customblade.copy();
+                    NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                    ItemSlashBlade.KillCount.set(reqTag, 1000);
+                    ItemSlashBlade.ProudSoul.set(reqTag,1000);
+                    ItemSlashBlade.RepairCount.set(reqTag, 10);
+
+                    reqiredBlade.setStackDisplayName("orotiagito seald");
+
+                    GameRegistry.registerCustomItemStack(nameOrotiagitoReqired, reqiredBlade);
+                    ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoReqired);
+
+                    ItemStack destBlade = GameRegistry.findItemStack(modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
+                    GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
+                            reqiredBlade,
+                            "PXP",
+                            "XBX",
+                            "PXP",
+                            'X',itemSphereBladeSoul,
+                            'P',itemProudSoul,
+                            'B',reqiredBlade));
+                }
+            }
+
+
+            {
+                ItemStack customblade = new ItemStack(bladeNamed,1,0);
+                NBTTagCompound tag = new NBTTagCompound();
+                customblade.setTagCompound(tag);
+
+                ItemSlashBladeNamed.CurrentItemName.set(tag, nameOrotiagitoRust);
+
+                ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + ToolMaterial.STONE.getDamageVsEntity());
+                ItemSlashBlade.TextureName.set(tag, "named/agito_rust_true");
+                ItemSlashBlade.ModelName.set(tag, "named/agito");
+                ItemSlashBlade.SpecialAttackType.set(tag, 2);
+                ItemSlashBlade.StandbyRenderType.set(tag, 2);
+
+                ItemSlashBlade.IsSealed.set(tag, true);
+
+                ItemSlashBladeNamed.TrueItemName.set(tag, nameOrotiagitoSeald);
+
+                GameRegistry.registerCustomItemStack(nameOrotiagitoRust, customblade);
+                ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoRust);
+
+                {
+                    ItemStack reqiredBlade = customblade.copy();
+                    NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
+                    ItemSlashBlade.KillCount.set(tag, 100);
+                    ItemSlashBlade.RepairCount.set(tag, 1);
+
+                    reqiredBlade.setStackDisplayName("orotiagito rust");
+
+                    GameRegistry.registerCustomItemStack(nameOrotiagitoSealdReqired, reqiredBlade);
+                    ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoSealdReqired);
+
+                    ItemStack destBlade = GameRegistry.findItemStack(modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
+                    GameRegistry.addRecipe(new RecipeAwakeBlade(destBlade,
+                            reqiredBlade,
+                            " X ",
+                            "XBX",
+                            " X ",
+                            'X',itemProudSoul,
+                            'B',reqiredBlade));
+                }
             }
         }
-
         //==================================================================================================================================
 
         GameRegistry.addRecipe(new RecipeAdjustPos());
@@ -730,6 +719,8 @@ public class SlashBlade implements IFuelHandler{
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
+
+        MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
 
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);
@@ -784,4 +775,34 @@ public class SlashBlade implements IFuelHandler{
     }
 
 
+
+    public static ItemStack getCustomBlade(String modid,String name){
+        ItemStack blade = GameRegistry.findItemStack(modid, name, 1);
+
+        if(blade != null){
+            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+
+            if(ItemSlashBladeNamed.IsDefaultBewitched.get(tag)){
+                blade.setStackDisplayName(blade.getDisplayName());
+            }
+        }
+
+        return blade;
+    }
+    public static ItemStack getCustomBlade(String key){
+        String modid;
+        String name;
+        {
+            String str[] = key.split(":",2);
+            if(str.length == 2){
+                modid = str[0];
+                name = str[1];
+            }else{
+                modid = SlashBlade.modid;
+                name = key;
+            }
+        }
+
+        return getCustomBlade(modid,name);
+    }
 }

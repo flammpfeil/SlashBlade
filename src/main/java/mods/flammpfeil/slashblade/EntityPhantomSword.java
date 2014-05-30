@@ -6,7 +6,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -82,33 +81,33 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
         //■サイズ変更
         setSize(0.5F, 0.5F);
 
+        {
+            float dist = 2.0f;
 
-        float dist = 2.5f;
+            double ran = (rand.nextFloat() - 0.5) * 2.0;
 
-        double ran = (rand.nextFloat() - 0.5) * 2.0;
+            double yaw =  Math.toRadians(-thrower.rotationYaw + 90);
 
-        double yaw =  Math.toRadians(-thrower.rotationYaw + 90);
+            double x = ran * Math.sin(yaw);
+            double y = 1.0 - Math.abs(ran);
+            double z = ran * Math.cos(yaw);
 
-        double x = ran * Math.sin(yaw);
-        double y = 1.0 - Math.abs(ran);
-        double z = ran * Math.cos(yaw);
+            x*=dist;
+            y*=dist;
+            z*=dist;
 
-        x*=dist;
-        y*=dist;
-        z*=dist;
+            //■初期位置・初期角度等の設定
+            setLocationAndAngles(thrower.posX + x,
+                    thrower.posY + y,
+                    thrower.posZ + z,
+                    thrower.rotationYaw,
+                    thrower.rotationPitch);
 
-        //■初期位置・初期角度等の設定
-        setLocationAndAngles(thrower.posX + x,
-                thrower.posY + y,
-                thrower.posZ + z,
-                thrower.rotationYaw,
-                thrower.rotationPitch);
+            iniYaw = thrower.rotationYaw;
+            iniPitch = thrower.rotationPitch;
 
-        //■初期ベクトル設定
-        setDriveVector(0.75F);
-
-        //■プレイヤー位置より一歩進んだ所に出現する
-        setPosition(posX + motionX, posY + motionY, posZ + motionZ);
+            setDriveVector(1.75f);
+        }
     }
 
     /**
@@ -116,12 +115,22 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
      */
     @Override
     protected void entityInit() {
+        //EntityId
+        this.getDataWatcher().addObject(4, 0);
+
         //Roll
         this.getDataWatcher().addObject(5, 0.0f);
 
         //lifetime
         this.getDataWatcher().addObject(6, 20);
 
+    }
+
+    public int getTargetEntityId(){
+        return this.getDataWatcher().getWatchableObjectInt(4);
+    }
+    public void setTargetEntityId(int entityid){
+        this.getDataWatcher().updateObject(4,entityid);
     }
 
     public float getRoll(){
@@ -138,29 +147,77 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
         this.getDataWatcher().updateObject(6,lifetime);
     }
 
-    public void setInitialSpeed(float f){
-        float dist = 2.0f;
+    float speed = 0.0f;
+    float iniYaw = Float.NaN;
+    float iniPitch = Float.NaN;
 
-        double ran = (rand.nextFloat() - 0.5) * 2.0;
+    public void doTargeting(){
+        int targetid = this.getTargetEntityId();
+        if(targetid != 0){
+            Entity target = worldObj.getEntityByID(targetid);
 
-        double yaw =  Math.toRadians(-thrower.rotationYaw + 90);
+            if(target != null){
 
-        double x = ran * Math.sin(yaw);
-        double y = 1.0 - Math.abs(ran);
-        double z = ran * Math.cos(yaw);
+                if(Float.isNaN(iniPitch)){
+                    iniYaw = thrower.rotationYaw;
+                    iniPitch = thrower.rotationPitch;
+                }
+                faceEntity(this,target,ticksExisted * 1.0f,ticksExisted * 1.0f);
+                setDriveVector(1.75F, false);
+            }
+        }
+    }
 
-        x*=dist;
-        y*=dist;
-        z*=dist;
 
-        //■初期位置・初期角度等の設定
-        setLocationAndAngles(thrower.posX + x,
-                thrower.posY + y,
-                thrower.posZ + z,
-                thrower.rotationYaw,
-                thrower.rotationPitch);
+    public void faceEntity(Entity viewer, Entity target, float yawStep, float pitchStep)
+    {
+        double d0 = target.posX - viewer.posX;
+        double d1 = target.posZ - viewer.posZ;
+        double d2;
 
-        setDriveVector(f);
+        if (target instanceof EntityLivingBase)
+        {
+            EntityLivingBase entitylivingbase = (EntityLivingBase)target;
+            d2 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (viewer.posY + (double)viewer.getEyeHeight());
+        }
+        else
+        {
+            d2 = (target.boundingBox.minY + target.boundingBox.maxY) / 2.0D - (viewer.posY + (double)viewer.getEyeHeight());
+        }
+
+        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+        float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
+        float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
+
+
+        iniPitch = this.updateRotation(iniPitch, f3, pitchStep);
+        iniYaw = this.updateRotation(iniYaw, f2, yawStep);
+
+
+
+        /**/
+
+    }
+
+    private float updateRotation(float par1, float par2, float par3)
+    {
+        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
+
+        if (f3 > par3)
+        {
+            f3 = par3;
+        }
+
+        if (f3 < -par3)
+        {
+            f3 = -par3;
+        }
+
+        return par1 + f3;
+    }
+
+    public void setDriveVector(float fYVecOfset){
+        setDriveVector(fYVecOfset,true);
     }
 
     /**
@@ -168,11 +225,11 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
      * ■移動速度設定
      * @param fYVecOfst
      */
-    public void setDriveVector(float fYVecOfst)
+    public void setDriveVector(float fYVecOfst,boolean init)
     {
         //■角度 -> ラジアン 変換
-        float fYawDtoR = (  rotationYaw / 180F) * (float)Math.PI;
-        float fPitDtoR = (rotationPitch / 180F) * (float)Math.PI;
+        float fYawDtoR = (  iniYaw / 180F) * (float)Math.PI;
+        float fPitDtoR = (iniPitch / 180F) * (float)Math.PI;
 
         //■単位ベクトル
         motionX = -MathHelper.sin(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
@@ -180,8 +237,13 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
         motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
 
         float f3 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
-        prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
-        prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
+        rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
+        rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
+        if(init){
+            speed = fYVecOfst;
+            prevRotationYaw = rotationYaw;
+            prevRotationPitch = rotationPitch;
+        }
     }
 
     @Override
@@ -301,8 +363,14 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
                     list.removeAll(alreadyHitEntity);
 
+                    if(getTargetEntityId() != 0){
+                        Entity target = worldObj.getEntityByID(getTargetEntityId());
+                        if(target != null){
+                            if(target.boundingBox.intersectsWith(bb))
+                                list.add(target);
+                        }
+                    }
                     alreadyHitEntity.addAll(list);
-
 
                     Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ);
                     Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
@@ -381,6 +449,8 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                 posX += motionX;
                 posY += motionY;
                 posZ += motionZ;
+            }else{
+                doTargeting();
             }
             setPosition(posX, posY, posZ);
 
@@ -554,6 +624,8 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
             this.hitY = this.posY - par1Entity.posY;
             this.hitZ = this.posZ - par1Entity.posZ;
             this.ridingEntity2 = par1Entity;
+
+            this.ticksExisted = Math.max(0,getLifeTime() - 20);
         }
     }
 

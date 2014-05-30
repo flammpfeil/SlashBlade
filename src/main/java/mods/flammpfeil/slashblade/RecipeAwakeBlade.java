@@ -1,33 +1,26 @@
 package mods.flammpfeil.slashblade;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class RecipeAwakeBlade extends ShapedOreRecipe {
 
-    boolean isYoutou = false;
     ItemStack requiredStateBlade = null;
 
-    public RecipeAwakeBlade(ItemStack result, boolean isYoutou, ItemStack requiredStateBlade, Object... recipe) {
+    public RecipeAwakeBlade(ItemStack result, ItemStack requiredStateBlade, Object... recipe) {
         super(result, recipe);
-        this.isYoutou = isYoutou;
         this.requiredStateBlade = requiredStateBlade;
     }
 
-    int tagValueCompareInteger(String key,NBTTagCompound reqTag,NBTTagCompound srcTag){
-        return Integer.compare(reqTag.getInteger(key) , srcTag.getInteger(key));
+    int tagValueCompare(TagPropertyAccessor access, NBTTagCompound reqTag, NBTTagCompound srcTag){
+        return access.get(reqTag).compareTo(access.get(srcTag));
     }
 
     @Override
@@ -59,11 +52,11 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                     if(!curIs.getUnlocalizedName().equals(requiredStateBlade.getUnlocalizedName()))
                         return false;
 
-                    if(0 < tagValueCompareInteger(ItemSlashBlade.proudSoulStr,reqTag,srcTag))
+                    if(0 < tagValueCompare(ItemSlashBlade.ProudSoul, reqTag, srcTag))
                         return false;
-                    if(0 < tagValueCompareInteger(ItemSlashBlade.killCountStr,reqTag,srcTag))
+                    if(0 < tagValueCompare(ItemSlashBlade.KillCount, reqTag, srcTag))
                         return false;
-                    if(0 < tagValueCompareInteger(ItemSlashBlade.RepairCounterStr,reqTag,srcTag))
+                    if(0 < tagValueCompare(ItemSlashBlade.RepairCount, reqTag, srcTag))
                         return false;
 
 
@@ -93,27 +86,22 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                     NBTTagCompound newTag;
                     newTag = ItemSlashBlade.getItemTagCompound(result);
 
-                    if(newTag.hasKey(ItemSlashBladeNamed.CurrentItemNameStr)){
+                    if(ItemSlashBladeNamed.CurrentItemName.exists(newTag)){
                         ItemStack tmp;
-                        String key = newTag.getString(ItemSlashBladeNamed.CurrentItemNameStr);
-                        tmp = ItemSlashBladeNamed.getCustomBlade(key);
-                        if(tmp == null)
-                            tmp = ItemSlashBladeNamed.getCustomBlade(key + ".youtou");
+                        String key = ItemSlashBladeNamed.CurrentItemName.get(newTag);
+                        tmp = SlashBlade.getCustomBlade(key);
 
                         if(tmp != null)
                             result = tmp;
                     }
                 }
 
-                if(isYoutou)
-                    result.setStackDisplayName(result.getDisplayName());
-
                 NBTTagCompound newTag;
                 newTag = ItemSlashBlade.getItemTagCompound(result);
 
-                newTag.setInteger(ItemSlashBlade.killCountStr,oldTag.getInteger(ItemSlashBlade.killCountStr));
-                newTag.setInteger(ItemSlashBlade.proudSoulStr,oldTag.getInteger(ItemSlashBlade.proudSoulStr));
-                newTag.setInteger(ItemSlashBlade.RepairCounterStr,oldTag.getInteger(ItemSlashBlade.RepairCounterStr));
+                ItemSlashBlade.KillCount.set(newTag, ItemSlashBlade.KillCount.get(oldTag));
+                ItemSlashBlade.ProudSoul.set(newTag, ItemSlashBlade.ProudSoul.get(oldTag));
+                ItemSlashBlade.RepairCount.set(newTag, ItemSlashBlade.RepairCount.get(oldTag));
 
                 if(oldTag.hasKey(ItemSlashBlade.adjustXStr))
                     newTag.setFloat(ItemSlashBlade.adjustXStr,oldTag.getFloat(ItemSlashBlade.adjustXStr));
