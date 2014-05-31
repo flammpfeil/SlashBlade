@@ -1746,22 +1746,25 @@ public class ItemSlashBlade extends ItemSword {
 
     @Override
     public void setDamage(ItemStack stack, int damage) {
-        NBTTagCompound tag = getItemTagCompound(stack);
-        EnumSet<SwordType> types = getSwordType(stack);
-        int maxDamage = stack.getMaxDamage();
 
-        if(damage <= 0 && !types.contains(SwordType.Sealed)){
-            IsBroken.set(tag, false);
+        if(damage != OreDictionary.WILDCARD_VALUE)
+        {
+            NBTTagCompound tag = getItemTagCompound(stack);
+            EnumSet<SwordType> types = getSwordType(stack);
+            int maxDamage = stack.getMaxDamage();
 
-        }else if(maxDamage < damage){
-            if(IsBroken.get(tag)){
-                if(!isDestructable(stack))
-                    damage = Math.min(damage,maxDamage);
-            }else{
-                IsBroken.set(tag,true);
+            if(damage <= 0 && !types.contains(SwordType.Sealed)){
+                IsBroken.set(tag, false);
+
+            }else if(maxDamage < damage){
+                if(IsBroken.get(tag)){
+                    if(!isDestructable(stack))
+                        damage = Math.min(damage,maxDamage);
+                }else{
+                    IsBroken.set(tag,true);
+                }
             }
         }
-
         super.setDamage(stack,damage);
     }
 

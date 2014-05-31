@@ -343,6 +343,7 @@ public class SlashBlade implements IFuelHandler{
             ItemSlashBladeNamed.NamedBlades.add(name);
             {
                 ItemStack reqiredBlade = new ItemStack(bladeWood);
+                reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                 NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                 ItemSlashBlade.KillCount.set(reqTag,1000);
 
@@ -417,6 +418,7 @@ public class SlashBlade implements IFuelHandler{
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
+                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.ProudSoul.set(reqTag, 1000);
 
@@ -462,6 +464,7 @@ public class SlashBlade implements IFuelHandler{
 
             {
                 ItemStack custombladeReqired = new ItemStack(weapon,1,0);
+                custombladeReqired.setItemDamage(OreDictionary.WILDCARD_VALUE);
 
                 NBTTagCompound tagReqired = new NBTTagCompound();
                 custombladeReqired.setTagCompound(tagReqired);
@@ -544,6 +547,7 @@ public class SlashBlade implements IFuelHandler{
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
+                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.KillCount.set(reqTag,100);
                     ItemSlashBlade.RepairCount.set(reqTag,1);
@@ -620,6 +624,7 @@ public class SlashBlade implements IFuelHandler{
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
+                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.KillCount.set(reqTag, 1000);
                     ItemSlashBlade.ProudSoul.set(reqTag,1000);
@@ -666,6 +671,7 @@ public class SlashBlade implements IFuelHandler{
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
+                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.KillCount.set(tag, 100);
                     ItemSlashBlade.RepairCount.set(tag, 1);
