@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -42,8 +43,8 @@ public class CommandHandler implements ICommand {
                 ItemStack item = pl.getHeldItem();
                 if(item != null && item.getItem() instanceof ItemSlashBlade){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(item);
-
-                    if(((ItemSlashBlade)item.getItem()).getSwordType(item).contains(ItemSlashBlade.SwordType.Bewitched)){
+                    EnumSet<ItemSlashBlade.SwordType> types = ((ItemSlashBlade)item.getItem()).getSwordType(item);
+                    if(types.contains(ItemSlashBlade.SwordType.Bewitched) && !types.contains(ItemSlashBlade.SwordType.Broken)){
                         int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
                         if(0 < level && ItemSlashBlade.ProudSoul.tryAdd(tag,-1,false)){
                             float magicDamage = 1 + level;
