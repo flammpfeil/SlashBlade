@@ -16,9 +16,33 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: VersionGetter
 
-version = "mc1.7.2-r11.2"
-group= "mods.flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+class VersionGetter implements Plugin<Project>{
+    void apply(Project project) {
+    }
+
+    public static String getVersionFromJavaCurrent(Project project, String file)
+    {
+        String major = "0";
+
+        String prefix = "public static final String version";
+
+        List<String> lines = (List<String>)org.apache.commons.io.FileUtils.readLines(project.file(file));
+        for (String s : lines)
+        {
+            s = s.trim();
+            if (s.startsWith(prefix))
+            {
+                s = s.substring(prefix.length(), s.length() - 1);
+                return s.replaceFirst("=","").trim().replaceAll("\"","").replaceAll(";","");
+            }
+        }
+    }
+}
+
+version = VersionGetter.getVersionFromJavaCurrent(getProject(), 'src/main/java/mods/flammpfeil/slashblade/SlashBlade.java')
+group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
 minecraft {
@@ -32,7 +56,7 @@ processResources
         include 'mcmod.info'
 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modname':"SlashBlade", 'modid':"flammpfeil.slashblade"
+        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modname':project.archivesBaseName, 'modid':project.group
     }
 
     // copy everything else, thats not the mcmod.info

@@ -4,6 +4,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -28,9 +29,17 @@ public class InitProxyClient extends InitProxy{
             public void upkey(int count) {
                 Minecraft mc = Minecraft.getMinecraft();
                 EntityClientPlayerMP player = mc.thePlayer;
+                mc.playerController.interactWithEntitySendPacket(player,player);
+                /*
+                if(count > 10)
+                    mc.playerController.interactWithEntitySendPacket(player,player);
+
+                */
+                /*
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                     player.sendChatMessage("/slashblade ps");
                 }
+                */
             }
         };
 	}

@@ -31,12 +31,13 @@ import java.util.*;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 
-@Mod(name=SlashBlade.modname,modid=SlashBlade.modid,version="1.7.2 r9.8")
+@Mod(name = SlashBlade.modname, modid = SlashBlade.modid, version = SlashBlade.version)
 public class SlashBlade implements IFuelHandler{
 
 
 	public static final String modname = "SlashBlade";
-	public static final String modid = "flammpfeil.slashblade";
+    public static final String modid = "flammpfeil.slashblade";
+    public static final String version = "1.7.2 r12";
 
 	public static final String BrokenBladeWhiteStr = "BrokenBladeWhite";
 	public static final String HundredKillSilverBambooLightStr = "HundredKillSilverBambooLight";
@@ -771,7 +772,7 @@ public class SlashBlade implements IFuelHandler{
 	}
 
 
-
+/*
     ICommand command;
     @EventHandler
     public void serverStarting(FMLServerStartingEvent evt)
@@ -779,7 +780,7 @@ public class SlashBlade implements IFuelHandler{
         command = new CommandHandler();
         evt.registerServerCommand(command);
     }
-
+*/
 
 
     public static ItemStack getCustomBlade(String modid,String name){
