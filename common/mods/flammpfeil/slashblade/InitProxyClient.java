@@ -51,9 +51,11 @@ public class InitProxyClient extends InitProxy{
 				if(kb.keyCode == -98 && tickEnd){
 	                Minecraft mc = Minecraft.getMinecraft();
 	                EntityClientPlayerMP player = mc.thePlayer;
+	                mc.playerController.func_78768_b(player,player);
+	                /*
 	                if(player != null && mc.inGameHasFocus && mc.currentScreen == null){
 	                    player.sendChatMessage("/slashblade ps");
-	                }
+	                }*/
 				}
 			}
 

@@ -813,7 +813,7 @@ public class SlashBlade implements IFuelHandler{
 	}
 
 
-
+/*
     ICommand command;
     @EventHandler
     public void serverStarting(FMLServerStartingEvent evt)
@@ -821,6 +821,6 @@ public class SlashBlade implements IFuelHandler{
         command = new CommandHandler();
         evt.registerServerCommand(command);
     }
-
+*/
 
 }

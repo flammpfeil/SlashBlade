@@ -1965,4 +1965,35 @@ public class ItemSlashBlade extends ItemSword {
             entity.swingItem();
         }
     }
+
+    @Override
+    public boolean itemInteractionForEntity(ItemStack item, EntityPlayer pl, EntityLivingBase par3EntityLivingBase) {
+
+        World w = pl.worldObj;
+        if(!w.isRemote){
+            if(pl.equals(par3EntityLivingBase)){
+                NBTTagCompound tag = getItemTagCompound(item);
+                EnumSet<SwordType> types = getSwordType(item);
+                if(types.contains(SwordType.Bewitched) && !types.contains(SwordType.Broken)){
+                	int ps = tag.getInteger(ItemSlashBlade.proudSoulStr);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
+                    if(1 <= ps && 0 < level){
+                        ps-=1;
+                        tag.setInteger(ItemSlashBlade.proudSoulStr,ps);
+
+                        float magicDamage = 1 + level;
+
+                        EntityPhantomSword entityDrive = new EntityPhantomSword(w, pl, magicDamage,90.0f);
+                        if (entityDrive != null) {
+                            entityDrive.setInitialSpeed(1.75f);
+                            entityDrive.setLifeTime(30);
+                            w.spawnEntityInWorld(entityDrive);
+                        }
+                    }
+                }
+            }
+        }
+
+        return super.itemInteractionForEntity(item, pl, par3EntityLivingBase);
+    }
 }
