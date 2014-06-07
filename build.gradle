@@ -18,6 +18,8 @@ buildscript {
 apply plugin: 'forge'
 apply plugin: VersionGetter
 
+System.setProperty('file.encoding', 'UTF-8')
+
 class VersionGetter implements Plugin<Project>{
     void apply(Project project) {
     }
@@ -80,3 +82,38 @@ jar {
         attributes 'FMLCorePluginContainsFMLMod': true
     }
 }
+
+def filteredSourceDir = file("${buildDir}/filterd/java")
+
+sourceSets {
+    // This source set will contain all sources that we filter
+    filtered {
+        java {
+            srcDirs = [filteredSourceDir]
+        }
+    }
+}
+
+def replacedSourceDir = file("${buildDir}/sources/java")
+
+// tell the compileJava task to compile the filtered source
+//compileJava.source = sourceSets.filtered.java
+
+
+// copy the main sources and filter any '$version' occurences.
+task processCopyReplaceTarget (dependsOn: 'sourceMainJava', type: Copy) {
+    from sourceSets.main.java
+    into filteredSourceDir
+}
+
+task processReleaseReplace(dependsOn: 'processCopyReplaceTarget', type: Copy){
+    from sourceSets.filtered.java
+    into replacedSourceDir
+    it.eachFile {
+        // static boolean isRelease = /*@isrelease@*/ false;
+        ant.replace(file: it.file, token: "@isrelease@", value: "*/true;//", encoding: "UTF-8")
+    }
+    //expand
+}
+
+compileJava.dependsOn processReleaseReplace

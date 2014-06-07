@@ -13,6 +13,8 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 
 public class Transformer implements IClassTransformer , Opcodes
 {
+    static final boolean isRelease = /*@isrelease@*/ false;
+
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
@@ -54,7 +56,7 @@ public class Transformer implements IClassTransformer , Opcodes
         return bytes;
     }
 
-    class RenderPlayerVisitor extends ClassVisitor
+    static class RenderPlayerVisitor extends ClassVisitor
     {
         String owner;
         public RenderPlayerVisitor(String owner ,ClassVisitor cv)
@@ -63,7 +65,7 @@ public class Transformer implements IClassTransformer , Opcodes
             this.owner = owner;
         }
 
-        static final String targetMethodName = "func_77029_c"; //renderEquippedItems
+        static final String targetMethodName = isRelease ? "func_77029_c" : "renderEquippedItems";
         static final String targetMethodDesc = "(Lnet/minecraft/client/entity/EntityLivingBase;F)V";
 
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
@@ -133,7 +135,7 @@ public class Transformer implements IClassTransformer , Opcodes
             */
             {
 
-                final String targetMethodName = "func_77029_c"; //
+                final String targetMethodName = isRelease ? "func_77029_c" : "renderEquippedItems";
                 final String targetMethodDesc = "(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V";
                 if (targetMethodName.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(owner, name, desc))
                         && targetMethodDesc.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodDesc(desc)))
