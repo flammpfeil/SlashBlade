@@ -112,6 +112,7 @@ task processReleaseReplace(dependsOn: 'processCopyReplaceTarget', type: Copy){
     it.eachFile {
         // static boolean isRelease = /*@isrelease@*/ false;
         ant.replace(file: it.file, token: "@isrelease@", value: "*/true;//", encoding: "UTF-8")
+        ant.replace(file: it.file, token: "@VERSION@", value: project.version, encoding: "UTF-8")
     }
     //expand
 }
