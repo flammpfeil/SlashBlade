@@ -1792,27 +1792,21 @@ public class ItemSlashBlade extends ItemSword {
         return specialAttacks.containsKey(key) ? specialAttacks.get(key) : defaultSA;
     }
 
-    @Override
-    public boolean itemInteractionForEntity(ItemStack item, EntityPlayer pl, EntityLivingBase par3EntityLivingBase) {
+    public void doRangeAttack(ItemStack item, EntityLivingBase entity, int mode) {
+        World w = entity.worldObj;
+        NBTTagCompound tag = getItemTagCompound(item);
+        EnumSet<SwordType> types = getSwordType(item);
 
-        World w = pl.worldObj;
-        if(!w.isRemote){
-            if(pl.equals(par3EntityLivingBase)){
-                NBTTagCompound tag = getItemTagCompound(item);
-                EnumSet<SwordType> types = getSwordType(item);
-                if(types.contains(SwordType.Bewitched) && !types.contains(SwordType.Broken)){
-                    /*
-                    long lastPSTime = tag.getLong("lastPSTime");
-                    System.out.println(lastPSTime);
-                    if(lastPStime == w.getTotalWorldTime()){
-                        //chargedPS
-                    }
-                    */
+        if(mode == 1){
+            if(types.contains(SwordType.Bewitched) && !types.contains(SwordType.Broken)){
 
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
-                    if(0 < level && ProudSoul.tryAdd(tag,-1,false)){
-                        float magicDamage = 1 + level;
-                        EntityPhantomSword entityDrive = new EntityPhantomSword(w, pl, magicDamage,90.0f);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
+                if(0 < level && ProudSoul.tryAdd(tag,-1,false)){
+                    float magicDamage = 1 + level;
+
+
+                    if(!w.isRemote){
+                        EntityPhantomSword entityDrive = new EntityPhantomSword(w, entity, magicDamage,90.0f);
                         if (entityDrive != null) {
                             entityDrive.setLifeTime(30);
 
@@ -1822,12 +1816,13 @@ public class ItemSlashBlade extends ItemSword {
                             w.spawnEntityInWorld(entityDrive);
                         }
 
-                        //tag.setLong("lastPSTime", w.getTotalWorldTime());
+                    }else{
+                        PacketHandler.INSTANCE.sendToServer(new MessageRangeAttack((byte)1));
+
                     }
+
                 }
             }
         }
-
-        return super.itemInteractionForEntity(item, pl, par3EntityLivingBase);
     }
 }

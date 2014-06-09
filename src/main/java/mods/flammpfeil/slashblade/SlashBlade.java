@@ -37,7 +37,7 @@ public class SlashBlade implements IFuelHandler{
 
 	public static final String modname = "SlashBlade";
     public static final String modid = "flammpfeil.slashblade";
-    public static final String version = "mc1.7.2 r12.1.1";
+    public static final String version = "mc1.7.2 r12.2";
 
 	public static final String BrokenBladeWhiteStr = "BrokenBladeWhite";
 	public static final String HundredKillSilverBambooLightStr = "HundredKillSilverBambooLight";
@@ -710,6 +710,7 @@ public class SlashBlade implements IFuelHandler{
 
         FMLCommonHandler.instance().bus().register(manager);
 
+        PacketHandler.init();
 
         RecipeSorter.register("flammpfeil.slashblade:upgrade", RecipeUpgradeBlade.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:wrap", RecipeWrapBlade.class, SHAPED, "after:forge:shaped");

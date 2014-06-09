@@ -7,6 +7,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -34,19 +35,12 @@ public class InitProxyClient extends InitProxy{
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                     ItemStack item = player.getHeldItem();
                     if(item != null && item.getItem() instanceof ItemSlashBlade){
-                        mc.playerController.interactWithEntitySendPacket(player,player);
+
+                        mc.playerController.updateController();
+
+                        ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, 1);
                     }
                 }
-                /*
-                if(count > 10)
-                    mc.playerController.interactWithEntitySendPacket(player,player);
-
-                */
-                /*
-                if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
-                    player.sendChatMessage("/slashblade ps");
-                }
-                */
             }
         };
 	}
