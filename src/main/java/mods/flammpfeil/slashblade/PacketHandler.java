@@ -8,7 +8,8 @@ import cpw.mods.fml.relauncher.Side;
  * Created by Furia on 14/06/09.
  */
 public class PacketHandler {
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(SlashBlade.modid);
+    //public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(SlashBlade.modid);
+    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("flammpfeil.sb");
 
 
     public static void init() {
