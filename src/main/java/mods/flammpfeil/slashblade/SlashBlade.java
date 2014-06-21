@@ -37,7 +37,7 @@ public class SlashBlade implements IFuelHandler{
 
 	public static final String modname = "SlashBlade";
     public static final String modid = "flammpfeil.slashblade";
-    public static final String version = "mc1.7.2 r12.3";
+    public static final String version = "mc1.7.2 r12.4";
 
 	public static final String BrokenBladeWhiteStr = "BrokenBladeWhite";
 	public static final String HundredKillSilverBambooLightStr = "HundredKillSilverBambooLight";
@@ -741,7 +741,9 @@ public class SlashBlade implements IFuelHandler{
         statManager.registerItemStat(wrapBlade, weapon, "SlashBlade");
         statManager.registerItemStat(bladeNamed, weapon, "SlashBlade");
 
+        DropEventHandler.registerEntityDrop("HardcoreEnderExpansion.Dragon", 1.0f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.yamato.broken", 1));
         DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.yamato.broken", 1));
+
         DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
         DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,GameRegistry.findItemStack(modid,"flammpfeil.slashblade.named.agito.rust",1));
     }
