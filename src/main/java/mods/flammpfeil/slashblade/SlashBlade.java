@@ -723,7 +723,7 @@ public class SlashBlade implements IFuelHandler{
         RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
 
 
-        InitEventBus.register(new Sange());
+        InitEventBus.register(new PSSange());
     }
 
     StatManager statManager;
