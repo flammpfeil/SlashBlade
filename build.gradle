@@ -16,40 +16,20 @@ buildscript {
 }
 
 apply plugin: 'forge'
-apply plugin: VersionGetter
 
-System.setProperty('file.encoding', 'UTF-8')
-
-class VersionGetter implements Plugin<Project>{
-    void apply(Project project) {
-    }
-
-    public static String getVersionFromJavaCurrent(Project project, String file)
-    {
-        String major = "0";
-
-        String prefix = "public static final String version";
-
-        List<String> lines = (List<String>)org.apache.commons.io.FileUtils.readLines(project.file(file));
-        for (String s : lines)
-        {
-            s = s.trim();
-            if (s.startsWith(prefix))
-            {
-                s = s.substring(prefix.length(), s.length() - 1);
-                return s.replaceFirst("=","").trim().replaceAll("\"","").replaceAll(";","");
-            }
-        }
-    }
-}
-
-version = VersionGetter.getVersionFromJavaCurrent(getProject(), 'src/main/java/mods/flammpfeil/slashblade/SlashBlade.java')
+version = "mc1.7.2 r13"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
 minecraft {
     version = "1.7.2-10.12.1.1101"
     assetDir = "eclipse/assets"
+
+    //static final boolean isRelease = /*@IS_RELEASE@*/ false;
+    replace '@IS_RELEASE@', '*/true;//'
+
+    replace '@VERSION@', project.version
+    replace '@MC_VERSION@', version
 }
 processResources
 {
@@ -82,39 +62,3 @@ jar {
         attributes 'FMLCorePluginContainsFMLMod': true
     }
 }
-
-def filteredSourceDir = file("${buildDir}/filterd/java")
-
-sourceSets {
-    // This source set will contain all sources that we filter
-    filtered {
-        java {
-            srcDirs = [filteredSourceDir]
-        }
-    }
-}
-
-def replacedSourceDir = file("${buildDir}/sources/java")
-
-// tell the compileJava task to compile the filtered source
-//compileJava.source = sourceSets.filtered.java
-
-
-// copy the main sources and filter any '$version' occurences.
-task processCopyReplaceTarget (dependsOn: 'sourceMainJava', type: Copy) {
-    from sourceSets.main.java
-    into filteredSourceDir
-}
-
-task processReleaseReplace(dependsOn: 'processCopyReplaceTarget', type: Copy){
-    from sourceSets.filtered.java
-    into replacedSourceDir
-    it.eachFile {
-        // static boolean isRelease = /*@isrelease@*/ false;
-        ant.replace(file: it.file, token: "@isrelease@", value: "*/true;//", encoding: "UTF-8")
-        ant.replace(file: it.file, token: "@VERSION@", value: project.version, encoding: "UTF-8")
-    }
-    //expand
-}
-
-compileJava.dependsOn processReleaseReplace

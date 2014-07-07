@@ -13,7 +13,7 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 
 public class Transformer implements IClassTransformer , Opcodes
 {
-    static final boolean isRelease = /*@isrelease@*/ false;
+    static final boolean isRelease = /*@IS_RELEASE@*/ false;
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)

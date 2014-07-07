@@ -40,7 +40,7 @@ public class SlashBlade implements IFuelHandler{
 
 	public static final String modname = "SlashBlade";
     public static final String modid = "flammpfeil.slashblade";
-    public static final String version = "mc1.7.2 r12.4";
+    public static final String version = "@VERSION@";
 
 	public static final String BrokenBladeWhiteStr = "BrokenBladeWhite";
 	public static final String HundredKillSilverBambooLightStr = "HundredKillSilverBambooLight";
