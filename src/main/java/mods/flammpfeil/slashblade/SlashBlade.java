@@ -8,8 +8,11 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.named.*;
+import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -68,6 +71,8 @@ public class SlashBlade implements IFuelHandler{
     public static final String TinyBladeSoulStr = "tiny_bladesoul";
 
     public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade");
+
+    public static final EventBus InitEventBus = new EventBus();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
@@ -716,6 +721,9 @@ public class SlashBlade implements IFuelHandler{
         RecipeSorter.register("flammpfeil.slashblade:wrap", RecipeWrapBlade.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:adjust", RecipeAdjustPos.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
+
+
+        InitEventBus.register(new Sange());
     }
 
     StatManager statManager;
@@ -724,6 +732,7 @@ public class SlashBlade implements IFuelHandler{
     public void init(FMLInitializationEvent evt){
         EntityRegistry.registerModEntity(EntityDrive.class, "Drive", 1, this, 250, 1, true);
         EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", 2, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityDirectAttackDummy.class, "DirectAttackDummy", 3, this, 250, 1, true);
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
@@ -746,6 +755,8 @@ public class SlashBlade implements IFuelHandler{
 
         DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
         DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,GameRegistry.findItemStack(modid,"flammpfeil.slashblade.named.agito.rust",1));
+
+        InitEventBus.post(new LoadEvent.InitEvent(evt));
     }
 
     @EventHandler
@@ -766,6 +777,8 @@ public class SlashBlade implements IFuelHandler{
                     'I', itemSphereBladeSoul,
                     'L', "logWood"));
         }
+
+        InitEventBus.post(new LoadEvent.PostInitEvent(evt));
     }
 
 

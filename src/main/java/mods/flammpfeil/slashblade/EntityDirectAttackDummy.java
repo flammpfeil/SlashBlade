@@ -1,14 +1,13 @@
 package mods.flammpfeil.slashblade;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import cpw.mods.fml.common.registry.IThrowableEntity;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -19,13 +18,15 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Furia on 14/05/08.
  */
-public class EntityDrive extends Entity implements IThrowableEntity {
+public class EntityDirectAttackDummy extends Entity implements IThrowableEntity {
     /**
      * ★撃った人
      */
@@ -38,32 +39,23 @@ public class EntityDrive extends Entity implements IThrowableEntity {
      */
     protected List<Entity> alreadyHitEntity = new ArrayList<Entity>();
 
-    protected float AttackLevel = 0.0f;
-
     /**
      * ■コンストラクタ
      * @param par1World
      */
-    public EntityDrive(World par1World)
+    public EntityDirectAttackDummy(World par1World)
     {
         super(par1World);
     }
 
-    public EntityDrive(World par1World, EntityLivingBase entityLiving,float AttackLevel,boolean multiHit, float roll){
-        this(par1World,entityLiving,AttackLevel,multiHit);
-        this.setRoll(roll);
-    }
-
-    public EntityDrive(World par1World, EntityLivingBase entityLiving,float AttackLevel,boolean multiHit){
-        this(par1World, entityLiving, AttackLevel);
+    public EntityDirectAttackDummy(World par1World, EntityLivingBase entityLiving, boolean multiHit){
+        this(par1World, entityLiving);
         this.setIsMultiHit(multiHit);
     }
 
-    public EntityDrive(World par1World, EntityLivingBase entityLiving,float AttackLevel)
+    public EntityDirectAttackDummy(World par1World, EntityLivingBase entityLiving)
     {
         this(par1World);
-
-        this.AttackLevel = AttackLevel;
 
         //■Y軸のオフセット設定
         yOffset = entityLiving.getEyeHeight()/2.0F;
@@ -86,7 +78,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         ticksExisted = 0;
 
         //■サイズ変更
-        setSize(1.0F, 2.0F);
+        setSize(2.0F, 2.0F);
 
         //■初期位置・初期角度等の設定
         setLocationAndAngles(thrower.posX,
@@ -110,9 +102,6 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         //isMultiHit
         this.getDataWatcher().addObject(4, (byte)0);
 
-        //Roll
-        this.getDataWatcher().addObject(5, 0.0f);
-
         //lifetime
         this.getDataWatcher().addObject(6, 20);
 
@@ -123,13 +112,6 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     }
     public void setIsMultiHit(boolean isMultiHit){
         this.getDataWatcher().updateObject(4,isMultiHit ? (byte)1 : (byte)0);
-    }
-
-    public float getRoll(){
-        return this.getDataWatcher().getWatchableObjectFloat(5);
-    }
-    public void setRoll(float roll){
-        this.getDataWatcher().updateObject(5,roll);
     }
 
     public int getLifeTime(){
@@ -199,7 +181,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                             if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
                                 isDestruction = false;
                             }else{
-                                isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving), this.AttackLevel);
+                                isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving), 1.0f);
                             }
                         }else if(curEntity instanceof EntityArrow){
                             if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
@@ -243,14 +225,20 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                     if(!getIsMultiHit())
                         alreadyHitEntity.addAll(list);
 
-                    float magicDamage = Math.max(1.0f, AttackLevel);
+                    NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+                    ItemSlashBlade.OnClick.set(tag,true);
                     for(Entity curEntity : list){
                         curEntity.hurtResistantTime = 0;
-                        DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
-                        curEntity.attackEntityFrom(ds, magicDamage);
-                        if(blade != null && curEntity instanceof EntityLivingBase)
-                            ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
+                        if(thrower instanceof EntityPlayer)
+                            ((EntityPlayer)thrower).attackTargetEntityWithCurrentItem(curEntity);
+                        else{
+                            DamageSource ds = new EntityDamageSource("mob", this.getThrower());
+                            curEntity.attackEntityFrom(ds, 10);
+                            if(blade != null && curEntity instanceof EntityLivingBase)
+                                ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
+                        }
                     }
+                    ItemSlashBlade.OnClick.set(tag,false);
                 }
             }
 

@@ -621,6 +621,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 			break;
 
+        case HiraTuki:
+            progress = 1.0f;
+
+            break;
+
 		default :
 			progress = 1.0f - progress;
 			progress = 1.0f - (float)Math.pow(progress,2.0);
@@ -680,6 +685,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 						progress = 1.0f - progress;
 					}
 					//GL11.glRotatef(-90, 0.0f, 1.0f, 0.0f);
+
+                    if(combo.equals(ComboSequence.HiraTuki)){
+                        GL11.glTranslatef(0.0f,0.0f,-24.0f);
+                    }
 
 					if(combo.equals(ComboSequence.Kiriorosi)){
 
@@ -747,7 +756,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 
             float scaleLocal = 0.095f;
-            GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
+            GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
             engine().bindTexture(resourceTexture);
             model.renderPart(renderTarget);

@@ -4,10 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
-import mods.flammpfeil.slashblade.specialattack.Drive;
-import mods.flammpfeil.slashblade.specialattack.SlashDimension;
-import mods.flammpfeil.slashblade.specialattack.SpecialAttackBase;
-import mods.flammpfeil.slashblade.specialattack.WaveEdge;
+import mods.flammpfeil.slashblade.specialattack.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.command.IEntitySelector;
@@ -191,7 +188,8 @@ public class ItemSlashBlade extends ItemSword {
     	Kiriage(false,260.0f,70.0f,false,20),
     	Kiriorosi(false,-260.0f,90.0f,false,12),
     	SlashDim(false,-220.0f,10.0f,true,8),
-    	Iai(false,240.0f,0.0f,false,8),
+        Iai(false,240.0f,0.0f,false,8),
+        HiraTuki(false,180.0f,180.0f,false,20),
     	;
 
 	    /**
@@ -309,6 +307,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
+            case HiraTuki:
             case Battou:
             {
                 float knockbackFactor = 0f;
@@ -1783,6 +1782,7 @@ public class ItemSlashBlade extends ItemSword {
         saMap.put(1,new Drive(0.75f,20,false,ComboSequence.Kiriage));
         saMap.put(2,new WaveEdge());
         saMap.put(3, new Drive(1.5f, 10, true, ComboSequence.Iai));
+        saMap.put(4, new Spear());
         return saMap;
     }
 

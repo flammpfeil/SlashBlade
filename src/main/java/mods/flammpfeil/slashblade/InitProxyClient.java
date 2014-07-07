@@ -24,8 +24,10 @@ public class InitProxyClient extends InitProxy{
         MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeNamed, renderer);
 		MinecraftForge.EVENT_BUS.register(renderer);
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, new RenderDrive());
+        RenderDrive rd = new RenderDrive();
+        RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSword.class, new RenderPhantomSword());
+        RenderingRegistry.registerEntityRenderingHandler(EntityDirectAttackDummy.class, rd);
 
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override
