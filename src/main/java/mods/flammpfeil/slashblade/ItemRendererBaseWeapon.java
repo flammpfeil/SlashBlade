@@ -687,7 +687,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 					//GL11.glRotatef(-90, 0.0f, 1.0f, 0.0f);
 
                     if(combo.equals(ComboSequence.HiraTuki)){
-                        GL11.glTranslatef(0.0f,0.0f,-24.0f);
+                        GL11.glTranslatef(0.0f,0.0f,-26.0f);
                     }
 
 					if(combo.equals(ComboSequence.Kiriorosi)){

@@ -724,6 +724,7 @@ public class SlashBlade implements IFuelHandler{
 
 
         InitEventBus.register(new PSSange());
+        InitEventBus.register(new Fox());
     }
 
     StatManager statManager;
