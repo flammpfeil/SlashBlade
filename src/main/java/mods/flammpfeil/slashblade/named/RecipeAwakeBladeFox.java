@@ -1,4 +1,4 @@
-package mods.flammpfeil.slashblade.named.event;
+package mods.flammpfeil.slashblade.named;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
