@@ -40,7 +40,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
 	            	if(0 < target.getItemDamage()){
 	            		if(target.hasTagCompound()){
 	            			NBTTagCompound tag = target.getTagCompound();
-	            			int proudSoul = tag.getInteger(ItemSlashBlade.proudSoulStr);
+	            			int proudSoul = ItemSlashBlade.ProudSoul.get(tag);
 
 	            			if(RepairProudSoulCount < proudSoul){
 	            				hasBlade = true;
@@ -71,7 +71,7 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
         	if(0 < itemstack.getItemDamage()){
         		if(itemstack.hasTagCompound()){
         			NBTTagCompound tag = itemstack.getTagCompound();
-        			int proudSoul = tag.getInteger(ItemSlashBlade.proudSoulStr);
+        			int proudSoul = ItemSlashBlade.ProudSoul.get(tag);
         			int repairPoints = proudSoul / RepairProudSoulCount;
 
         			if(0 < proudSoul){
@@ -82,7 +82,8 @@ public class RecipeInstantRepair extends ShapedRecipes implements ICraftingHandl
 
         				itemstack.setItemDamage(itemstack.getItemDamage()-repair);
 
-        				tag.setInteger(ItemSlashBlade.proudSoulStr, proudSoul);
+                        ItemSlashBlade.ProudSoul.set(tag, proudSoul);
+
         				tag.setInteger(RepairCountStr, repair);
         			}
         		}

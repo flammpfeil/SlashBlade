@@ -29,8 +29,10 @@ public class InitProxyClient extends InitProxy{
         MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeNamed.itemID, renderer);
 		MinecraftForge.EVENT_BUS.register(renderer);
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, new RenderDrive());
+        RenderDrive rd = new RenderDrive();
+        RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSword.class, new RenderPhantomSword());
+        RenderingRegistry.registerEntityRenderingHandler(EntityDirectAttackDummy.class, rd);
         KeyBinding[] array = new KeyBinding[]{Minecraft.getMinecraft().gameSettings.keyBindPickBlock};
         boolean[] repeat = new boolean[]{false};
 

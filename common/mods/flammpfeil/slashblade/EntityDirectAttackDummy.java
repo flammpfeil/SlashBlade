@@ -13,7 +13,10 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ import java.util.Random;
 /**
  * Created by Furia on 14/05/08.
  */
-public class EntityPhantomSword extends Entity implements IThrowableEntity {
+public class EntityDirectAttackDummy extends Entity implements IThrowableEntity {
     /**
      * ★撃った人
      */
@@ -36,27 +39,23 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
      */
     protected List<Entity> alreadyHitEntity = new ArrayList<Entity>();
 
-    protected float AttackLevel = 0.0f;
-
     /**
      * ■コンストラクタ
      * @param par1World
      */
-    public EntityPhantomSword(World par1World)
+    public EntityDirectAttackDummy(World par1World)
     {
         super(par1World);
     }
 
-    public EntityPhantomSword(World par1World, EntityLivingBase entityLiving, float AttackLevel, float roll){
-        this(par1World,entityLiving,AttackLevel);
-        this.setRoll(roll);
+    public EntityDirectAttackDummy(World par1World, EntityLivingBase entityLiving, boolean multiHit){
+        this(par1World, entityLiving);
+        this.setIsMultiHit(multiHit);
     }
 
-    public EntityPhantomSword(World par1World, EntityLivingBase entityLiving, float AttackLevel)
+    public EntityDirectAttackDummy(World par1World, EntityLivingBase entityLiving)
     {
         this(par1World);
-
-        this.AttackLevel = AttackLevel;
 
         //■Y軸のオフセット設定
         yOffset = entityLiving.getEyeHeight()/2.0F;
@@ -79,35 +78,20 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
         ticksExisted = 0;
 
         //■サイズ変更
-        setSize(0.5F, 0.5F);
+        setSize(2.0F, 2.0F);
 
-        {
-            float dist = 2.0f;
+        //■初期位置・初期角度等の設定
+        setLocationAndAngles(thrower.posX,
+                thrower.posY + (double)thrower.getEyeHeight()/2D,
+                thrower.posZ,
+                thrower.rotationYaw,
+                thrower.rotationPitch);
 
-            double ran = (rand.nextFloat() - 0.5) * 2.0;
+        //■初期ベクトル設定
+        setDriveVector(0.75F);
 
-            double yaw =  Math.toRadians(-thrower.rotationYaw + 90);
-
-            double x = ran * Math.sin(yaw);
-            double y = 1.0 - Math.abs(ran);
-            double z = ran * Math.cos(yaw);
-
-            x*=dist;
-            y*=dist;
-            z*=dist;
-
-            //■初期位置・初期角度等の設定
-            setLocationAndAngles(thrower.posX + x,
-                    thrower.posY + y,
-                    thrower.posZ + z,
-                    thrower.rotationYaw,
-                    thrower.rotationPitch);
-
-            iniYaw = thrower.rotationYaw;
-            iniPitch = thrower.rotationPitch;
-
-            setDriveVector(1.75f);
-        }
+        //■プレイヤー位置より一歩進んだ所に出現する
+        setPosition(posX + motionX, posY + motionY, posZ + motionZ);
     }
 
     /**
@@ -115,29 +99,19 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
      */
     @Override
     protected void entityInit() {
-        //EntityId
-        this.getDataWatcher().addObject(4, 0);
-
-        //Roll
-        this.getDataWatcher().addObject(5, 0.0f);
+        //isMultiHit
+        this.getDataWatcher().addObject(4, (byte)0);
 
         //lifetime
         this.getDataWatcher().addObject(6, 20);
 
     }
 
-    public int getTargetEntityId(){
-        return this.getDataWatcher().getWatchableObjectInt(4);
+    public boolean getIsMultiHit(){
+        return this.getDataWatcher().getWatchableObjectByte(4) == 0;
     }
-    public void setTargetEntityId(int entityid){
-        this.getDataWatcher().updateObject(4,entityid);
-    }
-
-    public float getRoll(){
-        return this.getDataWatcher().getWatchableObjectFloat(5);
-    }
-    public void setRoll(float roll){
-        this.getDataWatcher().updateObject(5,roll);
+    public void setIsMultiHit(boolean isMultiHit){
+        this.getDataWatcher().updateObject(4,isMultiHit ? (byte)1 : (byte)0);
     }
 
     public int getLifeTime(){
@@ -147,77 +121,13 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
         this.getDataWatcher().updateObject(6,lifetime);
     }
 
-    float speed = 0.0f;
-    float iniYaw = Float.NaN;
-    float iniPitch = Float.NaN;
-
-    public void doTargeting(){
-        int targetid = this.getTargetEntityId();
-        if(targetid != 0){
-            Entity target = worldObj.getEntityByID(targetid);
-
-            if(target != null){
-
-                if(Float.isNaN(iniPitch)){
-                    iniYaw = thrower.rotationYaw;
-                    iniPitch = thrower.rotationPitch;
-                }
-                faceEntity(this,target,ticksExisted * 1.0f,ticksExisted * 1.0f);
-                setDriveVector(1.75F, false);
-            }
-        }
-    }
-
-
-    public void faceEntity(Entity viewer, Entity target, float yawStep, float pitchStep)
-    {
-        double d0 = target.posX - viewer.posX;
-        double d1 = target.posZ - viewer.posZ;
-        double d2;
-
-        if (target instanceof EntityLivingBase)
-        {
-            EntityLivingBase entitylivingbase = (EntityLivingBase)target;
-            d2 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (viewer.posY + (double)viewer.getEyeHeight());
-        }
-        else
-        {
-            d2 = (target.boundingBox.minY + target.boundingBox.maxY) / 2.0D - (viewer.posY + (double)viewer.getEyeHeight());
-        }
-
-        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1);
-        float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
-        float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
-
-
-        iniPitch = this.updateRotation(iniPitch, f3, pitchStep);
-        iniYaw = this.updateRotation(iniYaw, f2, yawStep);
-
-
-
-        /**/
-
-    }
-
-    private float updateRotation(float par1, float par2, float par3)
-    {
-        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
-
-        if (f3 > par3)
-        {
-            f3 = par3;
-        }
-
-        if (f3 < -par3)
-        {
-            f3 = -par3;
-        }
-
-        return par1 + f3;
-    }
-
-    public void setDriveVector(float fYVecOfset){
-        setDriveVector(fYVecOfset,true);
+    public void setInitialSpeed(float f){
+        setLocationAndAngles(thrower.posX,
+                thrower.posY + (double)thrower.getEyeHeight()/2D,
+                thrower.posZ,
+                thrower.rotationYaw,
+                thrower.rotationPitch);
+        setDriveVector(f);
     }
 
     /**
@@ -225,11 +135,11 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
      * ■移動速度設定
      * @param fYVecOfst
      */
-    public void setDriveVector(float fYVecOfst,boolean init)
+    public void setDriveVector(float fYVecOfst)
     {
         //■角度 -> ラジアン 変換
-        float fYawDtoR = (  iniYaw / 180F) * (float)Math.PI;
-        float fPitDtoR = (iniPitch / 180F) * (float)Math.PI;
+        float fYawDtoR = (  rotationYaw / 180F) * (float)Math.PI;
+        float fPitDtoR = (rotationPitch / 180F) * (float)Math.PI;
 
         //■単位ベクトル
         motionX = -MathHelper.sin(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
@@ -237,73 +147,25 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
         motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
 
         float f3 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
-        rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
-        rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
-        if(init){
-            speed = fYVecOfst;
-            prevRotationYaw = rotationYaw;
-            prevRotationPitch = rotationPitch;
-        }
-    }
-
-    @Override
-    public void updateRidden() {
-
-        Entity ridingEntity = this.ridingEntity2;
-
-        if(ridingEntity.isDead){
-            this.setDead();
-            return;
-        }
-
-        lastTickPosX = posX;
-        lastTickPosY = posY;
-        lastTickPosZ = posZ;
-
-
-        posX = ridingEntity.posX + (this.hitX * Math.cos(Math.toRadians(ridingEntity.rotationYaw)) - this.hitZ * Math.sin(Math.toRadians(ridingEntity.rotationYaw)));
-        posY = ridingEntity.posY + this.hitY;
-        posZ = ridingEntity.posZ + (this.hitX * Math.sin(Math.toRadians(ridingEntity.rotationYaw)) + this.hitZ * Math.cos(Math.toRadians(ridingEntity.rotationYaw)));
-
-        rotationPitch = ridingEntity.rotationPitch + this.hitPitch;
-        rotationYaw = ridingEntity.rotationYaw + this.hitYaw;
-
-        setPosition(posX, posY, posZ);
-
-        setRotation(rotationYaw,rotationPitch);
-
-        //■死亡チェック
-        if(ticksExisted >= getLifeTime()) {
-
-            if(!ridingEntity.isDead){
-                float magicDamage = Math.max(1.0f, AttackLevel / 2);
-                ridingEntity.hurtResistantTime = 0;
-                DamageSource ds = DamageSourceAccessHelper.setDamageBypassesArmor(new EntityDamageSource("directMagic",this.getThrower())).setMagicDamage();
-                ridingEntity.attackEntityFrom(ds, magicDamage);
-                if(blade != null && ridingEntity instanceof EntityLivingBase)
-                    ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
-            }
-
-            setDead();
-        }
+        prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
+        prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
     }
 
     //■毎回呼ばれる。移動処理とか当り判定とかもろもろ。
     @Override
     public void onUpdate()
     {
-        if(this.ridingEntity2 != null){
-            updateRidden();
-        }else{
+        lastTickPosX = posX;
+        lastTickPosY = posY;
+        lastTickPosZ = posZ;
 
-            lastTickPosX = posX;
-            lastTickPosY = posY;
-            lastTickPosZ = posZ;
+        //super.onUpdate();
 
-            //super.onUpdate();
+        if(!worldObj.isRemote)
+        {
 
             {
-                double dAmbit = 0.75D;
+                double dAmbit = 1.5D;
                 AxisAlignedBB bb = AxisAlignedBB.getAABBPool().getAABB(posX - dAmbit, posY - dAmbit, posZ - dAmbit, posX + dAmbit, posY + dAmbit, posZ + dAmbit);
 
                 if(this.getThrower() instanceof EntityLivingBase){
@@ -319,7 +181,7 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                             if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.entityId == entityLiving.entityId)){
                                 isDestruction = false;
                             }else{
-                                isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving), this.AttackLevel);
+                                isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving), 1.0f);
                             }
                         }else if(curEntity instanceof EntityArrow){
                             if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.entityId == entityLiving.entityId)){
@@ -353,58 +215,30 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                                 this.worldObj.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
                             }
                         }
-
-                        this.setDead();
-                        return;
                     }
                 }
 
-                {
+                if(!getIsMultiHit() || this.ticksExisted % 2 == 0){
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
                     list.removeAll(alreadyHitEntity);
 
-                    if(getTargetEntityId() != 0){
-                        Entity target = worldObj.getEntityByID(getTargetEntityId());
-                        if(target != null){
-                            if(target.boundingBox.intersectsWith(bb))
-                                list.add(target);
-                        }
-                    }
-                    alreadyHitEntity.addAll(list);
+                    if(!getIsMultiHit())
+                        alreadyHitEntity.addAll(list);
 
-
-                    Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ);
-                    Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-
-                    double d0 = 10.0D;
-                    int i;
-                    float f1;
-
-                    Entity hitEntity = null;
-
+                    NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+                    ItemSlashBlade.OnClick.set(tag,true);
                     for(Entity curEntity : list){
-                        if (curEntity.canBeCollidedWith())
-                        {
-                            double d1 = curEntity.getDistanceToEntity(this);
-
-                            if (d1 < d0 || d0 == 0.0D)
-                            {
-                                hitEntity = curEntity;
-                                d0 = d1;
-                            }
+                        curEntity.hurtResistantTime = 0;
+                        if(thrower instanceof EntityPlayer)
+                            ((EntityPlayer)thrower).attackTargetEntityWithCurrentItem(curEntity);
+                        else{
+                            DamageSource ds = new EntityDamageSource("mob", this.getThrower());
+                            curEntity.attackEntityFrom(ds, 10);
+                            if(blade != null && curEntity instanceof EntityLivingBase)
+                                ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                         }
                     }
-
-                    if(hitEntity != null){
-                        float magicDamage = Math.max(1.0f, AttackLevel);
-                        hitEntity.hurtResistantTime = 0;
-                        DamageSource ds = DamageSourceAccessHelper.setDamageBypassesArmor(new EntityDamageSource("directMagic",this.getThrower())).setMagicDamage();
-                        hitEntity.attackEntityFrom(ds, magicDamage);
-                        if(blade != null && hitEntity instanceof EntityLivingBase)
-                            ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)hitEntity,(EntityLivingBase)thrower);
-
-                        mountEntity(hitEntity);
-                    }
+                    ItemSlashBlade.OnClick.set(tag,false);
                 }
             }
 
@@ -434,44 +268,31 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
             }
             */
 
-            if(this.ridingEntity2 == null)
+            //■消滅処理
+            Block nBlock = Block.blocksList[worldObj.getBlockId(nPosX, nPosY, nPosZ)];
+            if (nBlock != null && !nBlock.isAirBlock(worldObj,nPosX, nPosY, nPosZ) &&
+                    nBlock.getCollisionBoundingBoxFromPool(worldObj, nPosX, nPosY, nPosZ) != null)
             {
-                //■消滅処理
-                Block nBlock = Block.blocksList[worldObj.getBlockId(nPosX, nPosY, nPosZ)];
-                if (nBlock != null && !nBlock.isAirBlock(worldObj,nPosX, nPosY, nPosZ) &&
-                        nBlock.getCollisionBoundingBoxFromPool(worldObj, nPosX, nPosY, nPosZ) != null)
-                {
-                    this.setDead();
-                    return;
-                }
-            }
-
-            if(7 < ticksExisted){
-                posX += motionX;
-                posY += motionY;
-                posZ += motionZ;
-            }else{
-                doTargeting();
-            }
-            setPosition(posX, posY, posZ);
-
-            //■死亡チェック
-            if(ticksExisted >= getLifeTime()) {
-                setDead();
+                this.setDead();
             }
 
         }
-    }
 
-    @Override
-    public void setDead() {
-        if(this.thrower instanceof EntityPlayer)
-            ((EntityPlayer)thrower).onCriticalHit(this);
-        /*
-        if(!this.worldObj.isRemote)
-            System.out.println("dead" + this.ticksExisted);
-         */
-        super.setDead();
+        motionX *= 1.05f;
+        motionY *= 1.05f;
+        motionZ *= 1.05f;
+
+        posX += motionX;
+        posY += motionY;
+        posZ += motionZ;
+        setPosition(posX, posY, posZ);
+
+        //■死亡チェック
+        if(ticksExisted >= getLifeTime()) {
+            alreadyHitEntity.clear();
+            alreadyHitEntity = null;
+            setDead();
+        }
     }
 
     /**
@@ -605,30 +426,11 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
         return 0.0F;
     }
 
-    double hitX;
-    double hitY;
-    double hitZ;
-    float hitYaw;
-    float hitPitch;
-
-
-    Entity ridingEntity2 = null;
     /**
      * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
      */
     @Override
-    public void mountEntity(Entity par1Entity) {
-        if(par1Entity != null){
-            this.hitYaw = this.rotationYaw - par1Entity.rotationYaw;
-            this.hitPitch = this.rotationPitch - par1Entity.rotationPitch;
-            this.hitX = this.posX - par1Entity.posX;
-            this.hitY = this.posY - par1Entity.posY;
-            this.hitZ = this.posZ - par1Entity.posZ;
-            this.ridingEntity2 = par1Entity;
-
-            this.ticksExisted = Math.max(0,getLifeTime() - 20);
-        }
-    }
+    public void mountEntity(Entity par1Entity) {}
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,

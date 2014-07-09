@@ -261,6 +261,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glDepthFunc(GL11.GL_LEQUAL);
                 GL11.glPopAttrib();
             }
+
         }
         else
         {
@@ -310,6 +311,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		render(player,partialRenderTick);
 	}
 
+
     static private float interpolateRotation(float par1, float par2, float par3)
     {
         float f3;
@@ -357,14 +359,28 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             NBTTagCompound tag = item.getTagCompound();
             ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
 
-            renderType = tag.getInteger(ItemSlashBlade.StandbyRenderTypeStr);
+            renderType = ItemSlashBlade.StandbyRenderType.get(tag);
 
-            if(tag.getBoolean(ItemSlashBlade.isNoScabbardStr))
-            	renderType = 0;
+            if(isNoScabbard)
+                renderType = 0;
         }
 
         if(renderType == 0){
             return;
+        }
+
+        if(item.hasTagCompound()){
+            NBTTagCompound tag = item.getTagCompound();
+
+
+            ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
+            ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
+            az = -tag.getFloat(ItemSlashBlade.adjustZStr)/10.0f;
+        }
+
+        if(renderType != 1){
+            ax = 0;
+            az = 0;
         }
 
         String renderTarget;
@@ -582,7 +598,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         float az = 0;
 
 		boolean isBroken = swordType.contains(SwordType.Broken);
-
 		ItemSlashBlade.ComboSequence combo = ComboSequence.None;
 		if(item.hasTagCompound()){
 			NBTTagCompound tag = item.getTagCompound();
@@ -597,7 +612,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		}
 
 
-//		float progress =  player.prevSwingProgress + (player.swingProgress - player.prevSwingProgress) * partialRenderTick;
 		float progress = player.getSwingProgress(partialRenderTick);
 
 		if((!combo.equals(ComboSequence.None)) && player.swingProgress == 0.0f)
@@ -614,6 +628,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			progress = 1.0f - (Math.abs(progress-0.5f) * 2.0f);
 
 			break;
+
+        case HiraTuki:
+            progress = 1.0f;
+
+            break;
 
 		default :
 			progress = 1.0f - progress;
@@ -674,6 +693,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 						progress = 1.0f - progress;
 					}
 					//GL11.glRotatef(-90, 0.0f, 1.0f, 0.0f);
+
+                    if(combo.equals(ComboSequence.HiraTuki)){
+                        GL11.glTranslatef(0.0f,0.0f,-26.0f);
+                    }
 
 					if(combo.equals(ComboSequence.Kiriorosi)){
 						GL11.glRotatef(20.0f, -1.0f, 0, 0);
@@ -739,7 +762,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 
             float scaleLocal = 0.095f;
-            GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
+            GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
             engine().bindTexture(resourceTexture);
             model.renderPart(renderTarget);

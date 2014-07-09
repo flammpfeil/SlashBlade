@@ -28,10 +28,10 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
         super(par1, par2EnumToolMaterial, baseAttackModifiers);
     }
 
-
-    static public final String TrueItemNameStr = "TrueItemName";
-    static public final String CurrentItemNameStr = "CurrentItemName";
-    static public final String CustomMaxDamageStr = "CustomMaxDamage";
+    static public TagPropertyAccessor.TagPropertyBoolean IsDefaultBewitched = new TagPropertyAccessor.TagPropertyBoolean("isDefaultBewitched");
+    static public TagPropertyAccessor.TagPropertyString TrueItemName = new TagPropertyAccessor.TagPropertyString("TrueItemName");
+    static public TagPropertyAccessor.TagPropertyString CurrentItemName = new TagPropertyAccessor.TagPropertyString("CurrentItemName");
+    static public TagPropertyAccessor.TagPropertyInteger CustomMaxDamage = new TagPropertyAccessor.TagPropertyInteger("CustomMaxDamage");
     static public final String RepairOreDicMaterialStr = "RepairOreDicMaterial";
     static public final String RepairMaterialNameStr = "RepairMaterialName";
 
@@ -40,8 +40,8 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
         String result = super.getUnlocalizedName(par1ItemStack);
         if(par1ItemStack.hasTagCompound()){
             NBTTagCompound tag = par1ItemStack.getTagCompound();
-            if(tag.hasKey(CurrentItemNameStr)){
-                result = "item." + tag.getString(CurrentItemNameStr);
+            if(CurrentItemName.exists(tag)){
+                result = "item." + CurrentItemName.get(tag);
             }
         }
         return result;
@@ -51,30 +51,18 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     @Override
     public int getMaxDamage(ItemStack stack) {
         NBTTagCompound tag = this.getItemTagCompound(stack);
-        if(tag.hasKey(CustomMaxDamageStr))
-            return tag.getInteger(CustomMaxDamageStr);
-        else
-            return super.getMaxDamage(stack);
+        return CustomMaxDamage.get(tag,super.getMaxDamage(stack));
     }
 
-    public static List<String> BladeNames =Lists.newArrayList();
-
-    public static ItemStack getCustomBlade(String key){
-        ItemStack blade = GameRegistry.findItemStack(SlashBlade.modid, key, 1);
-        if(blade != null && key.endsWith(".youtou")){
-            blade.setItemName(blade.getDisplayName());
-        }
-        return blade;
-    }
+    public static List<String> NamedBlades = Lists.newArrayList();
 
     @Override
     public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-    		List par3List) {
-        if(this == SlashBlade.bladeNamed){
-            for(String bladename : BladeNames){
-                ItemStack blade = getCustomBlade(bladename);
-                if(blade != null) par3List.add(blade);
-            }
+                            List par3List) {
+
+        for(String bladename : NamedBlades){
+            ItemStack blade = SlashBlade.getCustomBlade(bladename);
+            if(blade != null) par3List.add(blade);
         }
     }
 
@@ -96,10 +84,11 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
                     break;
             }
         }
-/*
-        if(!result && tag.hasKey(RepairMaterialNameStr))
+
+/*        if(!result && tag.hasKey(RepairMaterialNameStr))
         {
             String matName = tag.getString(RepairMaterialNameStr);
+
             Item material = (Item)Item.itemRegistry.getObject(matName);
             if(material != null)
                 result = par2ItemStack.getItem() == material;

@@ -56,7 +56,7 @@ public class ItemSWaeponMaterial extends Item {
 		}
 	}
 
-	@Override
+    @Override
     public void registerIcons(IconRegister par1IconRegister) {
         super.registerIcons(par1IconRegister);
         tiny = par1IconRegister.registerIcon("flammpfeil.slashblade:tinyps");

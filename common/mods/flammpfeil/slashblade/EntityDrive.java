@@ -237,7 +237,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                     }
                 }
 
-                //if(this.ticksExisted % 2 == 0){
+                if(!getIsMultiHit() || this.ticksExisted % 2 == 0){
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
                     list.removeAll(alreadyHitEntity);
 
@@ -247,13 +247,12 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                     float magicDamage = Math.max(1.0f, AttackLevel);
                     for(Entity curEntity : list){
                         curEntity.hurtResistantTime = 0;
-
                         DamageSource ds = DamageSourceAccessHelper.setDamageBypassesArmor(new EntityDamageSource("directMagic",this.getThrower())).setMagicDamage();
                         curEntity.attackEntityFrom(ds, magicDamage);
                         if(blade != null && curEntity instanceof EntityLivingBase)
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                     }
-                //}
+                }
             }
 
             //■ブロック
