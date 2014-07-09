@@ -679,10 +679,10 @@ public class SlashBlade implements IFuelHandler{
                     ItemStack reqiredBlade = customblade.copy();
                     reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
-                    ItemSlashBlade.KillCount.set(tag, 100);
-                    ItemSlashBlade.RepairCount.set(tag, 1);
+                    ItemSlashBlade.KillCount.set(reqTag, 100);
+                    ItemSlashBlade.RepairCount.set(reqTag, 1);
 
-                    reqiredBlade.setStackDisplayName("orotiagito rust");
+                    reqiredBlade.setStackDisplayName("agito rust");
 
                     GameRegistry.registerCustomItemStack(nameOrotiagitoSealdReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoSealdReqired);
@@ -721,6 +721,7 @@ public class SlashBlade implements IFuelHandler{
         RecipeSorter.register("flammpfeil.slashblade:wrap", RecipeWrapBlade.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:adjust", RecipeAdjustPos.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
+        RecipeSorter.register("flammpfeil.slashblade:awake", RecipeAwakeBlade.class, SHAPED, "after:forge:shaped");
 
 
         InitEventBus.register(new PSSange());

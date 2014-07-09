@@ -2,60 +2,213 @@ package mods.flammpfeil.slashblade.named;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.DropEventHandler;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
-import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
+import mods.flammpfeil.slashblade.named.event.RecipeAwakeBladeFox;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 
 /**
  * Created by Furia on 14/07/07.
  */
 public class Fox {
-    String name = "flammpfeil.slashblade.named.fox";
+    static public final String nameWhite = "flammpfeil.slashblade.named.fox.white";
+    static public final String nameBlack = "flammpfeil.slashblade.named.fox.black";
+
     @SubscribeEvent
     public void init(LoadEvent.InitEvent event){
 
         {
-            String name = this.name + ".white";
+            String name = nameWhite;
 
-            ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
+            ItemStack customblade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            SlashBlade.wrapBlade.removeWrapItem(customblade);
+
+            customblade.addEnchantment(Enchantment.knockback,2);
+            customblade.addEnchantment(Enchantment.baneOfArthropods,2);
+            customblade.addEnchantment(Enchantment.unbreaking,3);
+            customblade.addEnchantment(Enchantment.looting,3);
+            customblade.addEnchantment(Enchantment.fireAspect,2);
+
+            NBTTagCompound tag = customblade.getTagCompound();
+
+            ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+
+            SlashBlade.wrapBlade.setWrapItem(customblade,innerBlade);
+
+            ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
 
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
-            ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBladeNamed.TrueItemName.set(tag, name);
+
             ItemSlashBlade.TextureName.set(tag, "named/sange/white");
             ItemSlashBlade.ModelName.set(tag, "named/sange/sange");
-            ItemSlashBlade.SpecialAttackType.set(tag, 4); //4:シュンカ一段
-            ItemSlashBlade.StandbyRenderType.set(tag, 2);
-            ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
+
+            ItemSlashBlade.SpecialAttackType.set(tag, 0); //0:次元斬
+            ItemSlashBlade.StandbyRenderType.set(tag, 1);
+
+            ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
 
             GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
+
+            customblade = customblade.copy();
+            NBTTagCompound displayTag = new NBTTagCompound();
+            customblade.setTagInfo("display",displayTag);
+            NBTTagList loreList = new NBTTagList();
+            loreList.appendTag(new NBTTagString("is demo item. is wooden sword"));
+            loreList.appendTag(new NBTTagString("true performance : please crafting"));
+            displayTag.setTag("Lore",loreList);
+            String creativeStr = name+".creative";
+            GameRegistry.registerCustomItemStack(creativeStr, customblade);
+            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + creativeStr);
         }
 
         {
-            String name = this.name + ".black";
-            ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
-            NBTTagCompound tag = new NBTTagCompound();
-            customblade.setTagCompound(tag);
+            String name = nameBlack;
+
+            ItemStack customblade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            SlashBlade.wrapBlade.removeWrapItem(customblade);
+
+            customblade.addEnchantment(Enchantment.smite,4);
+            customblade.addEnchantment(Enchantment.knockback,2);
+            customblade.addEnchantment(Enchantment.fireAspect, 2);
+
+            NBTTagCompound tag = customblade.getTagCompound();
+
+            ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+
+            SlashBlade.wrapBlade.setWrapItem(customblade, innerBlade);
+
+            ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
 
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
-            ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBladeNamed.TrueItemName.set(tag, name);
+
             ItemSlashBlade.TextureName.set(tag, "named/sange/black");
             ItemSlashBlade.ModelName.set(tag, "named/sange/sange");
-            ItemSlashBlade.SpecialAttackType.set(tag, 4); //4:シュンカ一段
-            ItemSlashBlade.StandbyRenderType.set(tag, 2);
-            ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
+            ItemSlashBlade.SpecialAttackType.set(tag, 4); //4:シュンカ一段
+            ItemSlashBlade.StandbyRenderType.set(tag, 1);
+
+            ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
             GameRegistry.registerCustomItemStack(name, customblade);
-            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
+
+            customblade = customblade.copy();
+            NBTTagCompound displayTag = new NBTTagCompound();
+            customblade.setTagInfo("display",displayTag);
+            NBTTagList loreList = new NBTTagList();
+            loreList.appendTag(new NBTTagString("is demo item. is wooden sword"));
+            loreList.appendTag(new NBTTagString("true performance : please crafting"));
+            displayTag.setTag("Lore",loreList);
+            String creativeStr = name+".creative";
+            GameRegistry.registerCustomItemStack(creativeStr, customblade);
+            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + creativeStr);
         }
+    }
+
+    @SubscribeEvent
+    public void postInit(LoadEvent.PostInitEvent event){
+
+        ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+
+        ItemStack kitunebi = GameRegistry.findItemStack("BambooMod","kitunebi",1);
+        if(kitunebi == null)
+            return;
+
+        ItemStack inari = GameRegistry.findItemStack("TofuCraft","foodSet",1);
+        if(inari != null)
+            inari.setItemDamage(14);
+        else
+            inari = GameRegistry.findItemStack("minecraft","wheat",1);
+
+        ItemStack proudsoul = GameRegistry.findItemStack(SlashBlade.modid,"proudsoul",1);
+
+        {
+            ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,nameWhite);
+
+            ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            {
+                SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
+
+                reqiredBlade.addEnchantment(Enchantment.looting,1);
+                NBTTagCompound tag = reqiredBlade.getTagCompound();
+                ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
+                ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
+                ItemSlashBlade.TextureName.set(tag,"BambooKatana");
+                ItemSlashBlade.KillCount.set(tag,199);
+                ItemSlashBlade.ProudSoul.set(tag,1000);
+                ItemSlashBlade.RepairCount.set(tag,1);
+
+                reqiredBlade.setStackDisplayName("BambooMod katana");
+            }
+            String reqiredStr = nameWhite + ".reqired";
+            GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
+
+            reqiredBlade = reqiredBlade.copy();
+            reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
+
+            IRecipe recipe = new RecipeAwakeBladeFox(blade,reqiredBlade,
+                    "FPF",
+                    "FXF",
+                    "FIF",
+                    'X', reqiredBlade,
+                    'F', kitunebi,
+                    'I', inari,
+                    'P', proudsoul);
+
+            GameRegistry.addRecipe(recipe);
+        }
+        {
+            ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,nameBlack);
+
+            ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            {
+                SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
+
+                reqiredBlade.addEnchantment(Enchantment.smite,1);
+                NBTTagCompound tag = reqiredBlade.getTagCompound();
+                ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
+                ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
+                ItemSlashBlade.TextureName.set(tag,"BambooKatana");
+                ItemSlashBlade.KillCount.set(tag,199);
+                ItemSlashBlade.ProudSoul.set(tag,1000);
+                ItemSlashBlade.RepairCount.set(tag,1);
+
+                reqiredBlade.setStackDisplayName("BambooMod katana");
+            }
+            String reqiredStr = nameBlack + ".reqired";
+            GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
+
+            reqiredBlade = reqiredBlade.copy();
+            reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
+
+            IRecipe recipe = new RecipeAwakeBladeFox(blade,reqiredBlade,
+                    "FPF",
+                    "FXF",
+                    "FIF",
+                    'X', reqiredBlade,
+                    'F', kitunebi,
+                    'I', inari,
+                    'P', proudsoul);
+
+            GameRegistry.addRecipe(recipe);
+        }
+
+        RecipeSorter.register("flammpfeil.slashblade:fox", RecipeAwakeBladeFox.class, SHAPED, "after:forge:shaped");
     }
 }

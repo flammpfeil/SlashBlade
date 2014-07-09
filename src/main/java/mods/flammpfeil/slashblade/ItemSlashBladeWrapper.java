@@ -48,10 +48,12 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
         NBTTagCompound tag = getItemTagCompound(stack);
         if(tag.hasKey(WrapItemStr))     tag.removeTag(WrapItemStr);
         TextureName.remove(tag);
+        ModelName.remove(tag);
         if(tag.hasKey("display"))       tag.removeTag("display");
         IsBroken.remove(tag);
         BaseAttackModifier.remove(tag);
         CurrentItemName.remove(tag);
+        TrueItemName.remove(tag);
         stack.setItemDamage(0);
     }
 
@@ -76,9 +78,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
             try{
                 NBTTagCompound tag = getItemTagCompound(par1ItemStack);
                 wrapItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag(WrapItemStr));
-                if(wrapItem != null)
-                    setWrapItem(par1ItemStack,wrapItem);
-                else
+                if(wrapItem == null)
                     removeWrapItem(par1ItemStack);
 
             }catch(Throwable e){
@@ -107,10 +107,11 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     public int getMaxDamage(ItemStack stack)
     {
         if(hasWrapedItem(stack)){
-            return getWrapedItem(stack).getMaxDamage();
-        }else{
-            return this.getMaxDamage();
+            ItemStack wrapItem = getWrapedItem(stack);
+            if(wrapItem != null)
+                return wrapItem.getMaxDamage();
         }
+        return this.getMaxDamage();
     }
 
     @Override
@@ -140,14 +141,17 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     public void setDamage(ItemStack stack, int damage) {
         NBTTagCompound tag = getItemTagCompound(stack);
         super.setDamage(stack,damage);
-        IsBroken.set(tag,false);
+        if(!TrueItemName.exists(tag))
+            IsBroken.set(tag,false);
     }
 
     @Override
     public void dropItemDestructed(Entity entity, ItemStack stack) {
         super.dropItemDestructed(entity, stack);
 
-        removeWrapItem(stack);
+        NBTTagCompound tag = getItemTagCompound(stack);
+        if(!TrueItemName.exists(tag))
+            removeWrapItem(stack);
     }
 
     @Override
