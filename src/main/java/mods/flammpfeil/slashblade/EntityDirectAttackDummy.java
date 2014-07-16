@@ -166,7 +166,7 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
 
             {
                 double dAmbit = 1.5D;
-                AxisAlignedBB bb = AxisAlignedBB.getAABBPool().getAABB(posX - dAmbit, posY - dAmbit, posZ - dAmbit, posX + dAmbit, posY + dAmbit, posZ + dAmbit);
+                AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX - dAmbit, posY - dAmbit, posZ - dAmbit, posX + dAmbit, posY + dAmbit, posZ + dAmbit);
 
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();

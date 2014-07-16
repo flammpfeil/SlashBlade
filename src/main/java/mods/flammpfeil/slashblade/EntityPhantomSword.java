@@ -304,7 +304,7 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
 
             {
                 double dAmbit = 0.75D;
-                AxisAlignedBB bb = AxisAlignedBB.getAABBPool().getAABB(posX - dAmbit, posY - dAmbit, posZ - dAmbit, posX + dAmbit, posY + dAmbit, posZ + dAmbit);
+                AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX - dAmbit, posY - dAmbit, posZ - dAmbit, posX + dAmbit, posY + dAmbit, posZ + dAmbit);
 
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
@@ -372,8 +372,8 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                     }
                     alreadyHitEntity.addAll(list);
 
-                    Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ);
-                    Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+                    Vec3 vec31 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+                    Vec3 vec3 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
                     double d0 = 10.0D;
                     int i;

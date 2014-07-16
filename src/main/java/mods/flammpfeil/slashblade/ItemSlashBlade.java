@@ -267,7 +267,8 @@ public class ItemSlashBlade extends ItemSword {
 
 	public EntityLivingBase setDaunting(EntityLivingBase entity){
 		if(!entity.worldObj.isRemote){
-			entity.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
+            entity.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
+            entity.addPotionEffect(new PotionEffect(Potion.confusion.getId(),10000,30,true));
 			entity.attackTime = 20;
 		}
 		return entity;
@@ -1617,7 +1618,7 @@ public class ItemSlashBlade extends ItemSword {
     }
     public Vec3 getPosition(EntityLivingBase owner)
     {
-        return owner.worldObj.getWorldVec3Pool().getVecFromPool(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
+        return Vec3.createVectorHelper(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
     }
 
     public Entity getRayTrace(EntityLivingBase owner, double reachMax){
