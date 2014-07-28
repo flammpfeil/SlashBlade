@@ -11,6 +11,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.command.ICommand;
@@ -56,10 +57,6 @@ public class SlashBlade implements IFuelHandler{
 
 	public static Item proudSoul;
 
-//	public static float offsetX,offsetY,offsetZ;
-
-	public static Map<String,Boolean> attackDisabled = new HashMap<String,Boolean>();
-
 	public static Configuration mainConfiguration;
 
 	public static ConfigEntityListManager manager;
@@ -73,6 +70,9 @@ public class SlashBlade implements IFuelHandler{
     public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade");
 
     public static final EventBus InitEventBus = new EventBus();
+
+    //ability
+    public static JustGuard abilityJustGuard;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
@@ -741,6 +741,10 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
 
         MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
+
+        //ability
+        abilityJustGuard = new JustGuard();
+        MinecraftForge.EVENT_BUS.register(abilityJustGuard);
 
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);

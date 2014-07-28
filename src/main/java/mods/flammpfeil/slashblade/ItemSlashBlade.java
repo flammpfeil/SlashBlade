@@ -552,7 +552,10 @@ public class ItemSlashBlade extends ItemSword {
         if(!current.useScabbard){
             if(IsCharged.get(tag)){
                 IsCharged.set(tag,false);
-                if(player instanceof EntityPlayer){
+
+                if(!IsBroken.get(tag)
+                    && swordType.contains(SwordType.Bewitched)
+                    && player instanceof EntityPlayer){
                     doAddAttack(itemStack,player,current);
                 }
             }
@@ -601,6 +604,8 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
 	public ItemStack onItemRightClick(ItemStack sitem, World par2World,
 			EntityPlayer par3EntityPlayer) {
+
+        SlashBlade.abilityJustGuard.SetJustGuardState(par3EntityPlayer);
 
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
