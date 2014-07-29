@@ -18,7 +18,7 @@ public class JustGuard {
 
     public static TagPropertyAccessor.TagPropertyLong ChargeStart = new TagPropertyAccessor.TagPropertyLong("SBChargeStart");
 
-    public void SetJustGuardState(EntityLivingBase e){
+    public void setJustGuardState(EntityLivingBase e){
         int hurtTicks = Math.min(
                 20,
                 Math.max(

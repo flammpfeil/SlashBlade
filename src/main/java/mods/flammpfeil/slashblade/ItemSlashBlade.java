@@ -605,7 +605,7 @@ public class ItemSlashBlade extends ItemSword {
 	public ItemStack onItemRightClick(ItemStack sitem, World par2World,
 			EntityPlayer par3EntityPlayer) {
 
-        SlashBlade.abilityJustGuard.SetJustGuardState(par3EntityPlayer);
+        SlashBlade.abilityJustGuard.setJustGuardState(par3EntityPlayer);
 
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
