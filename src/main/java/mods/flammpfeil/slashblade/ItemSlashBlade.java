@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.specialattack.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -388,6 +390,8 @@ public class ItemSlashBlade extends ItemSword {
         if(!comboSec.useScabbard)
             par1ItemStack.damageItem(1, par3EntityLivingBase);
 
+        StylishRankManager.doAttack(par3EntityLivingBase);
+
 		return true;
     }
 
@@ -591,6 +595,7 @@ public class ItemSlashBlade extends ItemSword {
 
                     LastActionTime.set(tag, player.worldObj.getTotalWorldTime());
 
+                    updateStyleAttackType(stack, player);
 	            }
 	        }
 		}
@@ -971,6 +976,8 @@ public class ItemSlashBlade extends ItemSword {
 
                     doSwingItem(sitem, el);
 
+                    updateStyleAttackType(sitem, el);
+
 					AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, el);
 
 					List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
@@ -1024,7 +1031,7 @@ public class ItemSlashBlade extends ItemSword {
 
 					if(swordType.containsAll(SwordType.BewitchedPerfect) && comboSeq.equals(ComboSequence.Battou)){
 						sitem.damageItem(10, el);
-                        //超短距離Drive周囲にばら撒くことで居合い再現はどーか
+                        //todo 超短距離Drive周囲にばら撒くことで居合い再現はどーか
 					}
 				}
 			}else{
@@ -1048,17 +1055,26 @@ public class ItemSlashBlade extends ItemSword {
 							List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
 
 							if(0 < list.size()){
+
+                                StylishRankManager.setNextAttackType(el,AttackTypes.Noutou);
+                                StylishRankManager.doAttack(el);
+
+                                /*
 								if(swordType.containsAll(SwordType.BewitchedSoulEater)
 										&& 10 < sitem.getItemDamage()){
 									int j1 = (int)Math.min(Math.ceil(list.size() * 0.5),5);
 							        dropXpOnBlockBreak(par2World, MathHelper.ceiling_double_int(el.posX), MathHelper.ceiling_double_int(el.posY), MathHelper.ceiling_double_int(el.posZ), j1);
 								}
+                                */
 
 								el.onCriticalHit(el);
+
+                                /*
 								if(!el.worldObj.isRemote){
 									el.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),200,3,true));
 									el.addPotionEffect(new PotionEffect(Potion.resistance.getId(),200,3,true));
 								}
+								*/
 							}
 
 						}
@@ -1066,10 +1082,12 @@ public class ItemSlashBlade extends ItemSword {
 
 					case SlashDim:
 					case Iai:
+                            StylishRankManager.setNextAttackType(el, AttackTypes.None);
 							setComboSequence(tag, ComboSequence.None);
 							break;
 					default:
 						if(comboSeq.useScabbard){
+                            StylishRankManager.setNextAttackType(el, AttackTypes.None);
 							setComboSequence(tag, ComboSequence.None);
 						}else{
                             tag.setInteger(lastPosHashStr,(int)((el.posX + el.posY + el.posZ) * 10.0));
@@ -1112,6 +1130,7 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}else{
 			if(!comboSeq.equals(ComboSequence.None) && ((prevAttackTime + comboSeq.comboResetTicks) < currentTime)){
+                StylishRankManager.setNextAttackType(el, AttackTypes.None);
 				setComboSequence(tag, ComboSequence.None);
 			}
 		}
@@ -1197,6 +1216,48 @@ public class ItemSlashBlade extends ItemSword {
 
 		}
 	}
+
+    private void updateStyleAttackType(ItemStack stack, EntityLivingBase e) {
+        NBTTagCompound tag = getItemTagCompound(stack);
+
+        ComboSequence combo = getComboSequence(tag);
+
+        switch (combo){
+            case Kiriage:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriage);
+                break;
+
+            case Kiriorosi:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriorosi);
+                break;
+
+            case Iai:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Iai);
+                break;
+
+            case Battou:
+
+                EnumSet<SwordType> swordType = getSwordType(stack);
+                if(swordType.containsAll(SwordType.BewitchedPerfect))
+                    StylishRankManager.setNextAttackType(e, AttackTypes.IaiBattou);
+                else
+                    StylishRankManager.setNextAttackType(e, AttackTypes.Battou);
+                break;
+
+            case Saya1:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Saya1);
+                break;
+
+            case Saya2:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Saya2);
+                break;
+
+            case HiraTuki:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriage);
+                break;
+
+        }
+    }
 
 
     protected void dropXpOnBlockBreak(World par1World, int par2, int par3, int par4, int par5)
@@ -1506,6 +1567,9 @@ public class ItemSlashBlade extends ItemSword {
                     stack,
                     comboSeq,
                     entityLiving);
+
+            StylishRankManager.setNextAttackType(entityLiving ,AttackTypes.DestructObject);
+
             List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,DestructableSelector);
             for(Entity curEntity : list){
 
@@ -1605,6 +1669,8 @@ public class ItemSlashBlade extends ItemSword {
 
                     destructedCount++;
                 }
+
+                StylishRankManager.doAttack(entityLiving);
             }
 
             if(0 < destructedCount){
