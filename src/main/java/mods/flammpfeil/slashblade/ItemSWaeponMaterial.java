@@ -13,6 +13,7 @@ import java.util.List;
 public class ItemSWaeponMaterial extends Item {
 
 	public ItemSWaeponMaterial() {
+        setHasSubtypes(true);
 	}
 
 	@Override

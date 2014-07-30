@@ -133,6 +133,14 @@ public class StylishRankManager {
 
         //stylePoint
         String attackType = AttackType.get(tag);
+        addRankPoint(e,attackType);
+    }
+
+    public static void addRankPoint(Entity e, String attackType){
+        if(e == null) return;
+        NBTTagCompound tag = getTag(e);
+
+        //stylePoint
         int value = 0;
 
         if(AttackTypes.types.containsKey(attackType))

@@ -73,8 +73,7 @@ public class JustGuard {
                 e.entityLiving.worldObj.playSoundAtEntity(el, "mob.blaze.hit", 1.0F, 1.0F);
 
 
-                StylishRankManager.setNextAttackType(el, StylishRankManager.AttackTypes.None);
-                StylishRankManager.doAttack(el);
+                StylishRankManager.addRankPoint(el, StylishRankManager.AttackTypes.JustGuard);
             }
         }
     }

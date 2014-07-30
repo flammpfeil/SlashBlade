@@ -253,11 +253,12 @@ public class ItemSlashBlade extends ItemSword {
             int proudSouls = ProudSoul.get(tag);
             int count = 0;
             if(proudSouls > 1000){
-                count = (proudSouls * (1/3)) / 100;
-                proudSouls = proudSouls * (2/3);
+                count = proudSouls / 300;
+                count = Math.min(64,count);
+                proudSouls = proudSouls - count * 100;
             }else{
                 count = proudSouls / 100;
-                proudSouls = proudSouls % 100;
+                proudSouls = proudSouls - count * 100;
             }
             count++;
 
@@ -1056,8 +1057,7 @@ public class ItemSlashBlade extends ItemSword {
 
 							if(0 < list.size()){
 
-                                StylishRankManager.setNextAttackType(el,AttackTypes.Noutou);
-                                StylishRankManager.doAttack(el);
+                                StylishRankManager.addRankPoint(el,AttackTypes.Noutou);
 
                                 /*
 								if(swordType.containsAll(SwordType.BewitchedSoulEater)
@@ -1240,8 +1240,10 @@ public class ItemSlashBlade extends ItemSword {
                 EnumSet<SwordType> swordType = getSwordType(stack);
                 if(swordType.containsAll(SwordType.BewitchedPerfect))
                     StylishRankManager.setNextAttackType(e, AttackTypes.IaiBattou);
-                else
+                else if(e.onGround)
                     StylishRankManager.setNextAttackType(e, AttackTypes.Battou);
+                else
+                    StylishRankManager.setNextAttackType(e, AttackTypes.JumpBattou);
                 break;
 
             case Saya1:
