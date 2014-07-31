@@ -5,6 +5,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -126,7 +127,7 @@ public class Fox {
         if(inari != null)
             inari.setItemDamage(14);
         else
-            inari = GameRegistry.findItemStack("minecraft","wheat",1);
+            inari = new ItemStack(Items.wheat,1);
 
         ItemStack proudsoul = GameRegistry.findItemStack(SlashBlade.modid,"proudsoul",1);
 
