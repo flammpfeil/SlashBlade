@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.specialattack;
 
 import mods.flammpfeil.slashblade.EntityDrive;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,7 +48,11 @@ public class Drive extends SpecialAttackBase {
 
             float baseModif = blade.getBaseAttackModifiers(tag);
             int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
-            float magicDamage = baseModif + ItemSlashBlade.AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
+            float magicDamage = baseModif;
+
+            int rank = StylishRankManager.getStylishRank(player);
+            if(5 <= rank)
+                magicDamage += ItemSlashBlade.AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
 
             EntityDrive entityDrive = new EntityDrive(world, player, magicDamage,multihit,90.0f - setCombo.swingDirection);
             if (entityDrive != null) {

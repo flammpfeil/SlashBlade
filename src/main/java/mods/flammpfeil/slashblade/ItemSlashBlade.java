@@ -558,7 +558,10 @@ public class ItemSlashBlade extends ItemSword {
             if(IsCharged.get(tag)){
                 IsCharged.set(tag,false);
 
-                if(!IsBroken.get(tag)
+                int rank = StylishRankManager.getStylishRank(player);
+
+                if(4 <= rank
+                    && !IsBroken.get(tag)
                     && swordType.contains(SwordType.Bewitched)
                     && player instanceof EntityPlayer){
                     doAddAttack(itemStack,player,current);
@@ -629,7 +632,11 @@ public class ItemSlashBlade extends ItemSword {
 
             float baseModif = getBaseAttackModifiers(tag);
             int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
-            float magicDamage = baseModif + AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
+            float magicDamage = baseModif;
+            int rank = StylishRankManager.getStylishRank(player);
+            if(5 <= rank){
+                magicDamage += AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
+            }
 
             EntityDrive entityDrive = new EntityDrive(world, player, magicDamage,false,90.0f - setCombo.swingDirection);
             if (entityDrive != null) {
@@ -1885,7 +1892,12 @@ public class ItemSlashBlade extends ItemSword {
 
                 int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
                 if(0 < level && ProudSoul.tryAdd(tag,-1,false)){
-                    float magicDamage = 1 + level;
+
+                    int rank = StylishRankManager.getStylishRank(entity);
+                    if(rank < 3)
+                        level = Math.min(1, level);
+
+                    float magicDamage = level;
 
 
                     if(!w.isRemote){

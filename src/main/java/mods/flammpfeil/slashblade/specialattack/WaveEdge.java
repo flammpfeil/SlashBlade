@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.specialattack;
 
 import mods.flammpfeil.slashblade.EntityDrive;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +36,11 @@ public class WaveEdge extends SpecialAttackBase {
 
             float baseModif = blade.getBaseAttackModifiers(tag);
             int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack));
-            float magicDamage = (baseModif/2.0f) + ItemSlashBlade.AttackAmplifier.get(tag) * (0.25f + (level /5.0f));
+            float magicDamage = (baseModif/2.0f);
+
+            int rank = StylishRankManager.getStylishRank(player);
+            if(5 <= rank)
+                magicDamage += ItemSlashBlade.AttackAmplifier.get(tag) * (0.25f + (level /5.0f));
 
             final float[] speeds = {0.25f,0.3f,0.35f};
             for(int i = 0; i < speeds.length;i++){
