@@ -1,11 +1,17 @@
 package mods.flammpfeil.slashblade.ability;
 
 import com.google.common.collect.Maps;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import java.util.Map;
 
@@ -45,7 +51,7 @@ public class StylishRankManager {
         public static String BreakPhantomSword = registerAttackType("BreakPhantomSword", 0.1f);
 
         public static String JustGuard = registerAttackType("JustGuard", 1.0f);
-        public static String Noutou = registerAttackType("Noutou", -1.0f);
+        public static String Noutou = registerAttackType("Noutou", -1.5f);
 
         public static String DestructObject = registerAttackType("DestructObject", -0.1f);
 
@@ -55,9 +61,19 @@ public class StylishRankManager {
         }
     }
 
+    /**
+     * 0:
+     * 1:D
+     * 2:C
+     * 3:B
+     * 4:A
+     * 5:S
+     * 6:SS
+     * 7:SSS
+     */
     public static String rankText[] = {"D","C","B","A","S","SS","SSS"};
 
-    public static int RankRange = 1000;
+    public static int RankRange = 100;
 
     public static TagPropertyAccessor.TagPropertyIntegerWithRange RankPoint = new TagPropertyAccessor.TagPropertyIntegerWithRange("SBRankPoint",0, (rankText.length * RankRange));
     public static TagPropertyAccessor.TagPropertyLong LastRankPointUpdate = new TagPropertyAccessor.TagPropertyLong("SBLastRPUpdate");
@@ -83,14 +99,16 @@ public class StylishRankManager {
         long now = e.worldObj.getTotalWorldTime();
         long lastUpdate = LastRankPointUpdate.get(tag);
 
-        long descPoint = Math.max(0,lastUpdate - now);
+        long descPoint = Math.max(0, now - lastUpdate);
 
-        if(descPoint < RankRange*2)
+        if(descPoint < RankRange * 2)
             rank -= descPoint;
         else
             rank = 0;
 
-        return Math.max(0,rank);
+        rank = Math.max(0,rank);
+
+        return rank;
     }
 
     public static float getCurrentProgress(Entity e){
@@ -108,7 +126,7 @@ public class StylishRankManager {
     public static int getStylishRank(int totalRankPoint){
         int rank = totalRankPoint;
 
-        rank = (int)Math.ceil(rank / RankRange);
+        rank = (int)Math.ceil(rank / (float)RankRange);
 
         rank = Math.max(0,Math.min(rankText.length, rank));
 
@@ -119,7 +137,7 @@ public class StylishRankManager {
         return getRankText(getStylishRank(e));
     }
     public static String getRankText(int rank){
-        return rank <= 0 ? "" : rankText[Math.max(rank - 1, rankText.length - 1)];
+        return rank <= 0 ? "" : rankText[Math.min(rank - 1, rankText.length - 1)];
     }
 
     public static void setNextAttackType(Entity e,String key){
@@ -133,7 +151,7 @@ public class StylishRankManager {
 
         //stylePoint
         String attackType = AttackType.get(tag);
-        addRankPoint(e,attackType);
+        addRankPoint(e, attackType);
     }
 
     public static void addRankPoint(Entity e, String attackType){
@@ -174,6 +192,7 @@ public class StylishRankManager {
 
     public static void addRankPoint(Entity e,int amount){
         if(e == null) return;
+        if(e.worldObj.isRemote) return;
         NBTTagCompound tag = getTag(e);
 
         int rankPoint = getTotalRankPoint(e);
@@ -186,14 +205,59 @@ public class StylishRankManager {
 
         int postRank = getStylishRank(rankPoint);
 
-        if(lastRank != postRank)
-            onRiseInRank(e,postRank,rankPoint);
+        onRiseInRank(e, postRank, rankPoint);
     }
+
+    public static final String MessageHeader = "///RankUpdate ";
 
     public static void onRiseInRank(Entity e, int rank,int rankPoint){
         if(e == null) return;
 
-        if(e.worldObj.isRemote)
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(getRankText(rank)));
+        NBTTagCompound tag = getTag(e);
+
+        if(e instanceof EntityPlayer){
+            ((EntityPlayer)e).addChatMessage(new ChatComponentText("S"+ getRankText(rank) + ":" + rankPoint + ":" + AttackType.get(tag)));
+            ((EntityPlayer)e).addChatMessage(new ChatComponentText(MessageHeader + rankPoint));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void LivingHurtEvent(LivingHurtEvent e){
+        String type = e.source.getDamageType();
+        if(e.isCanceled()) return;
+        if(e.entity == null) return;
+        if(e.entity instanceof EntityPlayer) return;
+        if(e.source.getDamageType() == "wither") return;
+        if(e.entityLiving.getActivePotionEffect(Potion.poison) != null && e.source.getDamageType() == "magic")
+            return;
+        NBTTagCompound tag = getTag(e.entity);
+
+        Long lastUpdate = LastRankPointUpdate.get(tag);
+
+        LastRankPointUpdate.set(tag,lastUpdate - RankRange / 2);
+    }
+
+    @SubscribeEvent
+    public void ClientChatReceivedEvent(ClientChatReceivedEvent e){
+        String text = e.message.getUnformattedText();
+        if(text.startsWith(MessageHeader)){
+
+            String value = text.substring(MessageHeader.length());
+            int rankPoint;
+            try{
+                rankPoint = Integer.parseInt(value);
+            }catch(Exception ex){
+                rankPoint = 0;
+            }
+
+            Entity el = Minecraft.getMinecraft().thePlayer;
+            NBTTagCompound tag = getTag(el);
+            RankPoint.set(tag,rankPoint);
+            LastRankPointUpdate.set(tag,el.worldObj.getTotalWorldTime());
+
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("receive :" + rankPoint + ":" + e.message.getUnformattedText()));
+
+            e.setCanceled(true);
+        }
     }
 }

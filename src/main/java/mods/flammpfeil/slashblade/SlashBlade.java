@@ -12,6 +12,7 @@ import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.JustGuard;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.command.ICommand;
@@ -73,8 +74,9 @@ public class SlashBlade implements IFuelHandler{
 
     //ability
     public static JustGuard abilityJustGuard;
+    public static StylishRankManager stylishRankManager;
 
-	@EventHandler
+    @EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
 		mainConfiguration = new Configuration(evt.getSuggestedConfigurationFile());
 
@@ -745,6 +747,9 @@ public class SlashBlade implements IFuelHandler{
         //ability
         abilityJustGuard = new JustGuard();
         MinecraftForge.EVENT_BUS.register(abilityJustGuard);
+
+        stylishRankManager = new StylishRankManager();
+        MinecraftForge.EVENT_BUS.register(stylishRankManager);
 
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);

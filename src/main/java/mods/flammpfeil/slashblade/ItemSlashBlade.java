@@ -807,11 +807,15 @@ public class ItemSlashBlade extends ItemSword {
     public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
         float tagAttackAmplifier = this.AttackAmplifier.get(tag);
 
+
+        float baseModif = getBaseAttackModifiers(tag);
         float attackAmplifier = 0;
 
-        if(swordType.contains(SwordType.Broken) || swordType.contains(SwordType.Sealed)){
-            attackAmplifier = -4;
-        }else if(swordType.contains(SwordType.FiercerEdge)){
+        int rank = StylishRankManager.getStylishRank(el);
+
+        if(rank < 3 || swordType.contains(SwordType.Broken) || swordType.contains(SwordType.Sealed)){
+            attackAmplifier = 2 - baseModif;
+        }else if( rank == 7 || 5 <= rank && swordType.contains(SwordType.FiercerEdge)){
             float tmp = el.experienceLevel;
             tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
 
@@ -829,7 +833,6 @@ public class ItemSlashBlade extends ItemSword {
             attrTag = new NBTTagList();
             tag.setTag("AttributeModifiers",attrTag);
 
-            float baseModif = getBaseAttackModifiers(tag);
             attrTag.appendTag(
                     getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + baseModif), 0))
             );
@@ -981,17 +984,23 @@ public class ItemSlashBlade extends ItemSword {
 
 					AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, el);
 
+                    int rank = StylishRankManager.getStylishRank(el);
+
 					List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
 					for(Entity curEntity : list){
 
 						switch (comboSeq) {
 						case Saya1:
 						case Saya2:
-							float attack = 4.0f + Item.ToolMaterial.STONE.getDamageVsEntity(); //stone like
-							if(swordType.contains(SwordType.Broken))
-								attack = Item.ToolMaterial.EMERALD.getDamageVsEntity();
-							else if(swordType.contains(SwordType.FiercerEdge) && el instanceof EntityPlayer)
-			                	attack += AttackAmplifier.get(tag) * 0.5f;
+							float attack = 4.0f;
+                            if(rank < 3 || swordType.contains(SwordType.Broken)){
+                                attack = 2.0f;
+                            }else{
+                                attack += Item.ToolMaterial.STONE.getDamageVsEntity(); //stone like
+                                if(swordType.contains(SwordType.FiercerEdge) && el instanceof EntityPlayer){
+                                    attack += AttackAmplifier.get(tag) * 0.5f;
+                                }
+                            }
 
 							if (curEntity instanceof EntityLivingBase)
 			                {
