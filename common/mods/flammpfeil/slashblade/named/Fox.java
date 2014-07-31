@@ -124,7 +124,7 @@ public class Fox {
         if(inari != null)
             inari.setItemDamage(14);
         else
-            inari = GameRegistry.findItemStack("minecraft","wheat",1);
+            inari = new ItemStack(Item.wheat,1);
 
         ItemStack proudsoul = GameRegistry.findItemStack(SlashBlade.modid,"proudsoul",1);
 
