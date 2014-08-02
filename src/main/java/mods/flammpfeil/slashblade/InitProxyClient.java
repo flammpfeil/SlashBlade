@@ -1,6 +1,9 @@
 package mods.flammpfeil.slashblade;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
+import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
@@ -23,6 +26,9 @@ public class InitProxyClient extends InitProxy{
         MinecraftForgeClient.registerItemRenderer(SlashBlade.wrapBlade, renderer);
         MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeNamed, renderer);
 		MinecraftForge.EVENT_BUS.register(renderer);
+
+
+        FMLCommonHandler.instance().bus().register(new StylishRankRenderer());
 
         RenderDrive rd = new RenderDrive();
         RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, rd);

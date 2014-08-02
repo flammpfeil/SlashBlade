@@ -115,7 +115,7 @@ public class StylishRankManager {
 
         int rank = getTotalRankPoint(e);
 
-        rank /= rankText.length;
+        rank %= RankRange;
 
         return rank / (float) RankRange;
     }
@@ -216,7 +216,7 @@ public class StylishRankManager {
         NBTTagCompound tag = getTag(e);
 
         if(e instanceof EntityPlayer){
-            ((EntityPlayer)e).addChatMessage(new ChatComponentText("S"+ getRankText(rank) + ":" + rankPoint + ":" + AttackType.get(tag)));
+            //((EntityPlayer)e).addChatMessage(new ChatComponentText(getRankText(rank) + ":" + rankPoint + ":" + AttackType.get(tag)));
             ((EntityPlayer)e).addChatMessage(new ChatComponentText(MessageHeader + rankPoint));
         }
     }
@@ -255,7 +255,7 @@ public class StylishRankManager {
             RankPoint.set(tag,rankPoint);
             LastRankPointUpdate.set(tag,el.worldObj.getTotalWorldTime());
 
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("receive :" + rankPoint + ":" + e.message.getUnformattedText()));
+            //Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("receive :" + rankPoint + ":" + e.message.getUnformattedText()));
 
             e.setCanceled(true);
         }
