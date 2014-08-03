@@ -21,26 +21,22 @@ public class StylishRankRenderer {
 
     @SubscribeEvent
     public void renderTick(TickEvent.RenderTickEvent event) {
-        label0:
-        {
-            Minecraft mc;
-            EntityPlayer player;
-            long time;
-            label1:
-            {
-                mc = FMLClientHandler.instance().getClient();
-                World world = mc.theWorld;
-                if (event.phase == TickEvent.Phase.START || !(Minecraft.getMinecraft().renderViewEntity instanceof EntityPlayer))
-                    break label0;
+        Minecraft mc;
+        EntityPlayer player;
+        long time;
 
-                player = (EntityPlayer) Minecraft.getMinecraft().renderViewEntity;
-                time = System.currentTimeMillis();
-            }
-            if (player != null && mc.inGameHasFocus) {
-                Minecraft _tmp2 = mc;
-                if (Minecraft.isGuiEnabled()) {
-                    renderRankHud(Float.valueOf(event.renderTickTime), player, time);
-                }
+        mc = FMLClientHandler.instance().getClient();
+        World world = mc.theWorld;
+        if (event.phase == TickEvent.Phase.START || !(Minecraft.getMinecraft().renderViewEntity instanceof EntityPlayer))
+            return;
+
+        player = (EntityPlayer) Minecraft.getMinecraft().renderViewEntity;
+        time = System.currentTimeMillis();
+
+        if (player != null && mc.inGameHasFocus) {
+            Minecraft _tmp2 = mc;
+            if (Minecraft.isGuiEnabled()) {
+                renderRankHud(event.renderTickTime, player, time);
             }
         }
     }
