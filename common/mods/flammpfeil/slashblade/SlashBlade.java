@@ -7,8 +7,11 @@ import java.util.Map;
 
 import javax.imageio.spi.RegisterableService;
 
+import mods.flammpfeil.slashblade.ability.JustGuard;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.named.Fox;
 import mods.flammpfeil.slashblade.named.PSSange;
+import mods.flammpfeil.slashblade.named.Tizuru;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.block.Block;import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.Mod;
@@ -106,7 +109,11 @@ public class SlashBlade implements IFuelHandler{
 
     public static final EventBus InitEventBus = new EventBus();
 
-	@EventHandler
+    //ability
+    public static JustGuard abilityJustGuard;
+    public static StylishRankManager stylishRankManager;
+
+    @EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
 		mainConfiguration = new Configuration(evt.getSuggestedConfigurationFile());
 
@@ -779,6 +786,7 @@ public class SlashBlade implements IFuelHandler{
 
         InitEventBus.register(new PSSange());
         InitEventBus.register(new Fox());
+        InitEventBus.register(new Tizuru());
         EntityRegistry.registerModEntity(EntityDrive.class, "Drive", 1, this, 250, 1, true);
         EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", 2, this, 250, 1, true);
 
@@ -786,6 +794,13 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
 
         MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
+
+        //ability
+        abilityJustGuard = new JustGuard();
+        MinecraftForge.EVENT_BUS.register(abilityJustGuard);
+
+        stylishRankManager = new StylishRankManager();
+        MinecraftForge.EVENT_BUS.register(stylishRankManager);
 
         DropEventHandler.registerEntityDrop("HardcoreEnderExpansion.Dragon", 1.0f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.yamato.broken", 1));
         DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, GameRegistry.findItemStack(modid, "flammpfeil.slashblade.named.yamato.broken", 1));

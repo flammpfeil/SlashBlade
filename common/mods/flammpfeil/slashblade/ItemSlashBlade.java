@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import mods.flammpfeil.slashblade.ability.JustGuard;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.StylishRankManager.AttackTypes;
 import mods.flammpfeil.slashblade.specialattack.Drive;
 import mods.flammpfeil.slashblade.specialattack.SlashDimension;
 import mods.flammpfeil.slashblade.specialattack.Spear;
@@ -73,7 +76,6 @@ public class ItemSlashBlade extends ItemSword {
 		return texture;
 	}
     static public Map<String,ResourceLocation> textureMap = new HashMap<String, ResourceLocation>();
-
 
     static public TagPropertyAccessor.TagPropertyString TextureName = new TagPropertyAccessor.TagPropertyString("TextureName");
     static public ResourceLocation getModelTexture(ItemStack par1ItemStack){
@@ -279,11 +281,12 @@ public class ItemSlashBlade extends ItemSword {
             int proudSouls = ProudSoul.get(tag);
             int count = 0;
             if(proudSouls > 1000){
-                count = (proudSouls * (1/3)) / 100;
-                proudSouls = proudSouls * (2/3);
+                count = proudSouls / 300;
+                count = Math.min(64,count);
+                proudSouls = proudSouls - count * 100;
             }else{
                 count = proudSouls / 100;
-                proudSouls = proudSouls % 100;
+                proudSouls = proudSouls - count * 100;
             }
             count++;
 
@@ -414,6 +417,8 @@ public class ItemSlashBlade extends ItemSword {
 
         if(!comboSec.useScabbard)
             par1ItemStack.damageItem(1, par3EntityLivingBase);
+
+        StylishRankManager.doAttack(par3EntityLivingBase);
 
 		return true;
     }
@@ -579,7 +584,13 @@ public class ItemSlashBlade extends ItemSword {
         if(!current.useScabbard){
             if(IsCharged.get(tag)){
                 IsCharged.set(tag,false);
-                if(player instanceof EntityPlayer){
+
+                int rank = StylishRankManager.getStylishRank(player);
+
+                if(4 <= rank
+                    && !IsBroken.get(tag)
+                    && swordType.contains(SwordType.Bewitched)
+                    && player instanceof EntityPlayer){
                     doAddAttack(itemStack,player,current);
                 }
             }
@@ -615,6 +626,7 @@ public class ItemSlashBlade extends ItemSword {
 
                     LastActionTime.set(tag, player.worldObj.getTotalWorldTime());
 
+                    updateStyleAttackType(stack, player);
 	            }
 	        }
 		}
@@ -628,6 +640,8 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
 	public ItemStack onItemRightClick(ItemStack sitem, World par2World,
 			EntityPlayer par3EntityPlayer) {
+
+        SlashBlade.abilityJustGuard.setJustGuardState(par3EntityPlayer);
 
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
@@ -645,7 +659,11 @@ public class ItemSlashBlade extends ItemSword {
 
             float baseModif = getBaseAttackModifiers(tag);
             int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
-            float magicDamage = baseModif + AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
+            float magicDamage = baseModif;
+            int rank = StylishRankManager.getStylishRank(player);
+            if(5 <= rank){
+                magicDamage += AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
+            }
 
             EntityDrive entityDrive = new EntityDrive(world, player, magicDamage,false,90.0f - setCombo.swingDirection);
             if (entityDrive != null) {
@@ -699,7 +717,8 @@ public class ItemSlashBlade extends ItemSword {
             LastActionTime.set(tag,par3EntityPlayer.worldObj.getTotalWorldTime());
 
 		}else{
-            OnClick.set(tag, true);
+            if(!JustGuard.atJustGuard(par3EntityPlayer))
+                OnClick.set(tag, true);
 		}
 
 	}
@@ -819,14 +838,19 @@ public class ItemSlashBlade extends ItemSword {
     	return result;
     }
 
+
     public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
         float tagAttackAmplifier = this.AttackAmplifier.get(tag);
 
+
+        float baseModif = getBaseAttackModifiers(tag);
         float attackAmplifier = 0;
 
-        if(swordType.contains(SwordType.Broken) || swordType.contains(SwordType.Sealed)){
-            attackAmplifier = -4;
-        }else if(swordType.contains(SwordType.FiercerEdge)){
+        int rank = StylishRankManager.getStylishRank(el);
+
+        if(rank < 3 || swordType.contains(SwordType.Broken) || swordType.contains(SwordType.Sealed)){
+            attackAmplifier = 2 - baseModif;
+        }else if( rank == 7 || 5 <= rank && swordType.contains(SwordType.FiercerEdge)){
             float tmp = el.experienceLevel;
             tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
 
@@ -844,7 +868,6 @@ public class ItemSlashBlade extends ItemSword {
             attrTag = new NBTTagList();
             tag.setTag("AttributeModifiers",attrTag);
 
-            float baseModif = getBaseAttackModifiers(tag);
             attrTag.appendTag(
                     getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(field_111210_e, "Weapon modifier", (double)(attackAmplifier + baseModif), 0))
             );
@@ -853,7 +876,6 @@ public class ItemSlashBlade extends ItemSword {
             el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
         }
     }
-
 
 	@Override
 	public void onUpdate(ItemStack sitem, World par2World,
@@ -931,16 +953,15 @@ public class ItemSlashBlade extends ItemSword {
 					int descExp;
 
 					if(swordType.contains(SwordType.Broken)){
-						el.addExhaustion(0.025F);
 						repair = 10;
 						descExp = 5;
 					}else{
 						repair = 1;
 						descExp = 1;
-						el.addExhaustion(0.025F);
 					}
 
 					if(0 < curDamage){
+                        el.addExhaustion(0.025F);
 						sitem.setItemDamage(Math.max(0,curDamage-repair));
 					}
 
@@ -993,7 +1014,11 @@ public class ItemSlashBlade extends ItemSword {
 
                     doSwingItem(sitem, el);
 
+                    updateStyleAttackType(sitem, el);
+
 					AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, el);
+
+                    int rank = StylishRankManager.getStylishRank(el);
 
 					List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
 					for(Entity curEntity : list){
@@ -1001,11 +1026,15 @@ public class ItemSlashBlade extends ItemSword {
 						switch (comboSeq) {
 						case Saya1:
 						case Saya2:
-							float attack = 4.0f + EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
-							if(swordType.contains(SwordType.Broken))
-								attack = EnumToolMaterial.EMERALD.getDamageVsEntity();
-							else if(swordType.contains(SwordType.FiercerEdge) && el instanceof EntityPlayer)
-			                	attack += AttackAmplifier.get(tag) * 0.5f;
+							float attack = 4.0f;
+                            if(rank < 3 || swordType.contains(SwordType.Broken)){
+                                attack = 2.0f;
+                            }else{
+                                attack += EnumToolMaterial.STONE.getDamageVsEntity(); //stone like
+                                if(swordType.contains(SwordType.FiercerEdge) && el instanceof EntityPlayer){
+                                    attack += AttackAmplifier.get(tag) * 0.5f;
+                                }
+                            }
 
 							if (curEntity instanceof EntityLivingBase)
 			                {
@@ -1056,7 +1085,6 @@ public class ItemSlashBlade extends ItemSword {
 					       || !el.isSwingInProgress /*swingProgress <= 0.0f*/)
 					    && (!el.isUsingItem())
 						){
-
 					switch (comboSeq) {
 					case None:
 						break;
@@ -1071,18 +1099,25 @@ public class ItemSlashBlade extends ItemSword {
 							List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
 
 							if(0 < list.size()){
+
+                                StylishRankManager.addRankPoint(el,AttackTypes.Noutou);
+
+                                /*
 								if(swordType.containsAll(SwordType.BewitchedSoulEater)
 										&& 10 < sitem.getItemDamage()){
-
 									int j1 = (int)Math.min(Math.ceil(list.size() * 0.5),5);
 							        dropXpOnBlockBreak(par2World, MathHelper.ceiling_double_int(el.posX), MathHelper.ceiling_double_int(el.posY), MathHelper.ceiling_double_int(el.posZ), j1);
 								}
+                                */
 
 								el.onCriticalHit(el);
+
+                                /*
 								if(!el.worldObj.isRemote){
 									el.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),200,3,true));
 									el.addPotionEffect(new PotionEffect(Potion.resistance.getId(),200,3,true));
 								}
+								*/
 							}
 
 						}
@@ -1090,10 +1125,12 @@ public class ItemSlashBlade extends ItemSword {
 
 					case SlashDim:
 					case Iai:
+                            StylishRankManager.setNextAttackType(el, AttackTypes.None);
 							setComboSequence(tag, ComboSequence.None);
 							break;
 					default:
 						if(comboSeq.useScabbard){
+                            StylishRankManager.setNextAttackType(el, AttackTypes.None);
 							setComboSequence(tag, ComboSequence.None);
 						}else{
                             tag.setInteger(lastPosHashStr,(int)((el.posX + el.posY + el.posZ) * 10.0));
@@ -1136,6 +1173,7 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}else{
 			if(!comboSeq.equals(ComboSequence.None) && ((prevAttackTime + comboSeq.comboResetTicks) < currentTime)){
+                StylishRankManager.setNextAttackType(el, AttackTypes.None);
 				setComboSequence(tag, ComboSequence.None);
 			}
 		}
@@ -1223,6 +1261,51 @@ public class ItemSlashBlade extends ItemSword {
 		}
 	}
 
+    private void updateStyleAttackType(ItemStack stack, EntityLivingBase e) {
+        NBTTagCompound tag = getItemTagCompound(stack);
+
+        ComboSequence combo = getComboSequence(tag);
+
+        switch (combo){
+            case Kiriage:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriage);
+                break;
+
+            case Kiriorosi:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriorosi);
+                break;
+
+            case Iai:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Iai);
+                break;
+
+            case Battou:
+
+                EnumSet<SwordType> swordType = getSwordType(stack);
+                if(swordType.containsAll(SwordType.BewitchedPerfect))
+                    StylishRankManager.setNextAttackType(e, AttackTypes.IaiBattou);
+                else if(e.onGround)
+                    StylishRankManager.setNextAttackType(e, AttackTypes.Battou);
+                else
+                    StylishRankManager.setNextAttackType(e, AttackTypes.JumpBattou);
+                break;
+
+            case Saya1:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Saya1);
+                break;
+
+            case Saya2:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Saya2);
+                break;
+
+            case HiraTuki:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriage);
+                break;
+
+        }
+    }
+
+
     protected void dropXpOnBlockBreak(World par1World, int par2, int par3, int par4, int par5)
     {
         if (!par1World.isRemote)
@@ -1258,6 +1341,8 @@ public class ItemSlashBlade extends ItemSword {
         double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1);
         float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
         float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
+
+
         owner.rotationPitch = this.updateRotation(owner.rotationPitch, f3, par3);
         owner.rotationPitch = (float)Math.min(Math.max(owner.rotationPitch,-30), 60);
 
@@ -1531,6 +1616,9 @@ public class ItemSlashBlade extends ItemSword {
                     stack,
                     comboSeq,
                     entityLiving);
+
+            StylishRankManager.setNextAttackType(entityLiving ,AttackTypes.DestructObject);
+
             List<Entity> list = entityLiving.worldObj.getEntitiesWithinAABBExcludingEntity(entityLiving, bb,DestructableSelector);
             for(Entity curEntity : list){
 
@@ -1630,6 +1718,8 @@ public class ItemSlashBlade extends ItemSword {
 
                     destructedCount++;
                 }
+
+                StylishRankManager.doAttack(entityLiving);
             }
 
             if(0 < destructedCount){
@@ -1833,7 +1923,12 @@ public class ItemSlashBlade extends ItemSword {
 
                 int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
                 if(0 < level && ProudSoul.tryAdd(tag,-1,false)){
-                    float magicDamage = 1 + level;
+
+                    int rank = StylishRankManager.getStylishRank(entity);
+                    if(rank < 3)
+                        level = Math.min(1, level);
+
+                    float magicDamage = level;
 
 
                     if(!w.isRemote){

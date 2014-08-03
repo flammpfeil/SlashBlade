@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.specialattack;
 
 import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -71,6 +72,7 @@ public class SlashDimension extends SpecialAttackBase{
             int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
             float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
             for(Entity curEntity : list){
+                StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);
                 blade.attackTargetEntity(stack, curEntity, player, true);
                 player.onCriticalHit(curEntity);
 
@@ -78,8 +80,10 @@ public class SlashDimension extends SpecialAttackBase{
                     curEntity.hurtResistantTime = 0;
                     DamageSource ds = DamageSourceAccessHelper.setDamageBypassesArmor(new EntityDamageSource("directMagic",player)).setMagicDamage();
                     curEntity.attackEntityFrom(ds, magicDamage);
-                    if(curEntity instanceof EntityLivingBase)
+                    if(curEntity instanceof EntityLivingBase){
+                        StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDimMagic);
                         stack.hitEntity((EntityLivingBase)curEntity, player);
+                    }
                 }
             }
 

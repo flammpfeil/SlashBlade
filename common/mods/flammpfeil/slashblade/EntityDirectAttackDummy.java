@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -172,6 +173,8 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb,ItemSlashBlade.DestructableSelector);
 
+                    StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
+
                     list.removeAll(alreadyHitEntity);
                     alreadyHitEntity.addAll(list);
                     for(Entity curEntity : list){
@@ -215,6 +218,8 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
                                 this.worldObj.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
                             }
                         }
+
+                        StylishRankManager.doAttack(this.thrower);
                     }
                 }
 
@@ -225,12 +230,15 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
                     if(!getIsMultiHit())
                         alreadyHitEntity.addAll(list);
 
+                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.Spear);
+
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
-                    ItemSlashBlade.OnClick.set(tag,true);
                     for(Entity curEntity : list){
                         curEntity.hurtResistantTime = 0;
-                        if(thrower instanceof EntityPlayer)
-                            ((EntityPlayer)thrower).attackTargetEntityWithCurrentItem(curEntity);
+                        if(thrower instanceof EntityPlayer){
+                            ItemSlashBlade itemBlade = (ItemSlashBlade)blade.getItem();
+                            itemBlade.attackTargetEntity(blade, curEntity, (EntityPlayer)thrower, true);
+                        }
                         else{
                             DamageSource ds = new EntityDamageSource("mob", this.getThrower());
                             curEntity.attackEntityFrom(ds, 10);
@@ -238,7 +246,6 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
                                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                         }
                     }
-                    ItemSlashBlade.OnClick.set(tag,false);
                 }
             }
 

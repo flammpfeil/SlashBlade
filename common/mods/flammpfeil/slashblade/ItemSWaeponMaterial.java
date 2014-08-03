@@ -12,7 +12,7 @@ public class ItemSWaeponMaterial extends Item {
 
 	public ItemSWaeponMaterial(int par1) {
 		super(par1);
-
+        setHasSubtypes(true);
 	}
 
 	@Override

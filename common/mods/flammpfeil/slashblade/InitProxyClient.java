@@ -8,6 +8,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
@@ -28,6 +29,9 @@ public class InitProxyClient extends InitProxy{
         MinecraftForgeClient.registerItemRenderer(SlashBlade.wrapBlade.itemID, renderer);
         MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeNamed.itemID, renderer);
 		MinecraftForge.EVENT_BUS.register(renderer);
+
+
+        TickRegistry.registerTickHandler(new StylishRankRenderer(), Side.CLIENT);
 
         RenderDrive rd = new RenderDrive();
         RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, rd);

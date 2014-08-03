@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -280,8 +281,10 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                 ridingEntity.hurtResistantTime = 0;
                 DamageSource ds = DamageSourceAccessHelper.setDamageBypassesArmor(new EntityDamageSource("directMagic",this.getThrower())).setMagicDamage();
                 ridingEntity.attackEntityFrom(ds, magicDamage);
-                if(blade != null && ridingEntity instanceof EntityLivingBase)
+                if(blade != null && ridingEntity instanceof EntityLivingBase){
+                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.BreakPhantomSword);
                     ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
+                }
             }
 
             setDead();
@@ -309,6 +312,8 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb,ItemSlashBlade.DestructableSelector);
+
+                    StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
 
                     list.removeAll(alreadyHitEntity);
                     alreadyHitEntity.addAll(list);
@@ -353,6 +358,8 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                                 this.worldObj.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
                             }
                         }
+
+                        StylishRankManager.doAttack(this.thrower);
 
                         this.setDead();
                         return;
@@ -400,8 +407,10 @@ public class EntityPhantomSword extends Entity implements IThrowableEntity {
                         hitEntity.hurtResistantTime = 0;
                         DamageSource ds = DamageSourceAccessHelper.setDamageBypassesArmor(new EntityDamageSource("directMagic",this.getThrower())).setMagicDamage();
                         hitEntity.attackEntityFrom(ds, magicDamage);
-                        if(blade != null && hitEntity instanceof EntityLivingBase)
+                        if(blade != null && hitEntity instanceof EntityLivingBase){
+                            StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)hitEntity,(EntityLivingBase)thrower);
+                        }
 
                         mountEntity(hitEntity);
                     }
