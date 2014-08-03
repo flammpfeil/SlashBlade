@@ -935,6 +935,7 @@ public class ItemSlashBlade extends ItemSword {
 					}
 
 					if(0 < curDamage){
+                        el.addExhaustion(0.025F);
 						sitem.setItemDamage(Math.max(0,curDamage-repair));
 					}
 
@@ -942,7 +943,6 @@ public class ItemSlashBlade extends ItemSword {
 
 					for(;descExp > 0;descExp--){
 						el.addExperience(-1);
-                        el.addExhaustion(0.025F);
 
 						if(el.experience < 0){
 							if(el.experienceLevel <= 0){
