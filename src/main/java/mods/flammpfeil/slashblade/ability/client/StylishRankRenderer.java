@@ -54,10 +54,12 @@ public class StylishRankRenderer {
         if(rank <= 0)
             return;
 
-        GL11.glPushMatrix();
+        GL11.glPushMatrix(); //1 store
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         //ScaledResolution sr = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         GL11.glClear(256);
         GL11.glMatrixMode(5889);
+        GL11.glPushMatrix(); //2 store
         GL11.glLoadIdentity();
         GL11.glOrtho(0.0D, mc.displayWidth, mc.displayHeight, 0.0D, 1000D, 3000D);
         //GL11.glOrtho(0.0D, sr.getScaledWidth_double(), sr.getScaledHeight_double(), 0.0D, 1000D, 3000D);
@@ -81,7 +83,7 @@ public class StylishRankRenderer {
         if(now < lastUpdate + 20*3)
             showTextRank = true;
 
-        GL11.glPushMatrix();
+        GL11.glPushMatrix(); //3 store
         {
             int rankOffset = 32 * (rank - 1);
             int textOffset = showTextRank ? 128 : 0;
@@ -92,10 +94,16 @@ public class StylishRankRenderer {
             drawTexturedQuad(0 , 32, 0 ,256-16, 64, 16, -90D);
             drawTexturedQuad(16, 32, 16,256-32, (int)(32 * StylishRankManager.getCurrentProgress(player)), 16, -95D);
         }
-        GL11.glPopMatrix();
+        GL11.glPopMatrix(); //3 restore
+
+
+        GL11.glMatrixMode(5889);
+        GL11.glPopMatrix(); //2 restore
+        GL11.glMatrixMode(5888);
 
         GL11.glDisable(3042);
-        GL11.glPopMatrix();
+        GL11.glPopAttrib();
+        GL11.glPopMatrix(); //1 restore
     }
 
     public static void drawTexturedQuad(int par1, int par2, int par3, int par4, int par5, int par6, double zLevel) {
