@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -15,17 +16,25 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 public class JustGuard {
 
     public static int activeTicks = 7;
+    public static long interval = -5;
 
     public static TagPropertyAccessor.TagPropertyLong ChargeStart = new TagPropertyAccessor.TagPropertyLong("SBChargeStart");
 
-    public void setJustGuardState(EntityLivingBase e){
+    public static  boolean atJustGuard(EntityLivingBase e){
+        long last = ChargeStart.get(e.getEntityData());
+        return last < 0;
+    }
+
+    public static void setJustGuardState(EntityLivingBase e){
         int hurtTicks = Math.min(
                 20,
                 Math.max(
                         0,
                         e.hurtResistantTime - (int) (e.maxHurtResistantTime / 2.0F)));
 
-        ChargeStart.set(e.getEntityData(), e.worldObj.getTotalWorldTime() + hurtTicks);
+        long last = ChargeStart.get(e.getEntityData());
+        if(!atJustGuard(e))
+            ChargeStart.set(e.getEntityData(), e.worldObj.getTotalWorldTime() + hurtTicks);
     }
 
     @SubscribeEvent
@@ -41,7 +50,7 @@ public class JustGuard {
         EntityLivingBase el = e.entityLiving;
 
         ItemStack stack = e.entityLiving.getHeldItem();
-        if(stack != null && stack.getItem() instanceof ItemSlashBlade){
+        if(el instanceof  EntityPlayer && ((EntityPlayer)el).isUsingItem() && stack != null && stack.getItem() instanceof ItemSlashBlade){
 
             long cs = ChargeStart.get(el.getEntityData());
             if(0 < cs && el.worldObj.getTotalWorldTime() - cs < activeTicks){
@@ -69,7 +78,7 @@ public class JustGuard {
                 ItemSlashBlade.OnClick.set(tag,true);
                 ItemSlashBlade.OnJumpAttacked.set(tag,false);
 
-                ChargeStart.set(el.getEntityData(),-5l);
+                ChargeStart.set(el.getEntityData(),interval);
                 e.entityLiving.worldObj.playSoundAtEntity(el, "mob.blaze.hit", 1.0F, 1.0F);
 
 
@@ -85,6 +94,7 @@ public class JustGuard {
         if(stack != null && stack.getItem() instanceof ItemSlashBlade){
 
             long cs = ChargeStart.get(el.getEntityData());
+            cs = Math.max(interval,cs);
             if(cs < 0){
                 el.motionX = 0;
                 el.motionY = 0;

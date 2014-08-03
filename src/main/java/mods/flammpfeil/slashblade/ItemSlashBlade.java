@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
+import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.specialattack.*;
@@ -690,7 +691,8 @@ public class ItemSlashBlade extends ItemSword {
             LastActionTime.set(tag,par3EntityPlayer.worldObj.getTotalWorldTime());
 
 		}else{
-            OnClick.set(tag, true);
+            if(!JustGuard.atJustGuard(par3EntityPlayer))
+                OnClick.set(tag, true);
 		}
 
 	}
@@ -925,13 +927,11 @@ public class ItemSlashBlade extends ItemSword {
 					int descExp;
 
 					if(swordType.contains(SwordType.Broken)){
-						el.addExhaustion(0.025F);
 						repair = 10;
 						descExp = 5;
 					}else{
 						repair = 1;
 						descExp = 1;
-						el.addExhaustion(0.025F);
 					}
 
 					if(0 < curDamage){
@@ -942,6 +942,7 @@ public class ItemSlashBlade extends ItemSword {
 
 					for(;descExp > 0;descExp--){
 						el.addExperience(-1);
+                        el.addExhaustion(0.025F);
 
 						if(el.experience < 0){
 							if(el.experienceLevel <= 0){
