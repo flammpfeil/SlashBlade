@@ -3,14 +3,14 @@ package mods.flammpfeil.slashblade.ability;
 import com.google.common.collect.Maps;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import java.util.Map;
@@ -237,8 +237,9 @@ public class StylishRankManager {
         LastRankPointUpdate.set(tag,lastUpdate - RankRange / 2);
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void ClientChatReceivedEvent(ClientChatReceivedEvent e){
+    public void ClientChatReceivedEvent(net.minecraftforge.client.event.ClientChatReceivedEvent e){
         String text = e.message.getUnformattedText();
         if(text.startsWith(MessageHeader)){
 
@@ -250,7 +251,7 @@ public class StylishRankManager {
                 rankPoint = 0;
             }
 
-            Entity el = Minecraft.getMinecraft().thePlayer;
+            Entity el = net.minecraft.client.Minecraft.getMinecraft().thePlayer;
             NBTTagCompound tag = getTag(el);
             RankPoint.set(tag,rankPoint);
             LastRankPointUpdate.set(tag,el.worldObj.getTotalWorldTime());
