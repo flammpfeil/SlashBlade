@@ -208,6 +208,13 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             model.renderPart(renderTarget);
 
+
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+            model.renderPart(renderTarget + "_luminous");
+            GL11.glPopAttrib();
+
             GL11.glDisable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_LIGHTING);
 
@@ -272,6 +279,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             }
 
             model.renderOnly(renderTargets);
+
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+            for(String renderTarget : renderTargets)
+                model.renderPart(renderTarget + "_luminous");
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glPopAttrib();
         }
 
     }
@@ -462,6 +478,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 engine().bindTexture(resourceTexture);
                 model.renderPart(renderTarget);
 
+                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+                GL11.glDisable(GL11.GL_LIGHTING);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+                model.renderPart(renderTarget + "_luminous");
+                GL11.glEnable(GL11.GL_LIGHTING);
+                GL11.glPopAttrib();
+
                 if (item.hasEffect(0))
                 {
                     GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -509,6 +533,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
                 renderTarget = "sheath";
                 model.renderPart(renderTarget);
+
+                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+                GL11.glDisable(GL11.GL_LIGHTING);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+                model.renderPart(renderTarget + "_luminous");
+                GL11.glEnable(GL11.GL_LIGHTING);
+                GL11.glPopAttrib();
 
                 if (item.hasEffect(0))
                 {
@@ -644,7 +676,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         String renderTarget;
 
 		GL11.glPushMatrix();
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         {
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
 			//体格補正 configより
@@ -761,6 +797,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             engine().bindTexture(resourceTexture);
             model.renderPart(renderTarget);
 
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+            model.renderPart(renderTarget + "_luminous");
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glPopAttrib();
+
             if (item.hasEffect(0))
             {
                 GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -841,6 +885,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             renderTarget = "sheath";
             model.renderPart(renderTarget);
+
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+            model.renderPart(renderTarget + "_luminous");
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glPopAttrib();
 
             if (item.hasEffect(0))
             {
@@ -937,6 +989,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			}GL11.glPopMatrix();
 
 			//-----------------------------------------------------------------------------------------------------------------------
-		}GL11.glPopMatrix();
+		}
+        GL11.glPopAttrib();
+        GL11.glPopMatrix();
 	}
 }
