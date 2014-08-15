@@ -2,6 +2,8 @@ package mods.flammpfeil.slashblade.ability;
 
 import com.google.common.collect.Maps;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -238,6 +240,7 @@ public class StylishRankManager {
         LastRankPointUpdate.set(tag,lastUpdate - RankRange / 2);
     }
 
+    @SideOnly(Side.CLIENT)
     @ForgeSubscribe
     public void ClientChatReceivedEvent(ClientChatReceivedEvent e){
         String text = ChatMessageComponent.createFromJson(e.message).toStringWithFormatting(true);
