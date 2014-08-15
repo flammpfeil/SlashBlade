@@ -225,7 +225,7 @@ public class SlashBlade implements IFuelHandler{
                 .setCreativeTab(tab);
         GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
 
-		bladeSilverBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(itemidSilverBamboo, EnumToolMaterial.WOOD, 4 + EnumToolMaterial.IRON.getDamageVsEntity()))
+		bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(itemidSilverBamboo, EnumToolMaterial.WOOD, 4 + EnumToolMaterial.IRON.getDamageVsEntity()))
 				.setDestructable(true)
 				.setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/silverbanboo.png"))
 				.setRepairMaterialOreDic("bamboo")
