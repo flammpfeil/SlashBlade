@@ -67,7 +67,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
         }
     }
 
-    public boolean hasWrapedItem(ItemStack par1ItemStack){
+    public static boolean hasWrapedItem(ItemStack par1ItemStack){
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         return tag.hasKey(WrapItemStr);
     }

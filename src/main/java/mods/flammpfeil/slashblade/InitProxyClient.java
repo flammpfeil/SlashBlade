@@ -4,6 +4,8 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
+import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
@@ -34,6 +36,8 @@ public class InitProxyClient extends InitProxy{
         RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSword.class, new RenderPhantomSword());
         RenderingRegistry.registerEntityRenderingHandler(EntityDirectAttackDummy.class, rd);
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityBladeStand.class, new BladeStandRender());
 
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override

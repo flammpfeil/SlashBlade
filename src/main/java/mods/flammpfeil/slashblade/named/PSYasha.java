@@ -37,6 +37,8 @@ public class PSYasha {
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("TwilightForest.Minoshroom", 0.5f, GameRegistry.findItemStack(SlashBlade.modid, name, 1));
+        ItemStack stack = GameRegistry.findItemStack(SlashBlade.modid, name, 1);
+        DropEventHandler.registerEntityDrop("TwilightForest.Minotaur"  , 0.05f, stack);
+        DropEventHandler.registerEntityDrop("TwilightForest.Minoshroom", 0.2f , stack);
     }
 }

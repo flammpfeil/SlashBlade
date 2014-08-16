@@ -4,6 +4,7 @@ import com.google.common.collect.*;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -24,12 +25,12 @@ public class DropEventHandler {
 
     public static Set<String> registerdEntityNames = Sets.newHashSet();
 
-    public static Map<String,Map<Float,ItemStack>> dropData = Maps.newHashMap();
+    public static Map<String,Multimap<Float,ItemStack>> dropData = Maps.newHashMap();
 
     public static void registerEntityDrop(String entityName,float rate, ItemStack item){
-        Map<Float,ItemStack> drops = null;
+        Multimap<Float,ItemStack> drops = null;
         if(!dropData.containsKey(entityName)){
-            drops = Maps.newHashMap();
+            drops = HashMultimap.create();
             dropData.put(entityName,drops);
         }else{
             drops = dropData.get(entityName);
@@ -44,16 +45,34 @@ public class DropEventHandler {
         if(dropData.containsKey(key)){
             Random rand = event.entityLiving.getRNG();
 
-            Map<Float,ItemStack> drops = dropData.get(key);
+            Multimap<Float,ItemStack> drops = dropData.get(key);
 
-            for(Map.Entry<Float,ItemStack> drop : drops.entrySet()){
-                if(drop.getKey() > rand.nextFloat() && drop.getValue() != null){
+            for(Map.Entry<Float,ItemStack> drop : drops.entries()){
+
+                boolean isDrop = false;
+
+                isDrop = drop.getKey() * (1.0f + 0.5f * event.lootingLevel) > rand.nextFloat();
+
+                if(isDrop && drop.getValue() != null){
                     ItemStack dropitem = drop.getValue().copy();
 
-                    dropitem.stackSize = Math.max(1,(int)Math.round((float)dropitem.stackSize * rand.nextFloat()));
+                    dropitem.stackSize =
+                            Math.max(
+                                dropitem.getMaxStackSize(),
+                                Math.max(1,
+                                        (int)Math.round((float)dropitem.stackSize * rand.nextFloat())));
 
-                    if(dropitem.stackSize != 0)
-                        event.entityLiving.entityDropItem(dropitem,1);
+                    if(dropitem.getItem() instanceof ItemSlashBlade){
+                        EntityBladeStand e = new EntityBladeStand(event.entityLiving.worldObj
+                                ,event.entityLiving.posX
+                                ,event.entityLiving.posY
+                                ,event.entityLiving.posZ
+                                ,dropitem);
+                        event.entityLiving.worldObj.spawnEntityInWorld(e);
+                    }else{
+                        if(dropitem.stackSize != 0)
+                            event.entityLiving.entityDropItem(dropitem,1);
+                    }
                 }
             }
         }

@@ -38,6 +38,6 @@ public class PSSange {
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("WitherBoss", 0.7f, GameRegistry.findItemStack(SlashBlade.modid, name, 1));
+        DropEventHandler.registerEntityDrop("WitherBoss", 0.3f, GameRegistry.findItemStack(SlashBlade.modid, name, 1));
     }
 }
