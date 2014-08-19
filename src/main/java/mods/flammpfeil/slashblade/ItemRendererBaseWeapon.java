@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.EntityLivingBase;
@@ -155,7 +156,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             case EQUIPPED_FIRST_PERSON:
             {
                 if(!types.contains(SwordType.NoScabbard)){
+                    GL11.glPushMatrix();
                     engine().bindTexture(resourceTexture);
+                    GL11.glLoadIdentity();
+                    if (EntityRenderer.anaglyphEnable)
+                    {
+                        GL11.glTranslatef((float)(EntityRenderer.anaglyphField * 2 - 1) * 0.1F, 0.0F, 0.0F);
+                    }
+                    /*
                     GL11.glPopMatrix();
                     GL11.glPopMatrix();
                     GL11.glPopMatrix();
@@ -164,6 +172,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                     GL11.glPushMatrix();
                     GL11.glPushMatrix();
                     GL11.glPushMatrix();
+                    */
 
                     GL11.glTranslatef(-0.35F,-0.1f,-0.8f);
                     //GL11.glRotatef(-10.0F, 0.0F, 0.0F, 1.0F);
@@ -173,6 +182,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                     float partialRenderTick = ticks;
                     EntityPlayer player = (EntityPlayer)data[1];
                     render(player, partialRenderTick,false);
+                    GL11.glPopMatrix();
                     return;
                 }
             }
