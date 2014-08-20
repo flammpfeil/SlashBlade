@@ -2,11 +2,11 @@
 <metadata>
   <groupId>flammpfeil.slashblade</groupId>
   <artifactId>SlashBlade</artifactId>
-  <version>mc1.7.10 r20</version>
+  <version>mc1.7.10-r20</version>
   <versioning>
     <versions>
-      <version>mc1.7.10 r20</version>
+      <version>mc1.7.10-r20</version>
     </versions>
-    <lastUpdated>20140820143903</lastUpdated>
+    <lastUpdated>20140820145556</lastUpdated>
   </versioning>
 </metadata>
