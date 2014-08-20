@@ -16,6 +16,7 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: 'maven'
 
 version = "mc1.7.10 r20"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -60,5 +61,31 @@ jar {
     manifest {
         attributes 'FMLCorePlugin': 'mods.flammpfeil.slashblade.asm.CorePlugin'
         attributes 'FMLCorePluginContainsFMLMod': true
+    }
+}
+
+
+task sourceZip(type: Zip) {
+    from sourceSets.main.allSource
+    classifier = 'src'
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+artifacts {
+    archives sourceZip
+    archives deobfJar
+}
+
+mavenRepository = '/maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri(mavenRepository))
+        }
     }
 }

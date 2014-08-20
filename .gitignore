@@ -5,6 +5,7 @@
 *.war
 *.ear
 
+maven
 nopublish
 .gradle
 build
