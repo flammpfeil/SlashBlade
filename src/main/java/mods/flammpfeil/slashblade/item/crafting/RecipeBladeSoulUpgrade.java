@@ -48,7 +48,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
                 }
             }
 
-            result = all.size() == 1;
+            result = all.size() == 1 || all.size() == 0;
             if(result){
                 for(Map.Entry<Integer,Integer> entry : all.entrySet()){
                     result = entry.getValue() == soulCount;
