@@ -14,6 +14,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
@@ -298,14 +299,18 @@ public class SlashBlade implements IFuelHandler{
         GameRegistry.addRecipe(new ShapelessOreRecipe(GameRegistry.findItemStack(modid,TinyBladeSoulStr,2),
                 itemProudSoul));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
+        GameRegistry.addRecipe(new RecipeBladeSoulUpgrade(itemProudSoul,
+                "XX",
+                'X', itemTinyBladeSoul));
+
+        GameRegistry.addRecipe(new RecipeBladeSoulUpgrade(itemIngotBladeSoul,
                 "PPP",
                 "PIP",
                 "PPP",
                 'I', Items.iron_ingot,
                 'P', itemProudSoul));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(itemIngotBladeSoul,
+        GameRegistry.addRecipe(new RecipeBladeSoulUpgrade(itemIngotBladeSoul,
                 " P ",
                 "PIP",
                 " P ",

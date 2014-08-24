@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -81,6 +82,13 @@ public class ItemSWaeponMaterial extends Item {
 		par3List.add(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1));
         par3List.add(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1));
         par3List.add(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr, 1));
+
+        ItemStack tiny = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr, 1);
+        for(Enchantment ench : EnchantHelper.rare){
+            ItemStack stack = tiny.copy();
+            stack.addEnchantment(ench,1);
+            par3List.add(stack);
+        }
 	}
 
     @Override
@@ -124,9 +132,6 @@ public class ItemSWaeponMaterial extends Item {
                 }
 
                 if(player.getRNG().nextFloat() < rate){
-
-
-
                     ItemStack blade = stand.getBlade();
                     Map<Integer,Integer> bladeEnchMap = EnchantmentHelper.getEnchantments(blade);
 
