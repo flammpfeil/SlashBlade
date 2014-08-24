@@ -16,6 +16,7 @@ import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
+import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -796,6 +797,8 @@ public class SlashBlade implements IFuelHandler{
         }
 
         InitEventBus.post(new LoadEvent.PostInitEvent(evt));
+
+        EnchantHelper.initEnchantmentList();
     }
 
 
