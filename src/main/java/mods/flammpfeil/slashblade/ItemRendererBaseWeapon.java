@@ -216,6 +216,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTarget = "item_bladens";
             }
 
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             model.renderPart(renderTarget);
 
 
@@ -288,6 +290,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTargets = new String[]{"sheath", "blade"};
             }
 
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             model.renderOnly(renderTargets);
 
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -485,6 +489,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 float scaleLocal = 0.095f;
                 GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
                 GL11.glRotatef(-90.0f, 0, 0, 1);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 engine().bindTexture(resourceTexture);
                 model.renderPart(renderTarget);
 
@@ -541,6 +547,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glRotatef(-90.0f, 0, 0, 1);
                 engine().bindTexture(resourceTexture);
 
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 renderTarget = "sheath";
                 model.renderPart(renderTarget);
 
@@ -805,6 +813,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
             engine().bindTexture(resourceTexture);
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             model.renderPart(renderTarget);
 
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -894,7 +905,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             engine().bindTexture(resourceTexture);
 
             renderTarget = "sheath";
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             model.renderPart(renderTarget);
+
 
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glDisable(GL11.GL_LIGHTING);
