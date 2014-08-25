@@ -3,10 +3,13 @@ package mods.flammpfeil.slashblade.ability;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
@@ -40,12 +43,12 @@ public class JustGuard {
     @SubscribeEvent
     public void LivingHurtEvent(LivingHurtEvent e){
         String type = e.source.getDamageType();
-        if(!type.equals("anvil")
-           && !type.equals("fallingBlock")
-           && !type.equals("magic")
-           && e.source.getEntity() == null){
-            return;
-        }
+
+        if(e.isCanceled()) return;
+        if(e.entity == null) return;
+        if(!(e.entity instanceof EntityPlayer)) return;
+        if(e.entityLiving.getActivePotionEffect(Potion.wither) != null && e.source.getDamageType() == "wither") return;
+        if(e.entityLiving.getActivePotionEffect(Potion.poison) != null && e.source.getDamageType() == "magic") return;
 
         EntityLivingBase el = e.entityLiving;
 
@@ -58,6 +61,10 @@ public class JustGuard {
                 NBTTagCompound tag = stack.getTagCompound();
 
                 el.setArrowCountInEntity(-1);
+
+                int fireProtection = EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId,stack);
+                if(0<fireProtection)
+                    el.setFire(0);
 
                 el.setJumping(true);
                 el.motionX = 0;

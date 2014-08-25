@@ -226,10 +226,9 @@ public class StylishRankManager {
         String type = e.source.getDamageType();
         if(e.isCanceled()) return;
         if(e.entity == null) return;
-        if(e.entity instanceof EntityPlayer) return;
-        if(e.source.getDamageType() == "wither") return;
-        if(e.entityLiving.getActivePotionEffect(Potion.poison) != null && e.source.getDamageType() == "magic")
-            return;
+        if(!(e.entity instanceof EntityPlayer)) return;
+        if(e.entityLiving.getActivePotionEffect(Potion.wither) != null && e.source.getDamageType() == "wither") return;
+        if(e.entityLiving.getActivePotionEffect(Potion.poison) != null && e.source.getDamageType() == "magic") return;
         NBTTagCompound tag = getTag(e.entity);
 
         Long lastUpdate = LastRankPointUpdate.get(tag);
