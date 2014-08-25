@@ -229,6 +229,7 @@ public class StylishRankManager {
         if(!(e.entity instanceof EntityPlayer)) return;
         if(e.entityLiving.getActivePotionEffect(Potion.wither) != null && e.source.getDamageType() == "wither") return;
         if(e.entityLiving.getActivePotionEffect(Potion.poison) != null && e.source.getDamageType() == "magic") return;
+        if(e.source.getDamageType() == "onFire") return;
         NBTTagCompound tag = getTag(e.entity);
 
         Long lastUpdate = LastRankPointUpdate.get(tag);

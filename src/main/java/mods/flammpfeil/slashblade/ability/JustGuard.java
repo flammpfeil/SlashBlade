@@ -55,6 +55,9 @@ public class JustGuard {
         ItemStack stack = e.entityLiving.getHeldItem();
         if(el instanceof  EntityPlayer && ((EntityPlayer)el).isUsingItem() && stack != null && stack.getItem() instanceof ItemSlashBlade){
 
+            int fireProtection = EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId,stack);
+            if(fireProtection == 0 && e.source.getDamageType() == "onFire") return;
+
             long cs = ChargeStart.get(el.getEntityData());
             if(0 < cs && el.worldObj.getTotalWorldTime() - cs < activeTicks){
                     e.setCanceled(true);
@@ -62,7 +65,6 @@ public class JustGuard {
 
                 el.setArrowCountInEntity(-1);
 
-                int fireProtection = EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId,stack);
                 if(0<fireProtection)
                     el.setFire(0);
 
