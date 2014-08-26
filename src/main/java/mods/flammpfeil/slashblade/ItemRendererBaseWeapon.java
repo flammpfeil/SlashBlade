@@ -218,6 +218,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderPart(renderTarget);
 
 
@@ -292,6 +293,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderOnly(renderTargets);
 
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -491,6 +493,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glRotatef(-90.0f, 0, 0, 1);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
                 engine().bindTexture(resourceTexture);
                 model.renderPart(renderTarget);
 
@@ -549,6 +552,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glColor3f(1.0F, 1.0F, 1.0F);
                 renderTarget = "sheath";
                 model.renderPart(renderTarget);
 
@@ -816,6 +820,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderPart(renderTarget);
 
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -908,6 +913,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderPart(renderTarget);
 
 
