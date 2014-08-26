@@ -197,7 +197,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
             GL11.glEnable(GL11.GL_BLEND);
-            OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GL11.glDisable(GL11.GL_CULL_FACE);
 
             GL11.glColor4f(1, 1, 1, 1.0F);
@@ -216,17 +216,13 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTarget = "item_bladens";
             }
 
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderPart(renderTarget);
 
 
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             model.renderPart(renderTarget + "_luminous");
-            GL11.glPopAttrib();
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             GL11.glDisable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_LIGHTING);
@@ -291,19 +287,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 renderTargets = new String[]{"sheath", "blade"};
             }
 
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderOnly(renderTargets);
 
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             for(String renderTarget : renderTargets)
                 model.renderPart(renderTarget + "_luminous");
             GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glPopAttrib();
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         }
 
     }
@@ -491,19 +483,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 float scaleLocal = 0.095f;
                 GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
                 GL11.glRotatef(-90.0f, 0, 0, 1);
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glColor3f(1.0F, 1.0F, 1.0F);
                 engine().bindTexture(resourceTexture);
                 model.renderPart(renderTarget);
 
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                 model.renderPart(renderTarget + "_luminous");
                 GL11.glEnable(GL11.GL_LIGHTING);
-                GL11.glPopAttrib();
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 if (item.hasEffect(0))
                 {
@@ -549,20 +537,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
                 GL11.glRotatef(-90.0f, 0, 0, 1);
                 engine().bindTexture(resourceTexture);
-
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GL11.glColor3f(1.0F, 1.0F, 1.0F);
                 renderTarget = "sheath";
                 model.renderPart(renderTarget);
 
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                 model.renderPart(renderTarget + "_luminous");
                 GL11.glEnable(GL11.GL_LIGHTING);
-                GL11.glPopAttrib();
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 if (item.hasEffect(0))
                 {
@@ -701,7 +684,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         {
             GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
@@ -817,19 +800,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
             engine().bindTexture(resourceTexture);
-
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderPart(renderTarget);
 
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             model.renderPart(renderTarget + "_luminous");
             GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glPopAttrib();
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             if (item.hasEffect(0))
             {
@@ -910,20 +888,14 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             engine().bindTexture(resourceTexture);
 
             renderTarget = "sheath";
-
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glColor3f(1.0F, 1.0F, 1.0F);
             model.renderPart(renderTarget);
 
-
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             model.renderPart(renderTarget + "_luminous");
             GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glPopAttrib();
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             if (item.hasEffect(0))
             {
