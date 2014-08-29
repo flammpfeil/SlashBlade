@@ -47,8 +47,6 @@ public class JustGuard {
         if(e.isCanceled()) return;
         if(e.entity == null) return;
         if(!(e.entity instanceof EntityPlayer)) return;
-        if(e.entityLiving.getActivePotionEffect(Potion.wither) != null && e.source.getDamageType() == "wither") return;
-        if(e.entityLiving.getActivePotionEffect(Potion.poison) != null && e.source.getDamageType() == "magic") return;
 
         EntityLivingBase el = e.entityLiving;
 
@@ -56,7 +54,16 @@ public class JustGuard {
         if(el instanceof  EntityPlayer && ((EntityPlayer)el).isUsingItem() && stack != null && stack.getItem() instanceof ItemSlashBlade){
 
             int fireProtection = EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId,stack);
-            if(fireProtection == 0 && e.source.getDamageType() == "onFire") return;
+
+            //mobからの攻撃は常にguard可能
+            boolean guardable = e.source.getEntity() != null;
+            {
+                //特殊guard機能
+                if(!guardable && 0 < fireProtection && e.source.getDamageType() == "onFire")
+                    guardable = true;
+            }
+            //特殊guardも通常guard不可なものはguard不可
+            if(!guardable && e.source.isUnblockable()) return;
 
             long cs = ChargeStart.get(el.getEntityData());
             if(0 < cs && el.worldObj.getTotalWorldTime() - cs < activeTicks){
