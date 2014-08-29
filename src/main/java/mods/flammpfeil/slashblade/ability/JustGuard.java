@@ -75,7 +75,6 @@ public class JustGuard {
                 if(0<fireProtection)
                     el.setFire(0);
 
-                el.setJumping(true);
                 el.motionX = 0;
                 el.motionY = 0;
                 el.motionZ = 0;

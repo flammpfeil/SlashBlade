@@ -209,6 +209,7 @@ public class StylishRankManager {
     }
 
     public static final String MessageHeader = "///RankUpdate ";
+    public static final String MessageHurt = "///RankUpdateHurt";
 
     public static void onRiseInRank(Entity e, int rank,int rankPoint){
         if(e == null) return;
@@ -218,6 +219,13 @@ public class StylishRankManager {
         if(e instanceof EntityPlayer){
             //((EntityPlayer)e).addChatMessage(new ChatComponentText(getRankText(rank) + ":" + rankPoint + ":" + AttackType.get(tag)));
             ((EntityPlayer)e).addChatMessage(new ChatComponentText(MessageHeader + rankPoint));
+        }
+    }
+
+    public static void onHurtChangeRank(Entity e){
+        if(e == null) return;
+        if(e instanceof EntityPlayer){
+            ((EntityPlayer)e).addChatMessage(new ChatComponentText(MessageHurt));
         }
     }
 
@@ -236,6 +244,7 @@ public class StylishRankManager {
         Long lastUpdate = LastRankPointUpdate.get(tag);
 
         LastRankPointUpdate.set(tag,lastUpdate - RankRange / 2);
+        onHurtChangeRank(e.entity);
     }
 
     @SideOnly(Side.CLIENT)
@@ -259,6 +268,14 @@ public class StylishRankManager {
 
             //Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("receive :" + rankPoint + ":" + e.message.getUnformattedText()));
 
+            e.setCanceled(true);
+        }else if(text.startsWith(MessageHurt)){
+            Entity el = net.minecraft.client.Minecraft.getMinecraft().thePlayer;
+            NBTTagCompound tag = getTag(el);
+
+            Long lastUpdate = LastRankPointUpdate.get(tag);
+
+            LastRankPointUpdate.set(tag, lastUpdate - RankRange / 2); 
             e.setCanceled(true);
         }
     }
