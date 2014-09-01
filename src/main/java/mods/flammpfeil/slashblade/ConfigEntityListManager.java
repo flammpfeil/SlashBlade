@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +68,10 @@ public class ConfigEntityListManager {
 					Entity instance = null;
 
 					try{
-                        instance = (Entity)cls.getConstructor(World.class).newInstance((Object)null);
+                        Constructor<Entity> constructor = cls.getConstructor(World.class);
+                        if(constructor != null){
+                            instance = constructor.newInstance((Object)event.world);
+                        }
 					}catch(Throwable e){
 						instance = null;
 					}
