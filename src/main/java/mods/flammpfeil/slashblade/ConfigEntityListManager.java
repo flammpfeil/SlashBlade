@@ -67,7 +67,7 @@ public class ConfigEntityListManager {
 					Entity instance = null;
 
 					try{
-                        instance = (Entity)cls.getConstructor(World.class).newInstance(null);
+                        instance = (Entity)cls.getConstructor(World.class).newInstance((Object)null);
 					}catch(Throwable e){
 						instance = null;
 					}
