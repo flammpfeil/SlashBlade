@@ -15,6 +15,7 @@ import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -66,7 +67,7 @@ public class ConfigEntityListManager {
 					Entity instance = null;
 
 					try{
-						instance = EntityList.createEntityByName(name, event.world);
+                        instance = (Entity)cls.getConstructor(World.class).newInstance(null);
 					}catch(Throwable e){
 						instance = null;
 					}
