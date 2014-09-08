@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
@@ -46,6 +47,7 @@ public class BladeStandRender extends Render{
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         float scale = 0.00675f;
         //=================stand init==========
@@ -89,6 +91,7 @@ public class BladeStandRender extends Render{
         ItemStack blade = e.getBlade();
         if(blade != null){
             GL11.glPushMatrix();
+            GL11.glShadeModel(GL11.GL_SMOOTH);
 
             Item item = blade.getItem();
 
@@ -185,13 +188,12 @@ public class BladeStandRender extends Render{
 
                 model.renderPart(renderTarget);
 
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                 model.renderPart(renderTarget + "_luminous");
                 GL11.glEnable(GL11.GL_LIGHTING);
-                GL11.glPopAttrib();
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 GL11.glPopMatrix();
             }
@@ -251,17 +253,17 @@ public class BladeStandRender extends Render{
                 String renderTarget = "sheath";
                 model.renderPart(renderTarget);
 
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                 model.renderPart(renderTarget + "_luminous");
                 GL11.glEnable(GL11.GL_LIGHTING);
-                GL11.glPopAttrib();
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 GL11.glPopMatrix();
             }
 
+            GL11.glShadeModel(GL11.GL_FLAT);
             GL11.glPopMatrix();
         }
 

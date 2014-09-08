@@ -5,6 +5,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
+import mods.flammpfeil.slashblade.client.model.obj.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -20,6 +21,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
+import net.minecraftforge.client.model.obj.WavefrontObject;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumSet;
@@ -39,8 +41,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
     static ResourceLocation resourceModel = new ResourceLocation("flammpfeil.slashblade","model/blade.obj");
 
     public ItemRendererBaseWeapon(){
-        if(modelBlade == null)
+        if(modelBlade == null){
             modelBlade = AdvancedModelLoader.loadModel(resourceModel);
+            if(modelBlade instanceof WavefrontObject){
+                Util.replaceFace((WavefrontObject)modelBlade);
+            }
+        }
     }
 
     static public Map<ResourceLocation,IModelCustom> models= Maps.newHashMap();
@@ -53,6 +59,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 result = AdvancedModelLoader.loadModel(loc);
             }catch(ModelFormatException e){
                 result = null;
+            }
+
+            if(result instanceof WavefrontObject){
+                Util.replaceFace((WavefrontObject)result);
             }
 
             models.put(loc,result);
@@ -233,7 +243,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             if (item.hasEffect(0))
             {
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glDepthFunc(GL11.GL_EQUAL);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 engine().bindTexture(RES_ITEM_GLINT);
@@ -258,10 +267,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glColor4f(1, 1, 1, 1.0F);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 GL11.glEnable(GL11.GL_LIGHTING);
                 GL11.glDepthFunc(GL11.GL_LEQUAL);
-                GL11.glPopAttrib();
             }
 
         }
@@ -401,6 +410,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
         GL11.glPushMatrix();
         {
+            GL11.glShadeModel(GL11.GL_SMOOTH);
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
             //体格補正 configより
@@ -495,7 +505,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
                 if (item.hasEffect(0))
                 {
-                    GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
                     GL11.glDepthFunc(GL11.GL_EQUAL);
                     GL11.glDisable(GL11.GL_LIGHTING);
                     engine().bindTexture(RES_ITEM_GLINT);
@@ -520,10 +530,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                     model.renderPart(renderTarget);
                     GL11.glPopMatrix();
                     GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                    GL11.glDisable(GL11.GL_BLEND);
+                    GL11.glColor4f(1, 1, 1, 1.0F);
+                    OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                     GL11.glEnable(GL11.GL_LIGHTING);
                     GL11.glDepthFunc(GL11.GL_LEQUAL);
-                    GL11.glPopAttrib();
                 }
 
             }GL11.glPopMatrix();
@@ -549,7 +559,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
                 if (item.hasEffect(0))
                 {
-                    GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                     GL11.glDepthFunc(GL11.GL_EQUAL);
                     GL11.glDisable(GL11.GL_LIGHTING);
                     engine().bindTexture(RES_ITEM_GLINT);
@@ -574,14 +583,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                     model.renderPart(renderTarget);
                     GL11.glPopMatrix();
                     GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                    GL11.glDisable(GL11.GL_BLEND);
+                    GL11.glColor4f(1, 1, 1, 1.0F);
+                    OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                     GL11.glEnable(GL11.GL_LIGHTING);
                     GL11.glDepthFunc(GL11.GL_LEQUAL);
-                    GL11.glPopAttrib();
                 }
 
                 GL11.glPopMatrix();
             }
+            GL11.glShadeModel(GL11.GL_FLAT);
         }GL11.glPopMatrix();
     }
 
@@ -683,6 +693,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         {
+            GL11.glShadeModel(GL11.GL_SMOOTH);
             GL11.glEnable(GL11.GL_BLEND);
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
@@ -811,7 +822,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             if (item.hasEffect(0))
             {
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glDepthFunc(GL11.GL_EQUAL);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 engine().bindTexture(RES_ITEM_GLINT);
@@ -836,10 +846,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glColor4f(1, 1, 1, 1.0F);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 GL11.glEnable(GL11.GL_LIGHTING);
                 GL11.glDepthFunc(GL11.GL_LEQUAL);
-                GL11.glPopAttrib();
             }
 
 			}GL11.glPopMatrix();
@@ -899,7 +909,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             if (item.hasEffect(0))
             {
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
                 GL11.glDepthFunc(GL11.GL_EQUAL);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 engine().bindTexture(RES_ITEM_GLINT);
@@ -924,17 +934,16 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 model.renderPart(renderTarget);
                 GL11.glPopMatrix();
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glColor4f(1, 1, 1, 1.0F);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 GL11.glEnable(GL11.GL_LIGHTING);
                 GL11.glDepthFunc(GL11.GL_LEQUAL);
-                GL11.glPopAttrib();
             }
 
 				GL11.glPopMatrix();
 
 				if(!isBroken && isEnchanted && (ItemSlashBlade.RequiredChargeTick < charge || combo.isCharged)){
 					GL11.glPushMatrix();
-						GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
 						GL11.glPushMatrix();
 
@@ -983,15 +992,16 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		                GL11.glLoadIdentity();
 		                GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		                GL11.glEnable(GL11.GL_LIGHTING);
-		                GL11.glDisable(GL11.GL_BLEND);
+                        GL11.glColor4f(1, 1, 1, 1.0F);
+                        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-						GL11.glPopAttrib();
 
 					GL11.glPopMatrix();
 				}
 			}GL11.glPopMatrix();
 
 			//-----------------------------------------------------------------------------------------------------------------------
+            GL11.glShadeModel(GL11.GL_FLAT);
 		}
         GL11.glPopAttrib();
         GL11.glPopMatrix();
