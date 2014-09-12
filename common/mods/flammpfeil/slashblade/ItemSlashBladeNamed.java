@@ -47,7 +47,6 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
         return result;
     }
 
-
     @Override
     public int getMaxDamage(ItemStack stack) {
         NBTTagCompound tag = this.getItemTagCompound(stack);

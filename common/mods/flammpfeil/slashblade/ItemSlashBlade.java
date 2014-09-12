@@ -16,6 +16,7 @@ import mods.flammpfeil.slashblade.specialattack.SlashDimension;
 import mods.flammpfeil.slashblade.specialattack.Spear;
 import mods.flammpfeil.slashblade.specialattack.SpecialAttackBase;
 import mods.flammpfeil.slashblade.specialattack.WaveEdge;
+import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.command.IEntitySelector;
@@ -293,6 +294,26 @@ public class ItemSlashBlade extends ItemSword {
             ProudSoul.set(tag, proudSouls);
             entity.entityDropItem(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, count), 0.0F);
 
+            if(stack.isItemEnchanted() && entity instanceof EntityLivingBase){
+
+                ItemStack tinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
+                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId,stack);
+
+                Random rand = ((EntityLivingBase)entity).getRNG();
+
+                boolean isRare = false;
+                for(int loop = 0;loop < unbreakingLevel; loop++){
+                    isRare = rand.nextFloat() < 0.1;
+                    if(isRare) break;
+                }
+
+                if(isRare)
+                    tinySoul.addEnchantment(EnchantHelper.getEnchantmentRare(rand),1);
+                else
+                    tinySoul.addEnchantment(EnchantHelper.getEnchantmentNormal(rand),1);
+
+                entity.entityDropItem(tinySoul, 0.0F);
+            }
         }
     }
 

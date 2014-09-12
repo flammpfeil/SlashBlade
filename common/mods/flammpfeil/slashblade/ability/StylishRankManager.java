@@ -212,6 +212,7 @@ public class StylishRankManager {
     }
 
     public static final String MessageHeader = "///RankUpdate ";
+    public static final String MessageHurt = "///RankUpdateHurt";
 
     public static void onRiseInRank(Entity e, int rank,int rankPoint){
         if(e == null) return;
@@ -224,20 +225,29 @@ public class StylishRankManager {
         }
     }
 
+    public static void onHurtChangeRank(Entity e){
+        if(e == null) return;
+        if(e instanceof EntityPlayer){
+            ((EntityPlayer)e).addChatMessage(MessageHurt);
+        }
+    }
+
     @ForgeSubscribe(priority = EventPriority.LOWEST)
     public void LivingHurtEvent(LivingHurtEvent e){
         String type = e.source.getDamageType();
         if(e.isCanceled()) return;
         if(e.entity == null) return;
-        if(e.entity instanceof EntityPlayer) return;
-        if(e.source.getDamageType() == "wither") return;
-        if(e.entityLiving.getActivePotionEffect(Potion.poison) != null && e.source.getDamageType() == "magic")
-            return;
+        if(!(e.entity instanceof EntityPlayer)) return;
+
+        //guard�s�ł��Amob����̍U���ł͂Ȃ�
+        if(e.source.isUnblockable() && e.source.getEntity() != null) return;
+
         NBTTagCompound tag = getTag(e.entity);
 
         Long lastUpdate = LastRankPointUpdate.get(tag);
 
         LastRankPointUpdate.set(tag,lastUpdate - RankRange / 2);
+        onHurtChangeRank(e.entity);
     }
 
     @SideOnly(Side.CLIENT)
@@ -261,6 +271,14 @@ public class StylishRankManager {
 
             //Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("receive :" + rankPoint + ":" + e.message.getUnformattedText()));
 
+            e.setCanceled(true);
+        }else if(text.startsWith(MessageHurt)){
+            Entity el = net.minecraft.client.Minecraft.getMinecraft().thePlayer;
+            NBTTagCompound tag = getTag(el);
+
+            Long lastUpdate = LastRankPointUpdate.get(tag);
+
+            LastRankPointUpdate.set(tag, lastUpdate - RankRange / 2);
             e.setCanceled(true);
         }
     }

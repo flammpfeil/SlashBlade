@@ -9,6 +9,8 @@ import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
+import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
@@ -37,6 +39,9 @@ public class InitProxyClient extends InitProxy{
         RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSword.class, new RenderPhantomSword());
         RenderingRegistry.registerEntityRenderingHandler(EntityDirectAttackDummy.class, rd);
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityBladeStand.class, new BladeStandRender());
+
         KeyBinding[] array = new KeyBinding[]{Minecraft.getMinecraft().gameSettings.keyBindPickBlock};
         boolean[] repeat = new boolean[]{false};
 

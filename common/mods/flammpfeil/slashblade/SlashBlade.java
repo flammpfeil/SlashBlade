@@ -9,10 +9,13 @@ import javax.imageio.spi.RegisterableService;
 
 import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.named.Fox;
 import mods.flammpfeil.slashblade.named.PSSange;
+import mods.flammpfeil.slashblade.named.PSYasha;
 import mods.flammpfeil.slashblade.named.Tizuru;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
+import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -785,10 +788,15 @@ public class SlashBlade implements IFuelHandler{
         TickRegistry.registerTickHandler(manager, Side.SERVER);
 
         InitEventBus.register(new PSSange());
+        InitEventBus.register(new PSYasha());
         InitEventBus.register(new Fox());
         InitEventBus.register(new Tizuru());
         EntityRegistry.registerModEntity(EntityDrive.class, "Drive", 1, this, 250, 1, true);
         EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", 2, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityDirectAttackDummy.class, "DirectAttackDummy", 3, this, 250, 1, true);
+
+
+        EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", 100, this, 250, 1000, false);
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
@@ -836,6 +844,8 @@ public class SlashBlade implements IFuelHandler{
         }
 
         InitEventBus.post(new LoadEvent.PostInitEvent(evt));
+
+        EnchantHelper.initEnchantmentList();
     }
 
 

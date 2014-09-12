@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.DropEventHandler;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
@@ -11,13 +11,12 @@ import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.ForgeSubscribe;
 
 /**
  * Created by Furia on 14/07/07.
  */
-public class PSSange {
-    String name = "flammpfeil.slashblade.named.sange";
+public class PSYasha {
+    String name = "flammpfeil.slashblade.named.yasha";
     @ForgeSubscribe
     public void init(LoadEvent.InitEvent event){
         ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
@@ -27,9 +26,9 @@ public class PSSange {
         ItemSlashBladeNamed.CurrentItemName.set(tag, name);
         ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
         ItemSlashBlade.setBaseAttackModifier(tag, 4 + EnumToolMaterial.IRON.getDamageVsEntity());
-        ItemSlashBlade.TextureName.set(tag, "named/sange/sange");
-        ItemSlashBlade.ModelName.set(tag, "named/sange/sange");
-        ItemSlashBlade.SpecialAttackType.set(tag, 4); //4:シュンカ一段
+        ItemSlashBlade.TextureName.set(tag, "named/yasha/yasha");
+        ItemSlashBlade.ModelName.set(tag, "named/yasha/yasha");
+        ItemSlashBlade.SpecialAttackType.set(tag, 4);
         ItemSlashBlade.StandbyRenderType.set(tag, 2);
         ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
@@ -39,6 +38,8 @@ public class PSSange {
 
     @ForgeSubscribe
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("WitherBoss", 0.3f, GameRegistry.findItemStack(SlashBlade.modid, name, 1));
+        ItemStack stack = GameRegistry.findItemStack(SlashBlade.modid, name, 1);
+        DropEventHandler.registerEntityDrop("TwilightForest.Minotaur"  , 0.05f, stack);
+        DropEventHandler.registerEntityDrop("TwilightForest.Minoshroom", 0.2f , stack);
     }
 }

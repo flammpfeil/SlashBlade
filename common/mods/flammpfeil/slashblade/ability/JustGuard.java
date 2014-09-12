@@ -2,6 +2,8 @@ package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -40,17 +42,27 @@ public class JustGuard {
     @ForgeSubscribe
     public void LivingHurtEvent(LivingHurtEvent e){
         String type = e.source.getDamageType();
-        if(!type.equals("anvil")
-           && !type.equals("fallingBlock")
-           && !type.equals("magic")
-           && e.source.getEntity() == null){
-            return;
-        }
+
+        if(e.isCanceled()) return;
+        if(e.entity == null) return;
+        if(!(e.entity instanceof EntityPlayer)) return;
 
         EntityLivingBase el = e.entityLiving;
 
         ItemStack stack = e.entityLiving.getHeldItem();
         if(el instanceof  EntityPlayer && ((EntityPlayer)el).isUsingItem() && stack != null && stack.getItem() instanceof ItemSlashBlade){
+
+            int fireProtection = EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId,stack);
+
+            //mobからの攻撃は常にguard可能
+            boolean guardable = e.source.getEntity() != null;
+            {
+                //特殊guard機能
+                if(!guardable && 0 < fireProtection && e.source.getDamageType() == "onFire")
+                    guardable = true;
+            }
+            //特殊guardも通常guard不可なものはguard不可
+            if(!guardable && e.source.isUnblockable()) return;
 
             long cs = ChargeStart.get(el.getEntityData());
             if(0 < cs && el.worldObj.getTotalWorldTime() - cs < activeTicks){
@@ -59,7 +71,9 @@ public class JustGuard {
 
                 el.setArrowCountInEntity(-1);
 
-                el.setJumping(true);
+                if(0<fireProtection)
+                    el.setFire(0);
+
                 el.motionX = 0;
                 el.motionY = 0;
                 el.motionZ = 0;

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -65,7 +66,10 @@ public class ConfigEntityListManager implements ITickHandler{
 					Entity instance = null;
 
 					try{
-						instance = EntityList.createEntityByName(name, (World)tickData[0]);
+                        Constructor<Entity> constructor = cls.getConstructor(World.class);
+                        if(constructor != null){
+                            instance = constructor.newInstance((Object)tickData[0]);
+                        }
 					}catch(Throwable e){
 						instance = null;
 					}
