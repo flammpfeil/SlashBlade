@@ -4,11 +4,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.client.model.obj.Face;
+import org.lwjgl.opengl.GL11;
 
 /**
  * Created by Furia on 14/09/08.
  */
 public class FaceEx extends Face {
+
+    public static boolean isSmoothShade = true;
 
     boolean hasVertexNormals = false;
 
@@ -26,7 +29,7 @@ public class FaceEx extends Face {
     @SideOnly(Side.CLIENT)
     public void addFaceForRender(Tessellator tessellator, float textureOffset)
     {
-        if(!hasVertexNormals)
+        if(!isSmoothShade || !hasVertexNormals)
             super.addFaceForRender(tessellator,textureOffset);
 
         float averageU = 0F;
