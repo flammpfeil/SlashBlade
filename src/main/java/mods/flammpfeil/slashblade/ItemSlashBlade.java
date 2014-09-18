@@ -162,6 +162,8 @@ public class ItemSlashBlade extends ItemSword {
     static public TagPropertyAccessor.TagPropertyFloat AttackAmplifier = new TagPropertyAccessor.TagPropertyFloat("AttackAmplifier");
     static public TagPropertyAccessor.TagPropertyFloat BaseAttackModifier = new TagPropertyAccessor.TagPropertyFloat("baseAttackModifier");
 
+    static public TagPropertyAccessor.TagPropertyInteger PrevExp = new TagPropertyAccessor.TagPropertyInteger("prevExp");
+
     static public TagPropertyAccessor.TagPropertyIntegerWithRange ProudSoul = new TagPropertyAccessor.TagPropertyIntegerWithRange("ProudSoul",0,999999999);
     static public TagPropertyAccessor.TagPropertyIntegerWithRange KillCount = new TagPropertyAccessor.TagPropertyIntegerWithRange("killCount",0,999999999);
     static public TagPropertyAccessor.TagPropertyIntegerWithRange RepairCount = new TagPropertyAccessor.TagPropertyIntegerWithRange("RepairCounter",0,999999999);
@@ -908,19 +910,19 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
+        if(!par2World.isRemote && !isCurrent && PrevExp.exists(tag)){
+            PrevExp.remove(tag);
+        }
         if(!par2World.isRemote && isCurrent && par2World.getTotalWorldTime() % 20 == 0){
         	int nowExp = el.experienceTotal;
 
-        	final String prevExpStr = "prevExp";
+            int repair = 0;
 
-        	if(!tag.hasKey(prevExpStr)){
-        		tag.setInteger(prevExpStr, nowExp);
-        	}
-
-        	int prevExp = tag.getInteger(prevExpStr);
-
-        	int repair = nowExp - prevExp;
-
+            if(PrevExp.exists(tag)){
+                int prevExp = PrevExp.get(tag);
+                repair = nowExp - prevExp;
+            }
+            PrevExp.set(tag,nowExp);
 
         	if(0 < repair){
             	if(0 < curDamage && swordType.containsAll(SwordType.BewitchedSoulEater) && !swordType.contains(SwordType.NoScabbard)){
@@ -934,9 +936,6 @@ public class ItemSlashBlade extends ItemSword {
             	}
 
         	}
-
-            if(repair != 0)
-                tag.setInteger(prevExpStr, el.experienceTotal);
         }
 
 		if(!isCurrent && !par2World.isRemote){
