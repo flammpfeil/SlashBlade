@@ -1819,7 +1819,11 @@ public class ItemSlashBlade extends ItemSword {
     		for(String oreName : this.repairMaterialOreDic){
         		List<ItemStack> list = OreDictionary.getOres(oreName);
         		for(ItemStack curItem : list){
-        			result = curItem.isItemEqual(par2ItemStack);
+                    if(curItem.getItemDamage() == OreDictionary.WILDCARD_VALUE){
+                        result = curItem.getItem() == par2ItemStack.getItem();
+                    }else{
+                        result = curItem.isItemEqual(par2ItemStack);
+                    }
         			if(result)
         				break;
         		}
