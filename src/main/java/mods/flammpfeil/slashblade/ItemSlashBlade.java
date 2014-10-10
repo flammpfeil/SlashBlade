@@ -296,7 +296,6 @@ public class ItemSlashBlade extends ItemSword {
 	public EntityLivingBase setDaunting(EntityLivingBase entity){
 		if(!entity.worldObj.isRemote){
             entity.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
-            entity.addPotionEffect(new PotionEffect(Potion.confusion.getId(),10000,30,true));
 			entity.attackTime = 20;
 		}
 		return entity;
