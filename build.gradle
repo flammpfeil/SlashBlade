@@ -59,7 +59,7 @@ tasks.withType(Compile) {
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'mods.flammpfeil.slashblade.asm.CorePlugin'
+        //attributes 'FMLCorePlugin': 'mods.flammpfeil.slashblade.asm.CorePlugin'
         attributes 'FMLCorePluginContainsFMLMod': true
     }
 }
