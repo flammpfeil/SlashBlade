@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -144,6 +145,10 @@ public class EntityBladeStand extends Entity {
         else
         {
             this.motionY -= 0.08D;
+        }
+
+        if(this.worldObj.getBlock((int)this.posX,(int)this.posY,(int)this.posZ) == Blocks.bedrock){
+            this.setPosition(this.posX,this.posY+1.5,this.posZ);
         }
 
         this.motionY *= 0.9800000190734863D;
