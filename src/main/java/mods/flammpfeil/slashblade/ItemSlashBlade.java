@@ -336,6 +336,7 @@ public class ItemSlashBlade extends ItemSword {
                 break;
             }
             case HiraTuki:
+                setDaunting(target);
             case Battou:
             {
                 float knockbackFactor = 0f;
