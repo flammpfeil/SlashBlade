@@ -83,16 +83,10 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
 
         //■初期位置・初期角度等の設定
         setLocationAndAngles(thrower.posX,
-                thrower.posY + (double)thrower.getEyeHeight()/2D,
+                thrower.posY,
                 thrower.posZ,
                 thrower.rotationYaw,
                 thrower.rotationPitch);
-
-        //■初期ベクトル設定
-        setDriveVector(0.75F);
-
-        //■プレイヤー位置より一歩進んだ所に出現する
-        setPosition(posX + motionX, posY + motionY, posZ + motionZ);
     }
 
     /**
@@ -119,47 +113,13 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
         return this.getDataWatcher().getWatchableObjectInt(6);
     }
     public void setLifeTime(int lifetime){
-        this.getDataWatcher().updateObject(6,lifetime);
-    }
-
-    public void setInitialSpeed(float f){
-        setLocationAndAngles(thrower.posX,
-                thrower.posY + (double)thrower.getEyeHeight()/2D,
-                thrower.posZ,
-                thrower.rotationYaw,
-                thrower.rotationPitch);
-        setDriveVector(f);
-    }
-
-    /**
-     * ■初期ベクトルとかを決めてる。
-     * ■移動速度設定
-     * @param fYVecOfst
-     */
-    public void setDriveVector(float fYVecOfst)
-    {
-        //■角度 -> ラジアン 変換
-        float fYawDtoR = (  rotationYaw / 180F) * (float)Math.PI;
-        float fPitDtoR = (rotationPitch / 180F) * (float)Math.PI;
-
-        //■単位ベクトル
-        motionX = -MathHelper.sin(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
-        motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
-        motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
-
-        float f3 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
-        prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
-        prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
+        this.getDataWatcher().updateObject(6, lifetime);
     }
 
     //■毎回呼ばれる。移動処理とか当り判定とかもろもろ。
     @Override
     public void onUpdate()
     {
-        lastTickPosX = posX;
-        lastTickPosY = posY;
-        lastTickPosZ = posZ;
-
         //super.onUpdate();
 
         if(!worldObj.isRemote)
@@ -167,7 +127,9 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
 
             {
                 double dAmbit = 1.5D;
-                AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX - dAmbit, posY - dAmbit, posZ - dAmbit, posX + dAmbit, posY + dAmbit, posZ + dAmbit);
+                AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(
+                        thrower.posX - dAmbit, thrower.posY - dAmbit, thrower.posZ - dAmbit 
+                        thrower.posX + dAmbit, thrower.posY + dAmbit, thrower.posZ + dAmbit);
 
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
@@ -250,51 +212,8 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
                     }
                 }
             }
-
-            //■ブロック
-            int nPosX = MathHelper.floor_double(posX);
-            int nPosY = MathHelper.floor_double(posY);
-            int nPosZ = MathHelper.floor_double(posZ);
-
-            /*
-            for (int idx = nPosX - 1; idx <= nPosX + 1; idx++) {
-                for (int idy = nPosY - 1; idy <= nPosY + 1; idy++) {
-                    for (int idz = nPosZ - 1; idz <= nPosZ + 1; idz++) {
-                        //▼
-                        Block nBlock = worldObj.getBlock(idx, idy, idz);
-
-                        //■
-                        if (nBlock.getMaterial() == Material.leaves
-                                || nBlock.getMaterial() == Material.web
-                                || nBlock.getMaterial() == Material.plants)
-                        {
-                            if(thrower instanceof EntityPlayerMP){
-                                ((EntityPlayerMP)thrower).theItemInWorldManager.tryHarvestBlock(idx, idy, idz);
-                            }
-                        }
-                    }
-                }
-            }
-            */
-
-            //■消滅処理
-            Block nBlock = worldObj.getBlock(nPosX, nPosY, nPosZ);
-            if (!nBlock.isAir(worldObj,nPosX, nPosY, nPosZ) &&
-                    nBlock.getCollisionBoundingBoxFromPool(worldObj, nPosX, nPosY, nPosZ) != null)
-            {
-                this.setDead();
-            }
-
         }
 
-        motionX *= 1.05f;
-        motionY *= 1.05f;
-        motionZ *= 1.05f;
-
-        posX += motionX;
-        posY += motionY;
-        posZ += motionZ;
-        setPosition(posX, posY, posZ);
 
         //■死亡チェック
         if(ticksExisted >= getLifeTime()) {

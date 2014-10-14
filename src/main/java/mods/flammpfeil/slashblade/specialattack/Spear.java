@@ -50,7 +50,6 @@ public class Spear extends SpecialAttackBase {
             player.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),10,0,true));
 
             EntityDirectAttackDummy entityDA = new EntityDirectAttackDummy(world, player, false);
-            entityDA.setInitialSpeed(attackDist);
             entityDA.setLifeTime(7);
             if (entityDA != null) {
                 world.spawnEntityInWorld(entityDA);
