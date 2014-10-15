@@ -128,7 +128,7 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
             {
                 double dAmbit = 1.5D;
                 AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(
-                        thrower.posX - dAmbit, thrower.posY - dAmbit, thrower.posZ - dAmbit 
+                        thrower.posX - dAmbit, thrower.posY - dAmbit, thrower.posZ - dAmbit,
                         thrower.posX + dAmbit, thrower.posY + dAmbit, thrower.posZ + dAmbit);
 
                 if(this.getThrower() instanceof EntityLivingBase){
