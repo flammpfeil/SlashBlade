@@ -14,7 +14,7 @@ public class SlashBladeItemDestroyEventHandler {
     public void PlayerDestroyItemEvent(PlayerDestroyItemEvent event){
         ItemStack stack = event.original;
         EntityPlayer player = event.entityPlayer;
-        if(stack.getItem() instanceof ItemSlashBlade){
+        if(stack != null && stack.getItem() instanceof ItemSlashBlade){
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             if(!blade.isDestructable(stack)){
