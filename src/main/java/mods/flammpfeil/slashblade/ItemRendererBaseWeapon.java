@@ -2,6 +2,8 @@ package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.Maps;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLContainer;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
@@ -14,6 +16,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -22,6 +25,7 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
+import net.minecraftforge.common.ForgeModContainer;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumSet;
@@ -327,7 +331,16 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 	public void RenderPlayerEventPre(RenderPlayerEvent.Specials.Pre event){
 		float partialRenderTick = event.partialRenderTick;
 		EntityPlayer player = event.entityPlayer;
+
+        GL11.glPushMatrix();
+        if(Loader.isModLoaded("SmartMoving")){
+            float f2 = this.interpolateRotation(player.prevRenderYawOffset, player.renderYawOffset, partialRenderTick);
+            GL11.glRotatef(f2,0,1,0);
+        }
+
 		render(player,partialRenderTick);
+
+        GL11.glPopMatrix();
 	}
 
 
