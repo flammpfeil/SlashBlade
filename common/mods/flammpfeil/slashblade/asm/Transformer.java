@@ -30,7 +30,7 @@ public class Transformer implements IClassTransformer , Opcodes
     {
         try
         {
-        	String pflmTarget = "PFLM_RenderPlayerV160";
+        	String pflmTarget = "PFLM_RenderPlayerMaster"; //PFLM_RenderPlayerV160
             final String targetClassName = "net.minecraft.client.renderer.entity.RenderPlayer";
 
             if (targetClassName.equals(transformedName)) {
@@ -45,7 +45,7 @@ public class Transformer implements IClassTransformer , Opcodes
                 System.out.println("Start SlashBlade Custom asm:" + transformedName);
                 ClassReader classReader = new ClassReader(bytes);
                 ClassWriter classWriter = new ClassWriter(1);
-                classReader.accept(new PFLMRenderPlayerVisitor(name,classWriter), 8);
+                classReader.accept(new OldPFLMRenderPlayerVisitor(name,classWriter), 8);
                 bytes = classWriter.toByteArray();
                 System.out.println("Success SlashBlade Custom asm:" + transformedName);
             }else{
@@ -190,6 +190,52 @@ public class Transformer implements IClassTransformer , Opcodes
         private class AddCustomCallVisitor2 extends LocalVariablesSorter{
 
             public AddCustomCallVisitor2(int access, String desc, MethodVisitor mv) {
+                super(access, desc, mv);
+            }
+
+            @Override
+            public void visitCode() {
+                super.visitCode();
+
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitVarInsn(FLOAD, 2);
+                mv.visitMethodInsn(INVOKESTATIC, "mods/flammpfeil/slashblade/ItemRendererBaseWeapon", "renderPFLM", "(Ljava/lang/Object;F)V");
+            }
+        }
+    }
+
+    class OldPFLMRenderPlayerVisitor extends ClassVisitor
+    {
+        String owner;
+        public OldPFLMRenderPlayerVisitor(String owner ,ClassVisitor cv)
+        {
+            super(Opcodes.ASM4,cv);
+            this.owner = owner;
+        }
+
+
+        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
+        {
+            {
+
+                final String targetMethodName = isRelease ? "renderSpecials" : "renderSpecials";
+                final String targetMethodDesc = "(Lnet/minecraft/entity/player/EntityPlayer;F)V";
+                if (targetMethodName.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(owner, name, desc))
+                        && targetMethodDesc.equals(FMLDeobfuscatingRemapper.INSTANCE.mapMethodDesc(desc)))
+                {
+                    MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+
+                    mv = new AddCustomCallVisitor(access,desc,mv);
+
+                    return mv;
+                }
+            }
+            return super.visitMethod(access, name, desc, signature, exceptions);
+        }
+
+        private class AddCustomCallVisitor extends LocalVariablesSorter{
+
+            public AddCustomCallVisitor(int access, String desc, MethodVisitor mv) {
                 super(access, desc, mv);
             }
 

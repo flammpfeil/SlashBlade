@@ -231,19 +231,21 @@ public class EntityDirectAttackDummy extends Entity implements IThrowableEntity 
                         alreadyHitEntity.addAll(list);
 
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.Spear);
-
-                    NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
-                    for(Entity curEntity : list){
-                        curEntity.hurtResistantTime = 0;
-                        if(thrower instanceof EntityPlayer){
-                            ItemSlashBlade itemBlade = (ItemSlashBlade)blade.getItem();
-                            itemBlade.attackTargetEntity(blade, curEntity, (EntityPlayer)thrower, true);
-                        }
-                        else{
-                            DamageSource ds = new EntityDamageSource("mob", this.getThrower());
-                            curEntity.attackEntityFrom(ds, 10);
-                            if(blade != null && curEntity instanceof EntityLivingBase)
-                                ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
+                    
+                    if(blade != null){
+                        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+                        for(Entity curEntity : list){
+                            curEntity.hurtResistantTime = 0;
+                            if(thrower instanceof EntityPlayer){
+                                ItemSlashBlade itemBlade = (ItemSlashBlade)blade.getItem();
+                                itemBlade.attackTargetEntity(blade, curEntity, (EntityPlayer)thrower, true);
+                            }
+                            else{
+                                DamageSource ds = new EntityDamageSource("mob", this.getThrower());
+                                curEntity.attackEntityFrom(ds, 10);
+                                if(blade != null && curEntity instanceof EntityLivingBase)
+                                    ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
+                            }
                         }
                     }
                 }

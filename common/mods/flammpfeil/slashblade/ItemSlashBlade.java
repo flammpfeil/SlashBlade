@@ -1322,6 +1322,8 @@ public class ItemSlashBlade extends ItemSword {
             case HiraTuki:
                 StylishRankManager.setNextAttackType(e, AttackTypes.Kiriage);
                 break;
+            default:
+            	break;
 
         }
     }

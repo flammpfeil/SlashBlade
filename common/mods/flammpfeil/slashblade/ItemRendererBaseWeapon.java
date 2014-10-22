@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.Loader;
 
 public class ItemRendererBaseWeapon implements IItemRenderer {
 
@@ -364,7 +365,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
     }
 
     static public void render(EntityLivingBase entity,float partialRenderTick){
+        GL11.glPushMatrix();
+        if(Loader.isModLoaded("SmartMoving")){
+            float f2 = interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialRenderTick);
+            GL11.glRotatef(f2,0,1,0);
+        }
+
         render(entity,partialRenderTick,true);
+
+        GL11.glPopMatrix();
     }
     static public void renderPFLM(Object entity,float partialRenderTick){
         if(entity instanceof  EntityLivingBase)
