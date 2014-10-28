@@ -5,12 +5,15 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
 import mods.flammpfeil.slashblade.client.model.obj.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.AdvancedModelLoader;
@@ -27,7 +31,12 @@ import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.common.ForgeModContainer;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.mapped.CacheUtil;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.DoubleBuffer;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -327,6 +336,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         ticks = event.partialTicks;
     }
 
+
 	@SubscribeEvent
 	public void RenderPlayerEventPre(RenderPlayerEvent.Specials.Pre event){
 		float partialRenderTick = event.partialRenderTick;
@@ -334,8 +344,53 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
         GL11.glPushMatrix();
         if(Loader.isModLoaded("SmartMoving")){
+            /*
+            float rotY = this.interpolateRotation(player.prevRenderYawOffset, player.renderYawOffset, partialRenderTick);
+            float rotAnim = 0;
+
+            Method funcHandleRotationFloat = ReflectionHelper.findMethod(RendererLivingEntity.class,event.renderer,new String[]{"func_77044_a","handleRotationFloat"},EntityLivingBase.class,float.class);
+            Method funcRotateCorpse = ReflectionHelper.findMethod(RendererLivingEntity.class,event.renderer,new String[]{"func_77043_a","rotateCorpse"},EntityLivingBase.class,float.class,float.class,float.class);
+            try {
+                if(funcHandleRotationFloat != null)
+                    rotAnim = (Float)funcHandleRotationFloat.invoke(event.renderer, player, partialRenderTick);
+
+                if(funcRotateCorpse != null)
+                    funcRotateCorpse.invoke(player, rotAnim, rotY, partialRenderTick);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }*/
+            /*
+            rotAnim = ((RendererLivingEntity)event.renderer).handleRotationFloat(player,partialRenderTick);
+            ((RendererLivingEntity)event.renderer).rotateCorpse(player,rotAnim,rotY,partialRenderTick);
+             */
+/**/
+            ModelRenderer render = event.renderer.modelBipedMain.bipedBody;
+            ModelRendererProxy proxy =new ModelRendererProxy(event.renderer.modelBipedMain,false);
+            if(render.childModels == null || !render.childModels.contains(proxy)){
+                render.addChild(new ModelRendererProxy(event.renderer.modelBipedMain,true));
+            }
+
+            int idx = render.childModels.indexOf(proxy);
+            proxy = (ModelRendererProxy)render.childModels.get(idx);
+
+            GL11.glLoadMatrix(proxy.buffer);
+/*
+            GL11.glTranslatef(render.offsetX, render.offsetY, render.offsetZ);
+            GL11.glTranslatef(render.rotationPointX, render.rotationPointY, render.rotationPointZ);
+            GL11.glRotated(Math.toDegrees(render.rotateAngleZ), 0.0, 0.0, 1.0);
+            GL11.glRotated(Math.toDegrees(render.rotateAngleY), 0.0, 0.0, 1.0);
+            GL11.glRotated(Math.toDegrees(render.rotateAngleX), 0.0, 0.0, 1.0);
+            */
+/**/
+/*
             float f2 = this.interpolateRotation(player.prevRenderYawOffset, player.renderYawOffset, partialRenderTick);
             GL11.glRotatef(f2,0,1,0);
+
+            float f3 = this.interpolateRotation(player.prevRotationPitch, player.rotationPitch, partialRenderTick);
+            GL11.glRotatef(f3,1,0,0);
+            **/
         }
 
 		render(player,partialRenderTick);
