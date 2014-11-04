@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -122,36 +123,27 @@ public class EntityBladeStand extends Entity {
         super.onUpdate();
 
 
-        if (this.motionY < -0.15D)
-        {
-            this.motionY = -0.15D;
-        }
-
         this.motionX = 0;
         this.motionZ = 0;
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
-        if (this.worldObj.isRemote && (!this.worldObj.blockExists((int)this.posX, 0, (int)this.posZ) || !this.worldObj.getChunkFromBlockCoords((int)this.posX, (int)this.posZ).isChunkLoaded))
+        if (this.posY > 0.0D)
         {
-            if (this.posY > 0.0D)
-            {
-                this.motionY = -0.1D;
-            }
-            else
-            {
-                this.motionY = 0.0D;
-            }
+            this.motionY = -0.1D;
         }
         else
         {
-            this.motionY -= 0.08D;
+            this.motionY = 0.0D;
         }
 
-        if(this.worldObj.getBlock((int)this.posX,(int)this.posY,(int)this.posZ) == Blocks.bedrock){
+        Block block = this.worldObj.getBlock((int)this.posX,(int)this.posY,(int)this.posZ);
+        if(!block.isAir(this.worldObj,(int)this.posX,(int)this.posY,(int)this.posZ)
+                && block.getBlockHardness(this.worldObj,(int)this.posX,(int)this.posY,(int)this.posZ) < 0){
+
             this.setPosition(this.posX,this.posY+1.5,this.posZ);
         }
 
-        this.motionY *= 0.9800000190734863D;
+        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+
 
         if(getType(this) < 0 && !this.hasBlade() && 200 < this.ticksExisted){
             this.setDead();

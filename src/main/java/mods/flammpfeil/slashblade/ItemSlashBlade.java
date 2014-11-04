@@ -1950,6 +1950,23 @@ public class ItemSlashBlade extends ItemSword {
     public EnumRarity getRarity(ItemStack stack)
     {
         NBTTagCompound tag = getItemTagCompound(stack);
+
+        if(tag.hasKey("rarityType")){
+            int type = tag.getByte("rarityType");
+            switch (type){
+                case 1:
+                    return EnumRarity.common;
+                case 2:
+                    return EnumRarity.uncommon;
+                case 3:
+                    return EnumRarity.rare;
+                case 4:
+                    return EnumRarity.epic;
+                default:
+            }
+        }
+
+
         EnumSet<SwordType> types = getSwordType(stack);
         if(stack.isItemEnchanted()){
             if(types.contains(SwordType.Bewitched) || types.contains(SwordType.FiercerEdge)){
