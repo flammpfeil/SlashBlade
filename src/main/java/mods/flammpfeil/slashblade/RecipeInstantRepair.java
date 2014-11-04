@@ -11,16 +11,37 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
-public class RecipeInstantRepair extends ShapedRecipes
+import java.util.ArrayList;
+import java.util.List;
+
+public class RecipeInstantRepair extends ShapedOreRecipe
 {
 
     public RecipeInstantRepair()
     {
-        super(2, 2, new ItemStack[] {
-        		null, new ItemStack(Blocks.cobblestone),
-        		new ItemStack(SlashBlade.weapon, 1, 0), null}
-        , new ItemStack(SlashBlade.weapon, 1, 0));
+        super(new ItemStack(SlashBlade.weapon, 1, 0),
+                " X",
+                "B ",
+                'X',"cobblestone",
+                'B',new ItemStack(SlashBlade.weapon, 1, 0));
+    }
+
+    public static boolean containsMatch(boolean strict, List<ItemStack> inputs, ItemStack... targets)
+    {
+        for (ItemStack input : inputs)
+        {
+            for (ItemStack target : targets)
+            {
+                if (OreDictionary.itemMatches(target, input, strict))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -31,7 +52,13 @@ public class RecipeInstantRepair extends ShapedRecipes
         	boolean hasGrindstone = false;
 
         	ItemStack stone = cInv.getStackInRowAndColumn(1, 0);
-        	hasGrindstone = (stone != null && stone.getItem() == Item.getItemFromBlock(Blocks.cobblestone));
+
+            if(stone == null)
+                return false;
+
+
+            ArrayList<ItemStack> ores = OreDictionary.getOres("cobblestone");
+            hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.cobblestone));
 
         	if(hasGrindstone){
 
@@ -112,14 +139,20 @@ public class RecipeInstantRepair extends ShapedRecipes
 
 	            		try{
 		            		ItemStack stone = craftMatrix.getStackInSlot(1);
-		            		if(stone != null && stone.getItem() == Item.getItemFromBlock(Blocks.cobblestone)){
-		                		if(stone.stackSize < repair){
-		                			int overDamage = repair - stone.stackSize;
-		                			item.setItemDamage(item.getItemDamage()+overDamage);
-		                			stone.stackSize = 0;
-		                		}else{
-		                			stone.stackSize -= repair;
-		                		}
+		            		if(stone != null){
+
+                                ArrayList<ItemStack> ores = OreDictionary.getOres("cobblestone");
+                                boolean hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.cobblestone));
+
+                                if(hasGrindstone){
+                                    if(stone.stackSize < repair){
+                                        int overDamage = repair - stone.stackSize;
+                                        item.setItemDamage(item.getItemDamage()+overDamage);
+                                        stone.stackSize = 0;
+                                    }else{
+                                        stone.stackSize -= repair;
+                                    }
+                                }
 		            		}
 	            		}catch(Throwable e){
 

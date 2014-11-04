@@ -25,10 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
@@ -1944,6 +1941,30 @@ public class ItemSlashBlade extends ItemSword {
 
                 }
             }
+        }
+    }
+
+
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack)
+    {
+        NBTTagCompound tag = getItemTagCompound(stack);
+        EnumSet<SwordType> types = getSwordType(stack);
+        if(stack.isItemEnchanted()){
+            if(types.contains(SwordType.Bewitched) || types.contains(SwordType.FiercerEdge)){
+                if(tag.getBoolean("isDefaultBewitched"))
+                    return EnumRarity.epic;
+                else
+                    return EnumRarity.rare;
+            }else{
+                return EnumRarity.uncommon;
+            }
+        }else{
+            if(tag.getBoolean("isDefaultBewitched"))
+                return EnumRarity.uncommon;
+            else
+                return EnumRarity.common;
         }
     }
 }
