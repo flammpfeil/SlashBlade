@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import java.util.EnumSet;
 
@@ -190,10 +191,18 @@ public class BladeStandRender extends Render{
 
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
+
+                float lastx = OpenGlHelper.lastBrightnessX;
+                float lasty = OpenGlHelper.lastBrightnessY;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                 model.renderPart(renderTarget + "_luminous");
-                GL11.glEnable(GL11.GL_LIGHTING);
+
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+                GL11.glEnable(GL11.GL_LIGHTING);
 
                 GL11.glPopMatrix();
             }
@@ -255,8 +264,16 @@ public class BladeStandRender extends Render{
 
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
+
+                float lastx = OpenGlHelper.lastBrightnessX;
+                float lasty = OpenGlHelper.lastBrightnessY;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)240.0f / 1.0F, (float)240.0f / 1.0F);
+
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                 model.renderPart(renderTarget + "_luminous");
+
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 

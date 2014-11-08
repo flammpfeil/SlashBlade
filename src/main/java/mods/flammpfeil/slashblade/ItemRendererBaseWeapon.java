@@ -170,8 +170,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 break;
             }
             case EQUIPPED:
-                if(data[1] instanceof EntityPlayer
-                        && !types.contains(SwordType.NoScabbard)){
+                if(/*data[1] instanceof EntityPlayer
+                        && */!types.contains(SwordType.NoScabbard)){
                     return;
                 }
                 break;
@@ -244,7 +244,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+            float lastx = OpenGlHelper.lastBrightnessX;
+            float lasty = OpenGlHelper.lastBrightnessY;
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
             model.renderPart(renderTarget + "_luminous");
+
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -297,8 +305,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glRotatef(-60, 0, 0, 1);
 
             String renderTargets[];
-            if(data[1] instanceof EntityPlayer
-                    || types.contains(SwordType.NoScabbard)){
+            if(/*data[1] instanceof EntityPlayer
+                    || */types.contains(SwordType.NoScabbard)){
 
                 if(isBroken){
                     renderTargets = new String[]{"blade_damaged"};
@@ -313,9 +321,18 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
+
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+            float lastx = OpenGlHelper.lastBrightnessX;
+            float lasty = OpenGlHelper.lastBrightnessY;
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
             for(String renderTarget : renderTargets)
                 model.renderPart(renderTarget + "_luminous");
+
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
             GL11.glEnable(GL11.GL_LIGHTING);
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         }
@@ -336,6 +353,28 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         ticks = event.partialTicks;
     }
 
+    @SubscribeEvent
+    public void RenderLivingEventPre(RenderLivingEvent.Pre event){
+        if(event.entity instanceof EntityPlayer)
+            return;
+
+
+        GL11.glPushMatrix();
+
+        GL11.glTranslatef((float)event.x, (float)event.y, (float)event.z);
+
+        GL11.glScalef(-1.0F, -1.0F, 1.0F);
+
+        float f5 = 0.0625F;
+        GL11.glTranslatef(0.0F, -24.0F * f5 - 0.0078125F, 0.0F);
+
+        float f2 = this.interpolateRotation(event.entity.prevRenderYawOffset, event.entity.renderYawOffset, ticks);
+        GL11.glRotatef(180.0F + f2, 0.0F, 1.0F, 0.0F);
+
+        render(event.entity,ticks);
+
+        GL11.glPopMatrix();
+    }
 
 	@SubscribeEvent
 	public void RenderPlayerEventPre(RenderPlayerEvent.Specials.Pre event){
@@ -418,10 +457,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
     static public void render(EntityLivingBase entity,float partialRenderTick){
         render(entity,partialRenderTick,true);
-    }
-    static public void renderPFLM(Object entity,float partialRenderTick){
-        if(entity instanceof  EntityLivingBase)
-            render((EntityLivingBase)entity,partialRenderTick,true);
     }
 
     static public void renderBack(ItemStack item, EntityPlayer player){
@@ -567,7 +602,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+                float lastx = OpenGlHelper.lastBrightnessX;
+                float lasty = OpenGlHelper.lastBrightnessY;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
                 model.renderPart(renderTarget + "_luminous");
+
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
@@ -621,7 +664,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+                float lastx = OpenGlHelper.lastBrightnessX;
+                float lasty = OpenGlHelper.lastBrightnessY;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
                 model.renderPart(renderTarget + "_luminous");
+
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
@@ -663,20 +714,20 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         }GL11.glPopMatrix();
     }
 
-	static public void render(EntityLivingBase entity,float partialRenderTick, boolean adjust)
+	static public void render(EntityLivingBase player,float partialRenderTick, boolean adjust)
 	{
-        if(entity == null || !(entity instanceof EntityPlayer))
+        if(player == null)
 			return;
 
-        EntityPlayer player = (EntityPlayer)entity;
-
-		ItemStack item = player.getCurrentEquippedItem();
+		ItemStack item = player.getHeldItem();
 
 
 		if(item == null || !(item.getItem() instanceof ItemSlashBlade)){
-            ItemStack firstItem = player.inventory.getStackInSlot(0);
-            if(adjust && firstItem != null && (firstItem.getItem() instanceof ItemSlashBlade)){
-                renderBack(firstItem,player);
+            if(player instanceof EntityPlayer){
+                ItemStack firstItem = ((EntityPlayer)player).inventory.getStackInSlot(0);
+                if(adjust && firstItem != null && (firstItem.getItem() instanceof ItemSlashBlade)){
+                    renderBack(firstItem,(EntityPlayer)player);
+                }
             }
             return;
         }
@@ -697,8 +748,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		boolean isBewitched = swordType.contains(SwordType.Bewitched);
 
 
-		int charge = player.getItemInUseDuration();
-
+		int charge;
+        if(player instanceof EntityPlayer)
+            charge = ((EntityPlayer) player).getItemInUseDuration();
+        else
+            charge = 0;
 
         float ax = 0;
         float ay = 0;
@@ -884,7 +938,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+            float lastx = OpenGlHelper.lastBrightnessX;
+            float lasty = OpenGlHelper.lastBrightnessY;
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
             model.renderPart(renderTarget + "_luminous");
+
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
             GL11.glEnable(GL11.GL_LIGHTING);
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
@@ -971,7 +1033,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+            float lastx = OpenGlHelper.lastBrightnessX;
+            float lasty = OpenGlHelper.lastBrightnessY;
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
             model.renderPart(renderTarget + "_luminous");
+
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
             GL11.glEnable(GL11.GL_LIGHTING);
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 

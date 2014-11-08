@@ -17,13 +17,17 @@ public class SlashBladeItemDestroyEventHandler {
         if(stack != null && stack.getItem() instanceof ItemSlashBlade){
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
+            blade.dropItemDestructed(player, stack);
+
             if(!blade.isDestructable(stack)){
                 ItemStack broken = stack.copy();
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(broken);
                 broken.stackSize = 1;
-                broken.setItemDamage(broken.getMaxDamage());
 
                 ItemSlashBlade.IsBroken.set(tag,true);
+
+                broken.setItemDamage(broken.getMaxDamage());
+
 
                 if(player.inventory.mainInventory[player.inventory.currentItem] == null)
                     player.inventory.mainInventory[player.inventory.currentItem] = broken;
@@ -31,8 +35,6 @@ public class SlashBladeItemDestroyEventHandler {
                     player.dropPlayerItemWithRandomChoice(broken, false);
 
             }
-
-            blade.dropItemDestructed(player, stack);
 
         }
     }

@@ -737,6 +737,7 @@ public class SlashBlade implements IFuelHandler{
         InitEventBus.register(new PSYasha());
         InitEventBus.register(new Fox());
         InitEventBus.register(new Tizuru());
+        InitEventBus.register(new Doutanuki());
     }
 
     StatManager statManager;
