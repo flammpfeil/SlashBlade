@@ -38,7 +38,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
         RegisterWrapable("weaponmod:katana.diamond", "BalkonDiamond", 8.0f);
         RegisterWrapable("weaponmod:katana.gold",  "BalkonGold", 2.0f);
 
-        //RegisterWrapable("Minecraft:wood_sword", "BambooKatana", 4.0f);
+        //RegisterWrapable("Minecraft:wooden_sword", "BambooKatana", 4.0f);
     }
 
     static public void RegisterWrapable(String name,String texture,float attackModifier){

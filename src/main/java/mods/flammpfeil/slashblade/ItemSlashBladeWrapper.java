@@ -140,18 +140,12 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     @Override
     public void setDamage(ItemStack stack, int damage) {
         NBTTagCompound tag = getItemTagCompound(stack);
-        super.setDamage(stack,damage);
+        if(hasWrapedItem(stack))
+            super.setDamage(stack,damage);
+        else
+            super.setDamage(stack,0);
         if(!TrueItemName.exists(tag))
             IsBroken.set(tag,false);
-    }
-
-    @Override
-    public void dropItemDestructed(Entity entity, ItemStack stack) {
-        super.dropItemDestructed(entity, stack);
-
-        NBTTagCompound tag = getItemTagCompound(stack);
-        if(!TrueItemName.exists(tag))
-            removeWrapItem(stack);
     }
 
     @Override
