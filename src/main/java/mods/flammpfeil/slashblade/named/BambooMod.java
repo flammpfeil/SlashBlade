@@ -40,9 +40,6 @@ public class BambooMod {
             ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
             ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
             ItemSlashBlade.TextureName.set(tag,"BambooKatana");
-            ItemSlashBlade.KillCount.set(tag,199);
-            ItemSlashBlade.ProudSoul.set(tag,1000);
-            ItemSlashBlade.RepairCount.set(tag,1);
 
             NBTTagCompound displayTag = new NBTTagCompound();
             reqiredBlade.setTagInfo("display",displayTag);
@@ -62,8 +59,7 @@ public class BambooMod {
     public void postinit(LoadEvent.PostInitEvent event){
 
         if(Loader.isModLoaded("BambooMod")){
-            ItemStack bladeWrapper = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
-            RecipeBambooMod recipe = new BambooMod.RecipeBambooMod(bladeWrapper);
+            RecipeBambooMod recipe = new BambooMod.RecipeBambooMod();
             GameRegistry.addRecipe(recipe);
 
             FMLCommonHandler.instance().bus().register(recipe);
@@ -77,8 +73,8 @@ public class BambooMod {
         ItemStack katana;
         float attackModif;
 
-        public RecipeBambooMod(ItemStack result) {
-            super(result,
+        public RecipeBambooMod() {
+            super(GameRegistry.findItemStack(SlashBlade.modid,"wrap.BambooMod.katana.sample",1),
                     "  P",
                     " S ",
                     "B  ",
