@@ -25,6 +25,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
  * Created by Furia on 14/11/11.
  */
 public class BambooMod {
+    @SubscribeEvent
     public void init(LoadEvent.InitEvent event){
 
         ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
@@ -57,6 +58,7 @@ public class BambooMod {
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
     }
 
+    @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
 
         if(Loader.isModLoaded("BambooMod")){
