@@ -159,7 +159,7 @@ public class BambooMod {
                 if(!(event.craftMatrix instanceof InventoryCrafting))
                     return;
 
-                if(this.matches((InventoryCrafting)event.craftMatrix,null))
+                if(!this.matches((InventoryCrafting)event.craftMatrix,null))
                     return;
 
                 ItemStack target = event.craftMatrix.getStackInSlot(0+2*3);
