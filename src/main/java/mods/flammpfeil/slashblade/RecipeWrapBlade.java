@@ -30,7 +30,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
         proudSoul = new ItemStack(SlashBlade.proudSoul,1,0);
 
-        RegisterWrapable("BambooMod:katana", "BambooKatana", 4.0f);
+        //RegisterWrapable("BambooMod:katana", "BambooKatana", 4.0f);
 
         RegisterWrapable("weaponmod:katana.wood",  "BalkonWood", 2.0f);
         RegisterWrapable("weaponmod:katana.stone", "BalkonStone", 4.0f);

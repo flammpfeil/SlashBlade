@@ -119,34 +119,6 @@ public class Fox {
 
         ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
 
-        {
-            ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
-            {
-                SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
-
-                reqiredBlade.addEnchantment(Enchantment.looting,1);
-                NBTTagCompound tag = reqiredBlade.getTagCompound();
-                ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
-                ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
-                ItemSlashBlade.TextureName.set(tag,"BambooKatana");
-                ItemSlashBlade.KillCount.set(tag,199);
-                ItemSlashBlade.ProudSoul.set(tag,1000);
-                ItemSlashBlade.RepairCount.set(tag,1);
-
-                NBTTagCompound displayTag = new NBTTagCompound();
-                reqiredBlade.setTagInfo("display",displayTag);
-                NBTTagList loreList = new NBTTagList();
-                loreList.appendTag(new NBTTagString("is demo item. is wooden sword"));
-                loreList.appendTag(new NBTTagString("true performance : please crafting"));
-                displayTag.setTag("Lore", loreList);
-
-                reqiredBlade.setStackDisplayName(reqiredBlade.getDisplayName());
-            }
-            String reqiredStr = "wrap.BambooMod.katana.sample";
-            GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
-            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
-        }
-
         ItemStack kitunebi = GameRegistry.findItemStack("BambooMod","kitunebi",1);
         if(kitunebi == null)
             return;
