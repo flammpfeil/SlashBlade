@@ -15,6 +15,8 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -23,6 +25,12 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public class Doutanuki {
     public static final String name = "flammpfeil.slashblade.named.sabigatana";
+
+    public static float spawnRate = 0.05f;
+    public static float isBrokenRate = 0.7f;
+    public static float noSheathRate = 0.9f;
+    public static float dropRate = 0.2f;
+
     @SubscribeEvent
     public void init(LoadEvent.InitEvent event){
         ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
@@ -48,12 +56,47 @@ public class Doutanuki {
 
         MinecraftForge.EVENT_BUS.register(this);
 
+        try{
+            SlashBlade.mainConfiguration.load();
+            {
+                Property prop;
+                prop = SlashBlade.mainConfiguration.get("RustBlade","SpawnRate",(double)spawnRate);
+                spawnRate = (float)prop.getDouble();
+                spawnRate = Math.min(1.0f,Math.max(0.0f,spawnRate));
+                prop.set(spawnRate);
+            }
+            {
+                Property prop;
+                prop = SlashBlade.mainConfiguration.get("RustBlade","IsBrokenRate",(double)isBrokenRate);
+                isBrokenRate = (float)prop.getDouble();
+                isBrokenRate = Math.min(1.0f,Math.max(0.0f,isBrokenRate));
+                prop.set(isBrokenRate);
+            }
+            {
+                Property prop;
+                prop = SlashBlade.mainConfiguration.get("RustBlade","NoSheathRate",(double)noSheathRate,"0.0<rate<1");
+                noSheathRate = (float)prop.getDouble();
+                noSheathRate = Math.min(1.0f,Math.max(0.0f,noSheathRate));
+                prop.set(noSheathRate);
+            }
+            {
+                Property prop;
+                prop = SlashBlade.mainConfiguration.get("RustBlade","DropRate",(double)dropRate,"0:nodrop , 0<droprate<1 , 2:forceDrop");
+                dropRate = (float)prop.getDouble();
+                dropRate = Math.max(0.0f,dropRate);
+                prop.set(dropRate);
+            }
+        }
+        finally
+        {
+            SlashBlade.mainConfiguration.save();
+        }
     }
 
     @SubscribeEvent
     public void specialSpawn(LivingSpawnEvent.SpecialSpawn event){
         if(event.entityLiving instanceof EntityZombie){
-            if (event.entityLiving.getRNG().nextFloat() < 0.01F)
+            if (spawnRate > event.entityLiving.getRNG().nextFloat())
             {
 
                 ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid , name);
@@ -61,10 +104,10 @@ public class Doutanuki {
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
 
-                if (0.9 > event.entityLiving.getRNG().nextFloat())
+                if (noSheathRate > event.entityLiving.getRNG().nextFloat())
                     ItemSlashBlade.IsNoScabbard.set(tag,true);
 
-                if(0.7 > event.entityLiving.getRNG().nextFloat())
+                if(isBrokenRate > event.entityLiving.getRNG().nextFloat())
                     ItemSlashBlade.IsBroken.set(tag,true);
 
 
@@ -76,7 +119,7 @@ public class Doutanuki {
 
 
                 event.entityLiving.setCurrentItemOrArmor(0, blade);
-                ((EntityZombie)event.entityLiving).setEquipmentDropChance(0,0.2f);
+                ((EntityZombie)event.entityLiving).setEquipmentDropChance(0,dropRate);
             }
         }
 
