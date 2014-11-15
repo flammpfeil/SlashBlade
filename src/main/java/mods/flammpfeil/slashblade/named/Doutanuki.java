@@ -107,28 +107,28 @@ public class Doutanuki {
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","SpawnRate",(double)spawnRate);
-                spawnRate = (float)prop.getDouble();
+                spawnRate = (float)prop.getDouble(spawnRate);
                 spawnRate = Math.min(1.0f,Math.max(0.0f,spawnRate));
                 prop.set(spawnRate);
             }
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","IsBrokenRate",(double)isBrokenRate);
-                isBrokenRate = (float)prop.getDouble();
+                isBrokenRate = (float)prop.getDouble(isBrokenRate);
                 isBrokenRate = Math.min(1.0f,Math.max(0.0f,isBrokenRate));
                 prop.set(isBrokenRate);
             }
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","NoSheathRate",(double)noSheathRate,"0.0<rate<1");
-                noSheathRate = (float)prop.getDouble();
+                noSheathRate = (float)prop.getDouble(noSheathRate);
                 noSheathRate = Math.min(1.0f,Math.max(0.0f,noSheathRate));
                 prop.set(noSheathRate);
             }
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","DropRate",(double)dropRate,"0:nodrop , 0<droprate<1 , 2:forceDrop");
-                dropRate = (float)prop.getDouble();
+                dropRate = (float)prop.getDouble(dropRate);
                 dropRate = Math.max(0.0f,dropRate);
                 prop.set(dropRate);
             }
