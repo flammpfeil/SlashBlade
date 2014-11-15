@@ -305,6 +305,23 @@ public class ItemSlashBlade extends ItemSword {
         }
     }
 
+    public void setArmorDrop(ItemStack stack, EntityLivingBase entity){
+
+        if(!(entity instanceof EntityLiving))
+            return;
+
+        if(!stack.isItemEnchanted())
+            return;
+
+        int lv = EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId,stack);
+        if(lv == 0)
+            return;
+
+        for(int i = 0; i < 5; i++){
+            ((EntityLiving) entity).setEquipmentDropChance(i,2.0f);
+        }
+    }
+
     public void setImpactEffect(ItemStack stack, EntityLivingBase target,EntityLivingBase user, ComboSequence comboSec){
         switch (comboSec) {
             case Kiriage:
@@ -371,7 +388,7 @@ public class ItemSlashBlade extends ItemSword {
                 target.motionZ = 0;
 
                 setDaunting(target);
-
+                setArmorDrop(stack,target);
                 break;
 
             case SlashDim:
@@ -1896,6 +1913,7 @@ public class ItemSlashBlade extends ItemSword {
         saMap.put(2,new WaveEdge());
         saMap.put(3, new Drive(1.5f, 10, true, ComboSequence.Iai));
         saMap.put(4, new Spear());
+        saMap.put(5, new CircleSlash());
         return saMap;
     }
 

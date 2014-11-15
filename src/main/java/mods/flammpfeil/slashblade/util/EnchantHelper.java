@@ -19,7 +19,8 @@ public class EnchantHelper {
             ,Enchantment.punch
             ,Enchantment.thorns
             ,Enchantment.fireProtection
-            ,Enchantment.featherFalling);
+            ,Enchantment.featherFalling
+            ,Enchantment.fortune);
 
     public static void initEnchantmentList(){
         for(Enchantment ench : Enchantment.enchantmentsList){

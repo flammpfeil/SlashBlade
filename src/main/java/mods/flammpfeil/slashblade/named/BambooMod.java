@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 /**
@@ -63,6 +64,8 @@ public class BambooMod {
             GameRegistry.addRecipe(recipe);
 
             FMLCommonHandler.instance().bus().register(recipe);
+
+            RecipeSorter.register("flammpfeil.slashblade:bamboomod", RecipeBambooMod.class, RecipeSorter.Category.SHAPED, "after:forge:shaped");
         }
     }
     /**
