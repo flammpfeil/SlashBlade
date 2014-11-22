@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -103,6 +104,8 @@ public class ItemSWaeponMaterial extends Item {
             e.setPositionAndRotation(x + 0.5 ,y + 0.5 ,z + 0.5,Math.round(player.rotationYaw / 45.0f) * 45.0f + 180.0f,e.rotationPitch);
             world.spawnEntityInWorld(e);
 
+            AchievementList.triggerAchievement(player,"bladeStand");
+
             return true;
         }else{
             return false;
@@ -166,5 +169,12 @@ public class ItemSWaeponMaterial extends Item {
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
-    };
+    }
+
+    @Override
+    public void onCreated(ItemStack p_77622_1_, World p_77622_2_, EntityPlayer p_77622_3_) {
+        super.onCreated(p_77622_1_, p_77622_2_, p_77622_3_);
+
+        AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
+    }
 }

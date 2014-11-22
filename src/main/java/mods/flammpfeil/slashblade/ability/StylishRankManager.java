@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
+import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -205,6 +206,11 @@ public class StylishRankManager {
         LastRankPointUpdate.set(tag,e.worldObj.getTotalWorldTime());
 
         int postRank = getStylishRank(rankPoint);
+
+        if(lastRank < postRank){
+            if(e instanceof EntityPlayer)
+                AchievementList.triggerAchievement((EntityPlayer)e,"rank"+getRankText(postRank));
+        }
 
         onRiseInRank(e, postRank, rankPoint);
     }

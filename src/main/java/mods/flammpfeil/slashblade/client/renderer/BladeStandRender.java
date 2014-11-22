@@ -124,6 +124,12 @@ public class BladeStandRender extends Render{
 
                         GL11.glRotatef(96.0f, 0, 0, 1);
 
+                        if(VFlip){
+                            GL11.glTranslatef(0, 15f, 0);
+                            GL11.glRotatef(7.0f, 0, 0, 1);
+                            GL11.glRotatef(180.0f,1,0,0);
+                        }
+
                         break;
 
                     case 0:
@@ -209,7 +215,7 @@ public class BladeStandRender extends Render{
 
 
             //================= render scabbard =================
-            if(0 <= type && !types.contains(ItemSlashBlade.SwordType.NoScabbard)){
+            if(!types.contains(ItemSlashBlade.SwordType.NoScabbard)){
                 GL11.glPushMatrix();
 
                 //==================init================
@@ -218,6 +224,18 @@ public class BladeStandRender extends Render{
                 float vFlipFactor = VFlip ? -1f : 1f;
 
                 switch (type){
+                    case -1:
+                        if(HFlip){
+                            GL11.glScalef(0, 0, 0);
+                        }
+                        GL11.glTranslatef(1.5f, -0.45f, 0.5f);
+                        GL11.glScalef(scale, scale, scale);
+                        GL11.glRotatef(90.0f, 1, 0, 0);
+
+                        if(HFlip){
+                            GL11.glRotatef(180.0f,0,1,0);
+                        }
+                        break;
                     case 0:
                         GL11.glTranslatef(1.1f * hFlipFactor,-0.17722f,0);
                         GL11.glScalef(scale, scale, scale);

@@ -5,6 +5,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
+import mods.flammpfeil.slashblade.client.renderer.ItemRendererSpecialMaterial;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -13,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
+import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -29,6 +31,8 @@ public class InitProxyClient extends InitProxy{
         MinecraftForgeClient.registerItemRenderer(SlashBlade.bladeNamed, renderer);
 		MinecraftForge.EVENT_BUS.register(renderer);
 
+        IItemRenderer render = new ItemRendererSpecialMaterial();
+        MinecraftForgeClient.registerItemRenderer(SlashBlade.proudSoul, render);
 
         FMLCommonHandler.instance().bus().register(new StylishRankRenderer());
 

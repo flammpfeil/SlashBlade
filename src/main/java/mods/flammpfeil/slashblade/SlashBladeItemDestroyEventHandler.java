@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,6 +30,10 @@ public class SlashBladeItemDestroyEventHandler {
                     if(!ItemSlashBladeWrapper.TrueItemName.exists(tag)){
                         ((ItemSlashBladeWrapper)blade).removeWrapItem(broken);
                     }
+                }
+
+                if(blade == SlashBlade.bladeWhiteSheath){
+                    AchievementList.triggerAchievement(event.entityPlayer, "brokenWhiteSheath");
                 }
 
                 if(player.inventory.mainInventory[player.inventory.currentItem] == null)

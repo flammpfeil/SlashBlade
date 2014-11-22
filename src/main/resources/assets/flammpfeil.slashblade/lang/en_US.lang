@@ -32,6 +32,7 @@ item.flammpfeil.slashblade.named.orotiagito.seald.name=agito
 item.flammpfeil.slashblade.named.orotiagito.name=orotiagito
 item.flammpfeil.slashblade.named.sange.name=sange
 item.flammpfeil.slashblade.named.yasha.name=yasha
+item.flammpfeil.slashblade.named.yashatrue.name=yasha
 item.flammpfeil.slashblade.wrapformat.low=Noted-%s-
 item.wrap.BambooMod.katana.name=nameless
 item.wrap.weaponmod.katana.wood.name=gekitaku
@@ -44,3 +45,83 @@ item.flammpfeil.slashblade.named.fox.black.name=kuro
 item.flammpfeil.slashblade.named.muramasa.name=muramasa
 item.flammpfeil.slashblade.named.sabigatana.name=rust blade
 item.flammpfeil.slashblade.named.doutanuki.name=doutanuki
+
+achievement.flammpfeil.slashblade.slashWoodenSword.pos=0,0
+achievement.flammpfeil.slashblade.buildWoodenBlade.pos=3,0
+achievement.flammpfeil.slashblade.takemitu.pos=3,3
+achievement.flammpfeil.slashblade.ginsitakemitu.pos=5,3
+achievement.flammpfeil.slashblade.saya.pos=6, 5
+
+achievement.flammpfeil.slashblade.tagayasan.pos=4,-2
+
+achievement.flammpfeil.slashblade.buildSlashBlade.pos=9,0
+achievement.flammpfeil.slashblade.enchanted.pos=10,1
+achievement.flammpfeil.slashblade.bewitched.pos=11,2
+achievement.flammpfeil.slashblade.tukumo.pos=12,-3
+achievement.flammpfeil.slashblade.muramasa.pos=13,0
+さ
+achievement.flammpfeil.slashblade.buildWhiteSheath.pos=6,0
+achievement.flammpfeil.slashblade.brokenWhiteSheath.pos=7,1
+
+achievement.flammpfeil.slashblade.noname.pos=-3,3
+
+achievement.flammpfeil.slashblade.hundredKill.pos=1,-4
+achievement.flammpfeil.slashblade.thousandKill.pos=2,-3
+
+achievement.flammpfeil.slashblade.soulEater.pos=1,-2
+
+achievement.flammpfeil.slashblade.rankD.pos=2,-6
+achievement.flammpfeil.slashblade.rankC.pos=3,-6
+achievement.flammpfeil.slashblade.rankB.pos=4,-6
+achievement.flammpfeil.slashblade.rankA.pos=5,-6
+achievement.flammpfeil.slashblade.rankS.pos=6,-6
+achievement.flammpfeil.slashblade.rankSS.pos=7,-6
+achievement.flammpfeil.slashblade.rankSSS.pos=8,-5
+achievement.flammpfeil.slashblade.proudSoul.pos=-3,-3
+achievement.flammpfeil.slashblade.tinySoul.pos=-2,-4
+achievement.flammpfeil.slashblade.soulIngot.pos=-4,-2
+achievement.flammpfeil.slashblade.soulSphere.pos=-5,-1
+achievement.flammpfeil.slashblade.enchantmentSoul.pos=-2,-1
+achievement.flammpfeil.slashblade.bladeStand.pos=-3,0
+
+achievement.flammpfeil.slashblade.bamboo.pos=9, 6
+achievement.flammpfeil.slashblade.foxwhite.pos=11, 5
+achievement.flammpfeil.slashblade.foxblack.pos=11, 7
+
+achievement.flammpfeil.slashblade.wrap.BalkonWood.pos=7, 7
+achievement.flammpfeil.slashblade.wrap.BalkonStone.pos=8, 8
+achievement.flammpfeil.slashblade.wrap.BalkonIron.pos=9, 9
+achievement.flammpfeil.slashblade.wrap.BalkonDiamond.pos=10, 10
+achievement.flammpfeil.slashblade.wrap.BalkonGold.pos=11, 11
+
+achievement.flammpfeil.slashblade.wrap.waA.pos=8, 12
+achievement.flammpfeil.slashblade.wrap.waB.pos=9, 13
+
+achievement.flammpfeil.slashblade.brokenYamato.pos=-2, 6
+achievement.flammpfeil.slashblade.yamato.pos=0, 6
+
+achievement.flammpfeil.slashblade.sabigatana.pos=-2, 9
+achievement.flammpfeil.slashblade.doutanuki.pos=0, 9
+
+achievement.flammpfeil.slashblade.agitoRust.pos=15, -5
+achievement.flammpfeil.slashblade.agito.pos=17, -4
+
+achievement.flammpfeil.slashblade.orotiagitoRust.pos=15, -3
+achievement.flammpfeil.slashblade.orotiagitoSealed.pos=17, -2
+achievement.flammpfeil.slashblade.orotiagito.pos=19, -1
+
+achievement.flammpfeil.slashblade.yasha.pos=15, 1
+achievement.flammpfeil.slashblade.yashaTrue.pos=16, 2
+achievement.flammpfeil.slashblade.sange.pos=18, 1
+
+achievement.flammpfeil.slashblade.darkraven.pos=18, -5
+achievement.flammpfeil.slashblade.darkraven.pos=20, -4
+
+achievement.flammpfeil.slashblade.phantomSword.pos=-6,-5
+
+achievement.flammpfeil.slashblade.murasama.pos=15, 4
+
+achievement.flammpfeil.slashblade.nihil.pos=24, -4
+achievement.flammpfeil.slashblade.nihilex.pos=26, -3
+achievement.flammpfeil.slashblade.nihilul.pos=28, -2
+achievement.flammpfeil.slashblade.crimsoncherry.pos=28,0

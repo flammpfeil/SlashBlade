@@ -2,12 +2,17 @@ package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.Maps;
 import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.stats.AchievementList;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.stats.Achievement;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
@@ -18,7 +23,7 @@ import java.util.Map;
  */
 public class RecipeWrapBlade extends ShapedRecipes {
     ItemStack proudSoul;
-    private static Map<String,String> wrapableTextureNames = Maps.newHashMap();
+    public static Map<String,String> wrapableTextureNames = Maps.newHashMap();
     private static Map<String,Float> wrapableBaseAttackModifiers = Maps.newHashMap();
     public RecipeWrapBlade()
     {
@@ -44,6 +49,36 @@ public class RecipeWrapBlade extends ShapedRecipes {
     static public void RegisterWrapable(String name,String texture,float attackModifier){
         wrapableTextureNames.put(name, texture);
         wrapableBaseAttackModifiers.put(name, attackModifier);
+    }
+
+    static public ItemStack getWrapSampleBlade(String name,String texture){
+
+        ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+
+        ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+        {
+            SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
+
+            reqiredBlade.addEnchantment(Enchantment.looting,1);
+            NBTTagCompound tag = reqiredBlade.getTagCompound();
+            ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + name.replace(':', '.'));
+            ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
+            ItemSlashBlade.TextureName.set(tag,texture);
+
+            NBTTagCompound displayTag = new NBTTagCompound();
+            reqiredBlade.setTagInfo("display",displayTag);
+            NBTTagList loreList = new NBTTagList();
+            loreList.appendTag(new NBTTagString("is demo item. is wooden sword"));
+            loreList.appendTag(new NBTTagString("true performance : please crafting"));
+            displayTag.setTag("Lore", loreList);
+
+            reqiredBlade.setStackDisplayName(reqiredBlade.getDisplayName());
+        }
+        String reqiredStr = "wrap." + name.replace(':', '.') + ".sample";
+        GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+        ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
+
+        return reqiredBlade;
     }
 
 

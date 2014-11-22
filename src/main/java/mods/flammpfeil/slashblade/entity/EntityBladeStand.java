@@ -1,7 +1,9 @@
 package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -10,6 +12,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
+import java.util.Random;
 
 /**
  * Created by Furia on 14/08/15.
@@ -25,7 +29,7 @@ public class EntityBladeStand extends Entity {
     public EntityBladeStand(World p_i1582_1_, double x, double y, double z, ItemStack blade) {
         this(p_i1582_1_);
         this.setStandType(-1);
-        this.setPositionAndRotation(x,y,z,this.rand.nextFloat(),this.rotationPitch);
+        this.setPositionAndRotation(x,y,z, 180.0f * (this.rand.nextFloat() * 2.0f - 1.0f),this.rotationPitch);
         this.setBlade(blade);
     }
 
@@ -43,6 +47,10 @@ public class EntityBladeStand extends Entity {
         return this.dataWatcher.getWatchableObjectInt(WatchIndexFlipState);
     }
     public void setFlip(int value) {
+        if(hasBlade() && getBlade().getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(getBlade())){
+            if(2 <= value)
+                value = 0;
+        }
         this.dataWatcher.updateObject(WatchIndexFlipState,value);
     }
     public void doFlip(){
@@ -76,6 +84,10 @@ public class EntityBladeStand extends Entity {
         return this.dataWatcher.getWatchableObjectItemStack(WatchIndexBlade);
     }
     public void setBlade(ItemStack blade){
+        if(blade != null && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
+            if(2 <= getFlip())
+                setFlip(0);
+        }
         this.dataWatcher.updateObject(WatchIndexBlade,blade);
     }
     public boolean hasBlade(){
@@ -126,13 +138,21 @@ public class EntityBladeStand extends Entity {
         this.motionX = 0;
         this.motionZ = 0;
 
-        if (this.posY > 0.0D)
-        {
+
+        if(hasBlade()){
+            if (this.posY > 0.0D)
+            {
+                this.motionY = -0.1D;
+            }
+            else if(this.posY < -0.5){
+                this.motionY = 1.0f;
+            }
+            else
+            {
+                this.motionY = 0.0;
+            }
+        }else{
             this.motionY = -0.1D;
-        }
-        else
-        {
-            this.motionY = 0.0D;
         }
 
         Block block = this.worldObj.getBlock((int)this.posX,(int)this.posY,(int)this.posZ);
@@ -144,6 +164,9 @@ public class EntityBladeStand extends Entity {
 
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
+        if(!hasBlade() && posY < -10){
+            this.setDead();
+        }
 
         if(getType(this) < 0 && !this.hasBlade() && 200 < this.ticksExisted){
             this.setDead();
@@ -159,9 +182,13 @@ public class EntityBladeStand extends Entity {
             ItemStack stack = p.getHeldItem();
             if(stack == null && this.hasBlade()){
 
-                p.setCurrentItemOrArmor(0,this.getBlade());
+                AchievementList.triggerCraftingAchievement(this.getBlade(), p);
 
+                p.setCurrentItemOrArmor(0, this.getBlade()); 
                 this.setBlade(null);
+
+                if(getType(this) == -1)
+                    this.setDead();
 
                 return true;
 
@@ -226,4 +253,7 @@ public class EntityBladeStand extends Entity {
         return true;
     }
 
+    public Random getRand(){
+        return this.rand;
+    }
 }

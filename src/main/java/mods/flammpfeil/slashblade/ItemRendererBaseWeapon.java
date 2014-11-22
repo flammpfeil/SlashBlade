@@ -10,9 +10,13 @@ import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
 import mods.flammpfeil.slashblade.client.model.obj.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,7 +34,9 @@ import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.common.ForgeModContainer;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.mapped.CacheUtil;
 
@@ -139,6 +145,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         return result;
 	}
 
+    DoubleBuffer invRenderMatrix = CacheUtil.createDoubleBuffer(16);
+
     private void renderItemLocal(ItemRenderType type, ItemStack item, Object... data) {
         boolean isBroken = false;
         EnumSet<SwordType> types = ((ItemSlashBlade)item.getItem()).getSwordType(item);
@@ -161,10 +169,20 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             }
             case INVENTORY:
             {
-                GL11.glTranslatef(08.0f, 8.0f, 0.0f);
+                GL11.glGetDouble(GL11.GL_MODELVIEW_MATRIX,invRenderMatrix);
+                if(invRenderMatrix.get(2+2*4) == 0){
+                    invRenderMatrix.put(2+2*4,1);
+                    GL11.glLoadMatrix(invRenderMatrix);
+                }
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                GL11.glDepthMask(true);
+
+                GL11.glTranslatef(08.0f, 8.0f, 10);
                 GL11.glRotatef(180, 0, 0, 1);
+                //GL11.glRotatef(System.currentTimeMillis() % 3600 / 10, 0, 1, 0);
                 float scale = 0.13f;
                 GL11.glScalef(-scale,scale,scale);
+
 
                 isHandled = true;
                 break;
@@ -216,14 +234,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
         if(isHandled){
 
-
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-
             GL11.glEnable(GL11.GL_BLEND);
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GL11.glDisable(GL11.GL_CULL_FACE);
 
-            GL11.glColor4f(1, 1, 1, 1.0F);
+            //GL11.glColor4f(1, 1, 1, 1.0F);
 
             GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
             GL11.glEnable(GL11.GL_ALPHA_TEST);

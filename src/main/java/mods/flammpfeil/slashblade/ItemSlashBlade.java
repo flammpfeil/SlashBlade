@@ -7,7 +7,9 @@ import cpw.mods.fml.common.registry.IThrowableEntity;
 import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.specialattack.*;
+import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -18,6 +20,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -265,6 +268,8 @@ public class ItemSlashBlade extends ItemSword {
 
             ProudSoul.set(tag, proudSouls);
             entity.entityDropItem(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, count), 0.0F);
+            if(entity instanceof EntityPlayer)
+                AchievementList.triggerAchievement((EntityPlayer)entity,"proudSoul");
 
             if(stack.isItemEnchanted() && entity instanceof EntityLivingBase){
 
@@ -285,6 +290,10 @@ public class ItemSlashBlade extends ItemSword {
                     tinySoul.addEnchantment(EnchantHelper.getEnchantmentNormal(rand),1);
 
                 entity.entityDropItem(tinySoul, 0.0F);
+
+                if(entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer)entity,"enchantmentSoul");
+
             }
 
         }
@@ -298,10 +307,21 @@ public class ItemSlashBlade extends ItemSword {
 		return entity;
 	}
 
-    public static void updateKillCount(ItemStack stack, EntityLivingBase target){
+    public static void updateKillCount(ItemStack stack, EntityLivingBase target,EntityLivingBase player){
         NBTTagCompound tag = getItemTagCompound(stack);
         if(!target.isEntityAlive() && target.deathTime == 0){
-            KillCount.add(tag, 1);
+            int count = KillCount.add(tag, 1);
+            if(player instanceof EntityPlayer){
+                switch (count){
+                    case 100:
+                        AchievementList.triggerAchievement((EntityPlayer)player,"hundredKill");
+                        break;
+                    case 1000:
+                        AchievementList.triggerAchievement((EntityPlayer)player,"thousandKill");
+                        break;
+                    default:
+                }
+            }
         }
     }
 
@@ -421,7 +441,7 @@ public class ItemSlashBlade extends ItemSword {
     {
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
-        updateKillCount(par1ItemStack, par2EntityLivingBase);
+        updateKillCount(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase);
 
     	ComboSequence comboSec = getComboSequence(tag);
 
@@ -691,6 +711,8 @@ public class ItemSlashBlade extends ItemSword {
 
 
     public void doChargeAttack(ItemStack stack, EntityPlayer par3EntityPlayer){
+        AchievementList.triggerAchievement(par3EntityPlayer,"enchanted");
+
         getSpecialAttack(stack).doSpacialAttack(stack,par3EntityPlayer);
 
         NBTTagCompound tag = getItemTagCompound(stack);
@@ -944,6 +966,9 @@ public class ItemSlashBlade extends ItemSword {
                 		repair = 11;
                 	}
             		sitem.setItemDamage(Math.max(0,curDamage-repair));
+
+                    if(sitem.getItemDamage() == 0)
+                        AchievementList.triggerAchievement(el,"soulEater");
 
             	}else{
         			ProudSoul.add(tag, repair);
@@ -1290,9 +1315,11 @@ public class ItemSlashBlade extends ItemSword {
             case Battou:
 
                 EnumSet<SwordType> swordType = getSwordType(stack);
-                if(swordType.containsAll(SwordType.BewitchedPerfect))
+                if(swordType.containsAll(SwordType.BewitchedPerfect)){
+                    if(e instanceof EntityPlayer)
+                        AchievementList.triggerAchievement((EntityPlayer)e,"bewitched");
                     StylishRankManager.setNextAttackType(e, AttackTypes.IaiBattou);
-                else if(e.onGround)
+                }else if(e.onGround)
                     StylishRankManager.setNextAttackType(e, AttackTypes.Battou);
                 else
                     StylishRankManager.setNextAttackType(e, AttackTypes.JumpBattou);
@@ -1950,6 +1977,10 @@ public class ItemSlashBlade extends ItemSword {
                             entityDrive.setTargetEntityId(targetid);
 
                             w.spawnEntityInWorld(entityDrive);
+
+                            if(entity instanceof EntityPlayer)
+                                AchievementList.triggerAchievement((EntityPlayer)entity,"phantomSword");
+
                         }
 
                     }else{
@@ -2000,6 +2031,45 @@ public class ItemSlashBlade extends ItemSword {
                 return EnumRarity.uncommon;
             else
                 return EnumRarity.common;
+        }
+    }
+
+    @Override
+    public void onCreated(ItemStack p_77622_1_, World p_77622_2_, EntityPlayer p_77622_3_) {
+        super.onCreated(p_77622_1_, p_77622_2_, p_77622_3_);
+
+        AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
+    }
+
+    @Override
+    public boolean onEntityItemUpdate(EntityItem entityItem) {
+        if(entityItem.worldObj.isRemote)
+            return false;
+
+        if(entityItem.getEntityData().getBoolean("noBladeStand"))
+            return false;
+
+        ItemStack stack = entityItem.getEntityItem();
+
+        if(stack.getItem() instanceof ItemSlashBladeWrapper){
+            if(!ItemSlashBladeWrapper.hasWrapedItem(stack))
+                return false;
+        }
+
+        if(stack.getRarity() !=EnumRarity.common || stack.hasDisplayName() || stack.hasTagCompound() && ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())){
+
+            EntityBladeStand e = new EntityBladeStand(entityItem.worldObj, entityItem.posX, entityItem.posY, entityItem.posZ, stack);
+
+            e.setFlip(e.getRand().nextInt(2));
+
+            e.moveEntity(entityItem.motionX * 2, entityItem.motionY * 2, entityItem.motionZ * 2);
+
+            entityItem.worldObj.spawnEntityInWorld(e);
+
+            entityItem.setDead();
+            return true;
+        }else{
+            return false;
         }
     }
 }

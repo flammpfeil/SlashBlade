@@ -1,7 +1,9 @@
 package mods.flammpfeil.slashblade;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -21,6 +23,8 @@ public class ItemSlashBladeBambooLight extends ItemSlashBladeDetune {
             NBTTagCompound tag = getItemTagCompound(stack);
             int killCount = ItemSlashBlade.KillCount.get(tag);
             if(100 <= killCount){
+                if(entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer)entity,"saya");
                 ItemStack sheath = GameRegistry.findItemStack(SlashBlade.modid, "slashbladeWrapper", 1);
                 if(sheath != null){
                     NBTTagCompound copyTag = (NBTTagCompound)tag.copy();

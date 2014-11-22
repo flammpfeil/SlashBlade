@@ -14,9 +14,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
+import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.command.ICommand;
 import net.minecraft.creativetab.CreativeTabs;
@@ -756,6 +758,7 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
 
         MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
+        MinecraftForge.EVENT_BUS.register(new TossEventHandler());
 
         //ability
         abilityJustGuard = new JustGuard();
@@ -806,6 +809,8 @@ public class SlashBlade implements IFuelHandler{
         InitEventBus.post(new LoadEvent.PostInitEvent(evt));
 
         EnchantHelper.initEnchantmentList();
+
+        AchievementList.init();
     }
 
 

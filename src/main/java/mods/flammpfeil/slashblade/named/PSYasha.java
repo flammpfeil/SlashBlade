@@ -16,29 +16,55 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class PSYasha {
     String name = "flammpfeil.slashblade.named.yasha";
+    String nameTrue = "flammpfeil.slashblade.named.yashatrue";
     @SubscribeEvent
     public void init(LoadEvent.InitEvent event){
-        ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
-        NBTTagCompound tag = new NBTTagCompound();
-        customblade.setTagCompound(tag);
 
-        ItemSlashBladeNamed.CurrentItemName.set(tag, name);
-        ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
-        ItemSlashBlade.TextureName.set(tag, "named/yasha/yasha");
-        ItemSlashBlade.ModelName.set(tag, "named/yasha/yasha");
-        ItemSlashBlade.SpecialAttackType.set(tag, 4);
-        ItemSlashBlade.StandbyRenderType.set(tag, 2);
-        ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
+        {
+            String name = this.name;
+            ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
+            NBTTagCompound tag = new NBTTagCompound();
+            customblade.setTagCompound(tag);
 
-        GameRegistry.registerCustomItemStack(name, customblade);
-        ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
+            ItemSlashBladeNamed.CurrentItemName.set(tag, name);
+            ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.TextureName.set(tag, "named/yasha/yasha");
+            ItemSlashBlade.ModelName.set(tag, "named/yasha/yasha");
+            ItemSlashBlade.SpecialAttackType.set(tag, 4);
+            ItemSlashBlade.StandbyRenderType.set(tag, 2);
+            ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
+
+            tag.setBoolean("IsNoStandDrop",true);
+
+            GameRegistry.registerCustomItemStack(name, customblade);
+            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
+        }
+        {
+            String name = this.nameTrue;
+            ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
+            NBTTagCompound tag = new NBTTagCompound();
+            customblade.setTagCompound(tag);
+
+            ItemSlashBladeNamed.CurrentItemName.set(tag, name);
+            ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.TextureName.set(tag, "named/yasha/yasha");
+            ItemSlashBlade.ModelName.set(tag, "named/yasha/yashaTrue");
+            ItemSlashBlade.SpecialAttackType.set(tag, 5);
+            ItemSlashBlade.StandbyRenderType.set(tag, 2);
+            ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
+
+            GameRegistry.registerCustomItemStack(name, customblade);
+            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
+        }
     }
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
         ItemStack stack = GameRegistry.findItemStack(SlashBlade.modid, name, 1);
         DropEventHandler.registerEntityDrop("TwilightForest.Minotaur"  , 0.05f, stack);
+        stack = GameRegistry.findItemStack(SlashBlade.modid, nameTrue, 1);
         DropEventHandler.registerEntityDrop("TwilightForest.Minoshroom", 0.2f , stack);
     }
 }

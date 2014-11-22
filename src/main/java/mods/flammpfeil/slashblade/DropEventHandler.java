@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -63,16 +64,22 @@ public class DropEventHandler {
                                         (int)Math.round((float)dropitem.stackSize * rand.nextFloat())));
 
                     if(dropitem.getItem() instanceof ItemSlashBlade){
-                        EntityBladeStand e = new EntityBladeStand(event.entityLiving.worldObj
-                                ,event.entityLiving.posX
-                                ,event.entityLiving.posY
-                                ,event.entityLiving.posZ
-                                ,dropitem);
-                        event.entityLiving.worldObj.spawnEntityInWorld(e);
-                    }else{
-                        if(dropitem.stackSize != 0)
-                            event.entityLiving.entityDropItem(dropitem,1);
+
+                        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(dropitem);
+                        if(!tag.getBoolean("IsNoStandDrop")){
+                            EntityBladeStand e = new EntityBladeStand(event.entityLiving.worldObj
+                                    ,event.entityLiving.posX
+                                    ,event.entityLiving.posY
+                                    ,event.entityLiving.posZ
+                                    ,dropitem);
+                            event.entityLiving.worldObj.spawnEntityInWorld(e);
+
+                            return;
+                        }
                     }
+
+                    if(dropitem.stackSize != 0)
+                        event.entityLiving.entityDropItem(dropitem,1);
                 }
             }
         }
