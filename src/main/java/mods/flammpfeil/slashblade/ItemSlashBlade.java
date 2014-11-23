@@ -447,7 +447,7 @@ public class ItemSlashBlade extends ItemSword {
 
         setImpactEffect(par1ItemStack,par2EntityLivingBase,par3EntityLivingBase,comboSec);
 
-        if(!comboSec.useScabbard)
+        if(!comboSec.useScabbard || IsNoScabbard.get(tag))
             par1ItemStack.damageItem(1, par3EntityLivingBase);
 
         StylishRankManager.doAttack(par3EntityLivingBase);

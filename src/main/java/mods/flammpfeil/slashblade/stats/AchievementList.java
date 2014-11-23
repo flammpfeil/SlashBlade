@@ -75,11 +75,11 @@ public class AchievementList {
                         {
                             parent.push(registerAchievement("saya", SlashBlade.getCustomBlade("slashbladeWrapper"), parent.peek()));
                             {
-                                parent.push(registerAchievement("bamboo", SlashBlade.getCustomBlade("wrap.BambooMod.katana.sample"), parent.peek()));
+                                parent.push(registerCraftingAchievement("bamboo", SlashBlade.getCustomBlade("wrap.BambooMod.katana.sample"), parent.peek()));
                                 {
-                                    parent.push(registerAchievement("foxwhite", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fox.white"), parent.peek()).setSpecial());
+                                    parent.push(registerCraftingAchievement("foxwhite", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fox.white"), parent.peek()).setSpecial());
                                     parent.pop();
-                                    parent.push(registerAchievement("foxblack", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fox.black"), parent.peek()).setSpecial());
+                                    parent.push(registerCraftingAchievement("foxblack", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fox.black"), parent.peek()).setSpecial());
                                     parent.pop();
                                 }
                                 parent.pop();
