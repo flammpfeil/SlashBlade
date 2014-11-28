@@ -85,8 +85,10 @@ public class AchievementList {
                                 parent.pop();
 
                                 for(Map.Entry<String,String> entry : RecipeWrapBlade.wrapableTextureNames.entrySet()){
-
-                                    AchievementList.registerCraftingAchievement("wrap." + entry.getValue(), RecipeWrapBlade.getWrapSampleBlade(entry.getKey(), entry.getValue()), parent.peek());
+                                    String[] modid = entry.getKey().split(":");
+                                    if(modid.length == 2 && modid[0].length() != 0 && Loader.isModLoaded(modid[0])){
+                                        AchievementList.registerCraftingAchievement("wrap." + entry.getValue(), RecipeWrapBlade.getWrapSampleBlade(entry.getKey(), entry.getValue()), parent.peek());
+                                    }
                                 }
                             }
                             parent.pop();
@@ -232,13 +234,14 @@ public class AchievementList {
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
-            }
-            parent.push(registerCraftingAchievement("agitoRust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito.rust"), startParent));
-            {
-                parent.push(registerCraftingAchievement("agito", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito"), parent.peek()));
+
+                parent.push(registerCraftingAchievement("agitoRust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito.rust"), startParent));
+                {
+                    parent.push(registerCraftingAchievement("agito", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito"), parent.peek()));
+                    parent.pop();
+                }
                 parent.pop();
             }
-            parent.pop();
         }
 
 
@@ -249,17 +252,18 @@ public class AchievementList {
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
-            }
-            parent.push(registerCraftingAchievement("orotiagitoRust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.rust"), startParent));
-            {
-                parent.push(registerCraftingAchievement("orotiagitoSealed", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.seald"), parent.peek()));
+
+                parent.push(registerCraftingAchievement("orotiagitoRust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.rust"), startParent));
                 {
-                    parent.push(registerCraftingAchievement("orotiagito", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito"), parent.peek()).setSpecial());
+                    parent.push(registerCraftingAchievement("orotiagitoSealed", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.seald"), parent.peek()));
+                    {
+                        parent.push(registerCraftingAchievement("orotiagito", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito"), parent.peek()).setSpecial());
+                        parent.pop();
+                    }
                     parent.pop();
                 }
                 parent.pop();
             }
-            parent.pop();
         }
 
         {
@@ -269,12 +273,13 @@ public class AchievementList {
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
-            }
-            parent.push(registerCraftingAchievement("yasha", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yasha"), startParent));
-            parent.pop();
 
-            parent.push(registerCraftingAchievement("yashaTrue", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yashatrue"), startParent));
-            parent.pop();
+                parent.push(registerCraftingAchievement("yasha", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yasha"), startParent));
+                parent.pop();
+
+                parent.push(registerCraftingAchievement("yashaTrue", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yashatrue"), startParent));
+                parent.pop();
+            }
         }
 
         {
@@ -348,8 +353,10 @@ public class AchievementList {
         });
     }
 
-    static int defaultX = -10;
-    static int defaultY = -5;
+    static int defaultX = 20;
+    //static int minX = 0;
+    static int defaultY = 5;
+    static int minY = -6;
     static public Pattern PosPattern = Pattern.compile("(-?\\d+)\\s*,\\s*(-?\\d+)");
     static public Achievement registerAchievement(String key, ItemStack icon, Achievement parent){
         String translateKey = getTranslateKey(key);
@@ -362,7 +369,9 @@ public class AchievementList {
         Matcher mat = PosPattern.matcher(posStr.trim());
         if(mat.matches()){
             x = Integer.parseInt(mat.group(1));
+            //x = Math.max(minX,x);
             y = Integer.parseInt(mat.group(2));
+            y = Math.max(minY,y);
         }
 
         Achievement achievement = registerAchievement(key, x, y, icon, parent);
