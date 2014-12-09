@@ -104,6 +104,10 @@ public class BladeStandRender extends Render{
 
             engine().bindTexture(resourceTexture);
 
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL,0.05f);
+
             //================== render edge ==============
             if(!(item instanceof ItemSlashBladeWrapper) || ItemSlashBladeWrapper.hasWrapedItem(blade)){
                 GL11.glPushMatrix();

@@ -199,6 +199,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 if(!types.contains(SwordType.NoScabbard)){
                     GL11.glPushMatrix();
                     engine().bindTexture(resourceTexture);
+
+                    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                    GL11.glAlphaFunc(GL11.GL_GEQUAL,0.05f);
+
                     GL11.glLoadIdentity();
                     if (EntityRenderer.anaglyphEnable)
                     {
@@ -245,6 +250,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glEnable(GL11.GL_ALPHA_TEST);
 
             engine().bindTexture(resourceTexture);
+
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
 
             String renderTarget;
             if(isBroken)
@@ -314,6 +323,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         else
         {
             engine().bindTexture(resourceTexture);
+
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
 
             GL11.glTranslatef(0.8f,0.2f,0);
             float scale = 0.008f;
@@ -613,6 +626,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glScalef(scaleLocal,scaleLocal,scaleLocal);
                 GL11.glRotatef(-90.0f, 0, 0, 1);
                 engine().bindTexture(resourceTexture);
+
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
+
                 model.renderPart(renderTarget);
 
                 GL11.glDisable(GL11.GL_LIGHTING);
@@ -674,6 +692,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
                 GL11.glRotatef(-90.0f, 0, 0, 1);
                 engine().bindTexture(resourceTexture);
+
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                GL11.glAlphaFunc(GL11.GL_GEQUAL,0.05f);
+
                 renderTarget = "sheath";
                 model.renderPart(renderTarget);
 
@@ -736,7 +759,6 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			return;
 
 		ItemStack item = player.getHeldItem();
-
 
 		if(item == null || !(item.getItem() instanceof ItemSlashBlade)){
             if(player instanceof EntityPlayer){
@@ -949,6 +971,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
             engine().bindTexture(resourceTexture);
+
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL,0.05f);
+
             model.renderPart(renderTarget);
 
             GL11.glDisable(GL11.GL_LIGHTING);
@@ -1042,6 +1069,10 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
             GL11.glRotatef(-90.0f, 0, 0, 1);
             engine().bindTexture(resourceTexture);
+
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
 
             renderTarget = "sheath";
             model.renderPart(renderTarget);

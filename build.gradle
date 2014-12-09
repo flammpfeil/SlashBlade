@@ -18,7 +18,7 @@ buildscript {
 apply plugin: 'forge'
 apply plugin: 'maven'
 
-version = "mc1.7.10-r42"
+version = "mc1.7.10-r43"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
