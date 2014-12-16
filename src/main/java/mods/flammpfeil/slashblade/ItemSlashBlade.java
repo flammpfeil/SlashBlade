@@ -334,11 +334,26 @@ public class ItemSlashBlade extends ItemSword {
             return;
 
         int lv = EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId,stack);
-        if(lv == 0)
-            return;
 
-        for(int i = 0; i < 5; i++){
-            ((EntityLiving) entity).setEquipmentDropChance(i,2.0f);
+        int slots;
+
+        switch(lv){
+
+            case 0:
+                return;
+            case 1:
+                slots = 1;
+                break;
+            default:
+                slots = 5;
+                break;
+        }
+
+        for(int i = 0; i < slots; i++){
+            try{
+                ((EntityLiving) entity).setEquipmentDropChance(i, 0.99f);
+            }catch(Exception e){
+            }
         }
     }
 
