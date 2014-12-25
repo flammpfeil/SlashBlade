@@ -2,10 +2,7 @@ package mods.flammpfeil.slashblade.named;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
-import mods.flammpfeil.slashblade.RecipeAwakeBlade;
-import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.inventory.InventoryCrafting;
@@ -75,6 +72,18 @@ public class Doutanuki {
             ItemSlashBlade.RepairCount.set(tag,1);
             GameRegistry.registerCustomItemStack(name + ".broken", customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name + ".broken");
+
+            {
+                ItemStack cblade = customblade.copy();
+                tag = ItemSlashBlade.getItemTagCompound(cblade);
+                ItemSlashBlade.IsNoScabbard.set(tag,true);
+                ItemSlashBlade.IsBroken.set(tag,true);
+                ItemSlashBlade.KillCount.set(tag,49);
+                ItemSlashBlade.RepairCount.set(tag,0);
+                cblade.setItemDamage(cblade.getMaxDamage() - 1);
+                GameRegistry.registerCustomItemStack(name + ".directdrop", cblade);
+                ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name + ".directdrop");
+            }
         }
 
         {
@@ -131,6 +140,17 @@ public class Doutanuki {
                 dropRate = (float)prop.getDouble(dropRate);
                 dropRate = Math.max(0.0f,dropRate);
                 prop.set(dropRate);
+            }
+
+            {
+                double directDropRate = 0.001;
+                Property prop;
+                prop = SlashBlade.mainConfiguration.get("RustBlade","DirectDropRate",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
+                directDropRate = prop.getDouble(dropRate);
+                prop.set(dropRate);
+
+                if(0 < directDropRate)
+                    DropEventHandler.registerEntityDrop("Zombie",(float)directDropRate,SlashBlade.getCustomBlade(Doutanuki.name + ".directdrop"));
             }
         }
         finally
