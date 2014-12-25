@@ -11,6 +11,7 @@ import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
+import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.command.IEntitySelector;
@@ -929,6 +930,10 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
 	public void onUpdate(ItemStack sitem, World par2World,
 			Entity par3Entity, int indexOfMainSlot, boolean isCurrent) {
+
+        if(SlashBladeHooks.onUpdateHooks(sitem, par2World, par3Entity, indexOfMainSlot, isCurrent)){
+            return;
+        }
 
 		if(!(par3Entity instanceof EntityPlayer)){
 			super.onUpdate(sitem, par2World, par3Entity, indexOfMainSlot, isCurrent);
@@ -2058,6 +2063,10 @@ public class ItemSlashBlade extends ItemSword {
 
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
+        if(SlashBladeHooks.onEntityItemUpdateHooks(entityItem)){
+            return false;
+        }
+
         if(entityItem.worldObj.isRemote)
             return false;
 
