@@ -128,6 +128,11 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
                         ItemStack wrapedItem = getWrapedItem(par1ItemStack);
                         int hurtRT = par2EntityLivingBase.hurtResistantTime;
 
+                        if(par3EntityLivingBase instanceof EntityPlayer){
+                            par2EntityLivingBase.hurtResistantTime = par2EntityLivingBase.maxHurtResistantTime;
+                            wrapedItem.getItem().onLeftClickEntity(wrapedItem,(EntityPlayer)par3EntityLivingBase,par2EntityLivingBase);
+                        }
+
                         par2EntityLivingBase.hurtResistantTime = 0;
                         wrapedItem.getItem().hitEntity(wrapedItem,par2EntityLivingBase, par3EntityLivingBase);
 
@@ -170,16 +175,5 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     @Override
     public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
         par3List.add(new ItemStack(par1, 1, 0));
-    }
-
-    @Override
-    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-        boolean result = super.onLeftClickEntity(stack, player, entity);
-
-        ItemStack wrapedItem = getWrapedItem(stack);
-
-        wrapedItem.getItem().onLeftClickEntity(wrapedItem,player,entity);
-
-        return result;
     }
 }
