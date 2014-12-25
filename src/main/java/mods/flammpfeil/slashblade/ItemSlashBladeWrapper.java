@@ -126,7 +126,15 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
                 if(hasWrapedItem(par1ItemStack)){
                     try{
                         ItemStack wrapedItem = getWrapedItem(par1ItemStack);
+                        int hurtRT = par2EntityLivingBase.hurtResistantTime;
+                        if(par3EntityLivingBase instanceof EntityPlayer){
+                            par2EntityLivingBase.hurtResistantTime = 0;
+                            wrapedItem.getItem().onLeftClickEntity(par1ItemStack,(EntityPlayer)par3EntityLivingBase,par2EntityLivingBase);
+                        }
+                        par2EntityLivingBase.hurtResistantTime = 0;
                         wrapedItem.getItem().hitEntity(wrapedItem,par2EntityLivingBase, par3EntityLivingBase);
+
+                        par2EntityLivingBase.maxHurtResistantTime = hurtRT;
                     }catch(Throwable e){
                         removeWrapItem(par1ItemStack);
                     }
