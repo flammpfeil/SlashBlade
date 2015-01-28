@@ -88,6 +88,12 @@ public class EntityBladeStand extends Entity {
             if(2 <= getFlip())
                 setFlip(0);
         }
+
+        if(blade != null && blade.getItem() instanceof ItemSlashBlade){
+            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+            ItemSlashBlade.PrevExp.remove(tag);
+        }
+
         this.dataWatcher.updateObject(WatchIndexBlade,blade);
     }
     public boolean hasBlade(){
