@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeWrapBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -340,10 +341,45 @@ public class AchievementList {
             ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.murasamablade");
             if(blade != null){
                 parent.push(registerCraftingAchievement("murasama", blade, startParent));
+
                 parent.pop();
             }
         }
 
+        {
+            Achievement startParent = net.minecraft.stats.AchievementList.killEnemy;
+            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.wanderer");
+            if(blade != null){
+                parent.push(registerCraftingAchievement("wanderer", blade, startParent));
+                {
+                    blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.wanderer.rfblade");
+                    if(blade != null){
+                        parent.push(registerCraftingAchievement("wanderer.rfblade", blade, parent.peek()));
+                        parent.pop();
+                    }
+                }
+                parent.pop();
+            }
+        }
+
+        {
+            Achievement startParent = net.minecraft.stats.AchievementList.enchantments;
+            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.frostwolfa");
+            if(blade != null){
+                parent.push(registerCraftingAchievement("frostwolfa", blade, startParent));
+                parent.pop();
+            }
+        }
+        {
+            Achievement startParent = net.minecraft.stats.AchievementList.enchantments;
+            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.frostwolfb");
+            if(blade != null){
+                parent.push(registerCraftingAchievement("frostwolfb", blade, startParent));
+                parent.pop();
+            }
+        }
+
+        SlashBlade.InitEventBus.post(new SlashBladeAchievementCreateEvent());
 
         AchievementPage.registerAchievementPage(new AchievementPage(SlashBlade.modname, achievements.values().toArray(new Achievement[]{})) {
             @Override

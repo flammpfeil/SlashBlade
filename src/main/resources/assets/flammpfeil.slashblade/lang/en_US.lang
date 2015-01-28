@@ -126,3 +126,9 @@ achievement.flammpfeil.slashblade.nihil.pos=24, -4
 achievement.flammpfeil.slashblade.nihilex.pos=26, -3
 achievement.flammpfeil.slashblade.nihilul.pos=28, -2
 achievement.flammpfeil.slashblade.crimsoncherry.pos=28,0
+
+achievement.flammpfeil.slashblade.frostwolfa.pos=15, 8
+achievement.flammpfeil.slashblade.frostwolfb.pos=17, 8
+
+achievement.flammpfeil.slashblade.wanderer.pos=15, 6
+achievement.flammpfeil.slashblade.wanderer.rfblade.pos=16, 7
