@@ -54,7 +54,9 @@ public class DropEventHandler {
 
                 isDrop = drop.getKey() * (1.0f + 0.5f * event.lootingLevel) > rand.nextFloat();
 
-                if(isDrop && drop.getValue() != null){
+                boolean forceDrop = drop.getKey() > 1.1f;
+
+                if((event.recentlyHit || forceDrop) && isDrop && drop.getValue() != null){
                     ItemStack dropitem = drop.getValue().copy();
 
                     dropitem.stackSize =

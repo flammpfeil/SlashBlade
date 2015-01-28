@@ -143,9 +143,9 @@ public class Doutanuki {
             }
 
             {
-                double directDropRate = 0.001;
+                double directDropRate = -1;
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","DirectDropRate",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
+                prop = SlashBlade.mainConfiguration.get("RustBlade","DirectDropChance",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
                 directDropRate = prop.getDouble(directDropRate);
 
                 if(0 < directDropRate)
