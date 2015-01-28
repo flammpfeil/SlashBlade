@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.stats.AchievementList;
+import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -138,6 +139,11 @@ public class EntityBladeStand extends Entity {
 
     @Override
     public void onUpdate() {
+
+        if(SlashBladeHooks.onEntityBladeStandUpdateHooks(this)){
+            return;
+        }
+
         super.onUpdate();
 
 

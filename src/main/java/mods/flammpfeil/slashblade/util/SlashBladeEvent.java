@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.util;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -19,13 +20,13 @@ public class SlashBladeEvent extends Event{
     }
 
     @Cancelable
-    public static class OnEntityItemUpdateEvent extends SlashBladeEvent{
+    public static class OnEntityBladeStandUpdateEvent extends SlashBladeEvent{
 
-        EntityItem entityItem;
+        EntityBladeStand entityBladeStand;
 
-        public OnEntityItemUpdateEvent(EntityItem entityItem) {
-            super(entityItem.getEntityItem());
-            this.entityItem = entityItem;
+        public OnEntityBladeStandUpdateEvent(EntityBladeStand entityItem) {
+            super(entityItem.getBlade());
+            this.entityBladeStand = entityItem;
         }
     }
 

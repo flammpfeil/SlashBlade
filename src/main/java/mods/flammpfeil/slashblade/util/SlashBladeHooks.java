@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.util;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventBus;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,7 @@ public class SlashBladeHooks {
     static public boolean onUpdateHooks(ItemStack blade,World world,Entity entity,int indexOfMainSlot,boolean isCurrent){
         return EventBus.post(new SlashBladeEvent.OnUpdateEvent(blade, world, entity, indexOfMainSlot, isCurrent));
     }
-    static public boolean onEntityItemUpdateHooks(EntityItem entityItem){
-        return EventBus.post(new SlashBladeEvent.OnEntityItemUpdateEvent(entityItem));
+    static public boolean onEntityBladeStandUpdateHooks(EntityBladeStand entityBladeStand){
+        return EventBus.post(new SlashBladeEvent.OnEntityBladeStandUpdateEvent(entityBladeStand));
     }
 }

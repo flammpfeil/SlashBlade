@@ -2063,10 +2063,6 @@ public class ItemSlashBlade extends ItemSword {
 
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if(SlashBladeHooks.onEntityItemUpdateHooks(entityItem)){
-            return false;
-        }
-
         if(entityItem.worldObj.isRemote)
             return false;
 
