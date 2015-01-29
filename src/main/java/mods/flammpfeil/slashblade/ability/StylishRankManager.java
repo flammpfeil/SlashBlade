@@ -1,25 +1,59 @@
 package mods.flammpfeil.slashblade.ability;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Furia on 14/07/29.*/
 
 public class StylishRankManager {
+
+    static private String unescape(String source){
+        return source.replace("\"", "").replace("\\quot;", "\"").replace("\\r;","\r").replace("\\n;","\n").replace("\\\\", "\\");
+    }
+
+    public StylishRankManager(){
+        try{
+            SlashBlade.mainConfiguration.load();
+
+            {
+                Property propIgnoreDamageType = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "RankDownIgnoreDamageTypes" ,new String[]{});
+
+                String[] strs = propIgnoreDamageType.getStringList();
+                ArrayList<String> tmp = Lists.newArrayList();
+                for(String str : strs){
+                    ignoreDamageTypes.add(unescape(str));
+                }
+            }
+
+        }
+        finally
+        {
+            SlashBlade.mainConfiguration.save();
+        }
+
+    }
 
     /**
      * 0 < Relative
@@ -236,6 +270,8 @@ public class StylishRankManager {
         }
     }
 
+    static public Set<String> ignoreDamageTypes = Sets.newHashSet("thrown");
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void LivingHurtEvent(LivingHurtEvent e){
         String type = e.source.getDamageType();
@@ -245,6 +281,16 @@ public class StylishRankManager {
 
         //guard不可でかつ、mobからの攻撃ではない
         if(e.source.isUnblockable() && e.source.getEntity() != null) return;
+
+        //反射攻撃ではないこと
+        if(e.source.getEntity() != null && e.source.getEntity() instanceof EntityLivingBase){
+            EntityLivingBase attacker = (EntityLivingBase)e.source.getEntity();
+
+            if(attacker.func_142015_aE() == attacker.ticksExisted)
+                return;
+        }
+
+        if(ignoreDamageTypes.contains(type)) return;
 
         NBTTagCompound tag = getTag(e.entity);
 

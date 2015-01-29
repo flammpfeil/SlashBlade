@@ -61,6 +61,9 @@ item.flammpfeil.slashblade.named.muramasa.name=「千鶴」村正
 item.flammpfeil.slashblade.named.sabigatana.name=錆びた刀
 item.flammpfeil.slashblade.named.doutanuki.name=剛剣「胴田貫」
 entity.flammpfeil.slashblade.BladeStand.name=刀掛台
+
+death.attack.directMagic=%1$sは%2$sに切裂かれた
+
 achievement.flammpfeil.slashblade.slashWoodenSword=切裂く意思
 achievement.flammpfeil.slashblade.slashWoodenSword.desc=一太刀だけ敵を切った木剣<br>抜刀術の始めの一歩<br>§8§l§o切伏す意思こそ真なる刃
 achievement.flammpfeil.slashblade.buildWoodenBlade=無銘刀「木偶」

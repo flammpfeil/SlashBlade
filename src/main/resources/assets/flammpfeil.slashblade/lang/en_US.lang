@@ -46,6 +46,8 @@ item.flammpfeil.slashblade.named.muramasa.name=muramasa
 item.flammpfeil.slashblade.named.sabigatana.name=rust blade
 item.flammpfeil.slashblade.named.doutanuki.name=doutanuki
 
+death.attack.directMagic=%1$s was hacked by %2$s using magic blade
+
 achievement.flammpfeil.slashblade.slashWoodenSword.pos=0,0
 achievement.flammpfeil.slashblade.buildWoodenBlade.pos=3,0
 achievement.flammpfeil.slashblade.takemitu.pos=3,3
