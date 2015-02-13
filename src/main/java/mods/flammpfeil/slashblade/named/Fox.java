@@ -165,7 +165,7 @@ public class Fox {
                     'I', inari,
                     'P', proudsoul);
 
-            GameRegistry.addRecipe(recipe);
+            SlashBlade.addRecipe(nameWhite, recipe);
         }
         {
             ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,nameBlack);
@@ -201,7 +201,7 @@ public class Fox {
                     'I', inari,
                     'P', proudsoul);
 
-            GameRegistry.addRecipe(recipe);
+            SlashBlade.addRecipe(nameBlack, recipe);
         }
 
         RecipeSorter.register("flammpfeil.slashblade:fox", RecipeAwakeBladeFox.class, SHAPED, "after:forge:shaped");

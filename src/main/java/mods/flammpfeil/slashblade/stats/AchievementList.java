@@ -29,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.AchievementEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,15 @@ public class AchievementList {
         return stack;
     }
 
+    static void setContent(Achievement achievement,String contentKey){
+        if(!(achievement instanceof AchievementEx))
+            return;
+        if(!SlashBlade.recipeMultimap.containsKey(contentKey))
+            return;
+
+        ((AchievementEx) achievement).content =  Lists.newArrayList(SlashBlade.recipeMultimap.get(contentKey));
+    }
+
     static public void init(){
         MinecraftForge.EVENT_BUS.register(INSTANCE);
 
@@ -70,17 +80,28 @@ public class AchievementList {
             {
                 parent.push(registerCraftingAchievement("buildWoodenBlade", SlashBlade.getCustomBlade("slashbladeWood"), parent.peek()));
                 {
+                    setContent(parent.peek(),"slashbladeWood");
+
                     parent.push(registerCraftingAchievement("takemitu", SlashBlade.getCustomBlade("slashbladeBambooLight"), parent.peek()));
                     {
+                        setContent(parent.peek(),"slashbladeBambooLight");
+
                         parent.push(registerCraftingAchievement("ginsitakemitu", SlashBlade.getCustomBlade("slashbladeSilverBambooLight"), parent.peek()));
                         {
+                            setContent(parent.peek(),"slashbladeSilverBambooLight");
+
                             parent.push(registerAchievement("saya", SlashBlade.getCustomBlade("slashbladeWrapper"), parent.peek()));
                             {
                                 parent.push(registerCraftingAchievement("bamboo", SlashBlade.getCustomBlade("wrap.BambooMod.katana.sample"), parent.peek()));
                                 {
+                                    setContent(parent.peek(),"wrap.BambooMod.katana.sample");
+
                                     parent.push(registerCraftingAchievement("foxwhite", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fox.white"), parent.peek()).setSpecial());
+                                    setContent(parent.peek(),"flammpfeil.slashblade.named.fox.white");
                                     parent.pop();
+
                                     parent.push(registerCraftingAchievement("foxblack", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fox.black"), parent.peek()).setSpecial());
+                                    setContent(parent.peek(), "flammpfeil.slashblade.named.fox.black");
                                     parent.pop();
                                 }
                                 parent.pop();
@@ -99,13 +120,18 @@ public class AchievementList {
                     parent.pop();
 
                     parent.push(registerCraftingAchievement("tagayasan", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.tagayasan"), parent.peek()).setSpecial());
+                    setContent(parent.peek(), "flammpfeil.slashblade.named.tagayasan");
                     parent.pop();
 
                     parent.push(registerCraftingAchievement("buildWhiteSheath", SlashBlade.getCustomBlade("slashbladeWhite"), parent.peek()));
                     {
+                        setContent(parent.peek(), "slashbladeWhite");
+
                         parent.push(registerAchievement("brokenWhiteSheath", SlashBlade.getCustomBlade("BrokenBladeWhite"), parent.peek()).setSpecial());
                         {
                             parent.push(registerCraftingAchievement("buildSlashBlade", SlashBlade.getCustomBlade("slashblade"), parent.peek()));
+                            setContent(parent.peek(), "slashblade");
+
 
                             ItemStack blade = SlashBlade.getCustomBlade("slashblade");
                             blade.addEnchantment(Enchantment.fireAspect, 1);
@@ -118,9 +144,11 @@ public class AchievementList {
                                 parent.pop();
 
                                 parent.push(registerCraftingAchievement("muramasa", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.muramasa"), parent.peek()).setSpecial());
+                                setContent(parent.peek(), "flammpfeil.slashblade.named.muramasa");
                                 parent.pop();
 
                                 parent.push(registerCraftingAchievement("tukumo", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yuzukitukumo"), parent.peek()).setSpecial());
+                                setContent(parent.peek(), "flammpfeil.slashblade.named.yuzukitukumo");
                                 parent.pop();
                             }
                             parent.pop();
@@ -134,6 +162,7 @@ public class AchievementList {
 
             {
                 parent.push(registerCraftingAchievement("noname", SlashBlade.getCustomBlade("slashbladeNamed"), parent.peek()));
+                setContent(parent.peek(), "slashbladeNamed");
                 parent.pop();
             }
 
@@ -154,12 +183,18 @@ public class AchievementList {
             {
                 parent.push(registerAchievement("proudSoul", SlashBlade.getCustomBlade("proudsoul"), parent.peek()));
                 {
+                    setContent(parent.peek(), "proudsoul");
+
                     parent.push(registerCraftingAchievement("tinySoul", SlashBlade.getCustomBlade("tiny_bladesoul"), parent.peek()));
+                    setContent(parent.peek(), "tiny_bladesoul");
                     parent.pop();
 
                     parent.push(registerCraftingAchievement("soulIngot", SlashBlade.getCustomBlade("ingot_bladesoul"), parent.peek()));
                     {
+                        setContent(parent.peek(), "ingot_bladesoul");
+
                         parent.push(registerCraftingAchievement("soulSphere", SlashBlade.getCustomBlade("sphere_bladesoul"), parent.peek()).setSpecial());
+                        setContent(parent.peek(), "sphere_bladesoul");
                         parent.pop();
                     }
                     parent.pop();
@@ -213,6 +248,7 @@ public class AchievementList {
             parent.push(registerCraftingAchievement("brokenYamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato.broken"), net.minecraft.stats.AchievementList.theEnd));
             {
                 parent.push(registerCraftingAchievement("yamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato"), parent.peek()).setSpecial());
+                setContent(parent.peek(), "flammpfeil.slashblade.named.yamato");
                 parent.pop();
             }
             parent.pop();
@@ -221,7 +257,10 @@ public class AchievementList {
         {
             parent.push(registerCraftingAchievement("sabigatana", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.sabigatana.broken"), net.minecraft.stats.AchievementList.killEnemy));
             {
+                setContent(parent.peek(), "flammpfeil.slashblade.named.sabigatana");
+
                 parent.push(registerCraftingAchievement("doutanuki", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.doutanuki"), parent.peek()));
+                setContent(parent.peek(), "flammpfeil.slashblade.named.doutanuki");
                 parent.pop();
             }
             parent.pop();
@@ -239,6 +278,7 @@ public class AchievementList {
                 parent.push(registerCraftingAchievement("agitoRust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito.rust"), startParent));
                 {
                     parent.push(registerCraftingAchievement("agito", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito"), parent.peek()));
+                    setContent(parent.peek(), "flammpfeil.slashblade.named.agito");
                     parent.pop();
                 }
                 parent.pop();
@@ -258,7 +298,10 @@ public class AchievementList {
                 {
                     parent.push(registerCraftingAchievement("orotiagitoSealed", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.seald"), parent.peek()));
                     {
+                        setContent(parent.peek(), "flammpfeil.slashblade.named.orotiagito.seald");
+
                         parent.push(registerCraftingAchievement("orotiagito", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito"), parent.peek()).setSpecial());
+                        setContent(parent.peek(), "flammpfeil.slashblade.named.orotiagito");
                         parent.pop();
                     }
                     parent.pop();
@@ -303,6 +346,7 @@ public class AchievementList {
             ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fluorescentbar");
             if(blade != null){
                 parent.push(registerCraftingAchievement("fluorescentbar", blade, startParent));
+                setContent(parent.peek(), "flammpfeil.slashblade.named.fluorescentbar");
                 parent.pop();
             }
         }
@@ -313,19 +357,25 @@ public class AchievementList {
             if(blade != null){
                 parent.push(registerCraftingAchievement("nihil", blade, startParent));
                 {
+                    setContent(parent.peek(), "flammpfeil.slashblade.named.nihil");
+
                     blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.nihilex");
                     if(blade != null){
                         parent.push(registerCraftingAchievement("nihilex", blade, parent.peek()));
                         {
+                            setContent(parent.peek(), "flammpfeil.slashblade.named.nihilex");
+
                             blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.nihilul");
                             if(blade != null){
                                 parent.push(registerCraftingAchievement("nihilul", blade, parent.peek()));
+                                setContent(parent.peek(), "flammpfeil.slashblade.named.nihilul");
                                 parent.pop();
                             }
 
                             blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.crimsoncherry");
                             if(blade != null){
                                 parent.push(registerCraftingAchievement("crimsoncherry", blade, parent.peek()));
+                                setContent(parent.peek(), "flammpfeil.slashblade.named.crimsoncherry");
                                 parent.pop();
                             }
                         }
@@ -341,7 +391,7 @@ public class AchievementList {
             ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.murasamablade");
             if(blade != null){
                 parent.push(registerCraftingAchievement("murasama", blade, startParent));
-
+                setContent(parent.peek(), "flammpfeil.slashblade.named.murasamablade");
                 parent.pop();
             }
         }
@@ -352,9 +402,12 @@ public class AchievementList {
             if(blade != null){
                 parent.push(registerCraftingAchievement("wanderer", blade, startParent));
                 {
+                    setContent(parent.peek(), "flammpfeil.slashblade.named.wanderer");
+
                     blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.wanderer.rfblade");
                     if(blade != null){
                         parent.push(registerCraftingAchievement("wanderer.rfblade", blade, parent.peek()));
+                        setContent(parent.peek(), "flammpfeil.slashblade.named.wanderer.rfblade");
                         parent.pop();
                     }
                 }
@@ -367,6 +420,7 @@ public class AchievementList {
             ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.frostwolfa");
             if(blade != null){
                 parent.push(registerCraftingAchievement("frostwolfa", blade, startParent));
+                setContent(parent.peek(), "flammpfeil.slashblade.named.frostwolfa");
                 parent.pop();
             }
         }
@@ -375,6 +429,7 @@ public class AchievementList {
             ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.frostwolfb");
             if(blade != null){
                 parent.push(registerCraftingAchievement("frostwolfb", blade, startParent));
+                setContent(parent.peek(), "flammpfeil.slashblade.named.frostwolfb");
                 parent.pop();
             }
         }
@@ -414,7 +469,7 @@ public class AchievementList {
         return achievement;
     }
     static public Achievement registerAchievement(String key, int x, int y, ItemStack icon, Achievement parent){
-        Achievement achievement = new Achievement(getAchievementKey(key), getTranslateKey(key), x, y, icon, parent);
+        Achievement achievement = new AchievementEx(getAchievementKey(key), getTranslateKey(key), x, y, icon, parent);
 
         achievements.put(achievement.statId ,achievement);
 
@@ -503,4 +558,7 @@ public class AchievementList {
     static public String getTranslateKey(String key){
         return SlashBlade.modid + "." + key;
     }
+
+    static public AchievementEx currentMouseOver = null;
+
 }

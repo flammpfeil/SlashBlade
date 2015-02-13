@@ -67,7 +67,7 @@ public class Tizuru {
                     'X', reqiredBlade,
                     'P', proudsoul);
 
-            GameRegistry.addRecipe(recipe);
+            SlashBlade.addRecipe(name, recipe);
         }
     }
 }

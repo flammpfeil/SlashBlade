@@ -17,14 +17,14 @@ buildscript {
 
 apply plugin: 'forge'
 apply plugin: 'maven'
-7
-version = "mc1.7.10-r48"
+
+version = "mc1.7.10-r49"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
 minecraft {
-    version = "1.7.10-10.13.2.1286"
-    assetDir = "eclipse/assets"
+    version = "1.7.10-10.13.2.1291"
+    runDir = "eclipse"
 
     //static final boolean isRelease = /*@IS_RELEASE@*/ false;
     replace '@IS_RELEASE@', '*/true;//'
@@ -52,8 +52,11 @@ dependencies {
     runtime fileTree(dir: 'libs', include: '*.jar')
 }
 
-tasks.withType(Compile) {
-    options.encoding = 'UTF-8'
+def defaultEncoding = 'UTF-8'
+tasks.withType(AbstractCompile) each { it.options.encoding = defaultEncoding }
+
+compileTestJava {
+      options.encoding = defaultEncoding
 }
 
 
@@ -72,6 +75,7 @@ task sourceZip(type: Zip) {
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
+    from sourceSets.main.allSource
     classifier = 'deobf'
 }
 
@@ -80,7 +84,7 @@ artifacts {
     archives deobfJar
 }
 
-mavenRepository = '/maven'
+def mavenRepository = '/maven'
 
 uploadArchives {
     repositories {

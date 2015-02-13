@@ -61,7 +61,7 @@ public class BambooMod {
 
         if(Loader.isModLoaded("BambooMod")){
             RecipeBambooMod recipe = new BambooMod.RecipeBambooMod();
-            GameRegistry.addRecipe(recipe);
+            SlashBlade.addRecipe("wrap.BambooMod.katana.sample", recipe);
 
             FMLCommonHandler.instance().bus().register(recipe);
 

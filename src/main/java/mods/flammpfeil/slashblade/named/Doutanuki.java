@@ -157,13 +157,13 @@ public class Doutanuki {
             SlashBlade.mainConfiguration.save();
         }
 
-        GameRegistry.addRecipe(new RecipeRepairBrokenBlade());
+        SlashBlade.addRecipe(name,new RecipeRepairBrokenBlade());
         RecipeSorter.register("flammpfeil.slashblade:rustsrepairbroken", RecipeRepairBrokenBlade.class, RecipeSorter.Category.SHAPED, "after:forge:shaped");
 
-        GameRegistry.addRecipe(new RecipeSheath());
+        SlashBlade.addRecipe(name,new RecipeSheath());
         RecipeSorter.register("flammpfeil.slashblade:rustsheath", RecipeSheath.class, RecipeSorter.Category.SHAPED, "after:forge:shaped");
 
-        GameRegistry.addRecipe(new RecipeDoutanuki());
+        SlashBlade.addRecipe(namedou,new RecipeDoutanuki());
         RecipeSorter.register("flammpfeil.slashblade:doutanuki", RecipeDoutanuki.class, RecipeSorter.Category.SHAPED, "after:flammpfeil.slashblade:awake");
 
     }
