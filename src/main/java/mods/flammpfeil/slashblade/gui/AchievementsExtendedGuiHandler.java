@@ -42,8 +42,10 @@ public class AchievementsExtendedGuiHandler {
 
         GuiAchievements guiAchievements = (GuiAchievements)event.gui;
 
+        /*
         int currentPage = (Integer)ReflectionHelper.getPrivateValue(GuiAchievements.class,guiAchievements,"currentPage");
         if(0 < currentPage && AchievementPage.getAchievementPage(currentPage).getName().equals(StatCollector.translateToLocal("flammpfeil.slashblade")))
+        */
         {
 
             if(currentRecipe == null){
