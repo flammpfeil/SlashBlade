@@ -239,8 +239,6 @@ public class SlashBlade implements IFuelHandler{
 
     StatManager statManager;
 
-    AchievementsExtendedGuiHandler extendedGuiHandler;
-
     @EventHandler
     public void init(FMLInitializationEvent evt){
 
@@ -273,8 +271,6 @@ public class SlashBlade implements IFuelHandler{
 
         stylishRankManager = new StylishRankManager();
         MinecraftForge.EVENT_BUS.register(stylishRankManager);
-
-        extendedGuiHandler = new AchievementsExtendedGuiHandler();
 
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);

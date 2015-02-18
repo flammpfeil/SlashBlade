@@ -7,6 +7,7 @@ import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
 import mods.flammpfeil.slashblade.client.renderer.ItemRendererSpecialMaterial;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
@@ -59,5 +60,7 @@ public class InitProxyClient extends InitProxy{
                 }
             }
         };
+
+        AchievementsExtendedGuiHandler extendedGuiHandler = new AchievementsExtendedGuiHandler();
 	}
 }
