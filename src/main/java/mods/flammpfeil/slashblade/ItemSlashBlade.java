@@ -1064,6 +1064,7 @@ public class ItemSlashBlade extends ItemSword {
                         for(;descLv > 0;descLv--){
                             if(0 < el.experienceLevel){
                                 el.experienceLevel--;
+                                el.addExperience(-1);
                             }
                         }
                     }
