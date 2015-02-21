@@ -258,8 +258,8 @@ public class ItemSlashBlade extends ItemSword {
             int proudSouls = ProudSoul.get(tag);
             int count = 0;
             if(proudSouls > 1000){
-                count = proudSouls / 300;
-                count = Math.min(64,count);
+                count = (proudSouls - 800) / 100;
+                count = Math.min(8,Math.max(0,count));
                 proudSouls = proudSouls - count * 100;
             }else{
                 count = proudSouls / 100;
@@ -295,6 +295,27 @@ public class ItemSlashBlade extends ItemSword {
                 if(entity instanceof EntityPlayer)
                     AchievementList.triggerAchievement((EntityPlayer)entity,"enchantmentSoul");
 
+                int enchCount = stack.getEnchantmentTagList().tagCount();
+                if(5 < enchCount){
+                    int targetTag = rand.nextInt(enchCount);
+
+                    NBTTagCompound enchTag = stack.getEnchantmentTagList().getCompoundTagAt(targetTag);
+                    enchTag = (NBTTagCompound)enchTag.copy();
+
+                    stack.getEnchantmentTagList().removeTag(targetTag);
+
+                    ItemStack proudSoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1);
+
+                    if (proudSoul.stackTagCompound == null)
+                        proudSoul.setTagCompound(new NBTTagCompound());
+                    if (!proudSoul.stackTagCompound.hasKey("ench", 9))
+                        proudSoul.stackTagCompound.setTag("ench", new NBTTagList());
+
+                    NBTTagList nbttaglist = proudSoul.stackTagCompound.getTagList("ench", 10);
+                    nbttaglist.appendTag(enchTag);
+
+                    entity.entityDropItem(proudSoul, 0.0F);
+                }
             }
 
         }
@@ -972,27 +993,27 @@ public class ItemSlashBlade extends ItemSword {
         if(!par2World.isRemote && isCurrent && par2World.getTotalWorldTime() % 20 == 0){
         	int nowExp = el.experienceTotal;
 
-            int repair = 0;
+            int increasedExp = 0;
 
             if(PrevExp.exists(tag)){
                 int prevExp = PrevExp.get(tag);
-                repair = nowExp - prevExp;
+                increasedExp = nowExp - prevExp;
             }
             PrevExp.set(tag,nowExp);
 
-        	if(0 < repair){
+        	if(0 < increasedExp){
             	if(0 < curDamage && swordType.containsAll(SwordType.BewitchedSoulEater) && !swordType.contains(SwordType.NoScabbard)){
-                	if(10 < repair ){
-                		repair = 11;
-                	}
-            		sitem.setItemDamage(Math.max(0,curDamage-repair));
+
+                    int repairAmount = Math.max(1 , (int)(increasedExp / 10.0));
+                    increasedExp -= repairAmount;
+            		sitem.setItemDamage(Math.max(0,curDamage-repairAmount));
 
                     if(sitem.getItemDamage() == 0)
                         AchievementList.triggerAchievement(el,"soulEater");
 
-            	}else{
-        			ProudSoul.add(tag, repair);
             	}
+
+                ProudSoul.add(tag, increasedExp);
 
         	}
         }
@@ -1004,14 +1025,15 @@ public class ItemSlashBlade extends ItemSword {
 
 				if(0<= idx && idx < 9 && 0 < el.experienceLevel){
 					int repair;
-					int descExp;
+					int descExp = 0;
+                    int descLv = 0;
 
 					if(swordType.contains(SwordType.Broken)){
-						repair = 10;
-						descExp = 5;
+						repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
+						descLv = 1;
 					}else{
 						repair = 1;
-						descExp = 1;
+						descExp = 10;
 					}
 
 					if(0 < curDamage){
@@ -1019,20 +1041,32 @@ public class ItemSlashBlade extends ItemSword {
 						sitem.setItemDamage(Math.max(0,curDamage-repair));
 					}
 
-                    ProudSoul.add(tag, descExp);
+                    if(0 < descExp){
+                        ProudSoul.add(tag, descExp);
 
-					for(;descExp > 0;descExp--){
-						el.addExperience(-1);
+                        for(;descExp > 0;descExp--){
+                            el.addExperience(-1);
 
-						if(el.experience < 0){
-							if(el.experienceLevel <= 0){
-								el.experience = 0;
-							}else{
-								el.experienceLevel--;
-								el.experience = 1.0f - (0.9f/el.xpBarCap());
-							}
-						}
-					}
+                            if(el.experience < 0){
+                                if(el.experienceLevel <= 0){
+                                    el.experience = 0;
+                                }else{
+                                    el.experienceLevel--;
+                                    el.experience = 1.0f - (0.9f/el.xpBarCap());
+                                }
+                            }
+                        }
+                    }
+
+                    if(0 < descLv){
+                        ProudSoul.add(tag, descLv * 20);
+
+                        for(;descLv > 0;descLv--){
+                            if(0 < el.experienceLevel){
+                                el.experienceLevel--;
+                            }
+                        }
+                    }
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +12,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
  * Created by Furia on 14/05/27.
  */
 public class SlashBladeItemDestroyEventHandler {
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void PlayerDestroyItemEvent(PlayerDestroyItemEvent event){
         ItemStack stack = event.original;
         EntityPlayer player = event.entityPlayer;
@@ -41,6 +42,7 @@ public class SlashBladeItemDestroyEventHandler {
                 else if (!player.inventory.addItemStackToInventory(broken))
                     player.dropPlayerItemWithRandomChoice(broken, false);
 
+                stack = broken;
             }
 
             blade.dropItemDestructed(player, stack);
