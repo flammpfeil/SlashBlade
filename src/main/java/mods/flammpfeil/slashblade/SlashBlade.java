@@ -13,8 +13,10 @@ import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.JustGuard;
+import mods.flammpfeil.slashblade.ability.SneakMove;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.named.*;
@@ -80,6 +82,7 @@ public class SlashBlade implements IFuelHandler{
     //ability
     public static JustGuard abilityJustGuard;
     public static StylishRankManager stylishRankManager;
+    public static SneakMove abilitySneakMove;
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
@@ -256,6 +259,8 @@ public class SlashBlade implements IFuelHandler{
         EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", 2, this, 250, 1, true);
         EntityRegistry.registerModEntity(EntityDirectAttackDummy.class, "DirectAttackDummy", 3, this, 250, 1, true);
 
+        EntityRegistry.registerModEntity(EntityPhantomSwordBase.class, "PhantomSwordBase", 4, this, 250, 1, true);
+
 
         EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", 100, this, 250, 1000, false);
 
@@ -268,6 +273,9 @@ public class SlashBlade implements IFuelHandler{
         //ability
         abilityJustGuard = new JustGuard();
         MinecraftForge.EVENT_BUS.register(abilityJustGuard);
+
+        abilitySneakMove = new SneakMove();
+        MinecraftForge.EVENT_BUS.register(abilitySneakMove);
 
         stylishRankManager = new StylishRankManager();
         MinecraftForge.EVENT_BUS.register(stylishRankManager);
