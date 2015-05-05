@@ -8,6 +8,7 @@ import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
@@ -961,7 +962,7 @@ public class ItemSlashBlade extends ItemSword {
 			return;
 		}
 
-		EntityPlayer el = (EntityPlayer)par3Entity;
+        EntityPlayer el = (EntityPlayer)par3Entity;
 
 		NBTTagCompound tag = getItemTagCompound(sitem);
 
@@ -2024,7 +2025,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
                     if(!w.isRemote){
-                        EntityPhantomSword entityDrive = new EntityPhantomSword(w, entity, magicDamage,90.0f);
+                        EntityPhantomSwordBase entityDrive = new EntityPhantomSwordBase(w, entity, magicDamage,90.0f);
                         if (entityDrive != null) {
                             entityDrive.setLifeTime(30);
 
