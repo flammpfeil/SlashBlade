@@ -10,8 +10,10 @@ import mods.flammpfeil.slashblade.client.renderer.RenderPhantomSwordBase;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
+import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,6 +22,7 @@ import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+import org.lwjgl.input.Keyboard;
 
 public class InitProxyClient extends InitProxy{
 	@Override
@@ -62,6 +65,28 @@ public class InitProxyClient extends InitProxy{
                         ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, 1);
                     }
                 }
+            }
+        };
+
+        KeyBinding keybind2 = new KeyBindingEx("Key.SlashBlade.SA", Keyboard.KEY_V,"flammpfeil.slashblade"){
+            @Override
+            public void upkey(int count) {
+                if(!GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward))
+                    return;
+
+                Minecraft mc = Minecraft.getMinecraft();
+                EntityClientPlayerMP player = mc.thePlayer;
+                if(player == null) return;
+                if(mc.isGamePaused()) return;
+                if(!mc.inGameHasFocus) return;
+                if(mc.currentScreen != null) return;
+
+                ItemStack item = player.getHeldItem();
+                if(item == null) return;
+                if(!(item.getItem() instanceof ItemSlashBlade)) return;
+
+                mc.playerController.updateController();
+                PacketHandler.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));
             }
         };
 

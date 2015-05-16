@@ -411,7 +411,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         setRotation(rotationYaw,rotationPitch);
 
         //■死亡チェック
-        if(ticksExisted >= getLifeTime()) {
+        if(ticksExisted >= 200/*getLifeTime()*/) {
 
             if(!ridingEntity.isDead){
                 if(!worldObj.isRemote){
@@ -617,6 +617,9 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
     }
 
     protected void attackEntity(Entity target){
+
+
+        this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
 
         if(!this.worldObj.isRemote){
             float magicDamage = Math.max(1.0f, AttackLevel);
@@ -894,7 +897,12 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
     float hitPitch;
 
 
-    Entity ridingEntity2 = null;
+    public Entity ridingEntity2 = null;
+
+    public Entity getRidingEntity(){
+        return this.ridingEntity2;
+    }
+
     /**
      * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
      */
@@ -908,7 +916,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
             this.hitZ = this.posZ - par1Entity.posZ;
             this.ridingEntity2 = par1Entity;
 
-            this.ticksExisted = Math.max(0,getLifeTime() - 20);
+            this.ticksExisted = 0;
         }
     }
 
