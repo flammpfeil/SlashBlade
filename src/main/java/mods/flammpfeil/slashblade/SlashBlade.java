@@ -12,6 +12,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.ability.ChargeFloating;
 import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.SneakMove;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
@@ -83,6 +84,7 @@ public class SlashBlade implements IFuelHandler{
     public static JustGuard abilityJustGuard;
     public static StylishRankManager stylishRankManager;
     public static SneakMove abilitySneakMove;
+    private static ChargeFloating abilityChargeFloating;
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
@@ -276,6 +278,9 @@ public class SlashBlade implements IFuelHandler{
 
         abilitySneakMove = new SneakMove();
         MinecraftForge.EVENT_BUS.register(abilitySneakMove);
+
+        abilityChargeFloating = new ChargeFloating();
+        MinecraftForge.EVENT_BUS.register(abilityChargeFloating);
 
         stylishRankManager = new StylishRankManager();
         MinecraftForge.EVENT_BUS.register(stylishRankManager);
