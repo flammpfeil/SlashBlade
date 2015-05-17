@@ -20,7 +20,8 @@ public class EnchantHelper {
             ,Enchantment.thorns
             ,Enchantment.fireProtection
             ,Enchantment.featherFalling
-            ,Enchantment.fortune);
+            ,Enchantment.fortune
+            ,Enchantment.respiration);
 
     public static void initEnchantmentList(){
         for(Enchantment ench : Enchantment.enchantmentsList){

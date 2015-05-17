@@ -53,27 +53,22 @@ public class JustGuard {
         ItemStack stack = e.entityLiving.getHeldItem();
         if(el instanceof  EntityPlayer && ((EntityPlayer)el).isUsingItem() && stack != null && stack.getItem() instanceof ItemSlashBlade){
 
-            int fireProtection = EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId,stack);
-
             //mobからの攻撃は常にguard可能
             boolean guardable = e.source.getEntity() != null;
-            {
-                //特殊guard機能
-                if(!guardable && 0 < fireProtection && e.source.getDamageType() == "onFire")
-                    guardable = true;
-            }
             //特殊guardも通常guard不可なものはguard不可
             if(!guardable && e.source.isUnblockable()) return;
 
             long cs = ChargeStart.get(el.getEntityData());
             if(0 < cs && el.worldObj.getTotalWorldTime() - cs < activeTicks){
-                    e.setCanceled(true);
+
+                e.setCanceled(true);
+                e.ammount = 0;
+                UntouchableTime.setUntouchableTime(el,20);
+
+
                 NBTTagCompound tag = stack.getTagCompound();
 
                 el.setArrowCountInEntity(-1);
-
-                if(0<fireProtection)
-                    el.setFire(0);
 
                 el.motionX = 0;
                 el.motionY = 0;

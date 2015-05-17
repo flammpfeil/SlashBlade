@@ -5,6 +5,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import javafx.geometry.BoundingBox;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -36,6 +37,10 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
         if(!(stack.getItem() instanceof ItemSlashBlade)) return null;
 
         switch(message.mode){
+            case 2:
+                {
+                    UntouchableTime.setUntouchableTime(entityPlayer,3,true);
+                }
             default:
                 {
                     int entityId = entityPlayer.getEntityData().getInteger("LastHitSummonedSwords");
@@ -61,6 +66,8 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                     look.normalize();
                     entityPlayer.onEnchantmentCritical(entityPlayer);
 
+                    UntouchableTime.setUntouchableTime(entityPlayer,20,true);
+
                     boolean teleported = false;
                     for(look.yCoord = 0.5f; 0.0f < look.yCoord; look.yCoord -= 0.1f){
                         Vec3 pos = Vec3.createVectorHelper(-look.xCoord + target.posX, look.yCoord + target.posY, -look.zCoord + target.posZ);
@@ -79,6 +86,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                             if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
                                 entityPlayer.playerNetServerHandler.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
                                 entityPlayer.onEnchantmentCritical(entityPlayer);
+                                teleported = true;
                                 break;
                             }
                         }

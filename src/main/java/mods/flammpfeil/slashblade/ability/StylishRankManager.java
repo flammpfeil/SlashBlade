@@ -91,6 +91,8 @@ public class StylishRankManager {
 
         public static String DestructObject = registerAttackType("DestructObject", -0.1f);
 
+        public static String AttackAvoidance = registerAttackType("AttackAvoidance", -0.3f);
+
         public static String registerAttackType(String key,float factor){
             types.put(key,factor);
             return key;

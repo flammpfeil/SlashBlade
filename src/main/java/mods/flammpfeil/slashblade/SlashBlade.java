@@ -12,10 +12,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.ability.ChargeFloating;
-import mods.flammpfeil.slashblade.ability.JustGuard;
-import mods.flammpfeil.slashblade.ability.SneakMove;
-import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
@@ -84,7 +81,10 @@ public class SlashBlade implements IFuelHandler{
     public static JustGuard abilityJustGuard;
     public static StylishRankManager stylishRankManager;
     public static SneakMove abilitySneakMove;
-    private static ChargeFloating abilityChargeFloating;
+    public static ChargeFloating abilityChargeFloating;
+    public static FireResistance abilityFireResistance;
+    public static WaterBreathing abilityWaterBreathing;
+    public static UntouchableTime abilityUntouchableTime;
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
@@ -281,6 +281,15 @@ public class SlashBlade implements IFuelHandler{
 
         abilityChargeFloating = new ChargeFloating();
         MinecraftForge.EVENT_BUS.register(abilityChargeFloating);
+
+        abilityFireResistance = new FireResistance();
+        MinecraftForge.EVENT_BUS.register(abilityFireResistance);
+
+        abilityWaterBreathing = new WaterBreathing ();
+        MinecraftForge.EVENT_BUS.register(abilityWaterBreathing);
+
+        abilityUntouchableTime = new UntouchableTime();
+        MinecraftForge.EVENT_BUS.register(abilityUntouchableTime);
 
         stylishRankManager = new StylishRankManager();
         MinecraftForge.EVENT_BUS.register(stylishRankManager);
