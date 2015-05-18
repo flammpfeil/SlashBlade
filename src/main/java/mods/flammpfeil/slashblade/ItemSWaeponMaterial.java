@@ -16,9 +16,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -114,13 +117,55 @@ public class ItemSWaeponMaterial extends Item {
     }
 
     @Override
+    public void addInformation(ItemStack par1ItemStack, EntityPlayer p_77624_2_, List par3List, boolean p_77624_4_) {
+        super.addInformation(par1ItemStack, p_77624_2_, par3List, p_77624_4_);
+
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(par1ItemStack);
+
+        if(ItemSlashBlade.SpecialAttackType.exists(tag)){
+            String key = "flammpfeil.slashblade.specialattack." + SlashBlade.weapon.getSpecialAttack(par1ItemStack).toString();
+
+            par3List.add(String.format("SA:%s",  StatCollector.translateToLocal(key)));
+        }
+
+    }
+
+    @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+
+        if(player.worldObj.isRemote) return false;
+
+        boolean using = false;
+
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+
+        if(stack.getItemDamage() == 2 && ItemSlashBlade.SpecialAttackType.exists(tag)){
+            int saType = ItemSlashBlade.SpecialAttackType.get(tag);
+
+            if (stack.isItemEnchanted() && entity instanceof EntityBladeStand)
+            {
+                EntityBladeStand stand = (EntityBladeStand)entity;
+
+                if(stand.hasBlade()){
+                    using = true;
+
+                    ItemStack blade = stand.getBlade();
+
+                    NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+
+                    ItemSlashBlade.SpecialAttackType.set(bladeTag,saType);
+
+                    player.onEnchantmentCritical(stand);
+                }
+            }
+        }
+
         if (stack.isItemEnchanted() && entity instanceof EntityBladeStand)
         {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
             if(stand.hasBlade()){
-                --stack.stackSize;
+                using = true;
 
                 int damage = stack.getItemDamage();
                 float rate = 0.0f;
@@ -144,7 +189,25 @@ public class ItemSWaeponMaterial extends Item {
 
                         int level = 1;
                         if(bladeEnchMap.containsKey(entry.getKey())){
-                            level = Math.min(ench.getMaxLevel(),bladeEnchMap.get(entry.getKey())+1);
+                            int currentLevel = bladeEnchMap.get(entry.getKey());
+                            int maxLevel = ench.getMaxLevel();
+                            if(currentLevel < maxLevel)
+                                level = currentLevel+1;
+                            else{
+                                level = maxLevel;
+
+                                if(0.7f < rate){
+                                    ItemStack bladeSphere = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
+
+                                    NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+                                    int saType = ItemSlashBlade.SpecialAttackType.get(bladeTag);
+
+                                    NBTTagCompound sphereTag = ItemSlashBlade.getItemTagCompound(bladeSphere);
+                                    ItemSlashBlade.SpecialAttackType.set(sphereTag,saType);
+
+                                    stand.entityDropItem(bladeSphere, 0.0F);
+                                }
+                            }
                         }
 
                         bladeEnchMap.put(entry.getKey(),level);
@@ -152,20 +215,17 @@ public class ItemSWaeponMaterial extends Item {
                         EnchantmentHelper.setEnchantments(bladeEnchMap,blade);
                     }
 
-                    for (int i1 = 0; i1 < 5; ++i1)
-                    {
-                        double d0 = itemRand.nextGaussian() * 0.02D;
-                        double d1 = itemRand.nextGaussian() * 0.02D;
-                        double d2 = itemRand.nextGaussian() * 0.02D;
-                        entity.worldObj.spawnParticle("happyVillager", (double) ((float) entity.posX + itemRand.nextFloat()), (double) entity.posY + (double) itemRand.nextFloat() * 1.0f, (double) ((float) entity.posZ + itemRand.nextFloat()), d0, d1, d2);
-                    }
+                    player.onCriticalHit(stand);
+                }
+            }
+        }
 
-                }
-                if (stack.stackSize <= 0)
-                {
-                    player.destroyCurrentEquippedItem();
-                }
-                return true;
+        if(using){
+            stack.stackSize--;
+
+            if (stack.stackSize <= 0)
+            {
+                player.destroyCurrentEquippedItem();
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
