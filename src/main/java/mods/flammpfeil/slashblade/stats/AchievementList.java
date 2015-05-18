@@ -60,7 +60,7 @@ public class AchievementList {
         return stack;
     }
 
-    static void setContent(Achievement achievement,String contentKey){
+    static public void setContent(Achievement achievement,String contentKey){
         if(!(achievement instanceof AchievementEx))
             return;
         if(!SlashBlade.recipeMultimap.containsKey(contentKey))
