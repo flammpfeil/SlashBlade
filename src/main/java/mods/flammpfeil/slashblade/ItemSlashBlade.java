@@ -12,6 +12,7 @@ import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
+import mods.flammpfeil.slashblade.util.InventoryUtility;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -1028,13 +1029,18 @@ public class ItemSlashBlade extends ItemSword {
 					int repair;
 					int descExp = 0;
                     int descLv = 0;
+                    int addProudSoul = 0;
 
 					if(swordType.contains(SwordType.Broken)){
 						repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
-						descLv = 1;
+                        ItemStack tinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
+                        addProudSoul = 20;
+                        if(!InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false))
+						    descLv = 1;
 					}else{
 						repair = 1;
 						descExp = 10;
+                        addProudSoul = 10;
 					}
 
 					if(0 < curDamage){
@@ -1042,9 +1048,9 @@ public class ItemSlashBlade extends ItemSword {
 						sitem.setItemDamage(Math.max(0,curDamage-repair));
 					}
 
-                    if(0 < descExp){
-                        ProudSoul.add(tag, descExp);
+                    ProudSoul.add(tag, addProudSoul);
 
+                    if(0 < descExp){
                         for(;descExp > 0;descExp--){
                             el.addExperience(-1);
 
@@ -1060,8 +1066,6 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(0 < descLv){
-                        ProudSoul.add(tag, descLv * 20);
-
                         for(;descLv > 0;descLv--){
                             if(0 < el.experienceLevel){
                                 el.experienceLevel--;
