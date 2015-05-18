@@ -337,7 +337,7 @@ public class SlashBlade implements IFuelHandler{
 
 	@Override
 	public int getBurnTime(ItemStack fuel) {
-		return (fuel.getItem() == this.proudSoul && fuel.getItemDamage() == 0) ? 20000 : 0;
+		return (fuel.getItem() == this.proudSoul && fuel.getItemDamage() == 0) ? 10000 : 0;
 	}
 
 

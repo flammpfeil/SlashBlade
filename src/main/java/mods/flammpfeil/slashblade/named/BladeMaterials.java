@@ -27,7 +27,7 @@ public class BladeMaterials {
             result.stackSize = 2;
 
             SlashBlade.addRecipe(SlashBlade.TinyBladeSoulStr,
-                    new ShapedOreRecipe(result,"X", 'X', itemProudSoul));
+                    new RecipeBladeSoulUpgrade(result,"X", 'X', itemProudSoul));
         }
 
         SlashBlade.addRecipe(SlashBlade.ProudSoulStr,
@@ -37,9 +37,9 @@ public class BladeMaterials {
 
         SlashBlade.addRecipe(SlashBlade.IngotBladeSoulStr,
                 new RecipeBladeSoulUpgrade(itemIngotBladeSoul,
-                "PPP",
+                " P ",
                 "PIP",
-                "PPP",
+                " P ",
                 'I', Items.iron_ingot,
                 'P', itemProudSoul));
 
@@ -49,7 +49,7 @@ public class BladeMaterials {
                 "PIP",
                 " P ",
                 'I', "ingotSteel",
-                'P', itemProudSoul));
+                'P', itemTinyBladeSoul));
 
         SlashBlade.addSmelting(SlashBlade.SphereBladeSoulStr,
                 itemIngotBladeSoul , itemSphereBladeSoul, 2.0F);
@@ -60,6 +60,6 @@ public class BladeMaterials {
                 "XIX",
                 "XXX",
                 'I',Items.glass_bottle,
-                'X',itemProudSoul));
+                'X',itemTinyBladeSoul));
     }
 }
