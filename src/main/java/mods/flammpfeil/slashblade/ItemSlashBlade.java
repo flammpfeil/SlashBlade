@@ -299,24 +299,40 @@ public class ItemSlashBlade extends ItemSword {
 
                 int enchCount = stack.getEnchantmentTagList().tagCount();
                 if(5 < enchCount){
-                    int targetTag = rand.nextInt(enchCount);
+                    if(0 < unbreakingLevel){
+                        Map enchantments = EnchantmentHelper.getEnchantments(stack);
 
-                    NBTTagCompound enchTag = stack.getEnchantmentTagList().getCompoundTagAt(targetTag);
-                    enchTag = (NBTTagCompound)enchTag.copy();
+                        if(unbreakingLevel == 1)
+                            enchantments.remove(Enchantment.unbreaking.effectId);
+                        else
+                            enchantments.put(Enchantment.unbreaking.effectId,unbreakingLevel-1);
 
-                    stack.getEnchantmentTagList().removeTag(targetTag);
+                        ItemStack rareTinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
+                        rareTinySoul.addEnchantment(EnchantHelper.getEnchantmentRare(rand),1);
+                        entity.entityDropItem(rareTinySoul, 0.0F);
 
-                    ItemStack proudSoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1);
+                        EnchantmentHelper.setEnchantments(enchantments,stack);
+                    }else{
 
-                    if (proudSoul.stackTagCompound == null)
-                        proudSoul.setTagCompound(new NBTTagCompound());
-                    if (!proudSoul.stackTagCompound.hasKey("ench", 9))
-                        proudSoul.stackTagCompound.setTag("ench", new NBTTagList());
+                        int targetTag = rand.nextInt(enchCount);
 
-                    NBTTagList nbttaglist = proudSoul.stackTagCompound.getTagList("ench", 10);
-                    nbttaglist.appendTag(enchTag);
+                        NBTTagCompound enchTag = stack.getEnchantmentTagList().getCompoundTagAt(targetTag);
+                        enchTag = (NBTTagCompound)enchTag.copy();
 
-                    entity.entityDropItem(proudSoul, 0.0F);
+                        stack.getEnchantmentTagList().removeTag(targetTag);
+
+                        ItemStack proudSoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1);
+
+                        if (proudSoul.stackTagCompound == null)
+                            proudSoul.setTagCompound(new NBTTagCompound());
+                        if (!proudSoul.stackTagCompound.hasKey("ench", 9))
+                            proudSoul.stackTagCompound.setTag("ench", new NBTTagList());
+
+                        NBTTagList nbttaglist = proudSoul.stackTagCompound.getTagList("ench", 10);
+                        nbttaglist.appendTag(enchTag);
+
+                        entity.entityDropItem(proudSoul, 0.0F);
+                    }
                 }
             }
 
