@@ -88,8 +88,7 @@ public class InitProxyClient extends InitProxy{
                     mc.playerController.updateController();
                     PacketHandler.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));
 
-                }
-
+                }else
                 if(mc.thePlayer.moveStrafing != 0.0f || mc.thePlayer.moveForward != 0.0f){
                     long now = mc.thePlayer.worldObj.getTotalWorldTime();
 

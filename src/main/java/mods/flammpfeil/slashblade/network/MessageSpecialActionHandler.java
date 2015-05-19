@@ -3,20 +3,16 @@ package mods.flammpfeil.slashblade.network;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import javafx.geometry.BoundingBox;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
-import scala.actors.threadpool.Arrays;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -103,10 +99,11 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
     public boolean getCanSpawnHere(Entity target,Vec3 pos,Entity... ignore)
     {
         AxisAlignedBB bb = this.setPosition(target,pos.xCoord,pos.yCoord,pos.zCoord);
+/*
         List entityList = target.worldObj.getCollidingBoundingBoxes(target, bb);
         entityList.removeAll(Arrays.asList(ignore));
-
-        return target.worldObj.checkNoEntityCollision(bb) && entityList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
+*/
+        return target.worldObj.checkNoEntityCollision(bb);// && entityList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
     }
 
     public AxisAlignedBB setPosition(Entity target, double p_70107_1_, double p_70107_3_, double p_70107_5_)
