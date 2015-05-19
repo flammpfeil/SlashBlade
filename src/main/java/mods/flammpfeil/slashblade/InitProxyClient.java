@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import mods.flammpfeil.slashblade.ability.AvoidAction;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
@@ -90,50 +91,7 @@ public class InitProxyClient extends InitProxy{
 
                 }else
                 if(mc.thePlayer.moveStrafing != 0.0f || mc.thePlayer.moveForward != 0.0f){
-                    long now = mc.thePlayer.worldObj.getTotalWorldTime();
-
-                    long interval = 3;
-
-                    long timeout = mc.thePlayer.getEntityData().getLong("SB.AvoidTimeout");
-
-                    if(interval < Math.abs(timeout - now)){
-
-                        //avoid combo limit
-                        {
-                            long comboInterval = 10;
-                            int comboLimit = 3;
-
-
-                            int combo = mc.thePlayer.getEntityData().getInteger("SB.AvoidCombo");
-                            long comboTimeout = mc.thePlayer.getEntityData().getLong("SB.AvoidComboTimeout");
-
-                            if(comboInterval < Math.abs(comboTimeout - now)){
-                                combo = 0;
-                            }
-
-                            if(comboLimit <= combo){
-                                return;
-                            }else{
-                                combo++;
-                                mc.thePlayer.getEntityData().setInteger("SB.AvoidCombo",combo);
-                                mc.thePlayer.getEntityData().setLong("SB.AvoidComboTimeout",now+comboInterval);
-                            }
-                        }
-
-                        float speedFactor;
-                        if(mc.thePlayer.isSneaking())
-                            speedFactor = 2.8f;
-                        else
-                            speedFactor = 0.8f;
-
-                        mc.thePlayer.getEntityData().setLong("SB.AvoidTimeout",now + interval);
-
-                        player.playSound("random.fizz", 0.3F, 10.0F);
-                        mc.thePlayer.moveFlying(mc.thePlayer.moveStrafing,mc.thePlayer.moveForward,speedFactor);
-                        mc.playerController.updateController();
-                        PacketHandler.INSTANCE.sendToServer(new MessageSpecialAction((byte) 2));
-                    }
-
+                    AvoidAction.doAvoid();
                 }
             }
         };

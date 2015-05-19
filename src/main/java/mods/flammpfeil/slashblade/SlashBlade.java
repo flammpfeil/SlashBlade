@@ -85,6 +85,7 @@ public class SlashBlade implements IFuelHandler{
     public static FireResistance abilityFireResistance;
     public static WaterBreathing abilityWaterBreathing;
     public static UntouchableTime abilityUntouchableTime;
+    public static AvoidAction abilityAvoidAction;
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
@@ -290,6 +291,9 @@ public class SlashBlade implements IFuelHandler{
 
         abilityUntouchableTime = new UntouchableTime();
         MinecraftForge.EVENT_BUS.register(abilityUntouchableTime);
+
+        abilityAvoidAction = new AvoidAction();
+        MinecraftForge.EVENT_BUS.register(abilityAvoidAction);
 
         stylishRankManager = new StylishRankManager();
         MinecraftForge.EVENT_BUS.register(stylishRankManager);

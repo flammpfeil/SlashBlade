@@ -1261,7 +1261,7 @@ public class ItemSlashBlade extends ItemSword {
 
 			if(swordType.contains(SwordType.Bewitched)){
 				AxisAlignedBB bb = el.boundingBox.copy();
-				bb = bb.expand(1, 1, 1);
+				bb = bb.expand(1.5, 1.5, 1.5);
 				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, this.AttackableSelector);
 				if(0 < list.size() && el.isAirBorne){
 					Entity target = null;
