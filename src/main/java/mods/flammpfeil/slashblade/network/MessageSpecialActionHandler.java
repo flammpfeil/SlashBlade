@@ -99,11 +99,10 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
     public boolean getCanSpawnHere(Entity target,Vec3 pos,Entity... ignore)
     {
         AxisAlignedBB bb = this.setPosition(target,pos.xCoord,pos.yCoord,pos.zCoord);
-/*
-        List entityList = target.worldObj.getCollidingBoundingBoxes(target, bb);
-        entityList.removeAll(Arrays.asList(ignore));
-*/
-        return target.worldObj.checkNoEntityCollision(bb);// && entityList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
+
+        List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
+
+        return /*target.worldObj.checkNoEntityCollision(bb) && */blockCollidList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
     }
 
     public AxisAlignedBB setPosition(Entity target, double p_70107_1_, double p_70107_3_, double p_70107_5_)
