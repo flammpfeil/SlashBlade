@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -88,8 +87,10 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                         }
                     }
 
-                    if(teleported)
+                    if(teleported){
                         lastHitSS.setDead();
+                        entityPlayer.worldObj.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
+                    }
                 }
                 break;
         }

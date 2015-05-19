@@ -52,6 +52,7 @@ public class SlashDimension extends SpecialAttackBase{
             ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.SlashDim);
 
             spawnParticle(world, target);
+            player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.endermen.portal", 0.5F, 1.0F);
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
