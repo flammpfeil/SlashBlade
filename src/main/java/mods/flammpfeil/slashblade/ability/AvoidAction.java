@@ -20,7 +20,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
  */
 public class AvoidAction {
     @SubscribeEvent
-    static public void onLivingJump(LivingEvent.LivingJumpEvent event){
+    public void onLivingJump(LivingEvent.LivingJumpEvent event){
         EntityLivingBase target = event.entityLiving;
         if(target == null) return;
 
