@@ -420,8 +420,10 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
                     DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
                     ridingEntity.attackEntityFrom(ds, magicDamage);
                     if(blade != null && ridingEntity instanceof EntityLivingBase){
-                        StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.BreakPhantomSword);
-                        ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
+                        if(thrower != null){
+                            StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.BreakPhantomSword);
+                            ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
+                        }
 
                         ridingEntity.motionX = 0;
                         ridingEntity.motionY = 0;
@@ -523,7 +525,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         {
             EntityPlayer entityplayer = (EntityPlayer)movingobjectposition.entityHit;
 
-            if (entityplayer.capabilities.disableDamage || this.getThrower() instanceof EntityPlayer && !((EntityPlayer)this.getThrower()).canAttackPlayer(entityplayer))
+            if (entityplayer.capabilities.disableDamage || (this.getThrower() != null && this.getThrower() instanceof EntityPlayer && !((EntityPlayer)this.getThrower()).canAttackPlayer(entityplayer)))
             {
                 movingobjectposition = null;
             }
@@ -619,7 +621,8 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
     protected void attackEntity(Entity target){
 
 
-        this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
+        if(this.thrower != null)
+            this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
 
         if(!this.worldObj.isRemote){
             float magicDamage = Math.max(1.0f, AttackLevel);
@@ -627,7 +630,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(blade != null && target instanceof EntityLivingBase && thrower instanceof EntityLivingBase){
+            if(blade != null && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
@@ -747,7 +750,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
     @Override
     public void setDead() {
-        if(this.thrower instanceof EntityPlayer)
+        if(this.thrower != null && this.thrower instanceof EntityPlayer)
             ((EntityPlayer)thrower).onCriticalHit(this);
         /*
         if(!this.worldObj.isRemote)
