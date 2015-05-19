@@ -166,8 +166,13 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
         int targetid = this.getTargetEntityId();
 
+        Entity owner = this.thrower;
+        if(this.thrower == null)
+            owner = this;
+
         if(targetid == 0){
-            Entity rayEntity = getRayTrace(30.0f); //最長３０
+
+            Entity rayEntity = getRayTrace(owner, 30.0f); //最長３０
             if(rayEntity != null){
                 targetid = rayEntity.getEntityId();
                 this.setTargetEntityId( rayEntity.getEntityId());
@@ -176,7 +181,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
         //視線中に無かった場合近傍Entityに拡張検索
         if(targetid == 0){
-            Entity rayEntity = getRayTrace(30.0f,10.0f,10.0f); //最長３０、視線外10幅まで探索拡張
+            Entity rayEntity = getRayTrace(owner, 30.0f,5.0f,5.0f); //最長３０、視線外10幅まで探索拡張
             if(rayEntity != null){
                 targetid = rayEntity.getEntityId();
                 this.setTargetEntityId( rayEntity.getEntityId());
@@ -200,24 +205,24 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         return true;
     }
 
-    public Entity getRayTrace(double reachMax){
-        return this.getRayTrace(reachMax,1.0f,0.0f);
+    public Entity getRayTrace(Entity owner, double reachMax){
+        return this.getRayTrace(owner, reachMax,1.0f,0.0f);
     }
 
-    public Entity getRayTrace(double reachMax, float expandFactor, float expandBorder){
+    public Entity getRayTrace(Entity owner, double reachMax, float expandFactor, float expandBorder){
         Entity pointedEntity;
         float par1 = 1.0f;
 
-        MovingObjectPosition objectMouseOver = rayTrace(reachMax, par1);
+        MovingObjectPosition objectMouseOver = rayTrace(owner,reachMax, par1);
         double reachMin = reachMax;
-        Vec3 entityPos = this.getPosition();
+        Vec3 entityPos = getPosition(owner);
 
         if (objectMouseOver != null)
         {
             reachMin = objectMouseOver.hitVec.distanceTo(entityPos);
         }
 
-        Vec3 lookVec = this.getLook(par1);
+        Vec3 lookVec = getLook(owner, par1);
         Vec3 reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
         pointedEntity = null;
         List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax).expand((double)expandFactor, (double)expandFactor, (double)expandFactor));
@@ -267,36 +272,36 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
         return pointedEntity;
     }
-    public MovingObjectPosition rayTrace(double par1, float par3)
+    public static MovingObjectPosition rayTrace(Entity owner, double par1, float par3)
     {
-        Vec3 vec3 = this.getPosition();
-        Vec3 vec31 = this.getLook(par3);
+        Vec3 vec3 = getPosition(owner);
+        Vec3 vec31 = getLook(owner, par3);
         Vec3 vec32 = vec3.addVector(vec31.xCoord * par1, vec31.yCoord * par1, vec31.zCoord * par1);
-        return this.worldObj.func_147447_a(vec3, vec32, false, false, true);
+        return owner.worldObj.func_147447_a(vec3, vec32, false, false, true);
     }
-    public Vec3 getPosition()
+    public static Vec3 getPosition(Entity owner)
     {
-        return Vec3.createVectorHelper(this.posX, this.posY + this.getEyeHeight(), this.posZ);
+        return Vec3.createVectorHelper(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
     }
-    public Vec3 getLook(float p_70676_1_)
+    public static Vec3 getLook(Entity owner, float rotMax)
     {
         float f1;
         float f2;
         float f3;
         float f4;
 
-        if (p_70676_1_ == 1.0F)
+        if (rotMax == 1.0F)
         {
-            f1 = MathHelper.cos(-this.rotationYaw * 0.017453292F - (float)Math.PI);
-            f2 = MathHelper.sin(-this.rotationYaw * 0.017453292F - (float)Math.PI);
-            f3 = -MathHelper.cos(-this.rotationPitch * 0.017453292F);
-            f4 = MathHelper.sin(-this.rotationPitch * 0.017453292F);
+            f1 =  MathHelper.cos(-owner.rotationYaw   * 0.017453292F - (float)Math.PI);
+            f2 =  MathHelper.sin(-owner.rotationYaw   * 0.017453292F - (float)Math.PI);
+            f3 = -MathHelper.cos(-owner.rotationPitch * 0.017453292F);
+            f4 =  MathHelper.sin(-owner.rotationPitch * 0.017453292F);
             return Vec3.createVectorHelper((double)(f2 * f3), (double)f4, (double)(f1 * f3));
         }
         else
         {
-            f1 = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * p_70676_1_;
-            f2 = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * p_70676_1_;
+            f1 = owner.prevRotationPitch + (owner.rotationPitch - owner.prevRotationPitch) * rotMax;
+            f2 = owner.prevRotationYaw + (owner.rotationYaw - owner.prevRotationYaw) * rotMax;
             f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
             f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
             float f5 = -MathHelper.cos(-f1 * 0.017453292F);
