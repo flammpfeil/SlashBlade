@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.AvoidAction;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
@@ -15,16 +16,26 @@ import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
+
+import java.util.List;
+import net.minecraft.util.Timer;
 
 public class InitProxyClient extends InitProxy{
 	@Override
@@ -98,4 +109,92 @@ public class InitProxyClient extends InitProxy{
 
         AchievementsExtendedGuiHandler extendedGuiHandler = new AchievementsExtendedGuiHandler();
 	}
+
+    @Override
+    public void getMouseOver(double len)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        float p_78473_1_ = ((Timer)ReflectionHelper.getPrivateValue(Minecraft.class,mc,"timer")).renderPartialTicks;
+
+        EntityRenderer er = mc.entityRenderer;
+        if (mc.renderViewEntity != null)
+        {
+            if (mc.theWorld != null)
+            {
+                mc.pointedEntity = null;
+                double d0 = len;
+                mc.objectMouseOver = mc.renderViewEntity.rayTrace(d0, p_78473_1_);
+                double d1 = d0;
+                Vec3 vec3 = mc.renderViewEntity.getPosition(p_78473_1_);
+
+
+                if (mc.objectMouseOver != null)
+                {
+                    d1 = mc.objectMouseOver.hitVec.distanceTo(vec3);
+                }
+
+                Vec3 vec31 = mc.renderViewEntity.getLook(p_78473_1_);
+                Vec3 vec32 = vec3.addVector(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0);
+                Entity pointedEntity = null;
+                Vec3 vec33 = null;
+                float f1 = 1.0F;
+                List list = mc.theWorld.getEntitiesWithinAABBExcludingEntity(mc.renderViewEntity, mc.renderViewEntity.boundingBox.addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand((double)f1, (double)f1, (double)f1));
+                double d2 = d1;
+
+                for (int i = 0; i < list.size(); ++i)
+                {
+                    Entity entity = (Entity)list.get(i);
+
+                    if (entity.canBeCollidedWith())
+                    {
+                        float f2 = entity.getCollisionBorderSize();
+                        AxisAlignedBB axisalignedbb = entity.boundingBox.expand((double)f2, (double)f2, (double)f2);
+                        MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+
+                        if (axisalignedbb.isVecInside(vec3))
+                        {
+                            if (0.0D < d2 || d2 == 0.0D)
+                            {
+                                pointedEntity = entity;
+                                vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
+                                d2 = 0.0D;
+                            }
+                        }
+                        else if (movingobjectposition != null)
+                        {
+                            double d3 = vec3.distanceTo(movingobjectposition.hitVec);
+
+                            if (d3 < d2 || d2 == 0.0D)
+                            {
+                                if (entity == mc.renderViewEntity.ridingEntity && !entity.canRiderInteract())
+                                {
+                                    if (d2 == 0.0D)
+                                    {
+                                        pointedEntity = entity;
+                                        vec33 = movingobjectposition.hitVec;
+                                    }
+                                }
+                                else
+                                {
+                                    pointedEntity = entity;
+                                    vec33 = movingobjectposition.hitVec;
+                                    d2 = d3;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (pointedEntity != null && (d2 < d1 || mc.objectMouseOver == null))
+                {
+                    mc.objectMouseOver = new MovingObjectPosition(pointedEntity, vec33);
+
+                    if (pointedEntity instanceof EntityLivingBase || pointedEntity instanceof EntityItemFrame)
+                    {
+                        mc.pointedEntity = pointedEntity;
+                    }
+                }
+            }
+        }
+    }
 }

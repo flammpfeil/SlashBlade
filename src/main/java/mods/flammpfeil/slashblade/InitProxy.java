@@ -9,4 +9,6 @@ public class InitProxy {
 
 	public void initializeItemRenderer() {}
 
+
+    public void getMouseOver(double len){}
 }

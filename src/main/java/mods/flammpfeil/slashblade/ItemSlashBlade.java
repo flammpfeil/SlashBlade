@@ -850,8 +850,13 @@ public class ItemSlashBlade extends ItemSword {
 			break;
 
 		case Iai:
-			bb = bb.expand(2.0f, 0.25f, 2.0f);
-			bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+            if(swordType.contains(SwordType.Broken)){
+                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+            }else{
+                bb = bb.expand(2.0f, 0.25f, 2.0f);
+                bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+            }
 			break;
 
 		case Saya1:
@@ -862,8 +867,13 @@ public class ItemSlashBlade extends ItemSword {
 
 		case Kiriorosi:
 		default:
-			bb = bb.expand(1.2f, 1.25f, 1.2f);
-			bb = bb.offset(vec.xCoord*2.0f,0.5f,vec.zCoord*2.0f);
+            if(swordType.contains(SwordType.Broken)){
+                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+            }else{
+                bb = bb.expand(1.2f, 1.25f, 1.2f);
+                bb = bb.offset(vec.xCoord*2.0f,0.5f,vec.zCoord*2.0f);
+            }
 			break;
 		}
 
@@ -1689,6 +1699,15 @@ public class ItemSlashBlade extends ItemSword {
 
     @Override
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+
+        EnumSet<SwordType> type = getSwordType(stack);
+
+        double swordLen = 5.5D;
+        if(type.contains(SwordType.Broken))
+            swordLen = 2.8D;
+
+        InitProxy.proxy.getMouseOver(swordLen);
+
         /*if(!entityLiving.worldObj.isRemote)
         {
             NBTTagCompound tag = getItemTagCompound(stack);
