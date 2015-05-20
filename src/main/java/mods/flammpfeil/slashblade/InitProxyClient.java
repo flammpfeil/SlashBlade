@@ -114,7 +114,7 @@ public class InitProxyClient extends InitProxy{
     public void getMouseOver(double len)
     {
         Minecraft mc = Minecraft.getMinecraft();
-        float p_78473_1_ = ((Timer)ReflectionHelper.getPrivateValue(Minecraft.class,mc,"timer")).renderPartialTicks;
+        float p_78473_1_ = ((Timer)ReflectionHelper.getPrivateValue(Minecraft.class,mc,"timer","field_71428_T")).renderPartialTicks;
 
         EntityRenderer er = mc.entityRenderer;
         if (mc.renderViewEntity != null)
