@@ -1,6 +1,8 @@
 package mods.flammpfeil.slashblade.ability;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -41,6 +43,7 @@ public class SneakMove {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void onFOVUpdateEvent(FOVUpdateEvent event){
         if(event.entity == null) return;
         IAttributeInstance iattributeinstance = event.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
