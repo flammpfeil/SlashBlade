@@ -806,8 +806,10 @@ public class ItemSlashBlade extends ItemSword {
             LastActionTime.set(tag,par3EntityPlayer.worldObj.getTotalWorldTime());
 
 		}else{
-            if(!JustGuard.atJustGuard(par3EntityPlayer))
+            if(!JustGuard.atJustGuard(par3EntityPlayer)){
                 OnClick.set(tag, true);
+                par3EntityPlayer.motionY = 0.0;
+            }
 		}
 
 	}
@@ -854,7 +856,7 @@ public class ItemSlashBlade extends ItemSword {
                 bb = bb.expand(1.0f, 0.0f, 1.0f);
                 bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
             }else{
-                bb = bb.expand(2.0f, 0.25f, 2.0f);
+                bb = bb.expand(2.0f, 1.0f, 2.0f);
                 bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
             }
 			break;
@@ -1271,7 +1273,7 @@ public class ItemSlashBlade extends ItemSword {
 
 			if(swordType.contains(SwordType.Bewitched)){
 				AxisAlignedBB bb = el.boundingBox.copy();
-				bb = bb.expand(1.5, 1.5, 1.5);
+				bb = bb.expand(2.0, 1.5, 2.0);
 				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, this.AttackableSelector);
 				if(0 < list.size() && el.isAirBorne){
 					Entity target = null;
