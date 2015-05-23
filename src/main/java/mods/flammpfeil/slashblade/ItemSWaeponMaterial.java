@@ -142,7 +142,7 @@ public class ItemSWaeponMaterial extends Item {
         if(stack.getItemDamage() == 2 && ItemSlashBlade.SpecialAttackType.exists(tag)){
             int saType = ItemSlashBlade.SpecialAttackType.get(tag);
 
-            if (stack.isItemEnchanted() && entity instanceof EntityBladeStand)
+            if (entity instanceof EntityBladeStand)
             {
                 EntityBladeStand stand = (EntityBladeStand)entity;
 
