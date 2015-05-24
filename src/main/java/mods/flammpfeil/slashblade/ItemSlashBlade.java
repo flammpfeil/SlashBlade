@@ -1268,31 +1268,6 @@ public class ItemSlashBlade extends ItemSword {
                     DestructEntity(el, sitem);
 				}
 			}
-
-
-
-			if(swordType.contains(SwordType.Bewitched)){
-				AxisAlignedBB bb = el.boundingBox.copy();
-				bb = bb.expand(2.0, 1.5, 2.0);
-				List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, this.AttackableSelector);
-				if(0 < list.size() && el.isAirBorne){
-					Entity target = null;
-					float distance = 10.0f;
-					for(Entity curEntity : list){
-						float curDist = curEntity.getDistanceToEntity(el);
-						if(curDist < distance)
-						{
-							target = curEntity;
-							distance = curDist;
-						}
-					}
-
-					if(target != null){
-						el.onGround = true;
-						el.setJumping(false);
-					}
-				}
-			}
 		}else{
 			if(!comboSeq.equals(ComboSequence.None) && ((prevAttackTime + comboSeq.comboResetTicks) < currentTime)){
                 StylishRankManager.setNextAttackType(el, AttackTypes.None);
