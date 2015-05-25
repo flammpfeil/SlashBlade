@@ -87,6 +87,7 @@ public class SlashBlade implements IFuelHandler{
     public static UntouchableTime abilityUntouchableTime;
     public static AvoidAction abilityAvoidAction;
     public static EnemyStep abilityEnemyStep;
+    public static AerialRave abilityAerialRave;
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
@@ -298,6 +299,10 @@ public class SlashBlade implements IFuelHandler{
 
         abilityEnemyStep = new EnemyStep();
         MinecraftForge.EVENT_BUS.register(abilityEnemyStep);
+
+        abilityAerialRave = new AerialRave();
+        MinecraftForge.EVENT_BUS.register(abilityAerialRave);
+
 
         stylishRankManager = new StylishRankManager();
         MinecraftForge.EVENT_BUS.register(stylishRankManager);

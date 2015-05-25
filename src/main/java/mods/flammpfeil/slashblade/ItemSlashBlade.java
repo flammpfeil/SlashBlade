@@ -621,29 +621,30 @@ public class ItemSlashBlade extends ItemSword {
 		NBTTagCompound tag = getItemTagCompound(itemStack);
 
 		switch (current) {
-		case Iai:
-			player.fallDistance = 0;
-			if(!player.onGround && !OnJumpAttacked.get(tag)){
-				player.motionY = 0;
-				player.addVelocity(0.0, 0.3D,0.0);
+        case Iai:
+            if (!player.onGround){
+                player.fallDistance = 0;
 
-
-                int level = 1 + EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
-                player.fallDistance *= Math.max(0,(4.5-level)/5.0);
-			}
+                if(!OnJumpAttacked.get(tag)){
+                    //player.motionY = 0;
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+                    if(level == 0)
+                        player.addVelocity(0.0, 0.3D,0.0);
+                }
+            }
 			break;
 
 		case Battou:
 			if (!player.onGround){
+                player.fallDistance = 0;
+
 				if(!OnJumpAttacked.get(tag)){
-					player.motionY = 0;
-					player.addVelocity(0.0, 0.2D,0.0);
+					//player.motionY = 0;
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+                    if(level == 0)
+    					player.addVelocity(0.0, 0.2D,0.0);
+
                     OnJumpAttacked.set(tag,true);
-
-
-	                int level = 1 + EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
-	                player.fallDistance *= Math.max(0,(4.5-level)/5.0);
-	                
 				}
 			}
 
@@ -730,6 +731,16 @@ public class ItemSlashBlade extends ItemSword {
 
         SlashBlade.abilityJustGuard.setJustGuardState(par3EntityPlayer);
 
+        /*
+        if(!par3EntityPlayer.isUsingItem()){
+            NBTTagCompound tag = getItemTagCompound(sitem);
+            if(!JustGuard.atJustGuard(par3EntityPlayer)){
+                //OnClick.set(tag, true);
+                //par3EntityPlayer.motionY = 0.0;
+            }
+        }
+        */
+
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
  
@@ -806,9 +817,10 @@ public class ItemSlashBlade extends ItemSword {
             LastActionTime.set(tag,par3EntityPlayer.worldObj.getTotalWorldTime());
 
 		}else{
+
             if(!JustGuard.atJustGuard(par3EntityPlayer)){
                 OnClick.set(tag, true);
-                par3EntityPlayer.motionY = 0.0;
+                //par3EntityPlayer.motionY = 0.0;
             }
 		}
 
