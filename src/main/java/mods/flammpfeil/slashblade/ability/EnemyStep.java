@@ -32,6 +32,8 @@ public class EnemyStep {
         EntityLivingBase target = event.entityLiving;
         if(target == null) return;
 
+        if(!target.worldObj.isRemote) return;
+
         ItemStack stack = target.getHeldItem();
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
@@ -39,12 +41,29 @@ public class EnemyStep {
         EnumSet<ItemSlashBlade.SwordType> swordType = ((ItemSlashBlade)stack.getItem()).getSwordType(stack);
         if(!swordType.contains(ItemSlashBlade.SwordType.Bewitched)) return;
 
-        if(!canCycleJump(target)) return;
+
+        //wall kick jump
+        boolean wallKickJumped = target.getEntityData().hasKey(WallKick);
+
+        if(!canCycleJump(target)){
+
+            if(wallKickJumped){
+                if(target.onGround){
+                    target.getEntityData().removeTag(WallKick);
+                }
+            }
+
+            return;
+        }
 
         //EnemyStep
         Entity enemy = getStepEntity(target);
         if(enemy != null){
             resetJump(target);
+
+            if(wallKickJumped){
+                target.getEntityData().removeTag(WallKick);
+            }
 
             if(target instanceof EntityPlayer)
                 ((EntityPlayer) target).onEnchantmentCritical(enemy);
@@ -52,14 +71,7 @@ public class EnemyStep {
             return;
         }
 
-        //wall kick jump
-        boolean wallKickJumped = target.getEntityData().hasKey(WallKick);
-        if(wallKickJumped){
-            if(target.onGround){
-                target.getEntityData().removeTag(WallKick);
-            }
-            return;
-        }else if(!target.onGround){ //now jumping
+        if(!wallKickJumped && !target.onGround){ //now jumping
             if(hasCollidWallBlocks(target, target.getPosition(1.0f))){
                 resetJump(target);
 
@@ -76,29 +88,51 @@ public class EnemyStep {
     public boolean canCycleJump(EntityLivingBase target){
         boolean isJumping = ReflectionHelper.getPrivateValue(EntityLivingBase.class,target,"isJumping","field_70703_bu");
 
-        boolean hasKey = target.getEntityData().hasKey(DoJumping);
+        int jumpState = target.getEntityData().getInteger(DoJumping);
 
-        if(!isJumping){
-            if(hasKey)
-                target.getEntityData().removeTag(DoJumping);
+        if(isJumping){
+            switch (jumpState){
+                case 0: //firstJump
+                    target.getEntityData().setInteger(DoJumping,1);
+                    if(target.fallDistance == 0){
+                        return false;
+                    }else{ //no jump falling
+                        return true;
+                    }
+                case 1: //now first jumping
+                    return false;
 
-            return false;
+                case 2: //special jump
+                    target.getEntityData().setInteger(DoJumping,1);
+                    return true;
+
+                default:
+                    return false;
+            }
+        }else{
+
+            switch (jumpState){
+                case 1: //set can special jump
+                    target.getEntityData().setInteger(DoJumping,2);
+                    return false;
+
+                default:
+                    if(target.onGround)
+                        target.getEntityData().removeTag(DoJumping);
+
+                    return false;
+            }
         }
-
-        if(hasKey) return false;
-
-        return true;
     }
     private void resetJump(EntityLivingBase target){
         target.onGround = true;
-        ReflectionHelper.setPrivateValue(EntityLivingBase.class,target,0,"jumpTicks","field_70773_bE");
-        target.getEntityData().setInteger(DoJumping,1);
+        ReflectionHelper.setPrivateValue(EntityLivingBase.class, target, 0, "jumpTicks", "field_70773_bE");
     }
 
     public boolean hasCollidWallBlocks(Entity target, Vec3 pos)
     {
         AxisAlignedBB bb = this.getPositionAABB(target, pos.xCoord, pos.yCoord, pos.zCoord);
-        bb = bb.expand(0.5,0,0.5);
+        bb = bb.expand(1.0, 0.0, 1.0);
         List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
 
         return !blockCollidList.isEmpty();
@@ -161,6 +195,5 @@ public class EnemyStep {
                 }
             }
         }
-
     }
 }
