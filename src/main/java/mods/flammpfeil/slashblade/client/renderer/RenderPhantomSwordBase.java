@@ -85,7 +85,7 @@ public class RenderPhantomSwordBase extends Render {
         float lifetime = entityPhantomSword.getLifeTime();
         float ticks = entityPhantomSword.ticksExisted;
         tessellator.startDrawing(GL11.GL_TRIANGLES);
-        tessellator.setColorRGBA_F(0.2F, 0.2F, 1.0F, 1.0f);
+        tessellator.setColorRGBA_I(entityPhantomSword.getColor(), 255);
 
         //◆頂点登録 開始
         double dScale = 1.0;

@@ -171,6 +171,7 @@ public class ItemSlashBlade extends ItemSword {
     static public TagPropertyAccessor.TagPropertyIntegerWithRange KillCount = new TagPropertyAccessor.TagPropertyIntegerWithRange("killCount",0,999999999);
     static public TagPropertyAccessor.TagPropertyIntegerWithRange RepairCount = new TagPropertyAccessor.TagPropertyIntegerWithRange("RepairCounter",0,999999999);
 
+    static public TagPropertyAccessor.TagPropertyInteger SummonedSwordColor = new TagPropertyAccessor.TagPropertyInteger("SummonedSwordColor");
 
 	public static int AnvilRepairBonus = 100;
 
@@ -626,10 +627,11 @@ public class ItemSlashBlade extends ItemSword {
                 player.fallDistance = 0;
 
                 if(!OnJumpAttacked.get(tag)){
-                    //player.motionY = 0;
                     int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
-                    if(level == 0)
+                    if(level == 0){
                         player.addVelocity(0.0, 0.3D,0.0);
+                        player.motionY = 0;
+                    }
                 }
             }
 			break;
@@ -639,10 +641,11 @@ public class ItemSlashBlade extends ItemSword {
                 player.fallDistance = 0;
 
 				if(!OnJumpAttacked.get(tag)){
-					//player.motionY = 0;
                     int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
-                    if(level == 0)
-    					player.addVelocity(0.0, 0.2D,0.0);
+                    if(level == 0){
+                        player.motionY = 0;
+                        player.addVelocity(0.0, 0.2D,0.0);
+                    }
 
                     OnJumpAttacked.set(tag,true);
 				}
@@ -2059,6 +2062,9 @@ public class ItemSlashBlade extends ItemSword {
 
                             int targetid = ItemSlashBlade.TargetEntityId.get(tag);
                             entityDrive.setTargetEntityId(targetid);
+
+                            if(SummonedSwordColor.exists(tag))
+                                entityDrive.setColor(SummonedSwordColor.get(tag));
 
                             w.spawnEntityInWorld(entityDrive);
 

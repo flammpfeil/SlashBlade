@@ -133,6 +133,8 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         //lifetime
         this.getDataWatcher().addObject(6, 20);
 
+        //color
+        this.getDataWatcher().addObject(10, 0x3333FF);
     }
 
     public int getTargetEntityId(){
@@ -154,6 +156,13 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
     }
     public void setLifeTime(int lifetime){
         this.getDataWatcher().updateObject(6,lifetime);
+    }
+
+    public int getColor(){
+        return this.getDataWatcher().getWatchableObjectInt(10);
+    }
+    public void setColor(int value){
+        this.getDataWatcher().updateObject(10,value);
     }
 
     float speed = 0.0f;
