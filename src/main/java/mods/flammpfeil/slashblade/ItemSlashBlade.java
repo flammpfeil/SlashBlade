@@ -629,8 +629,8 @@ public class ItemSlashBlade extends ItemSword {
                 if(!OnJumpAttacked.get(tag)){
                     int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
                     if(level == 0){
-                        player.addVelocity(0.0, 0.3D,0.0);
                         player.motionY = 0;
+                        player.addVelocity(0.0, 0.3D,0.0);
                     }
                 }
             }
@@ -967,12 +967,11 @@ public class ItemSlashBlade extends ItemSword {
         if(rank < 3 || swordType.contains(SwordType.Broken) || swordType.contains(SwordType.Sealed)){
             attackAmplifier = 2 - baseModif;
         }else if( rank == 7 || 5 <= rank && swordType.contains(SwordType.FiercerEdge)){
-            float tmp = el.experienceLevel;
-            tmp = 1.0f + (float)( tmp < 15.0f ? tmp * 0.5f : tmp < 30.0f ? 3.0f +tmp*0.45f : 7.0f+0.4f * tmp);
+            float level = el.experienceLevel;
 
             float max = RefineBase + RepairCount.get(tag);
 
-            attackAmplifier = Math.min(tmp, max);
+            attackAmplifier = Math.min(level, max);
         }
 
         if(tagAttackAmplifier != attackAmplifier)
@@ -1533,15 +1532,52 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void addInformationMaxAttack(ItemStack par1ItemStack,
-                                          EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         float repair = RepairCount.get(tag);
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+
+        float baseModif = getBaseAttackModifiers(tag);
+
+        float maxBonus = RefineBase + repair;
+        float level = par2EntityPlayer.experienceLevel;
+        float ba = baseModif;
+
+        par3List.add("");
+        par3List.add("§4RankAttackDamage");
         if(swordType.contains(SwordType.FiercerEdge)){
-            float baseModif = getBaseAttackModifiers(tag);
-            par3List.add(String.format("§4+%.1f Max Attack Damage", (baseModif + RefineBase + repair)));
+            par3List.add("§6B-A§r/§4S-SSS§r/§5Limit");
+            float sss = (baseModif + Math.min(maxBonus,level));
+
+            par3List.add( String.format("§6+%.1f§r/§4+%.1f§r/§5+%.1f",ba , sss , (baseModif + maxBonus)));
+        }else{
+            par3List.add("§6B-SS§r/§4SSS§r/§5Limit");
+            float sss = (baseModif + Math.min(maxBonus,level));
+
+            par3List.add( String.format("§6+%.1f§r/§4+%.1f§r/§5+%.1f",ba , sss , (baseModif + maxBonus)));
         }
+
+    }
+
+    public void addInformationSpecialEffec(ItemStack par1ItemStack,
+                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+
+        NBTTagCompound etag = getSpecialEffect(par1ItemStack);
+
+        Set<String> tagKeys = etag.func_150296_c();
+
+        if(tagKeys.size() == 0) return;
+
+        int reqiredLevel = getSEffectReqiredLevel(par1ItemStack);
+        int playerLevel = par2EntityPlayer.experienceLevel;
+
+        par3List.add("");
+
+        for(String key : tagKeys){
+            par3List.add(StatCollector.translateToLocal("slashblade.seffect.name." + key));
+        }
+        par3List.add((reqiredLevel <= playerLevel ? "§c" : "§8") + StatCollector.translateToLocalFormatted("slashblade.seffect.reqiredlevel",reqiredLevel));
     }
     
 	@Override
@@ -1554,13 +1590,16 @@ public class ItemSlashBlade extends ItemSword {
 		addInformationSwordClass(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		addInformationKillCount(par1ItemStack, par2EntityPlayer, par3List, par4);
-        addInformationMaxAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		addInformationProudSoul(par1ItemStack, par2EntityPlayer, par3List, par4);
 
         addInformationSpecialAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
         addInformationRepairCount(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        addInformationSpecialEffec(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        addInformationMaxAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(tag.hasKey(adjustXStr)){
@@ -2161,5 +2200,23 @@ public class ItemSlashBlade extends ItemSword {
         }else{
             return false;
         }
+    }
+
+    public static NBTTagCompound getSpecialEffect(ItemStack stack){
+        NBTTagCompound tag = getItemTagCompound(stack);
+
+        NBTTagCompound result = tag.getCompoundTag("SB.SEffect");
+
+        if(!tag.hasKey("SB.SEffect")){
+            tag.setTag("SB.SEffect",result);
+        }
+
+        return result;
+    }
+
+    public static int getSEffectReqiredLevel(ItemStack stack){
+        NBTTagCompound etag = getSpecialEffect(stack);
+        final int factor = 5;
+        return etag.func_150296_c().size() * factor;
     }
 }

@@ -39,7 +39,7 @@ public class AvoidAction {
 
         long now = mc.thePlayer.worldObj.getTotalWorldTime();
 
-        long interval = 3;
+        long interval = 2;
 
         long timeout = mc.thePlayer.getEntityData().getLong("SB.AvoidTimeout");
 
