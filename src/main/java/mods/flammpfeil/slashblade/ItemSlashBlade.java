@@ -1538,25 +1538,28 @@ public class ItemSlashBlade extends ItemSword {
         float repair = RepairCount.get(tag);
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
+        par3List.add("");
+        par3List.add("§4RankAttackDamage");
+        String header;
+        String template;
+
+        if(swordType.contains(SwordType.FiercerEdge)){
+            header = "§6B-A§r/§4S-SSS§r/§5Limit";
+            template = "§6+%.1f§r/§4+%.1f§r/§5+%.1f";
+        }else{
+            header = "§6B-SS§r/§4SSS§r/§5Limit";
+            template = "§6+%.1f§r/§4+%.1f§r/§5+%.1f";
+        }
+
         float baseModif = getBaseAttackModifiers(tag);
 
         float maxBonus = RefineBase + repair;
         float level = par2EntityPlayer.experienceLevel;
         float ba = baseModif;
+        float sss = (baseModif + Math.min(maxBonus,level));
 
-        par3List.add("");
-        par3List.add("§4RankAttackDamage");
-        if(swordType.contains(SwordType.FiercerEdge)){
-            par3List.add("§6B-A§r/§4S-SSS§r/§5Limit");
-            float sss = (baseModif + Math.min(maxBonus,level));
-
-            par3List.add( String.format("§6+%.1f§r/§4+%.1f§r/§5+%.1f",ba , sss , (baseModif + maxBonus)));
-        }else{
-            par3List.add("§6B-SS§r/§4SSS§r/§5Limit");
-            float sss = (baseModif + Math.min(maxBonus,level));
-
-            par3List.add( String.format("§6+%.1f§r/§4+%.1f§r/§5+%.1f",ba , sss , (baseModif + maxBonus)));
-        }
+        par3List.add(header);
+        par3List.add(String.format(template,ba , sss , (baseModif + maxBonus)));
 
     }
 
@@ -1569,15 +1572,18 @@ public class ItemSlashBlade extends ItemSword {
 
         if(tagKeys.size() == 0) return;
 
-        int reqiredLevel = getSEffectReqiredLevel(par1ItemStack);
         int playerLevel = par2EntityPlayer.experienceLevel;
 
         par3List.add("");
 
         for(String key : tagKeys){
-            par3List.add(StatCollector.translateToLocal("slashblade.seffect.name." + key));
+            int reqiredLevel = etag.getInteger(key);
+
+            par3List.add(
+                    StatCollector.translateToLocal("slashblade.seffect.name." + key)
+                    + "§r "
+                    + (reqiredLevel <= playerLevel ? "§c" : "§8") + reqiredLevel);
         }
-        par3List.add((reqiredLevel <= playerLevel ? "§c" : "§8") + StatCollector.translateToLocalFormatted("slashblade.seffect.reqiredlevel",reqiredLevel));
     }
     
 	@Override
@@ -2212,11 +2218,5 @@ public class ItemSlashBlade extends ItemSword {
         }
 
         return result;
-    }
-
-    public static int getSEffectReqiredLevel(ItemStack stack){
-        NBTTagCompound etag = getSpecialEffect(stack);
-        final int factor = 5;
-        return etag.func_150296_c().size() * factor;
     }
 }
