@@ -49,6 +49,10 @@ item.flammpfeil.slashblade.named.doutanuki.name=doutanuki
 
 death.attack.directMagic=%1$s was hacked by %2$s using magic blade
 
+slashblade.seffect.name.ProjectileBarrier=ProjectileBarrier
+slashblade.seffect.name.WitherEdge=WitherEdge
+
+
 achievement.flammpfeil.slashblade.slashWoodenSword.pos=0,0
 achievement.flammpfeil.slashblade.buildWoodenBlade.pos=3,0
 achievement.flammpfeil.slashblade.takemitu.pos=3,3

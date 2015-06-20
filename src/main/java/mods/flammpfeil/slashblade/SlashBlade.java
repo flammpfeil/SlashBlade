@@ -20,6 +20,7 @@ import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.BladeMaterials;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
+import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
@@ -88,6 +89,7 @@ public class SlashBlade implements IFuelHandler{
     public static AvoidAction abilityAvoidAction;
     public static EnemyStep abilityEnemyStep;
     public static AerialRave abilityAerialRave;
+    public static StunManager abilityStun;
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
@@ -307,6 +309,10 @@ public class SlashBlade implements IFuelHandler{
         stylishRankManager = new StylishRankManager();
         MinecraftForge.EVENT_BUS.register(stylishRankManager);
 
+
+        abilityStun = new StunManager();
+        MinecraftForge.EVENT_BUS.register(abilityStun);
+
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);
 
@@ -343,6 +349,8 @@ public class SlashBlade implements IFuelHandler{
         InitEventBus.post(new LoadEvent.PostInitEvent(evt));
 
         EnchantHelper.initEnchantmentList();
+
+        SpecialEffects.init();
 
         AchievementList.init();
     }

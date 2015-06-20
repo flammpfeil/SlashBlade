@@ -2,8 +2,10 @@ package mods.flammpfeil.slashblade.util;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
+import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -20,9 +22,24 @@ public class SlashBladeEvent extends Event{
     }
 
     @Cancelable
+    public static class ImpactEffectEvent extends SlashBladeEvent{
+
+        public ItemSlashBlade.ComboSequence sequence;
+        public EntityLivingBase target;
+        public EntityLivingBase user;
+
+        public ImpactEffectEvent(ItemStack stack, EntityLivingBase target, EntityLivingBase user, ItemSlashBlade.ComboSequence sequence) {
+            super(stack);
+            this.target = target;
+            this.user = user;
+            this.sequence = sequence;
+        }
+    }
+
+    @Cancelable
     public static class OnEntityBladeStandUpdateEvent extends SlashBladeEvent{
 
-        EntityBladeStand entityBladeStand;
+        public EntityBladeStand entityBladeStand;
 
         public OnEntityBladeStandUpdateEvent(EntityBladeStand entityItem) {
             super(entityItem.getBlade());

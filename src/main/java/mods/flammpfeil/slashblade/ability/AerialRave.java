@@ -31,6 +31,8 @@ public class AerialRave {
 
         if(!target.isSwingInProgress) return;
 
+        if(target.onGround) return;
+
         if(target.motionY < 0)
             target.motionY = 0;
     }

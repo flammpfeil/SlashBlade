@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import mods.flammpfeil.slashblade.ability.JustGuard;
+import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
@@ -345,6 +346,9 @@ public class ItemSlashBlade extends ItemSword {
             entity.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true));
 			entity.attackTime = 20;
 		}
+
+        StunManager.setStun(entity, 20);
+
 		return entity;
 	}
 
@@ -399,13 +403,17 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void setImpactEffect(ItemStack stack, EntityLivingBase target,EntityLivingBase user, ComboSequence comboSec){
+
+        if(SlashBladeHooks.onImpactEffectHooks(stack,target,user,comboSec))
+            return;
+
         switch (comboSec) {
             case Kiriage:
                 target.onGround = false;
                 target.motionX = 0;
                 target.motionY = 0;
                 target.motionZ = 0;
-                target.addVelocity(0.0, 0.7D, 0.0);
+                target.addVelocity(0.0, 0.6D, 0.0);
 
                 setDaunting(target);
                 break;
@@ -450,7 +458,16 @@ public class ItemSlashBlade extends ItemSword {
                 target.motionX = 0;
                 target.motionY = 0;
                 target.motionZ = 0;
-                target.addVelocity(0.0, 0.3D, 0.0);
+
+                {
+
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, stack);
+                    if(0 < level){
+                        target.addVelocity(0.0, 0.3D, 0.0);
+                    }else{
+                        target.addVelocity(0.0, 0.2D, 0.0);
+                    }
+                }
 
                 setDaunting(target);
 
