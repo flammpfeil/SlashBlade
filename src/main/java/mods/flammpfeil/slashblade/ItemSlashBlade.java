@@ -2090,6 +2090,7 @@ public class ItemSlashBlade extends ItemSword {
         saMap.put(3, new Drive(1.5f, 10, true, ComboSequence.Iai));
         saMap.put(4, new Spear());
         saMap.put(5, new CircleSlash());
+        saMap.put(6, new BlisteringWitherSwords());
         return saMap;
     }
 
