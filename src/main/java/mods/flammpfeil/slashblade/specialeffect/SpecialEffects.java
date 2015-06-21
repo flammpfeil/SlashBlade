@@ -20,6 +20,7 @@ public class SpecialEffects {
     private static Set<ISpecialEffect> effects = Sets.newHashSet();
     public static ISpecialEffect WitherEdge = register(new WitherEdge());
     public static ISpecialEffect ProjectileBarrier = register(new ProjectileBarrier());
+    public static ISpecialEffect CrystalHealing = register(new CrystalHealing());
 
     public static ISpecialEffect register(ISpecialEffect effect){
         effects.add(effect);

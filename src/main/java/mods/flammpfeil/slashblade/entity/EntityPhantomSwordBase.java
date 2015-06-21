@@ -133,6 +133,9 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         //lifetime
         this.getDataWatcher().addObject(6, 20);
 
+        //interval
+        this.getDataWatcher().addObject(7, 7);
+
         //color
         this.getDataWatcher().addObject(10, 0x3333FF);
     }
@@ -141,7 +144,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         return this.getDataWatcher().getWatchableObjectInt(4);
     }
     public void setTargetEntityId(int entityid){
-        this.getDataWatcher().updateObject(4,entityid);
+        this.getDataWatcher().updateObject(4, entityid);
     }
 
     public float getRoll(){
@@ -156,6 +159,13 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
     }
     public void setLifeTime(int lifetime){
         this.getDataWatcher().updateObject(6,lifetime);
+    }
+
+    public int getInterval(){
+        return this.getDataWatcher().getWatchableObjectInt(7);
+    }
+    public void setInterval(int value){
+        this.getDataWatcher().updateObject(7,value);
     }
 
     public int getColor(){
@@ -747,7 +757,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
             doRotation();
 
-            if(7 < this.ticksExisted)
+            if(getInterval() < this.ticksExisted)
                 moveEntity(this.motionX, this.motionY, this.motionZ);
 
             normalizeRotation();
