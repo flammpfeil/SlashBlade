@@ -65,7 +65,19 @@ public class RenderPhantomSwordBase extends Render {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        int color = entityPhantomSword.getColor();
+
+        boolean inverse = color < 0;
+
+        color = Math.abs(color);
+
+        if(!inverse){
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        }
+        else{
+            GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
+        }
         //GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
         //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -85,7 +97,7 @@ public class RenderPhantomSwordBase extends Render {
         float lifetime = entityPhantomSword.getLifeTime();
         float ticks = entityPhantomSword.ticksExisted;
         tessellator.startDrawing(GL11.GL_TRIANGLES);
-        tessellator.setColorRGBA_I(entityPhantomSword.getColor(), 255);
+        tessellator.setColorRGBA_I(color, 255);
 
         //◆頂点登録 開始
         double dScale = 1.0;

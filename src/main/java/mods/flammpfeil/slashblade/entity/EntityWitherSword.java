@@ -33,8 +33,25 @@ public class EntityWitherSword extends EntityPhantomSwordBase {
     }
 
     @Override
+    protected void entityInit() {
+        super.entityInit();
+
+
+        //burst
+        this.getDataWatcher().addObject(8, (byte)0);
+    }
+
+    public boolean getBurst(){
+        return this.getDataWatcher().getWatchableObjectByte(8) != 0;
+    }
+    public void setBurst(boolean value){
+        this.getDataWatcher().updateObject(8,value ? (byte)1 : (byte)0);
+    }
+
+    @Override
     protected void attackEntity(Entity target) {
-        this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, false);
+        if(getBurst())
+            this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, false);
 
         if(!this.worldObj.isRemote){
             float magicDamage = Math.max(1.0f, AttackLevel);
@@ -46,7 +63,6 @@ public class EntityWitherSword extends EntityPhantomSwordBase {
                 StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
-
                 if (!target.isEntityAlive())
                     ((EntityLivingBase)thrower).heal(1.0F);
 
@@ -57,7 +73,8 @@ public class EntityWitherSword extends EntityPhantomSwordBase {
 
                 ((EntityLivingBase) target).hurtTime = 1;
 
-                ((EntityLivingBase)target).addPotionEffect(new PotionEffect(Potion.wither.getId(), 20 * 5, 1));
+                if(!getBurst())
+                    ((EntityLivingBase)target).addPotionEffect(new PotionEffect(Potion.wither.getId(), 20 * 5, 1));
 
                 ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
             }

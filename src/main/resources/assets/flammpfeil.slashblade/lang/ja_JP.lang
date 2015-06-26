@@ -63,6 +63,9 @@ item.flammpfeil.slashblade.named.fox.black.name=狐月刀「黒狐」
 item.flammpfeil.slashblade.named.muramasa.name=「千鶴」村正
 item.flammpfeil.slashblade.named.sabigatana.name=錆びた刀
 item.flammpfeil.slashblade.named.doutanuki.name=剛剣「胴田貫」
+
+item.flammpfeil.slashblade.named.koseki.name=枯石の大刀
+
 entity.flammpfeil.slashblade.BladeStand.name=刀掛台
 
 death.attack.directMagic=%1$sは%2$sに切裂かれた
@@ -91,8 +94,12 @@ achievement.flammpfeil.slashblade.tagayasan=§d木刀「鉄刀木」
 achievement.flammpfeil.slashblade.tagayasan.desc=唐木タガヤサン<br>何故か修復剤には鉄が使える<br>§8§l§o千叩き伏せ<br>なお折れぬ木刀は<br>変化の法が末に<br>鉄の名を冠す堅木へ
 achievement.flammpfeil.slashblade.saya=§e変貌の鞘
 achievement.flammpfeil.slashblade.saya.desc=百体切りを成した<br>銀紙竹光が折れ残した<br>§8§l§o無貌の鞘<br>刀に合わせ変化する
+
 achievement.flammpfeil.slashblade.noname=§8無銘「無名」
 achievement.flammpfeil.slashblade.noname.desc=ニコイチ修理の悲劇<br>§8§l§o無貌の刀<br>妖刀名刀が寄り代<br>名を失ってなお刃は衰えぬ
+achievement.flammpfeil.slashblade.koseki=§8枯石の大刀
+achievement.flammpfeil.slashblade.koseki.desc=衰枯と爆砕の力宿す大刀<br>衰枯の石は力無き者が振るえば使い手をも食らう<br>その姿は、ある龍太刀を模したもの
+
 achievement.flammpfeil.slashblade.hundredKill=§d百鬼調伏
 achievement.flammpfeil.slashblade.hundredKill.desc=百体切り<br>§8§l§o銀紙竹光折れど<br>残る意思の器
 achievement.flammpfeil.slashblade.thousandKill=§c鋭気千刃

@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 /**
@@ -61,6 +62,20 @@ public class SlashBladeEvent extends Event{
             this.entity = entity;
             this.indexOfMainSlot = indexOfMainSlot;
             this.isCurrent = isCurrent;
+        }
+    }
+
+    @Cancelable
+    public static class BladeStandAttack extends SlashBladeEvent{
+        public EntityBladeStand entityBladeStand;
+        public DamageSource damageSource;
+        public float damage;
+
+        public BladeStandAttack(EntityBladeStand entityBladeStand, DamageSource damageSource, float damage) {
+            super(entityBladeStand.getBlade());
+            this.entityBladeStand = entityBladeStand;
+            this.damageSource = damageSource;
+            this.damage = damage;
         }
     }
 

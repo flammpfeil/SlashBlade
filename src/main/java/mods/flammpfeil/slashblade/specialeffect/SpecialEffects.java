@@ -1,15 +1,12 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import scala.None;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,7 +16,6 @@ public class SpecialEffects {
 
     private static Set<ISpecialEffect> effects = Sets.newHashSet();
     public static ISpecialEffect WitherEdge = register(new WitherEdge());
-    public static ISpecialEffect ProjectileBarrier = register(new ProjectileBarrier());
     public static ISpecialEffect CrystalHealing = register(new CrystalHealing());
 
     public static ISpecialEffect register(ISpecialEffect effect){

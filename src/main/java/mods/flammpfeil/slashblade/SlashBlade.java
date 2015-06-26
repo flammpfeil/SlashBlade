@@ -90,6 +90,7 @@ public class SlashBlade implements IFuelHandler{
     public static EnemyStep abilityEnemyStep;
     public static AerialRave abilityAerialRave;
     public static StunManager abilityStun;
+    public static ProjectileBarrier abilityProjectileBarrier;
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
@@ -245,6 +246,8 @@ public class SlashBlade implements IFuelHandler{
         InitEventBus.register(new Tizuru());
         InitEventBus.register(new Doutanuki());
         InitEventBus.register(new BambooMod());
+
+        InitEventBus.register(new Koseki());
     }
 
     StatManager statManager;
@@ -312,6 +315,10 @@ public class SlashBlade implements IFuelHandler{
 
         abilityStun = new StunManager();
         MinecraftForge.EVENT_BUS.register(abilityStun);
+
+        abilityProjectileBarrier = new ProjectileBarrier();
+        MinecraftForge.EVENT_BUS.register(abilityProjectileBarrier);
+
 
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);

@@ -54,7 +54,7 @@ public class CrystalHealing implements ISpecialEffect {
 
         if(!hasBeaconEffect) return;
 
-        player.addPotionEffect(new PotionEffect(Potion.regeneration.getId(),8,1));
+        player.addPotionEffect(new PotionEffect(Potion.regeneration.getId(),8,2));
 
     }
 

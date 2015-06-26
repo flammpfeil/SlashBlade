@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -135,6 +136,14 @@ public class EntityBladeStand extends Entity {
             int type = this.getStandType();
             p_70014_1_.setInteger(SaveKeyStandType,type);
         }
+    }
+
+    @Override
+    public boolean attackEntityFrom(DamageSource p_70097_1_, float p_70097_2_) {
+        if(SlashBladeHooks.onBladeStandAttack(this, p_70097_1_, p_70097_2_)){
+            return false;
+        }
+        return super.attackEntityFrom(p_70097_1_, p_70097_2_);
     }
 
     @Override

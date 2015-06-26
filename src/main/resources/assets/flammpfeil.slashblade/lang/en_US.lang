@@ -49,9 +49,10 @@ item.flammpfeil.slashblade.named.muramasa.name=muramasa
 item.flammpfeil.slashblade.named.sabigatana.name=rust blade
 item.flammpfeil.slashblade.named.doutanuki.name=doutanuki
 
+item.flammpfeil.slashblade.named.koseki.name=WitherBlade
+
 death.attack.directMagic=%1$s was hacked by %2$s using magic blade
 
-slashblade.seffect.name.ProjectileBarrier=ProjectileBarrier
 slashblade.seffect.name.WitherEdge=WitherEdge
 
 
@@ -73,6 +74,7 @@ achievement.flammpfeil.slashblade.buildWhiteSheath.pos=6,0
 achievement.flammpfeil.slashblade.brokenWhiteSheath.pos=7,1
 
 achievement.flammpfeil.slashblade.noname.pos=-3,3
+achievement.flammpfeil.slashblade.koseki.pos=-4,5
 
 achievement.flammpfeil.slashblade.hundredKill.pos=1,-4
 achievement.flammpfeil.slashblade.thousandKill.pos=2,-3

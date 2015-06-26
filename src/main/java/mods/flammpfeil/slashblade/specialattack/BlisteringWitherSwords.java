@@ -80,20 +80,22 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
                 int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
                 float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
 
-                int count = 3 + StylishRankManager.getStylishRank(player);
+                int count = 1 + StylishRankManager.getStylishRank(player);
 
                 for(int i = 0; i < count;i++){
 
                     if(!world.isRemote){
-                        EntityPhantomSwordBase entityDrive = new EntityWitherSword(world, player, magicDamage,90.0f);
+                        boolean isBurst = (i % 2 == 0);
+
+                        EntityWitherSword entityDrive = new EntityWitherSword(world, player, magicDamage,90.0f);
                         if (entityDrive != null) {
                             entityDrive.setInterval(7+i*2);
                             entityDrive.setLifeTime(30);
 
-                            boolean isBurst = (i % 2 == 0);
-
-                            int color = isBurst ? 0x6896cc : 0x1a1a1a;
+                            int color = isBurst ? -0x6896cc : -0x1c1c1c;
                             entityDrive.setColor(color);
+
+                            entityDrive.setBurst(isBurst);
 
                             entityDrive.setTargetEntityId(target.getEntityId());
 

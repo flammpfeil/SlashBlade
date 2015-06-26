@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 /**
@@ -24,5 +25,9 @@ public class SlashBladeHooks {
     }
     static public boolean onImpactEffectHooks(ItemStack stack, EntityLivingBase target, EntityLivingBase user, ItemSlashBlade.ComboSequence sequence){
         return EventBus.post(new SlashBladeEvent.ImpactEffectEvent(stack, target, user, sequence));
+    }
+
+    public static boolean onBladeStandAttack(EntityBladeStand entityBladeStand, DamageSource damageSource, float damage) {
+        return EventBus.post(new SlashBladeEvent.BladeStandAttack(entityBladeStand,damageSource,damage));
     }
 }

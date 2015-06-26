@@ -41,7 +41,7 @@ public class WitherEdge implements ISpecialEffect{
                 break;
         }
 
-        event.target.addPotionEffect(new PotionEffect(Potion.wither.getId(),10,1));
+        event.target.addPotionEffect(new PotionEffect(Potion.wither.getId(),20 * 5,1));
         player.onEnchantmentCritical(event.target);
 
     }
@@ -62,7 +62,7 @@ public class WitherEdge implements ISpecialEffect{
                 if(player.getRNG().nextInt(4) != 0) return;
                 break;
             case Effective:
-                break;
+                return;
         }
 
         PotionEffect haste = player.getActivePotionEffect(Potion.digSpeed);
@@ -70,7 +70,7 @@ public class WitherEdge implements ISpecialEffect{
 
         if (player.swingProgressInt != check) return;
 
-        player.addPotionEffect(new PotionEffect(Potion.wither.getId(),10,1));
+        player.addPotionEffect(new PotionEffect(Potion.wither.getId(),20 * 5,1));
 
     }
 
