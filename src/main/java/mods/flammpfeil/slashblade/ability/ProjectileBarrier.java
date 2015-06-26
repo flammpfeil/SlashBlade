@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
 import java.util.List;
 
@@ -23,15 +24,13 @@ import java.util.List;
  */
 public class ProjectileBarrier {
     @SubscribeEvent
-    public void onUpdate(LivingEvent.LivingUpdateEvent event){
-        if(event.entityLiving == null) return;
-        if(!(event.entityLiving instanceof EntityPlayer)) return;
-
-        EntityPlayer player = (EntityPlayer)event.entityLiving;
+    public void onUpdate(PlayerUseItemEvent.Tick event){
+        EntityPlayer player = event.entityPlayer;
+        if(player == null) return;
         if(!player.isUsingItem()) return;
-        if(player.getItemInUseDuration() < ItemSlashBlade.RequiredChargeTick) return;
+        if(event.duration < ItemSlashBlade.RequiredChargeTick) return;
 
-        ItemStack stack = player.getHeldItem();
+        ItemStack stack = event.item;
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;

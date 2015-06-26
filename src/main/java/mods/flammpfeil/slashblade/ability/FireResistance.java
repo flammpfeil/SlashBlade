@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
 /**
  * Created by Furia on 15/05/17.
@@ -19,14 +20,12 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 public class FireResistance {
 
     @SubscribeEvent
-    public void onUpdate(LivingEvent.LivingUpdateEvent event){
-        EntityLivingBase target = event.entityLiving;
-        if(target == null) return;
+    public void onUpdate(PlayerUseItemEvent.Tick event){
+        EntityPlayer player = event.entityPlayer;
+        if(player == null) return;
+        if(!player.isUsingItem()) return;
 
-        if(!(target instanceof EntityPlayer)) return;
-        if(!((EntityPlayer) target).isUsingItem()) return;
-
-        ItemStack stack = target.getHeldItem();
+        ItemStack stack = event.item;
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
@@ -37,14 +36,14 @@ public class FireResistance {
         float speedfactor = 0.05f;
         speedfactor *= (float)level;
 
-        if(target.isBurning()){
-            target.moveFlying(target.moveStrafing,target.moveForward,0.25f + speedfactor);
+        if(player.isBurning()){
+            player.moveFlying(player.moveStrafing,player.moveForward,0.25f + speedfactor);
 
-            if(ItemSlashBlade.RequiredChargeTick < ((EntityPlayer) target).getItemInUseDuration()){
-                ReflectionHelper.setPrivateValue(Entity.class, target, 0, "fire", "field_70151_c");
+            if(ItemSlashBlade.RequiredChargeTick < event.duration){
+                ReflectionHelper.setPrivateValue(Entity.class, player, 0, "fire", "field_70151_c");
             }
         }
 
-        target.addPotionEffect(new PotionEffect(Potion.fireResistance.getId(),2,level-1,true));
+        player.addPotionEffect(new PotionEffect(Potion.fireResistance.getId(),2,level-1,true));
     }
 }
