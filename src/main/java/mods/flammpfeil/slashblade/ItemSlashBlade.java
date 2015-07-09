@@ -1246,7 +1246,6 @@ public class ItemSlashBlade extends ItemSword {
 						//※動かず納刀完了させ、敵に囲まれている場合にボーナス付与。
 
 						if(tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posY + el.posZ) * 10.0)){
-
 							AxisAlignedBB bb = el.boundingBox.copy();
 							bb = bb.expand(10, 5, 10);
 							List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
@@ -1274,6 +1273,9 @@ public class ItemSlashBlade extends ItemSword {
 							}
 
 						}
+                        StylishRankManager.setNextAttackType(el, AttackTypes.None);
+                        setComboSequence(tag, ComboSequence.None);
+                        break;
 
 
 					case SlashDim:
@@ -1286,8 +1288,9 @@ public class ItemSlashBlade extends ItemSword {
                             StylishRankManager.setNextAttackType(el, AttackTypes.None);
 							setComboSequence(tag, ComboSequence.None);
 						}else{
-                            tag.setInteger(lastPosHashStr,(int)((el.posX + el.posY + el.posZ) * 10.0));
-                            LastActionTime.set(tag,currentTime);
+
+                            tag.setInteger(lastPosHashStr, (int) ((el.posX + el.posY + el.posZ) * 10.0));
+                            LastActionTime.set(tag,currentTime + 5);
                             setComboSequence(tag, ComboSequence.Noutou);
                             doSwingItem(sitem, el);
                         }
@@ -2028,6 +2031,7 @@ public class ItemSlashBlade extends ItemSword {
         if(entity.worldObj.isRemote){
             entity.isSwingInProgress = true;
             entity.swingProgressInt = 0;
+        }else{
             entity.swingItem();
         }
     }
