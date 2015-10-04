@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.specialattack;
 
+import mods.flammpfeil.slashblade.EntityDrive;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.enchantment.Enchantment;
@@ -9,10 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.List;
 /**
  * Created by Furia on 14/05/27.
  */
-public class SlashDimension extends SpecialAttackBase{
+public class SlashDimension extends SpecialAttackBase implements IJustSpecialAttack{
     @Override
     public String toString() {
         return "slashdimension";
@@ -52,6 +50,7 @@ public class SlashDimension extends SpecialAttackBase{
             ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.SlashDim);
 
             spawnParticle(world, target);
+
             player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.endermen.portal", 0.5F, 1.0F);
 
             final int cost = -20;
@@ -86,7 +85,6 @@ public class SlashDimension extends SpecialAttackBase{
                     }
                 }
             }
-
         }
     }
 
@@ -133,5 +131,99 @@ public class SlashDimension extends SpecialAttackBase{
                 target.posY + target.height + 0.5,
                 target.posZ + 1.0,
                 3.0, 3.0, 3.0);
+    }
+
+    @Override
+    public void doJustSpacialAttack(ItemStack stack, EntityPlayer player) {
+        World world = player.worldObj;
+
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+
+        Entity target = null;
+
+        int entityId = ItemSlashBlade.TargetEntityId.get(tag);
+
+        if(entityId != 0){
+            Entity tmp = world.getEntityByID(entityId);
+            if(tmp != null){
+                if(tmp.getDistanceToEntity(player) < 30.0f)
+                    target = tmp;
+            }
+        }
+
+        if(target == null){
+            target = getEntityToWatch(player);
+        }
+
+        if(target != null){
+            ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.SlashDim);
+
+            //spawnParticle(world, target);
+
+            player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.endermen.portal", 0.5F, 1.0F);
+
+            final int cost = -20;
+            if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
+                stack.damageItem(10, player);
+            }
+
+            AxisAlignedBB bb = target.boundingBox.copy();
+            bb = bb.expand(2.0f, 0.25f, 2.0f);
+
+            List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(player, bb, ItemSlashBlade.AttackableSelector);
+
+            if(!ItemSlashBlade.AttackableSelector.isEntityApplicable(target))
+                list.add(target);
+
+            ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
+
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+            float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
+            for(Entity curEntity : list){
+                StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);
+                blade.attackTargetEntity(stack, curEntity, player, true);
+                player.onEnchantmentCritical(curEntity);
+
+                if(0 < level){
+                    curEntity.hurtResistantTime = 0;
+                    DamageSource ds = new EntityDamageSource("directMagic",player).setDamageBypassesArmor().setMagicDamage();
+                    curEntity.attackEntityFrom(ds, magicDamage);
+                    if(curEntity instanceof EntityLivingBase){
+                        StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDimMagic);
+                        stack.hitEntity((EntityLivingBase)curEntity, player);
+                    }
+
+                    for(int i = 0; i < 5;i++){
+
+                        EntityDrive entityDrive = new EntityDrive(world, player, Math.min(1.0f,magicDamage/3.0f),false,0);
+
+
+                        float rotationYaw = curEntity.rotationYaw + 60 * i + (entityDrive.getRand().nextFloat() - 0.5f) * 60;
+                        float rotationPitch = (entityDrive.getRand().nextFloat() - 0.5f) * 60;
+
+                        float fYawDtoR = (  rotationYaw / 180F) * (float)Math.PI;
+                        float fPitDtoR = (rotationPitch / 180F) * (float)Math.PI;
+                        float fYVecOfst = 0.5f;
+
+                        float motionX = -MathHelper.sin(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst * 2;
+                        float motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
+                        float motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst * 2;
+
+                        entityDrive.setLocationAndAngles(curEntity.posX - motionX,
+                                curEntity.posY + (double)curEntity.getEyeHeight()/2D - motionY,
+                                curEntity.posZ - motionZ,
+                                rotationYaw,
+                                rotationPitch);
+                        entityDrive.setDriveVector(fYVecOfst);
+                        entityDrive.setLifeTime(8);
+                        entityDrive.setIsMultiHit(false);
+                        entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
+                        if (entityDrive != null) {
+                            world.spawnEntityInWorld(entityDrive);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

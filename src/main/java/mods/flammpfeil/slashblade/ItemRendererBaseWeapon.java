@@ -840,10 +840,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			break;
 		}
 
+        /*
 		if(!isBroken && isEnchanted && ItemSlashBlade.RequiredChargeTick < charge){
 			progress = 0.0f;
 			combo = ComboSequence.None;
 		}
+        */
 
 
 

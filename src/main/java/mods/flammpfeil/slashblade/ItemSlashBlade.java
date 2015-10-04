@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
@@ -16,6 +17,7 @@ import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import mods.flammpfeil.slashblade.util.InventoryUtility;
+import mods.flammpfeil.slashblade.util.SilentUpdateItem;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -195,14 +197,14 @@ public class ItemSlashBlade extends ItemSword {
     public enum ComboSequence
 	{
     	None(true,0.0f,0.0f,false,0),
-    	Saya1(true,200.0f,5.0f,false,6),
-    	Saya2(true,-200.0f,5.0f,false,12),
+    	Saya1(true,200.0f,5.0f,false,20),
+    	Saya2(true,-200.0f,5.0f,false,20),
     	Battou(false,240.0f,0.0f,false,12),
     	Noutou(false,-210.0f,10.0f,false,5),
     	Kiriage(false,260.0f,70.0f,false,20),
     	Kiriorosi(false,-260.0f,90.0f,false,12),
     	SlashDim(false,-220.0f,10.0f,true,8),
-        Iai(false,240.0f,0.0f,false,8),
+        Iai(false,240.0f,0.0f,false,20),
         HiraTuki(false,180.0f,180.0f,false,20),
     	;
 
@@ -386,7 +388,7 @@ public class ItemSlashBlade extends ItemSword {
         if(!stack.isItemEnchanted())
             return;
 
-        int lv = EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId,stack);
+        int lv = EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, stack);
 
         int slots;
 
@@ -526,7 +528,7 @@ public class ItemSlashBlade extends ItemSword {
 
     	ComboSequence comboSec = getComboSequence(tag);
 
-        setImpactEffect(par1ItemStack,par2EntityLivingBase,par3EntityLivingBase,comboSec);
+        setImpactEffect(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase, comboSec);
 
         if(!comboSec.useScabbard || IsNoScabbard.get(tag))
             par1ItemStack.damageItem(1, par3EntityLivingBase);
@@ -769,6 +771,91 @@ public class ItemSlashBlade extends ItemSword {
         }
         */
 
+        //sitem.setItemDamage(1320);
+        NBTTagCompound tag = getItemTagCompound(sitem);
+        long prevAttackTime = LastActionTime.get(tag);
+        long currentTime = par3EntityPlayer.worldObj.getTotalWorldTime();
+        EnumSet<SwordType> swordType = getSwordType(sitem);
+        ComboSequence comboSeq = getComboSequence(tag);
+        if(prevAttackTime + ComboInterval < currentTime){
+
+            OnClick.set(tag,true);
+            LastActionTime.set(tag,currentTime);
+
+            comboSeq = getNextComboSeq(sitem, comboSeq, true, par3EntityPlayer);
+            setPlayerEffect(sitem, comboSeq, par3EntityPlayer);
+            setComboSequence(tag, comboSeq);
+
+
+            //par3EntityPlayer.swingItem();
+            doSwingItem(sitem, par3EntityPlayer);
+
+            updateStyleAttackType(sitem, par3EntityPlayer);
+
+            AxisAlignedBB bb = getBBofCombo(sitem, comboSeq, par3EntityPlayer);
+
+            int rank = StylishRankManager.getStylishRank(par3EntityPlayer);
+
+            List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(par3EntityPlayer, bb, AttackableSelector);
+            for(Entity curEntity : list){
+
+                switch (comboSeq) {
+                    case Saya1:
+                    case Saya2:
+                        float attack = 4.0f;
+                        if(rank < 3 || swordType.contains(SwordType.Broken)){
+                            attack = 2.0f;
+                        }else{
+                            attack += Item.ToolMaterial.STONE.getDamageVsEntity(); //stone like
+                            if(swordType.contains(SwordType.FiercerEdge) && par3EntityPlayer instanceof EntityPlayer){
+                                attack += AttackAmplifier.get(tag) * 0.5f;
+                            }
+                        }
+
+                        if (curEntity instanceof EntityLivingBase)
+                        {
+                            float var4 = 0;
+                            var4 = EnchantmentHelper.getEnchantmentModifierLiving(par3EntityPlayer, (EntityLiving)curEntity);
+                            if(var4 > 0)
+                                attack += var4;
+                        }
+
+
+                        if (curEntity instanceof EntityLivingBase){
+                            attack = Math.min(attack,((EntityLivingBase)curEntity).getHealth()-1);
+                        }
+
+
+                        curEntity.hurtResistantTime = 0;
+                        curEntity.attackEntityFrom(DamageSource.causeMobDamage(par3EntityPlayer), attack);
+
+
+                        if (curEntity instanceof EntityLivingBase){
+                            this.hitEntity(sitem, (EntityLivingBase)curEntity, par3EntityPlayer);
+                        }
+
+                        break;
+
+                    case None:
+                        break;
+
+                    default:
+                        ((EntityPlayer)par3EntityPlayer).attackTargetEntityWithCurrentItem(curEntity);
+                        ((EntityPlayer)par3EntityPlayer).onCriticalHit(curEntity);
+                        break;
+                }
+            }
+            OnClick.set(tag, false);
+
+
+            if(swordType.containsAll(SwordType.BewitchedPerfect) && comboSeq.equals(ComboSequence.Battou)){
+                sitem.damageItem(10, par3EntityPlayer);
+                //todo 超短距離Drive周囲にばら撒くことで居合い再現はどーか
+            }
+
+            SilentUpdateItem.silentUpdateItem(par3EntityPlayer);
+        }
+
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
  
@@ -791,7 +878,7 @@ public class ItemSlashBlade extends ItemSword {
                 magicDamage += AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
             }
 
-            EntityDrive entityDrive = new EntityDrive(world, player, magicDamage,false,90.0f - setCombo.swingDirection);
+            EntityDrive entityDrive = new EntityDrive(world, player, magicDamage, false, 90.0f - setCombo.swingDirection);
             if (entityDrive != null) {
                 entityDrive.setInitialSpeed(0.75f);
                 entityDrive.setLifeTime(20);
@@ -804,10 +891,15 @@ public class ItemSlashBlade extends ItemSword {
     }
 
 
-    public void doChargeAttack(ItemStack stack, EntityPlayer par3EntityPlayer){
-        AchievementList.triggerAchievement(par3EntityPlayer,"enchanted");
+    public void doChargeAttack(ItemStack stack, EntityPlayer par3EntityPlayer,boolean isJust){
+        AchievementList.triggerAchievement(par3EntityPlayer, "enchanted");
 
-        getSpecialAttack(stack).doSpacialAttack(stack,par3EntityPlayer);
+        SpecialAttackBase sa = getSpecialAttack(stack);
+        if(isJust && sa instanceof IJustSpecialAttack){
+            ((IJustSpecialAttack)sa).doJustSpacialAttack(stack,par3EntityPlayer);
+        }else {
+            sa.doSpacialAttack(stack, par3EntityPlayer);
+        }
 
         NBTTagCompound tag = getItemTagCompound(stack);
         IsCharged.set(tag, true);
@@ -838,19 +930,30 @@ public class ItemSlashBlade extends ItemSword {
 
 		if(RequiredChargeTick < var6 && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
 
+
+            SilentUpdateItem.forceUpdate(par1ItemStack, par3EntityPlayer);
+
             doSwingItem(par1ItemStack, par3EntityPlayer);
 
-            doChargeAttack(par1ItemStack, par3EntityPlayer);
+            boolean isJust = false;
+
+            if(var6 < (RequiredChargeTick + 4)) {
+                par3EntityPlayer.onEnchantmentCritical(par3EntityPlayer);
+                isJust = true;
+            }
+
+            doChargeAttack(par1ItemStack, par3EntityPlayer, isJust);
 
             LastActionTime.set(tag,par3EntityPlayer.worldObj.getTotalWorldTime());
 
-		}else{
+		}
+        /*else{
 
             if(!JustGuard.atJustGuard(par3EntityPlayer)){
                 OnClick.set(tag, true);
                 //par3EntityPlayer.motionY = 0.0;
             }
-		}
+		}*/
 
 	}
 
@@ -1021,6 +1124,8 @@ public class ItemSlashBlade extends ItemSword {
 	public void onUpdate(ItemStack sitem, World par2World,
 			Entity par3Entity, int indexOfMainSlot, boolean isCurrent) {
 
+        SilentUpdateItem.onUpdate(sitem,par3Entity,isCurrent);
+
         if(SlashBladeHooks.onUpdateHooks(sitem, par2World, par3Entity, indexOfMainSlot, isCurrent)){
             return;
         }
@@ -1145,9 +1250,10 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
+        /*
 		if(el.onGround && !el.isAirBorne && OnJumpAttacked.get(tag)){
 			setComboSequence(tag, ComboSequence.None);
-		}
+		}*/
 
 		if(el.onGround && OnJumpAttacked.get(tag))
             OnJumpAttacked.set(tag, false);
@@ -1165,6 +1271,7 @@ public class ItemSlashBlade extends ItemSword {
 
 		if(isCurrent){
 
+            /*
 			if(OnClick.get(tag)){
 
 				//sitem.setItemDamage(1320);
@@ -1240,12 +1347,13 @@ public class ItemSlashBlade extends ItemSword {
                         //todo 超短距離Drive周囲にばら撒くことで居合い再現はどーか
 					}
 				}
-			}else{
+			}else*/
+            {
 				if(comboSeq != ComboSequence.None
                         && ((prevAttackTime + (comboSeq.comboResetTicks - (el.worldObj.isRemote ? 1 : 0))) < currentTime)
 						&& (comboSeq.useScabbard
 					       || !el.isSwingInProgress /*swingProgress <= 0.0f*/)
-					    && (!el.isUsingItem())
+					    //&& (!el.isUsingItem())
 						){
 					switch (comboSeq) {
 					case None:
