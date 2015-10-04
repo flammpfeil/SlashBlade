@@ -93,7 +93,7 @@ public class EntityBladeStand extends Entity {
 
         if(blade != null && blade.getItem() instanceof ItemSlashBlade){
             NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
-            ItemSlashBlade.PrevExp.remove(tag);
+            //ItemSlashBlade.PrevExp.remove(tag);
         }
 
         this.dataWatcher.updateObject(WatchIndexBlade,blade);

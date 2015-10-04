@@ -4,10 +4,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.JustGuard;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
+import mods.flammpfeil.slashblade.ability.SoulEater;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.specialattack.*;
@@ -41,6 +43,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class ItemSlashBlade extends ItemSword {
@@ -356,6 +359,11 @@ public class ItemSlashBlade extends ItemSword {
         NBTTagCompound tag = getItemTagCompound(stack);
         if(!target.isEntityAlive() && target.deathTime == 0){
             int count = KillCount.add(tag, 1);
+
+            incrementProudSoul(stack, target, player);
+
+            SoulEater.entityKilled(stack, target, player);
+
             if(player instanceof EntityPlayer){
                 switch (count){
                     case 100:
@@ -1048,6 +1056,7 @@ public class ItemSlashBlade extends ItemSword {
 			}
 		}
 
+        /*
         if(!par2World.isRemote && !isCurrent && PrevExp.exists(tag)){
             PrevExp.remove(tag);
         }
@@ -1070,7 +1079,6 @@ public class ItemSlashBlade extends ItemSword {
             		sitem.setItemDamage(Math.max(0,curDamage-repairAmount));
 
                     if(sitem.getItemDamage() == 0)
-                        AchievementList.triggerAchievement(el,"soulEater");
 
             	}
 
@@ -1078,6 +1086,7 @@ public class ItemSlashBlade extends ItemSword {
 
         	}
         }
+        */
 
 		if(!isCurrent && !par2World.isRemote){
 			if(swordType.contains(SwordType.Bewitched) && !swordType.contains(SwordType.NoScabbard) && 0 < curDamage && par2World.getTotalWorldTime() % 20 == 0){
@@ -1160,6 +1169,7 @@ public class ItemSlashBlade extends ItemSword {
 
 				//sitem.setItemDamage(1320);
 				if(prevAttackTime + ComboInterval < currentTime){
+                    LastActionTime.set(tag,currentTime);
 
 					comboSeq = getNextComboSeq(sitem, comboSeq, true, el);
                     setPlayerEffect(sitem,comboSeq,el);
@@ -1224,7 +1234,6 @@ public class ItemSlashBlade extends ItemSword {
 					}
                     OnClick.set(tag, false);
 
-                    LastActionTime.set(tag,currentTime);
 
 					if(swordType.containsAll(SwordType.BewitchedPerfect) && comboSeq.equals(ComboSequence.Battou)){
 						sitem.damageItem(10, el);
@@ -1246,6 +1255,9 @@ public class ItemSlashBlade extends ItemSword {
 						//※動かず納刀完了させ、敵に囲まれている場合にボーナス付与。
 
 						if(tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posY + el.posZ) * 10.0)){
+
+                            SoulEater.fire(sitem, el);
+
 							AxisAlignedBB bb = el.boundingBox.copy();
 							bb = bb.expand(10, 5, 10);
 							List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
@@ -2240,5 +2252,21 @@ public class ItemSlashBlade extends ItemSword {
         }
 
         return result;
+    }
+
+    static void incrementProudSoul(ItemStack stack, EntityLivingBase target,EntityLivingBase player){
+        if(player instanceof EntityPlayer) {
+            Method getExperiencePoints = ReflectionHelper.findMethod(EntityLivingBase.class, target, new String[]{"getExperiencePoints", "func_70693_a"}, EntityPlayer.class);
+            try {
+                int exp = (Integer)getExperiencePoints.invoke(target, (EntityPlayer) player);
+
+                NBTTagCompound tag = getItemTagCompound(stack);
+                PrevExp.set(tag,exp);
+                ProudSoul.add(tag,exp);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
