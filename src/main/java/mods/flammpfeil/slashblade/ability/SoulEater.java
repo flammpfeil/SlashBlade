@@ -13,11 +13,34 @@ import java.util.EnumSet;
  */
 public class SoulEater {
     static final String tag = "SB.KilledPos";
+    static final String tag2 = "SB.KilledCount";
+    static final String tag3 = "SB.KilledExp";
 
     public static void entityKilled(ItemStack stack, EntityLivingBase target,EntityLivingBase player){
         if(!isAveilable(stack)) return;
 
-        player.getEntityData().setInteger(tag, getPosHash(player));
+        NBTTagCompound nbtTag = ItemSlashBlade.getItemTagCompound(stack);
+        int exp = ItemSlashBlade.PrevExp.get(nbtTag);
+        exp = Math.max(0,exp);
+
+        int posHash = player.getEntityData().getInteger(tag);
+        int nowHash = getPosHash(player);
+
+        player.getEntityData().removeTag(tag);
+
+        if(posHash != nowHash){
+            player.getEntityData().setInteger(tag, nowHash);
+            player.getEntityData().setInteger(tag2, 1);
+            player.getEntityData().setInteger(tag3, exp);
+        }else{
+            int count = player.getEntityData().getInteger(tag2);
+            count += 1;
+            player.getEntityData().setInteger(tag2, count);
+
+            int sumexp = player.getEntityData().getInteger(tag3);
+            sumexp += exp;
+            player.getEntityData().setInteger(tag3, sumexp);
+        }
     }
 
     public static void fire(ItemStack stack ,EntityLivingBase player){
@@ -31,7 +54,8 @@ public class SoulEater {
         if(posHash != nowHash) return;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
-        int exp = ItemSlashBlade.PrevExp.get(tag);
+        int exp = player.getEntityData().getInteger(tag3);
+        player.getEntityData().removeTag(tag3);
 
         ItemSlashBlade.ProudSoul.add(tag,exp / 2);
 
@@ -39,8 +63,12 @@ public class SoulEater {
         int repair = Math.max(exp, 1);
         stack.setItemDamage(Math.max(0, curDamage - repair));
 
-        if(!player.worldObj.isRemote)
-            player.heal(1.0f);
+        if(!player.worldObj.isRemote) {
+            float count = player.getEntityData().getInteger(tag2);
+            count = count / 3.0f;
+            player.getEntityData().removeTag(tag2);
+            player.heal(count);
+        }
 
         if(player instanceof EntityPlayer){
             AchievementList.triggerAchievement((EntityPlayer) player, "soulEater");
