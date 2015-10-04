@@ -26,8 +26,6 @@ public class SoulEater {
         int posHash = player.getEntityData().getInteger(tag);
         int nowHash = getPosHash(player);
 
-        player.getEntityData().removeTag(tag);
-
         if(posHash != nowHash){
             player.getEntityData().setInteger(tag, nowHash);
             player.getEntityData().setInteger(tag2, 1);
@@ -63,17 +61,21 @@ public class SoulEater {
         int repair = Math.max(exp, 1);
         stack.setItemDamage(Math.max(0, curDamage - repair));
 
-        if(!player.worldObj.isRemote) {
-            float count = player.getEntityData().getInteger(tag2);
-            count = count / 3.0f;
-            player.getEntityData().removeTag(tag2);
-            player.heal(count);
-        }
 
-        if(player instanceof EntityPlayer){
-            AchievementList.triggerAchievement((EntityPlayer) player, "soulEater");
-            ((EntityPlayer) player).onEnchantmentCritical(player);
-            ((EntityPlayer) player).addExhaustion(1.0f);
+        if(player.getHealth() != player.getMaxHealth()){
+            if(!player.worldObj.isRemote) {
+                float count = player.getEntityData().getInteger(tag2);
+                count = Math.max(count, player.getMaxHealth() / 10.0f);
+                player.getEntityData().removeTag(tag2);
+
+                player.heal(count);
+            }
+
+            if(player instanceof EntityPlayer){
+                AchievementList.triggerAchievement((EntityPlayer) player, "soulEater");
+                ((EntityPlayer) player).onEnchantmentCritical(player);
+                ((EntityPlayer) player).addExhaustion(1.0f);
+            }
         }
     }
 
