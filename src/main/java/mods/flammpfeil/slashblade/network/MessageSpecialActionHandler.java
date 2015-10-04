@@ -35,6 +35,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
             case 2:
                 {
                     UntouchableTime.setUntouchableTime(entityPlayer,3,true);
+                    break;
                 }
             default:
                 {
