@@ -23,17 +23,18 @@ public class SoulEater {
         int exp = ItemSlashBlade.PrevExp.get(nbtTag);
         exp = Math.max(0,exp);
 
-        int posHash = player.getEntityData().getInteger(tag);
-        int nowHash = getPosHash(player);
-
-        if(posHash != nowHash){
-            player.getEntityData().setInteger(tag, nowHash);
-            player.getEntityData().setInteger(tag2, 1);
+        if(isNoMove(player)){
+            player.getEntityData().setInteger(tag, getPosHash(player));
             player.getEntityData().setInteger(tag3, exp);
+
+            if(!player.worldObj.isRemote)
+                player.getEntityData().setInteger(tag2, 1);
         }else{
-            int count = player.getEntityData().getInteger(tag2);
-            count += 1;
-            player.getEntityData().setInteger(tag2, count);
+            if(!player.worldObj.isRemote){
+                int count = player.getEntityData().getInteger(tag2);
+                count += 1;
+                player.getEntityData().setInteger(tag2, count);
+            }
 
             int sumexp = player.getEntityData().getInteger(tag3);
             sumexp += exp;
@@ -44,18 +45,17 @@ public class SoulEater {
     public static void fire(ItemStack stack ,EntityLivingBase player){
         if(!player.getEntityData().hasKey(tag)) return;
 
-        int posHash = player.getEntityData().getInteger(tag);
-        int nowHash = getPosHash(player);
-
+        if(!isNoMove(player)) return;
         player.getEntityData().removeTag(tag);
 
-        if(posHash != nowHash) return;
-
-        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
         int exp = player.getEntityData().getInteger(tag3);
         player.getEntityData().removeTag(tag3);
 
-        ItemSlashBlade.ProudSoul.add(tag,exp / 2);
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+        ItemSlashBlade.ProudSoul.add(tag,exp);
+
+
+        if(!isSoulEaterAveilable(stack)) return;
 
         int curDamage = stack.getItemDamage();
         int repair = Math.max(exp, 1);
@@ -65,7 +65,7 @@ public class SoulEater {
         if(player.getHealth() != player.getMaxHealth()){
             if(!player.worldObj.isRemote) {
                 float count = player.getEntityData().getInteger(tag2);
-                count = Math.max(count, player.getMaxHealth() / 10.0f);
+                count = Math.min(count, player.getMaxHealth() / 10.0f);
                 player.getEntityData().removeTag(tag2);
 
                 player.heal(count);
@@ -83,14 +83,22 @@ public class SoulEater {
         return  (int) ((entity.posX + entity.posY + entity.posZ) * 10.0);
     }
 
+    public static boolean isNoMove(EntityLivingBase player){
+        int posHash = player.getEntityData().getInteger(tag);
+        int nowHash = getPosHash(player);
+
+        return posHash == nowHash;
+    }
+
     static boolean isAveilable(ItemStack stack){
         if(stack == null) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
+        return true;
+    }
 
+    static boolean isSoulEaterAveilable(ItemStack stack){
         ItemSlashBlade blade = (ItemSlashBlade) stack.getItem();
         EnumSet<ItemSlashBlade.SwordType> st = blade.getSwordType(stack);
-        if(!st.contains(ItemSlashBlade.SwordType.SoulEeater)) return false;
-
-        return true;
+        return st.contains(ItemSlashBlade.SwordType.SoulEeater);
     }
 }
