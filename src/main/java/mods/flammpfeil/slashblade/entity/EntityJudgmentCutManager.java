@@ -262,7 +262,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     bladeItem.doSwingItem(blade,(EntityPlayer)this.getThrower());
 
-                blade.setItemDamage(blade.getMaxDamage() / 3);
+                blade.setItemDamage(blade.getMaxDamage() / 2);
             }
 
             alreadyHitEntity.clear();

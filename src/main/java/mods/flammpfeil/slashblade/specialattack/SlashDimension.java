@@ -3,6 +3,8 @@ package mods.flammpfeil.slashblade.specialattack;
 import mods.flammpfeil.slashblade.EntityDrive;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.UntouchableTime;
+import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -18,7 +20,7 @@ import java.util.List;
 /**
  * Created by Furia on 14/05/27.
  */
-public class SlashDimension extends SpecialAttackBase implements IJustSpecialAttack{
+public class SlashDimension extends SpecialAttackBase implements IJustSpecialAttack,ISuperSpecialAttack{
     @Override
     public String toString() {
         return "slashdimension";
@@ -225,5 +227,15 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                 }
             }
         }
+    }
+
+    @Override
+    public void doSuperSpecialAttack(ItemStack stack, EntityPlayer player) {
+
+        EntityJudgmentCutManager entityDA = new EntityJudgmentCutManager(player.worldObj, player);
+        if (entityDA != null) {
+            player.worldObj.spawnEntityInWorld(entityDA);
+        }
+        UntouchableTime.setUntouchableTime(player, 30, true);
     }
 }

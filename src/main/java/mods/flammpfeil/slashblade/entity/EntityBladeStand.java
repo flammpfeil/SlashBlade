@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.entity;
 
+import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.SlashBlade;
@@ -14,7 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -59,6 +62,29 @@ public class EntityBladeStand extends Entity {
         setFlip(Math.abs((getFlip() + 1) % 4));
     }
 
+    public enum StandType{
+        Dual,
+        Single,
+        Upright,
+        Naked,
+        Wall;
+
+        public static StandType getType(int id){
+            if(typeMap.containsKey(id))
+                return typeMap.get(id);
+            else
+                return Naked;
+        }
+        static Map<Integer,StandType> typeMap = Maps.newHashMap();
+        static{
+            typeMap.put(-1,Naked);  //dropItem
+            typeMap.put(0,Dual);    //soul
+            typeMap.put(1,Single);  //ingot
+            typeMap.put(2,Wall);    //sphere
+            typeMap.put(3,Upright); //tiny
+        }
+    }
+
     static final int WatchIndexStandType = 9;
     public int getStandType(){
         return this.dataWatcher.getWatchableObjectInt(WatchIndexStandType);
@@ -66,19 +92,8 @@ public class EntityBladeStand extends Entity {
     public void setStandType(int value){
         this.dataWatcher.updateObject(WatchIndexStandType,value);
     }
-    public static int getType(EntityBladeStand e){
-        switch(e.getStandType()){
-            case -1:
-                return -1;
-            case 0:
-                return 0;
-            case 1:
-                return 1;
-            case 2:
-                return -1;
-            default:
-                return 2;
-        }
+    public static StandType getType(EntityBladeStand e){
+        return StandType.getType(e.getStandType());
     }
 
     static final int WatchIndexBlade = 8;
@@ -105,6 +120,7 @@ public class EntityBladeStand extends Entity {
 
     static final String SaveKeyBlade = "Blade";
     static final String SaveKeyStandType = "StandType";
+    static final String SaveKeyFlip = "Flip";
     @Override
     protected void readEntityFromNBT(NBTTagCompound p_70037_1_) {
 
@@ -118,6 +134,11 @@ public class EntityBladeStand extends Entity {
             ItemStack blade = ItemStack.loadItemStackFromNBT(tag);
 
             this.setBlade(blade);
+        }
+
+        if(p_70037_1_.hasKey(SaveKeyFlip)){
+            int flip = p_70037_1_.getInteger(SaveKeyFlip);
+            this.setFlip(flip);
         }
     }
 
@@ -135,6 +156,11 @@ public class EntityBladeStand extends Entity {
         {
             int type = this.getStandType();
             p_70014_1_.setInteger(SaveKeyStandType,type);
+        }
+
+        {
+            int flip = this.getFlip();
+            p_70014_1_.setInteger(SaveKeyFlip,flip);
         }
     }
 
@@ -159,8 +185,9 @@ public class EntityBladeStand extends Entity {
         this.motionX = 0;
         this.motionZ = 0;
 
-
-        if(hasBlade()){
+        if(getType(this) == StandType.Wall) {
+            this.motionY = 0.0;
+        }else if(hasBlade()){
             if (this.posY > 0.0D)
             {
                 this.motionY = -0.1D;
@@ -189,7 +216,7 @@ public class EntityBladeStand extends Entity {
             this.setDead();
         }
 
-        if(getType(this) < 0 && !this.hasBlade() && 200 < this.ticksExisted){
+        if(getType(this) == StandType.Naked && !this.hasBlade() && 200 < this.ticksExisted){
             this.setDead();
         }
     }
@@ -208,7 +235,7 @@ public class EntityBladeStand extends Entity {
                 p.setCurrentItemOrArmor(0, this.getBlade()); 
                 this.setBlade(null);
 
-                if(getType(this) == -1)
+                if(getType(this) == StandType.Naked)
                     this.setDead();
 
                 return true;

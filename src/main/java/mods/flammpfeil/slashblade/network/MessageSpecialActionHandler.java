@@ -8,6 +8,8 @@ import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
+import mods.flammpfeil.slashblade.specialattack.ISuperSpecialAttack;
+import mods.flammpfeil.slashblade.specialattack.SpecialAttackBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -36,11 +38,14 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
         switch(message.mode){
             case 3:
                 {
-                    EntityJudgmentCutManager entityDA = new EntityJudgmentCutManager(entityPlayer.worldObj, entityPlayer);
-                    if (entityDA != null) {
-                        entityPlayer.worldObj.spawnEntityInWorld(entityDA);
+                    ItemSlashBlade itemBlade = (ItemSlashBlade)stack.getItem();
+                    SpecialAttackBase base = itemBlade.getSpecialAttack(stack);
+                    if(base instanceof ISuperSpecialAttack){
+                        ((ISuperSpecialAttack) base).doSuperSpecialAttack(stack, entityPlayer);
+                    }else if(ItemSlashBlade.defaultSA instanceof ISuperSpecialAttack){
+                        ((ISuperSpecialAttack) ItemSlashBlade.defaultSA).doSuperSpecialAttack(stack, entityPlayer);
                     }
-                    UntouchableTime.setUntouchableTime(entityPlayer,30,true);
+
                     break;
                 }
             case 2:

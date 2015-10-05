@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.DropEventHandler;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
@@ -62,7 +63,7 @@ public class Koseki {
     @SubscribeEvent
     public void onBladeStandAttack(SlashBladeEvent.BladeStandAttack event){
         if(!event.entityBladeStand.hasBlade()) return;
-        if(event.entityBladeStand.getStandType() != 1) return;
+        if(EntityBladeStand.getType(event.entityBladeStand) != EntityBladeStand.StandType.Single) return;
         if(!(event.damageSource.getEntity() instanceof EntityWither)) return;
         if(!event.damageSource.isExplosion()) return;
         if(!event.damageSource.getDamageType().equals("explosion.player")) return;
