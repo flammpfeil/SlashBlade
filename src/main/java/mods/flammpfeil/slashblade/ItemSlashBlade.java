@@ -1208,8 +1208,14 @@ public class ItemSlashBlade extends ItemSword {
 						repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
                         ItemStack tinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
                         addProudSoul = 20;
-                        if(!InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false))
-						    descLv = 1;
+                        {
+                            if(el.experienceLevel < 40){
+                                descExp = repair;
+                            }else{
+                                if(!InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false))
+                                    descLv = 1;
+                            }
+                        }
 					}else{
 						repair = 1;
 						descExp = 10;

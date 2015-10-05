@@ -3,8 +3,10 @@ package mods.flammpfeil.slashblade.network;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import mods.flammpfeil.slashblade.EntityDirectAttackDummy;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
+import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -32,6 +34,15 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
         if(!(stack.getItem() instanceof ItemSlashBlade)) return null;
 
         switch(message.mode){
+            case 3:
+                {
+                    EntityJudgmentCutManager entityDA = new EntityJudgmentCutManager(entityPlayer.worldObj, entityPlayer);
+                    if (entityDA != null) {
+                        entityPlayer.worldObj.spawnEntityInWorld(entityDA);
+                    }
+                    UntouchableTime.setUntouchableTime(entityPlayer,30,true);
+                    break;
+                }
             case 2:
                 {
                     UntouchableTime.setUntouchableTime(entityPlayer,3,true);

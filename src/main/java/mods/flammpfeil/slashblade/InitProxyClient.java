@@ -11,6 +11,7 @@ import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
 import mods.flammpfeil.slashblade.client.renderer.ItemRendererSpecialMaterial;
 import mods.flammpfeil.slashblade.client.renderer.RenderPhantomSwordBase;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
@@ -34,6 +35,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
+import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.util.Timer;
 
@@ -58,7 +60,9 @@ public class InitProxyClient extends InitProxy{
         RenderDrive rd = new RenderDrive();
         RenderingRegistry.registerEntityRenderingHandler(EntityDrive.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSword.class, new RenderPhantomSword());
+
         RenderingRegistry.registerEntityRenderingHandler(EntityDirectAttackDummy.class, rd);
+        RenderingRegistry.registerEntityRenderingHandler(EntityJudgmentCutManager.class, rd);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSwordBase.class, new RenderPhantomSwordBase());
 
@@ -104,6 +108,66 @@ public class InitProxyClient extends InitProxy{
                 if(mc.thePlayer.moveStrafing != 0.0f || mc.thePlayer.moveForward != 0.0f){
                     AvoidAction.doAvoid();
                 }
+            }
+
+            @Override
+            public void presskey(int count) {
+                super.presskey(count);
+
+                Minecraft mc = Minecraft.getMinecraft();
+                EntityClientPlayerMP player = mc.thePlayer;
+                if(player == null) return;
+                if(mc.isGamePaused()) return;
+                if(!mc.inGameHasFocus) return;
+                if(mc.currentScreen != null) return;
+
+                ItemStack item = player.getHeldItem();
+                if(item == null) return;
+                if(!(item.getItem() instanceof ItemSlashBlade)) return;
+
+                ItemSlashBlade bladeItem = (ItemSlashBlade)item.getItem();
+
+                EnumSet<ItemSlashBlade.SwordType> types = bladeItem.getSwordType(item);
+
+                if(!types.containsAll(ItemSlashBlade.SwordType.BewitchedPerfect)) return;
+                if(!types.contains(ItemSlashBlade.SwordType.FiercerEdge)) return;
+
+
+                player.worldObj.spawnParticle("portal",
+                        player.posX + (player.getRNG().nextDouble() - 0.5D) * (double)player.width,
+                        player.posY + player.getRNG().nextDouble() * (double)player.height - 0.25D,
+                        player.posZ + (player.getRNG().nextDouble() - 0.5D) * (double)player.width,
+                        (player.getRNG().nextDouble() - 0.5D) * 2.0D, -player.getRNG().nextDouble(), (player.getRNG().nextDouble() - 0.5D) * 2.0D);
+            }
+
+            @Override
+            public void upkey(int count) {
+                super.upkey(count);
+
+                Minecraft mc = Minecraft.getMinecraft();
+                EntityClientPlayerMP player = mc.thePlayer;
+                if(player == null) return;
+                if(mc.isGamePaused()) return;
+                if(!mc.inGameHasFocus) return;
+                if(mc.currentScreen != null) return;
+
+                ItemStack item = player.getHeldItem();
+                if(item == null) return;
+                if(!(item.getItem() instanceof ItemSlashBlade)) return;
+
+                ItemSlashBlade bladeItem = (ItemSlashBlade)item.getItem();
+
+                EnumSet<ItemSlashBlade.SwordType> types = bladeItem.getSwordType(item);
+
+                if(!types.containsAll(ItemSlashBlade.SwordType.BewitchedPerfect)) return;
+                if(!types.contains(ItemSlashBlade.SwordType.FiercerEdge)) return;
+
+                if(20 > count) return;
+
+                mc.playerController.updateController();
+                PacketHandler.INSTANCE.sendToServer(new MessageSpecialAction((byte) 3));
+
+
             }
         };
 

@@ -76,6 +76,8 @@ public class StylishRankManager {
 
         public static String SlashDim = registerAttackType("SlashDim", 0.6f);
         public static String SlashDimMagic = registerAttackType("SlashDimMagic", -0.1f);
+        public static String JudgmentCut= registerAttackType("JudgmentCut", 0.1f);
+
         public static String Drive = registerAttackType("Drive", 0.5f);
         public static String Spear = registerAttackType("Spear", -0.2f);
         //public static String WaveEdge = registerAttackType("WaveEdge", -0.1f);

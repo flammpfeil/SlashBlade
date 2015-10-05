@@ -23,13 +23,14 @@ public class SoulEater {
         int exp = ItemSlashBlade.PrevExp.get(nbtTag);
         exp = Math.max(0,exp);
 
-        if(isNoMove(player)){
+        if(!isNoMove(player)){
             player.getEntityData().setInteger(tag, getPosHash(player));
             player.getEntityData().setInteger(tag3, exp);
 
             if(!player.worldObj.isRemote)
                 player.getEntityData().setInteger(tag2, 1);
         }else{
+            player.getEntityData().setInteger(tag, getPosHash(player));
             if(!player.worldObj.isRemote){
                 int count = player.getEntityData().getInteger(tag2);
                 count += 1;
