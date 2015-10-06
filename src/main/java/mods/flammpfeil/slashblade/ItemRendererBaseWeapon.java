@@ -976,9 +976,13 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-            GL11.glAlphaFunc(GL11.GL_GEQUAL,0.05f);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
 
             model.renderPart(renderTarget);
+
+            if(!combo.useScabbard){
+                model.renderPart(renderTarget + "_unsheathe");
+            }
 
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
@@ -989,6 +993,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 
             model.renderPart(renderTarget + "_luminous");
+            if(!combo.useScabbard){
+                model.renderPart(renderTarget + "_unsheathe_luminous");
+            }
 
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
 
