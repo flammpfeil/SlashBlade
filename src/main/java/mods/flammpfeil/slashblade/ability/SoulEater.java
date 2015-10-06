@@ -55,6 +55,8 @@ public class SoulEater {
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
         ItemSlashBlade.ProudSoul.add(tag,exp);
 
+        StylishRankManager.addRankPoint(player, StylishRankManager.AttackTypes.KillNoutou);
+
 
         if(!isSoulEaterAveilable(stack)) return;
 

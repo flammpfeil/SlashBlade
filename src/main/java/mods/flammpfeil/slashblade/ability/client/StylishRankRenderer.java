@@ -80,7 +80,7 @@ public class StylishRankRenderer {
             showTextRank = true;
 
         GL11.glPushMatrix(); //3 store
-        {
+        if(now < (lastUpdate+120)){
             int rankOffset = 32 * (rank - 1);
             int textOffset = showTextRank ? 128 : 0;
 
