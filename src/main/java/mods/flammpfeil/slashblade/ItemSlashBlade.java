@@ -815,7 +815,7 @@ public class ItemSlashBlade extends ItemSword {
                         if (curEntity instanceof EntityLivingBase)
                         {
                             float var4 = 0;
-                            var4 = EnchantmentHelper.getEnchantmentModifierLiving(par3EntityPlayer, (EntityLiving)curEntity);
+                            var4 = EnchantmentHelper.getEnchantmentModifierLiving(par3EntityPlayer, (EntityLivingBase)curEntity);
                             if(var4 > 0)
                                 attack += var4;
                         }
