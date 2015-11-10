@@ -904,38 +904,72 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                         GL11.glTranslatef(0.0f,0.0f,-26.0f);
                     }
 
-					if(combo.equals(ComboSequence.Kiriorosi)){
+                    if(combo.equals(ComboSequence.Kiriorosi)){
 
 
-						GL11.glRotatef(20.0f, -1.0f, 0, 0);
-						GL11.glRotatef(-30.0f, 0, 0, -1.0f);
+                        GL11.glRotatef(20.0f, -1.0f, 0, 0);
+                        GL11.glRotatef(-30.0f, 0, 0, -1.0f);
 
 
-                        GL11.glTranslatef(0.0f,0.0f,-8.0f);
+                        GL11.glTranslatef(0.0f, 0.0f, -8.0f);
                         //GL11.glRotatef(-30.0f,1,0,0);
 
 
-						GL11.glRotatef((90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
+                        GL11.glRotatef((90 - combo.swingDirection), 0.0f, -1.0f, 0.0f);
 
-						GL11.glRotatef((1.0f-progress) * -90.0f, 0.0f, 0.0f, -1.0f);
-						GL11.glTranslatef(0.0f, (1.0f-progress) * -5.0f, 0.0f);
-						GL11.glTranslatef((1.0f-progress) * 10.0f, 0.0f, 0.0f);
+                        GL11.glRotatef((1.0f - progress) * -90.0f, 0.0f, 0.0f, -1.0f);
+                        GL11.glTranslatef(0.0f, (1.0f - progress) * -5.0f, 0.0f);
+                        GL11.glTranslatef((1.0f - progress) * 10.0f, 0.0f, 0.0f);
 
-						GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
-						GL11.glTranslatef(0.0f, -yoffset, 0.0f);
+                        GL11.glTranslatef(-xoffset, 0.0f, 0.0f);
+                        GL11.glTranslatef(0.0f, -yoffset, 0.0f);
 
-						progress = 1.0f;
+                        progress = 1.0f;
 
-						if(0 < combo.swingAmplitude){
-							GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
-						}else{
-							GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
-						}
+                        if(0 < combo.swingAmplitude){
+                            GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+                        }else{
+                            GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+                        }
 
-						GL11.glTranslatef(0.0f, yoffset, 0.0f);
-						GL11.glTranslatef(xoffset , 0.0f, 0.0f );
+                        GL11.glTranslatef(0.0f, yoffset, 0.0f);
+                        GL11.glTranslatef(xoffset , 0.0f, 0.0f );
                         GL11.glRotatef(180.0f, 0, 1, 0);
-					}else{
+                    }else if(combo.swingDirection < 0){
+
+
+                        GL11.glRotatef(20.0f, -1.0f, 0, 0);
+                        GL11.glRotatef(-30.0f, 0, 0, -1.0f);
+
+
+                        GL11.glTranslatef(0.0f,0.0f,-12.0f);
+                        //GL11.glRotatef(-30.0f,1,0,0);
+
+
+                        GL11.glRotatef((90 + combo.swingDirection), 0.0f, -1.0f, 0.0f);
+
+
+                        GL11.glRotatef((1.0f - progress) * -(180.0f + 60.0f), 0.0f, 0.0f, -1.0f);
+                        /*
+                        GL11.glTranslatef(0.0f, (1.0f-progress) * -5.0f, 0.0f);
+                        GL11.glTranslatef((1.0f-progress) * 10.0f, 0.0f, 0.0f);
+                        */
+
+                        GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
+                        GL11.glTranslatef(0.0f, -yoffset, 0.0f);
+
+                        progress = 1.0f;
+
+                        if(0 < combo.swingAmplitude){
+                            GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+                        }else{
+                            GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
+                        }
+
+                        GL11.glTranslatef(0.0f, yoffset, 0.0f);
+                        GL11.glTranslatef(xoffset, 0.0f, 0.0f);
+                        //GL11.glRotatef(180.0f, 0, 1, 0);
+                    }else{
 
 						GL11.glRotatef(progress * 20.0f, -1.0f, 0, 0);
 						GL11.glRotatef(progress * -30.0f, 0, 0, -1.0f);

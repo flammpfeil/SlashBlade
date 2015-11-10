@@ -52,9 +52,22 @@ public class DropEventHandler {
 
                 boolean isDrop = false;
 
-                isDrop = drop.getKey() * (1.0f + 0.5f * event.lootingLevel) > rand.nextFloat();
+                float rate = Math.abs(drop.getKey());
+                boolean requiredBlade = drop.getKey() < 0;
 
-                boolean forceDrop = drop.getKey() > 1.1f;
+                isDrop = rate * (1.0f + 0.5f * event.lootingLevel) > rand.nextFloat();
+
+                boolean forceDrop = rate > 1.1f;
+
+                if(requiredBlade){
+                    EntityLivingBase target =event.entityLiving.getAITarget();
+                    if(target == null) return;
+
+                    ItemStack attackItem = target.getHeldItem();
+                    if(attackItem == null) return;
+                    if(!(attackItem.getItem() instanceof ItemSlashBlade)) return;
+
+                }
 
                 if((event.recentlyHit || forceDrop) && isDrop && drop.getValue() != null){
                     ItemStack dropitem = drop.getValue().copy();

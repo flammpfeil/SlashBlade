@@ -28,7 +28,7 @@ public class PSSange {
         ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
         ItemSlashBlade.TextureName.set(tag, "named/sange/sange");
         ItemSlashBlade.ModelName.set(tag, "named/sange/sange");
-        ItemSlashBlade.SpecialAttackType.set(tag, 4); //4:シュンカ一段
+        ItemSlashBlade.SpecialAttackType.set(tag, 7); //4:シュンカ一段
         ItemSlashBlade.StandbyRenderType.set(tag, 2);
         ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
@@ -38,6 +38,6 @@ public class PSSange {
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("WitherBoss", 0.3f, GameRegistry.findItemStack(SlashBlade.modid, name, 1));
+        DropEventHandler.registerEntityDrop("WitherBoss", -0.3f, GameRegistry.findItemStack(SlashBlade.modid, name, 1));
     }
 }

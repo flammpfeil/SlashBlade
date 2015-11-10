@@ -16,6 +16,7 @@ import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
+import mods.flammpfeil.slashblade.entity.EntitySakuraEndManager;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.named.*;
@@ -266,13 +267,15 @@ public class SlashBlade implements IFuelHandler{
         FMLCommonHandler.instance().bus().register(recipeRepair);
 
 
-        EntityRegistry.registerModEntity(EntityDrive.class, "Drive", 1, this, 250, 1, true);
-        EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", 2, this, 250, 1, true);
-        EntityRegistry.registerModEntity(EntityDirectAttackDummy.class, "DirectAttackDummy", 3, this, 250, 1, true);
+        int entityId = 1;
+        EntityRegistry.registerModEntity(EntityDrive.class, "Drive", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityDirectAttackDummy.class, "DirectAttackDummy", entityId++, this, 250, 1, true);
 
-        EntityRegistry.registerModEntity(EntityPhantomSwordBase.class, "PhantomSwordBase", 4, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityPhantomSwordBase.class, "PhantomSwordBase", entityId++, this, 250, 1, true);
 
-        EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", 5, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 1, true);
 
         EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", 100, this, 250, 1000, false);
 

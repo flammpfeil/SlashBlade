@@ -206,6 +206,8 @@ public class ItemSlashBlade extends ItemSword {
     	SlashDim(false,-220.0f,10.0f,true,8),
         Iai(false,240.0f,0.0f,false,20),
         HiraTuki(false,180.0f,180.0f,false,20),
+        SlashEdge(false, 240.0f,20.0f,false,12),
+        ReturnEdge(false, 250.0f,-160.0f,false,12),
     	;
 
 	    /**
@@ -241,16 +243,16 @@ public class ItemSlashBlade extends ItemSword {
 	     * @param swingDirection 振る角度
 	     * @param isCharged チャージエフェクト有無
 	     */
-	    private ComboSequence(boolean useScabbard, float swingAmplitude, float swingDirection, boolean isCharged,int comboResetTicks)
-	    {
-	    	Seqs.add(this.ordinal(), this);
+        private ComboSequence(boolean useScabbard, float swingAmplitude, float swingDirection, boolean isCharged,int comboResetTicks)
+        {
+            Seqs.add(this.ordinal(), this);
 
-	    	this.useScabbard = useScabbard;
-	    	this.swingAmplitude = swingAmplitude;
-	    	this.swingDirection = swingDirection;
-	    	this.isCharged = isCharged;
-	    	this.comboResetTicks = comboResetTicks;
-	    }
+            this.useScabbard = useScabbard;
+            this.swingAmplitude = swingAmplitude;
+            this.swingDirection = swingDirection;
+            this.isCharged = isCharged;
+            this.comboResetTicks = comboResetTicks;
+        }
 
 	    public static ComboSequence get(int ordinal){
 	    	return Seqs.get(ordinal);
@@ -445,6 +447,7 @@ public class ItemSlashBlade extends ItemSword {
             }
             case HiraTuki:
                 setDaunting(target);
+            case ReturnEdge:
             case Battou:
             {
                 float knockbackFactor = 0f;
@@ -464,6 +467,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
+            case SlashEdge:
             case Iai:
                 target.motionX = 0;
                 target.motionY = 0;
@@ -1233,7 +1237,8 @@ public class ItemSlashBlade extends ItemSword {
                                 if(el.experienceLevel <= 0){
                                     el.experience = 0;
                                 }else{
-                                    el.experienceLevel--;
+                                    //el.experienceLevel--;
+                                    el.addExperienceLevel(-1);
                                     el.experience = 1.0f - (0.9f/el.xpBarCap());
                                 }
                             }
@@ -1243,8 +1248,9 @@ public class ItemSlashBlade extends ItemSword {
                     if(0 < descLv){
                         for(;descLv > 0;descLv--){
                             if(0 < el.experienceLevel){
-                                el.experienceLevel--;
-                                el.addExperience(-1);
+                                //el.experienceLevel--;
+                                el.addExperienceLevel(-1);
+                                //el.addExperience(-1);
                             }
                         }
                     }
@@ -2217,6 +2223,7 @@ public class ItemSlashBlade extends ItemSword {
         saMap.put(4, new Spear());
         saMap.put(5, new CircleSlash());
         saMap.put(6, new BlisteringWitherSwords());
+        saMap.put(7, new SakuraEnd());
         return saMap;
     }
 
