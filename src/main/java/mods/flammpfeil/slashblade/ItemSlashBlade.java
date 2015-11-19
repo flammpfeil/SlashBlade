@@ -6,11 +6,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.ability.JustGuard;
-import mods.flammpfeil.slashblade.ability.StunManager;
-import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
-import mods.flammpfeil.slashblade.ability.SoulEater;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.specialattack.*;
@@ -367,6 +364,7 @@ public class ItemSlashBlade extends ItemSword {
             incrementProudSoul(stack, target, player);
 
             SoulEater.entityKilled(stack, target, player);
+            DefeatTheBoss.entityKilled(stack, target, player);
 
             if(player instanceof EntityPlayer){
                 switch (count){
@@ -464,6 +462,9 @@ public class ItemSlashBlade extends ItemSword {
                         (double) (-MathHelper.sin(user.rotationYaw * (float) Math.PI / 180.0F) * (float) knockbackFactor * 0.5F),
                         0.2D,
                         (double) (MathHelper.cos(user.rotationYaw * (float) Math.PI / 180.0F) * (float) knockbackFactor * 0.5F));
+
+                if(user.onGround)
+                    UpthrustBlast.setUpthrustBlastSword(stack,user,target);
 
                 break;
             }
@@ -1373,6 +1374,8 @@ public class ItemSlashBlade extends ItemSword {
 						if(tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posY + el.posZ) * 10.0)){
 
                             SoulEater.fire(sitem, el);
+
+                            UpthrustBlast.doBlast(sitem, el);
 
 							AxisAlignedBB bb = el.boundingBox.copy();
 							bb = bb.expand(10, 5, 10);

@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.ability.AirTrick;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -12,6 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -944,6 +946,13 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
             this.ridingEntity2 = par1Entity;
 
             this.ticksExisted = 0;
+
+            if(!this.worldObj.isRemote){
+                if(this.getEntityData().getBoolean("IsAirTrick")){
+                    if(this.getThrower() instanceof EntityPlayerMP)
+                        AirTrick.doAirTrick((EntityPlayerMP)this.getThrower());
+                }
+            }
         }
     }
 
