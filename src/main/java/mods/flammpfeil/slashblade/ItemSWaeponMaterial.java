@@ -246,4 +246,19 @@ public class ItemSWaeponMaterial extends Item {
 
         AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
     }
+
+    @Override
+    public boolean isPotionIngredient(ItemStack p_150892_1_) {
+        return p_150892_1_.getItemDamage() == 0 || p_150892_1_.getItemDamage() == 3;
+    }
+
+    @Override
+    public String getPotionEffect(ItemStack p_150896_1_) {
+        switch (p_150896_1_.getItemDamage()){
+            case 0:  //soul
+                return "+14&13-13";
+            default: //tiny
+                return "+4";
+        }
+    }
 }

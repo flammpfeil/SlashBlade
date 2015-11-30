@@ -52,14 +52,26 @@ public class BladeMaterials {
                 'P', itemTinyBladeSoul));
 
         SlashBlade.addSmelting(SlashBlade.SphereBladeSoulStr,
-                itemIngotBladeSoul , itemSphereBladeSoul, 2.0F);
+                itemIngotBladeSoul, itemSphereBladeSoul, 2.0F);
 
-        SlashBlade.addRecipe("VariousRecipe",
+        SlashBlade.addRecipe(SlashBlade.ProudSoulStr,
                 new ShapedOreRecipe(new ItemStack(Items.experience_bottle),
-                "XXX",
-                "XIX",
-                "XXX",
-                'I',Items.glass_bottle,
-                'X',itemTinyBladeSoul));
+                        " P ",
+                        " S ",
+                        " I ",
+                        'S', new ItemStack(Items.brewing_stand),
+                        'P', itemProudSoul,
+                        'I', new ItemStack(Items.potionitem, 1, 8192))
+                ,true);
+
+        SlashBlade.addRecipe(SlashBlade.TinyBladeSoulStr,
+                new ShapedOreRecipe(new ItemStack(Items.potionitem,1,8233),
+                        " P ",
+                        " S ",
+                        " I ",
+                        'S',new ItemStack(Items.brewing_stand),
+                        'P',itemProudSoul,
+                        'I',new ItemStack(Items.potionitem,1,0))
+                ,true);
     }
 }

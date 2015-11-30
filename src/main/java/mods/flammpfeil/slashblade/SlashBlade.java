@@ -26,6 +26,7 @@ import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
+import mods.flammpfeil.slashblade.util.PotionManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -324,6 +325,7 @@ public class SlashBlade implements IFuelHandler{
         abilityProjectileBarrier = new ProjectileBarrier();
         MinecraftForge.EVENT_BUS.register(abilityProjectileBarrier);
 
+        new PotionManager();
 
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);
