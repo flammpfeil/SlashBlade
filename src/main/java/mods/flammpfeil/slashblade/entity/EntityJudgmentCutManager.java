@@ -239,6 +239,11 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                             entityDrive.setDriveVector(fYVecOfst);
                             entityDrive.setLifeTime(8);
                             entityDrive.setIsMultiHit(false);
+
+                            int rank = StylishRankManager.getStylishRank(this.getThrower());
+                            if(5 <= rank)
+                                entityDrive.setIsSlashDimension(true);
+
                             entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
                             if (entityDrive != null) {
                                 this.worldObj.spawnEntityInWorld(entityDrive);

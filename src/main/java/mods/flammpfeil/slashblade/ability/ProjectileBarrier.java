@@ -1,7 +1,9 @@
 package mods.flammpfeil.slashblade.ability;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import mods.flammpfeil.slashblade.EntityDrive;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.specialeffect.ISpecialEffect;
@@ -28,12 +30,14 @@ public class ProjectileBarrier {
         EntityPlayer player = event.entityPlayer;
         if(player == null) return;
         if(!player.isUsingItem()) return;
-        if(event.duration < ItemSlashBlade.RequiredChargeTick) return;
-
         ItemStack stack = event.item;
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
+
+
+        int ticks = stack.getMaxItemUseDuration() - event.duration;
+        if(ticks < ItemSlashBlade.RequiredChargeTick) return;
 
         int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack);
         if(level <= 0) return;
@@ -48,6 +52,11 @@ public class ProjectileBarrier {
 
             if(target instanceof EntityPhantomSwordBase)
                 continue;
+
+            if(target instanceof IThrowableEntity){
+                if(((IThrowableEntity) target).getThrower() == player)
+                    continue;
+            }
 
             destructEntity(player, target);
         }

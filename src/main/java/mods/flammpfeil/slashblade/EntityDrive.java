@@ -117,13 +117,16 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         //lifetime
         this.getDataWatcher().addObject(6, 20);
 
+        //lifetime
+        this.getDataWatcher().addObject(7, (byte) 0);
+
     }
 
     public boolean getIsMultiHit(){
         return this.getDataWatcher().getWatchableObjectByte(4) == 0;
     }
     public void setIsMultiHit(boolean isMultiHit){
-        this.getDataWatcher().updateObject(4,isMultiHit ? (byte)1 : (byte)0);
+        this.getDataWatcher().updateObject(4, isMultiHit ? (byte) 1 : (byte) 0);
     }
 
     public float getRoll(){
@@ -138,6 +141,13 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     }
     public void setLifeTime(int lifetime){
         this.getDataWatcher().updateObject(6,lifetime);
+    }
+
+    public boolean getIsSlashDimension(){
+        return this.getDataWatcher().getWatchableObjectByte(7) == 1;
+    }
+    public void setIsSlashDimension(boolean isSlashDimension){
+        this.getDataWatcher().updateObject(7, isSlashDimension ? (byte) 1 : (byte) 0);
     }
 
     public void setInitialSpeed(float f){
@@ -256,9 +266,22 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                         StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.Drive);
 
                     for(Entity curEntity : list){
+
+                        if(getIsSlashDimension()){
+                            if(curEntity instanceof EntityLivingBase){
+                                float health = ((EntityLivingBase) curEntity).getHealth();
+                                if(0 < health){
+                                    health = Math.max(1,health - magicDamage);
+                                    ((EntityLivingBase) curEntity).setHealth(health);
+                                }
+                            }
+                        }
+
                         curEntity.hurtResistantTime = 0;
                         DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
                         curEntity.attackEntityFrom(ds, magicDamage);
+
+
                         if(blade != null && curEntity instanceof EntityLivingBase)
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                     }

@@ -39,7 +39,8 @@ public class FireResistance {
         if(player.isBurning()){
             player.moveFlying(player.moveStrafing,player.moveForward,0.25f + speedfactor);
 
-            if(ItemSlashBlade.RequiredChargeTick < event.duration){
+            int ticks = stack.getMaxItemUseDuration() - event.duration;
+            if(ItemSlashBlade.RequiredChargeTick < ticks){
                 ReflectionHelper.setPrivateValue(Entity.class, player, 0, "fire", "field_70151_c");
             }
         }

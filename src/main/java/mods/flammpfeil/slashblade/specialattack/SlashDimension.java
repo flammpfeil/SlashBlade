@@ -212,13 +212,19 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                         float motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst * 2;
 
                         entityDrive.setLocationAndAngles(curEntity.posX - motionX,
-                                curEntity.posY + (double)curEntity.getEyeHeight()/2D - motionY,
+                                curEntity.posY + (double) curEntity.getEyeHeight() / 2D - motionY,
                                 curEntity.posZ - motionZ,
                                 rotationYaw,
                                 rotationPitch);
                         entityDrive.setDriveVector(fYVecOfst);
                         entityDrive.setLifeTime(8);
                         entityDrive.setIsMultiHit(false);
+
+
+                        int rank = StylishRankManager.getStylishRank(player);
+                        if(5 <= rank)
+                            entityDrive.setIsSlashDimension(true);
+
                         entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
                         if (entityDrive != null) {
                             world.spawnEntityInWorld(entityDrive);

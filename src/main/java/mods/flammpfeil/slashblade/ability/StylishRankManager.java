@@ -97,6 +97,14 @@ public class StylishRankManager {
 
         public static String AttackAvoidance = registerAttackType("AttackAvoidance", -0.3f);
 
+
+        public static String SlashEdge = registerAttackType("SlashEdge", 0.2f);
+        public static String ReturnEdge = registerAttackType("ReturnEdge", 0.2f);
+        public static String SSlashEdge = registerAttackType("SSlashEdge", 0.2f);
+        public static String SReturnEdge = registerAttackType("SReturnEdge", 0.2f);
+        public static String SIai = registerAttackType("SIai", 0.2f);
+        public static String SSlashBlade = registerAttackType("SSlashBlade", -0.2f);
+
         public static String registerAttackType(String key,float factor){
             types.put(key,factor);
             return key;

@@ -1,24 +1,14 @@
 package mods.flammpfeil.slashblade.ability;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Created by Furia on 14/07/26.
@@ -51,6 +41,9 @@ public class JustGuard {
     public void LivingHurtEvent(LivingHurtEvent e){
         String type = e.source.getDamageType();
 
+        if(e.entity.worldObj.isRemote)
+            return;
+
         if(e.isCanceled()) return;
         if(e.entity == null) return;
         if(!(e.entity instanceof EntityPlayer)) return;
@@ -70,7 +63,7 @@ public class JustGuard {
 
                 e.setCanceled(true);
                 e.ammount = 0;
-                UntouchableTime.setUntouchableTime(el,20);
+                UntouchableTime.setUntouchableTime(el, 20);
 
 
                 NBTTagCompound tag = stack.getTagCompound();
@@ -83,23 +76,26 @@ public class JustGuard {
 
 
                 double yOffset = 0;
+                ItemSlashBlade.ComboSequence postSeq;
                 if(!el.onGround){
-                    ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Iai);
+                    postSeq = ItemSlashBlade.ComboSequence.Iai;
                 }else{
                     yOffset = 0.5;
-                    ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Saya2);
+                    postSeq = ItemSlashBlade.ComboSequence.Saya2;
                 }
                 el.getEntityData().setDouble("SBLastPosY", el.posY + yOffset);
 
-                ItemSlashBlade.IsCharged.set(tag,true);
+                ItemSlashBlade.IsCharged.set(tag, true);
                 ItemSlashBlade.OnClick.set(tag,true);
-                ItemSlashBlade.OnJumpAttacked.set(tag,false);
+                ItemSlashBlade.OnJumpAttacked.set(tag, false);
 
-                ChargeStart.set(el.getEntityData(),interval);
+                ChargeStart.set(el.getEntityData(), interval);
                 e.entityLiving.worldObj.playSoundAtEntity(el, "mob.blaze.hit", 1.0F, 1.0F);
 
 
                 StylishRankManager.addRankPoint(el, StylishRankManager.AttackTypes.JustGuard);
+
+                ((ItemSlashBlade)stack.getItem()).nextAttackSequence(stack, postSeq, (EntityPlayer) el);
             }
         }
     }

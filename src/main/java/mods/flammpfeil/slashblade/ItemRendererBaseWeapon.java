@@ -823,6 +823,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 		//progress = (player.ticksExisted % 10) / 10.0f;
 
 		switch(combo){
+        case SIai:
 		case Iai:
 			progress = 1.0f - (Math.abs(progress-0.5f) * 2.0f);
 

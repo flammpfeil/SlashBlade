@@ -171,7 +171,7 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
         EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
 
         double dAmbit = 0.5D;
-        AxisAlignedBB bb = itemBlade.getBBofCombo(blade, ItemSlashBlade.ComboSequence.Battou, entityLiving);
+        AxisAlignedBB bb = itemBlade.getBBofCombo(blade, combo, entityLiving);
 
         bb = bb.expand(0,dAmbit,0);
 
