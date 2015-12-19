@@ -2203,12 +2203,8 @@ public class ItemSlashBlade extends ItemSword {
 
             }else if(maxDamage < damage){
                 if(IsBroken.get(tag)){
-                    if(!isDestructable(stack))
-                        damage = Math.min(damage,maxDamage);
+                    damage = Math.min(damage,maxDamage);
                 }
-                /*else{
-                    IsBroken.set(tag,true);
-                }*/
             }
         }
         super.setDamage(stack,damage);
