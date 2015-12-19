@@ -283,14 +283,19 @@ public class ItemSlashBlade extends ItemSword {
             if(stack.isItemEnchanted() && entity instanceof EntityLivingBase){
 
                 ItemStack tinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
-                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId,stack);
+                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, stack);
+                int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, stack);
 
                 Random rand = ((EntityLivingBase)entity).getRNG();
 
                 boolean isRare = false;
-                for(int loop = 0;loop < unbreakingLevel; loop++){
-                    isRare = rand.nextFloat() < 0.1;
-                    if(isRare) break;
+                if(0 < unbreakingLevel && 0 < lootingLevel){
+                    isRare = true;
+                }else {
+                    for (int loop = 0; loop < unbreakingLevel; loop++) {
+                        isRare = rand.nextFloat() < 0.3;
+                        if (isRare) break;
+                    }
                 }
 
                 if(isRare)
@@ -2200,9 +2205,10 @@ public class ItemSlashBlade extends ItemSword {
                 if(IsBroken.get(tag)){
                     if(!isDestructable(stack))
                         damage = Math.min(damage,maxDamage);
-                }else{
-                    IsBroken.set(tag,true);
                 }
+                /*else{
+                    IsBroken.set(tag,true);
+                }*/
             }
         }
         super.setDamage(stack,damage);

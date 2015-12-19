@@ -23,7 +23,7 @@ group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-nami
 archivesBaseName = "SlashBlade"
 
 minecraft {
-    version = "1.7.10-10.13.2.1291"
+    version = "1.7.10-10.13.4.1492-1.7.10"
     runDir = "eclipse"
 
     //static final boolean isRelease = /*@IS_RELEASE@*/ false;
