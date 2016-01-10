@@ -3,9 +3,11 @@ package mods.flammpfeil.slashblade.ability;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.entity.ai.EntityAIStun;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -46,5 +48,36 @@ public class StunManager {
 
         duration = Math.min(duration, EntityAIStun.timeoutLimit);
         target.getEntityData().setLong(EntityAIStun.StunTimeout,target.worldObj.getTotalWorldTime() + duration);
+    }
+
+    static final String FreezeTimeout = "FreezeTimeout";
+    static final long freezeLimit = 200;
+
+    @SubscribeEvent
+    public void onEntityCanUpdate(EntityEvent.CanUpdate event){
+        if(event.isCanceled()) return;
+        Entity target = event.entity;
+        if(target == null) return;
+        if(target.worldObj == null) return;
+
+        long timeout = target.getEntityData().getLong(FreezeTimeout);
+        if(timeout == 0) return;
+
+        long timeLeft = timeout - target.worldObj.getTotalWorldTime();
+        if(timeLeft <= 0 || freezeLimit < timeLeft){
+            target.getEntityData().removeTag(FreezeTimeout);
+            return;
+        }else{
+            event.canUpdate = false;
+        }
+    }
+
+    public static void setFreeze(EntityLivingBase target, long duration){
+        if(target.worldObj == null) return;
+        if(!(target instanceof EntityLiving)) return;
+        if(duration <= 0) return;
+
+        duration = Math.min(duration, freezeLimit);
+        target.getEntityData().setLong(FreezeTimeout,target.worldObj.getTotalWorldTime() + duration);
     }
 }

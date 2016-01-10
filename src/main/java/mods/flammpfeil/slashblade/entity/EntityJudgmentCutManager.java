@@ -178,6 +178,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                             }
 
                             StunManager.setStun((EntityLivingBase) curEntity, stanTicks);
+                            StunManager.setFreeze((EntityLivingBase) curEntity, stanTicks);
 
 
                             for(int i = 0; i<5; i++)
