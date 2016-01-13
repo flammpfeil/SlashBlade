@@ -13,10 +13,7 @@ import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.*;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
-import mods.flammpfeil.slashblade.entity.EntitySakuraEndManager;
+import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.named.*;
@@ -277,6 +274,8 @@ public class SlashBlade implements IFuelHandler{
 
         EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 1, true);
         EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 1, true);
+
+        EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 1, true);
 
         EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", 100, this, 250, 1000, false);
 

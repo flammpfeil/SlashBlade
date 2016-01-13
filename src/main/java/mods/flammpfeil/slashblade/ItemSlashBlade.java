@@ -824,7 +824,13 @@ public class ItemSlashBlade extends ItemSword {
 		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
 	}
 
-    public void nextAttackSequence(ItemStack stack, ComboSequence prevComboSeq, EntityPlayer player){
+    public void nextAttackSequence(ItemStack stack, ComboSequence prevComboSeq, EntityPlayer player) {
+        ComboSequence comboSeq = getNextComboSeq(stack, prevComboSeq, true, player);
+
+        doAttack(stack, comboSeq, player);
+    }
+
+    public void doAttack(ItemStack stack, ComboSequence comboSeq, EntityPlayer player){
         World world = player.getEntityWorld();
         NBTTagCompound tag = getItemTagCompound(stack);
         EnumSet<SwordType> swordType = getSwordType(stack);
@@ -833,8 +839,6 @@ public class ItemSlashBlade extends ItemSword {
         LastActionTime.set(tag, currentTime);
 
         OnClick.set(tag,true);
-
-        ComboSequence comboSeq = getNextComboSeq(stack, prevComboSeq, true, player);
         setPlayerEffect(stack, comboSeq, player);
         setComboSequence(tag, comboSeq);
 
@@ -950,11 +954,15 @@ public class ItemSlashBlade extends ItemSword {
             if(5 <= rank){
                 magicDamage += AttackAmplifier.get(tag) * (0.5f + (level / 5.0f));
             }
-            EntityDrive entityDrive = new EntityDrive(world, player, magicDamage, false, 90.0f - Math.abs(setCombo.swingDirection));
+            boolean disableMultiHit = rank <= 5;
+            EntityDrive entityDrive = new EntityDrive(world, player, magicDamage, disableMultiHit, 90.0f - Math.abs(setCombo.swingDirection));
             if (entityDrive != null) {
                 entityDrive.setInitialSpeed(0.05f);
-                entityDrive.setLifeTime(40);
-                entityDrive.setIsSlashDimension(true);
+                entityDrive.setLifeTime(20);
+
+                EnumSet<SwordType> type = getSwordType(stack);
+                entityDrive.setIsSlashDimension(type.contains(SwordType.FiercerEdge));
+
                 world.spawnEntityInWorld(entityDrive);
             }
 

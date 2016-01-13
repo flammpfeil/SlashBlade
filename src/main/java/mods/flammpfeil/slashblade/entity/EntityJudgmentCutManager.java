@@ -22,6 +22,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
@@ -199,7 +200,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                 List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
                 list.removeAll(alreadyHitEntity);
 
-                StylishRankManager.setNextAttackType(this.getThrower() ,StylishRankManager.AttackTypes.JudgmentCut);
+                StylishRankManager.setNextAttackType(this.getThrower(), StylishRankManager.AttackTypes.JudgmentCut);
 
                 if(blade != null){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
@@ -242,8 +243,10 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                             entityDrive.setIsMultiHit(false);
 
                             int rank = StylishRankManager.getStylishRank(this.getThrower());
-                            if(5 <= rank)
-                                entityDrive.setIsSlashDimension(true);
+                            if(5 <= rank) {
+                                EnumSet<ItemSlashBlade.SwordType> type = bladeItem.getSwordType(blade);
+                                entityDrive.setIsSlashDimension(type.contains(ItemSlashBlade.SwordType.FiercerEdge));
+                            }
 
                             entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
                             if (entityDrive != null) {

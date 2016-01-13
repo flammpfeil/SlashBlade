@@ -10,10 +10,7 @@ import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
 import mods.flammpfeil.slashblade.client.renderer.ItemRendererSpecialMaterial;
 import mods.flammpfeil.slashblade.client.renderer.RenderPhantomSwordBase;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
-import mods.flammpfeil.slashblade.entity.EntitySakuraEndManager;
+import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import net.minecraft.client.Minecraft;
@@ -65,6 +62,7 @@ public class InitProxyClient extends InitProxy{
         RenderingRegistry.registerEntityRenderingHandler(EntityDirectAttackDummy.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityJudgmentCutManager.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntitySakuraEndManager.class, rd);
+        RenderingRegistry.registerEntityRenderingHandler(EntityJustGuardManager.class, rd);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSwordBase.class, new RenderPhantomSwordBase());
 

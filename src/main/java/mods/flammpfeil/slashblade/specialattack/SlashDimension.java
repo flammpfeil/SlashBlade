@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -222,8 +223,10 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
 
                         int rank = StylishRankManager.getStylishRank(player);
-                        if(5 <= rank)
-                            entityDrive.setIsSlashDimension(true);
+                        if(5 <= rank) {
+                            EnumSet<ItemSlashBlade.SwordType> type = blade.getSwordType(stack);
+                            entityDrive.setIsSlashDimension(type.contains(ItemSlashBlade.SwordType.FiercerEdge));
+                        }
 
                         entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
                         if (entityDrive != null) {

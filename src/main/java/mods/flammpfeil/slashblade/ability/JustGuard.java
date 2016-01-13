@@ -3,6 +3,8 @@ package mods.flammpfeil.slashblade.ability;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
+import mods.flammpfeil.slashblade.entity.EntityJustGuardManager;
+import mods.flammpfeil.slashblade.entity.EntitySakuraEndManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -81,12 +83,8 @@ public class JustGuard {
 
 
                 double yOffset = 0;
-                ItemSlashBlade.ComboSequence postSeq;
-                if(!el.onGround){
-                    postSeq = ItemSlashBlade.ComboSequence.Iai;
-                }else{
+                if(el.onGround){
                     yOffset = 0.5;
-                    postSeq = ItemSlashBlade.ComboSequence.Saya2;
                 }
                 el.getEntityData().setDouble("SBLastPosY", el.posY + yOffset);
 
@@ -96,13 +94,17 @@ public class JustGuard {
                 ItemSlashBlade.OnClick.set(tag,true);
                 ItemSlashBlade.OnJumpAttacked.set(tag,false);
 
-                ChargeStart.set(el.getEntityData(),interval);
+                ChargeStart.set(el.getEntityData(), interval);
                 e.entityLiving.worldObj.playSoundAtEntity(el, "mob.blaze.hit", 1.0F, 1.0F);
 
 
                 StylishRankManager.addRankPoint(el, StylishRankManager.AttackTypes.JustGuard);
 
-                ((ItemSlashBlade)stack.getItem()).nextAttackSequence(stack, postSeq, (EntityPlayer) el);
+
+                EntityJustGuardManager entityManager = new EntityJustGuardManager(el.worldObj, el);
+                if (entityManager != null) {
+                    el.worldObj.spawnEntityInWorld(entityManager);
+                }
             }
         }
     }
