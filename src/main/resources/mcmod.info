@@ -8,11 +8,11 @@
   "url": "",
   "updateUrl": "",
   "authors": [ "Ferne",],
-  "credits": "Mrkwtkr LostyBear Naya1925",
+  "credits": "Furia",
   "logoFile": "",
   "parent":"",
   "screenshots": [],
-  "requiredMods": [],
+  "requiredMods": ["MinecraftForge"],
   "dependencies": []
 }
 ]

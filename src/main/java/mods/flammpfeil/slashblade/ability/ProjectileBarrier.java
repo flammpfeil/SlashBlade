@@ -1,22 +1,16 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.IThrowableEntity;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import mods.flammpfeil.slashblade.EntityDrive;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
-import mods.flammpfeil.slashblade.specialeffect.ISpecialEffect;
-import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
 import java.util.List;
@@ -46,11 +40,11 @@ public class ProjectileBarrier {
     }
 
     private void expandBarrier(EntityPlayer player){
-        AxisAlignedBB bb = player.boundingBox.expand(2,2,2);
-        List<Entity> list = player.worldObj.getEntitiesWithinAABBExcludingEntity(player,bb, ItemSlashBlade.DestructableSelector);
+        AxisAlignedBB bb = player.getEntityBoundingBox().expand(2,2,2);
+        List<Entity> list = player.worldObj.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
         for(Entity target : list){
 
-            if(target instanceof EntityPhantomSwordBase)
+            if(target instanceof EntitySummonedSwordBase)
                 continue;
 
             if(target instanceof IThrowableEntity){

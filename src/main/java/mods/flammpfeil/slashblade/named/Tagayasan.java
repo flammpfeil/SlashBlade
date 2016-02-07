@@ -1,9 +1,8 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
@@ -24,7 +23,7 @@ public class Tagayasan {
 
     @SubscribeEvent()
     public void init(LoadEvent.InitEvent event){
-        ItemStack itemSphereBladeSoul = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr , 1);
+        ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr , 1);
 
         ItemStack customblade = new ItemStack(SlashBlade.bladeNamed,1,0);
         NBTTagCompound tag = new NBTTagCompound();
@@ -43,7 +42,7 @@ public class Tagayasan {
 
         tag.setString(ItemSlashBladeNamed.RepairMaterialNameStr,"iron_ingot");
 
-        GameRegistry.registerCustomItemStack(name, customblade);
+        SlashBlade.registerCustomItemStack(name, customblade);
         ItemSlashBladeNamed.NamedBlades.add(name);
         {
             ItemStack reqiredBlade = new ItemStack(SlashBlade.bladeWood);
@@ -54,7 +53,7 @@ public class Tagayasan {
             reqiredBlade.setStackDisplayName("thousandkill woodblade");
 
             name = "flammpfeil.slashblade.tagayasan.reqired";
-            GameRegistry.registerCustomItemStack(name, reqiredBlade);
+            SlashBlade.registerCustomItemStack(name, reqiredBlade);
             ItemSlashBladeNamed.NamedBlades.add(name);
 
             SlashBlade.addRecipe(Tagayasan,

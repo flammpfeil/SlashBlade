@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.item;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 
 /**

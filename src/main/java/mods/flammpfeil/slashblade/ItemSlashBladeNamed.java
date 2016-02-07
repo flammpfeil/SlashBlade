@@ -1,11 +1,12 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.Lists;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
@@ -51,6 +52,8 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
 
         for(String bladename : NamedBlades){
             ItemStack blade = SlashBlade.getCustomBlade(bladename);
+            if(blade.getItemDamage() == OreDictionary.WILDCARD_VALUE)
+                blade.setItemDamage(0);
             if(blade != null) par3List.add(blade);
         }
     }
@@ -81,7 +84,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
         if(!result && tag.hasKey(RepairMaterialNameStr))
         {
             String matName = tag.getString(RepairMaterialNameStr);
-            Item material = (Item)Item.itemRegistry.getObject(matName);
+            Item material = (Item)Item.itemRegistry.getObject(new ResourceLocation(matName));
             if(material != null)
                 result = par2ItemStack.getItem() == material;
         }

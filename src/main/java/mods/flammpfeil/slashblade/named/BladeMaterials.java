@@ -1,8 +1,8 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
@@ -17,10 +17,10 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 public class BladeMaterials {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void init(LoadEvent.InitEvent event){
-        ItemStack itemProudSoul = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr , 1);
-        ItemStack itemIngotBladeSoul = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr , 1);
-        ItemStack itemSphereBladeSoul = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr , 1);
-        ItemStack itemTinyBladeSoul = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr , 1);
+        ItemStack itemProudSoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr , 1);
+        ItemStack itemIngotBladeSoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr , 1);
+        ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr , 1);
+        ItemStack itemTinyBladeSoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr , 1);
 
         {
             ItemStack result = itemTinyBladeSoul.copy();
@@ -70,7 +70,7 @@ public class BladeMaterials {
                         " S ",
                         " I ",
                         'S',new ItemStack(Items.brewing_stand),
-                        'P',itemProudSoul,
+                        'P',itemTinyBladeSoul,
                         'I',new ItemStack(Items.potionitem,1,0))
                 ,true);
     }

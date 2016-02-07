@@ -1,11 +1,8 @@
 package mods.flammpfeil.slashblade;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumSet;

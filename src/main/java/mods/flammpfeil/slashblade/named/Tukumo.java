@@ -1,8 +1,8 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
@@ -43,7 +43,7 @@ public class Tukumo {
             ItemSlashBlade.SpecialAttackType.set(tag, 3);
             ItemSlashBlade.StandbyRenderType.set(tag, 1);
 
-            GameRegistry.registerCustomItemStack(name, customblade);
+            SlashBlade.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.NamedBlades.add(name);
 
             {
@@ -58,7 +58,7 @@ public class Tukumo {
                 ItemSlashBlade.KillCount.set(tagReqired, 1000);
 
                 String nameReqired = "flammpfeil.slashblade.thousandkill";
-                GameRegistry.registerCustomItemStack(nameReqired, custombladeReqired);
+                SlashBlade.registerCustomItemStack(nameReqired, custombladeReqired);
                 ItemSlashBladeNamed.NamedBlades.add(nameReqired);
 
                 SlashBlade.addRecipe(YuzukiTukumo,
@@ -73,7 +73,7 @@ public class Tukumo {
                                 'L', new ItemStack(Blocks.lapis_block),
                                 'I', new ItemStack(Blocks.iron_block),
                                 'G', new ItemStack(Blocks.gold_block),
-                                'S', GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1),
+                                'S', SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1),
                                 'B', custombladeReqired));
 
             }

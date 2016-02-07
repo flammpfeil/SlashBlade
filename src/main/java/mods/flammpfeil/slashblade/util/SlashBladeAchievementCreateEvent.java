@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.util;
 
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 
 /**

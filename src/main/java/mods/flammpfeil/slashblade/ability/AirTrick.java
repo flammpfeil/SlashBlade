@@ -1,9 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.MessageRangeAttack;
-import mods.flammpfeil.slashblade.PacketHandler;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -14,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -35,13 +32,13 @@ public class AirTrick {
         Entity lastHitSS = entityPlayer.worldObj.getEntityByID(entityId);
 
         if(lastHitSS == null) return false;
-        if(!(lastHitSS instanceof EntityPhantomSwordBase)) return false;
+        if(!(lastHitSS instanceof EntitySummonedSwordBase)) return false;
         if(lastHitSS.isDead) return false;
 
         if(lastHitSS.worldObj.getTotalWorldTime() < lastHitSS.getEntityData().getLong(NextAirTrick))
             return false;
 
-        Entity target = ((EntityPhantomSwordBase) lastHitSS).getRidingEntity();
+        Entity target = ((EntitySummonedSwordBase) lastHitSS).getRidingEntity();
 
         if(target == null)
             target = lastHitSS;
@@ -50,15 +47,14 @@ public class AirTrick {
 
         Vec3 look = entityPlayer.getLookVec();
 
-        look.yCoord = 0;
         look.normalize();
         entityPlayer.onEnchantmentCritical(entityPlayer);
 
         UntouchableTime.setUntouchableTime(entityPlayer,20,true);
 
         boolean teleported = false;
-        for(look.yCoord = 0.5f; 0.0f < look.yCoord; look.yCoord -= 0.1f){
-            Vec3 pos = Vec3.createVectorHelper(-look.xCoord + target.posX, look.yCoord + target.posY, -look.zCoord + target.posZ);
+        for(double y = 0.5; 0.0 < y; y -= 0.1){
+            Vec3 pos = new Vec3(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
 
             if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
                 entityPlayer.playerNetServerHandler.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
@@ -68,8 +64,8 @@ public class AirTrick {
             }
         }
         if(!teleported){
-            for(look.yCoord = 0.6f; look.yCoord < 1.5f; look.yCoord += 0.1f){
-                Vec3 pos = Vec3.createVectorHelper(-look.xCoord + target.posX, look.yCoord + target.posY, -look.zCoord + target.posZ);
+            for(double y = 0.6; y < 1.5; y += 0.1){
+                Vec3 pos = new Vec3(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
 
                 if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
                     entityPlayer.playerNetServerHandler.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
@@ -101,11 +97,11 @@ public class AirTrick {
         return /*target.worldObj.checkNoEntityCollision(bb) && */blockCollidList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
     }
 
-    static private AxisAlignedBB setPosition(Entity target, double p_70107_1_, double p_70107_3_, double p_70107_5_)
+    static private AxisAlignedBB setPosition(Entity target, double x, double y, double z)
     {
         float f = target.width / 2.0F;
         float f1 = target.height;
-        return AxisAlignedBB.getBoundingBox(p_70107_1_ - (double)f, p_70107_3_ - (double)target.yOffset + (double)target.ySize, p_70107_5_ - (double)f, p_70107_1_ + (double)f, p_70107_3_ - (double)target.yOffset + (double)target.ySize + (double)f1, p_70107_5_ + (double)f);
+        return new AxisAlignedBB(x - (double)f, y, z - (double)f, x + (double)f, y + (double)f1, z + (double)f);
     }
 
     static public void SummonOrDo(EntityPlayerMP player){
@@ -131,7 +127,7 @@ public class AirTrick {
                 if(0 < level && ItemSlashBlade.ProudSoul.tryAdd(tag,-1,false)){
                     float magicDamage = 1;
 
-                    EntityPhantomSwordBase entitySS = new EntityPhantomSwordBase(player.worldObj, player, magicDamage,90.0f);
+                    EntitySummonedSwordBase entitySS = new EntitySummonedSwordBase(player.worldObj, player, magicDamage,90.0f);
                     if (entitySS != null) {
 
                         entitySS.getEntityData().setBoolean("IsAirTrick",true);

@@ -1,25 +1,19 @@
 package mods.flammpfeil.slashblade.entity;
 
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-
-import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 /**
  * Created by Furia on 15/06/21.
  */
-public class EntityWitherSword extends EntityPhantomSwordBase {
+public class EntityWitherSword extends EntitySummonedSwordBase {
     public EntityWitherSword(World par1World) {
         super(par1World);
     }
@@ -38,14 +32,14 @@ public class EntityWitherSword extends EntityPhantomSwordBase {
 
 
         //burst
-        this.getDataWatcher().addObject(8, (byte)0);
+        this.getDataWatcher().addObject(11, (byte)0);
     }
 
     public boolean getBurst(){
-        return this.getDataWatcher().getWatchableObjectByte(8) != 0;
+        return this.getDataWatcher().getWatchableObjectByte(11) != 0;
     }
     public void setBurst(boolean value){
-        this.getDataWatcher().updateObject(8,value ? (byte)1 : (byte)0);
+        this.getDataWatcher().updateObject(11,value ? (byte)1 : (byte)0);
     }
 
     @Override

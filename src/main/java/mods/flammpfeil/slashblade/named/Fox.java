@@ -1,7 +1,8 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.enchantment.Enchantment;
@@ -29,7 +30,7 @@ public class Fox {
         {
             String name = nameWhite;
 
-            ItemStack customblade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            ItemStack customblade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
             SlashBlade.wrapBlade.removeWrapItem(customblade);
 
             customblade.addEnchantment(Enchantment.knockback,2);
@@ -40,7 +41,7 @@ public class Fox {
 
             NBTTagCompound tag = customblade.getTagCompound();
 
-            ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+            ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
             SlashBlade.wrapBlade.setWrapItem(customblade,innerBlade);
 
@@ -57,7 +58,7 @@ public class Fox {
 
             ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
 
-            GameRegistry.registerCustomItemStack(name, customblade);
+            SlashBlade.registerCustomItemStack(name, customblade);
 
             customblade = customblade.copy();
             NBTTagCompound displayTag = new NBTTagCompound();
@@ -67,14 +68,14 @@ public class Fox {
             loreList.appendTag(new NBTTagString("true performance : please crafting"));
             displayTag.setTag("Lore", loreList);
             String creativeStr = name+".creative";
-            GameRegistry.registerCustomItemStack(creativeStr, customblade);
+            SlashBlade.registerCustomItemStack(creativeStr, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + creativeStr);
         }
 
         {
             String name = nameBlack;
 
-            ItemStack customblade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            ItemStack customblade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
             SlashBlade.wrapBlade.removeWrapItem(customblade);
 
             customblade.addEnchantment(Enchantment.smite,4);
@@ -83,7 +84,7 @@ public class Fox {
 
             NBTTagCompound tag = customblade.getTagCompound();
 
-            ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+            ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
             SlashBlade.wrapBlade.setWrapItem(customblade, innerBlade);
 
@@ -99,7 +100,7 @@ public class Fox {
             ItemSlashBlade.StandbyRenderType.set(tag, 1);
 
             ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
-            GameRegistry.registerCustomItemStack(name, customblade);
+            SlashBlade.registerCustomItemStack(name, customblade);
 
             customblade = customblade.copy();
             NBTTagCompound displayTag = new NBTTagCompound();
@@ -109,7 +110,7 @@ public class Fox {
             loreList.appendTag(new NBTTagString("true performance : please crafting"));
             displayTag.setTag("Lore", loreList);
             String creativeStr = name+".creative";
-            GameRegistry.registerCustomItemStack(creativeStr, customblade);
+            SlashBlade.registerCustomItemStack(creativeStr, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + creativeStr);
         }
     }
@@ -117,24 +118,24 @@ public class Fox {
     @SubscribeEvent
     public void postInit(LoadEvent.PostInitEvent event){
 
-        ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+        ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
-        ItemStack kitunebi = GameRegistry.findItemStack("BambooMod","kitunebi",1);
+        ItemStack kitunebi = SlashBlade.findItemStack("BambooMod","kitunebi",1);
         if(kitunebi == null)
             return;
 
-        ItemStack inari = GameRegistry.findItemStack("TofuCraft","foodSet",1);
+        ItemStack inari = SlashBlade.findItemStack("TofuCraft","foodSet",1);
         if(inari != null)
             inari.setItemDamage(14);
         else
             inari = new ItemStack(Items.wheat,1);
 
-        ItemStack proudsoul = GameRegistry.findItemStack(SlashBlade.modid,"proudsoul",1);
+        ItemStack proudsoul = SlashBlade.findItemStack(SlashBlade.modid,"proudsoul",1);
 
         {
             ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,nameWhite);
 
-            ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            ItemStack reqiredBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
             {
                 SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
@@ -150,7 +151,7 @@ public class Fox {
                 reqiredBlade.setStackDisplayName("BambooMod katana");
             }
             String reqiredStr = nameWhite + ".reqired";
-            GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+            SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
 
             reqiredBlade = reqiredBlade.copy();
@@ -170,7 +171,7 @@ public class Fox {
         {
             ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,nameBlack);
 
-            ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+            ItemStack reqiredBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
             {
                 SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
@@ -186,7 +187,7 @@ public class Fox {
                 reqiredBlade.setStackDisplayName("BambooMod katana");
             }
             String reqiredStr = nameBlack + ".reqired";
-            GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+            SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
 
             reqiredBlade = reqiredBlade.copy();

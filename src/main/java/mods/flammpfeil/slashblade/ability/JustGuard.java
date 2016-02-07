@@ -1,18 +1,14 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.entity.EntityJustGuardManager;
-import mods.flammpfeil.slashblade.entity.EntitySakuraEndManager;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;

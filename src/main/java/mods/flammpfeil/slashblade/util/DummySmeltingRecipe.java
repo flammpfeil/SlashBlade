@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.util;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -37,5 +37,10 @@ public class DummySmeltingRecipe implements IRecipe {
     @Override
     public ItemStack getRecipeOutput() {
         return output;
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+        return new ItemStack[]{input};
     }
 }

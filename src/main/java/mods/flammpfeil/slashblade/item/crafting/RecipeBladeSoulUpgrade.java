@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.item.crafting;
 
 import com.google.common.collect.Maps;
-import mods.flammpfeil.slashblade.ItemSWaeponMaterial;
+import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -30,7 +30,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
             for(int idx = 0; idx < inv.getSizeInventory(); idx++){
                 ItemStack stack = inv.getStackInSlot(idx);
                 if(stack == null) continue;
-                if(!(stack.getItem() instanceof ItemSWaeponMaterial)) continue;
+                if(!(stack.getItem() instanceof ItemProudSoul)) continue;
 
                 soulCount++;
 
@@ -68,7 +68,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
         for(int idx = 0; idx < var1.getSizeInventory(); idx++){
             ItemStack stack = var1.getStackInSlot(idx);
             if(stack == null) continue;
-            if(!(stack.getItem() instanceof ItemSWaeponMaterial)) continue;
+            if(!(stack.getItem() instanceof ItemProudSoul)) continue;
 
 
             Map<Integer,Integer> emap = EnchantmentHelper.getEnchantments(stack);

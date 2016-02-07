@@ -1,9 +1,8 @@
 package mods.flammpfeil.slashblade.specialattack;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.entity.EntityWitherSword;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -113,13 +112,13 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
         World world = player.worldObj;
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
-            AxisAlignedBB bb = player.boundingBox.copy();
+            AxisAlignedBB bb = player.getEntityBoundingBox();
             Vec3 vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
             bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);
 
-            List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(player, bb, ItemSlashBlade.AttackableSelector);
+            List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
             float distance = 30.0f;
             for(Entity curEntity : list){
                 float curDist = curEntity.getDistanceToEntity(player);

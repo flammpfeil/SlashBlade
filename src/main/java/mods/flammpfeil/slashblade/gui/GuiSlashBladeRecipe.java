@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.gui;
 
-import cpw.mods.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -80,7 +80,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
         this.fontRendererObj.drawString(this.title,
                 this.guiLeft + this.xSize / 2 - this.fontRendererObj.getStringWidth(this.title) / 2,
                 this.guiTop + 6,
-                4210752);
+                0x000000);//4210752);
     }
 
     ItemStack getWildCardStack(ItemStack stack){
@@ -89,6 +89,11 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 stack = stack.copy();
 
                 stack.setItemDamage((int)(System.currentTimeMillis() % 1000 / 1000.0 * stack.getMaxDamage()));
+            }
+        }else{
+            if(stack.getItemDamage() == OreDictionary.WILDCARD_VALUE){
+                stack = stack.copy();
+                stack.setItemDamage(0);
             }
         }
 
@@ -143,15 +148,17 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
                     targetItemStack = getWildCardStack(targetItemStack);
 
-                    itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + gridLeft + slotSize * 1, this.guiTop + gridTop + slotSize * 1);
-                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + gridLeft + slotSize * 1, this.guiTop + gridTop + slotSize * 1);
+                    //
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack,
+                            this.guiLeft + gridLeft + slotSize * 1, this.guiTop + gridTop + slotSize * 1);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + gridLeft + slotSize * 1, this.guiTop + gridTop + slotSize * 1, null);
 
                 }
 
                 targetItemStack = dummySmeltingRecipe.getRecipeOutput();
                 if(targetItemStack != null){
-                    itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
-                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop);
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop,null);
 
                     if (this.checkMouseOver(resultLeft, resultTop, 16, 16, mouseX, mouseY))
                     {
@@ -201,7 +208,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         if (target instanceof ItemStack){
                             targetItemStack = (ItemStack)target;
                         }
-                        else if (target instanceof ArrayList){
+                        else if (target instanceof List){
 
                             List<ItemStack> list = (List<ItemStack>)target;
                             if(list.size() != 0){
@@ -213,11 +220,10 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
 
                         if(targetItemStack != null){
-
                             targetItemStack = getWildCardStack(targetItemStack);
 
-                            itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + gridLeft + slotSize * gx, this.guiTop + gridTop + slotSize * gy);
-                            itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + gridLeft + slotSize * gx, this.guiTop + gridTop + slotSize * gy);
+                            itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + gridLeft + slotSize * gx, this.guiTop + gridTop + slotSize * gy);
+                            itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + gridLeft + slotSize * gx, this.guiTop + gridTop + slotSize * gy, null);
 
                         }
 
@@ -237,8 +243,8 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                     ItemStack targetItemStack = shapedOreRecipe.getRecipeOutput();
 
                     if(targetItemStack != null){
-                        itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
-                        itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop);
+                        itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
+                        itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop, null);
 
 
                         if (this.checkMouseOver(resultLeft, resultTop, 16, 16, mouseX, mouseY))

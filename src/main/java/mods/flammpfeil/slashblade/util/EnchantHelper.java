@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.util;
 import com.google.common.collect.Lists;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.Random;
@@ -24,7 +25,9 @@ public class EnchantHelper {
             ,Enchantment.respiration);
 
     public static void initEnchantmentList(){
-        for(Enchantment ench : Enchantment.enchantmentsList){
+        //func_181077_c : get locationEnchantments.keySet()
+        for(ResourceLocation key : Enchantment.func_181077_c()){
+            Enchantment ench = Enchantment.getEnchantmentByLocation(key.toString());
             if(ench == null) continue;
 
             if(ench.type.canEnchantItem(Items.iron_sword)){

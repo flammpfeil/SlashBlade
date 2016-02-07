@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

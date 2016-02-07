@@ -1,7 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.entity.monster.EntityZombie;
@@ -47,7 +49,7 @@ public class Doutanuki {
             ItemSlashBlade.IsSealed.set(tag,true);
             //ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
-            GameRegistry.registerCustomItemStack(name, customblade);
+            SlashBlade.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
 
             {
@@ -56,21 +58,21 @@ public class Doutanuki {
                 ItemSlashBlade.RepairCount.set(tag,5);
                 ItemSlashBlade.ProudSoul.set(tag,1000);
                 ItemSlashBlade.KillCount.set(tag,100);
-                GameRegistry.registerCustomItemStack(name + ".doureqired", cblade);
+                SlashBlade.registerCustomItemStack(name + ".doureqired", cblade);
                 ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name + ".doureqired");
             }
 
             customblade = customblade.copy();
             tag = ItemSlashBlade.getItemTagCompound(customblade);
             ItemSlashBlade.IsNoScabbard.set(tag,true);
-            GameRegistry.registerCustomItemStack(name + ".noscabbard", customblade);
+            SlashBlade.registerCustomItemStack(name + ".noscabbard", customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name + ".noscabbard");
 
             customblade = customblade.copy();
             tag = ItemSlashBlade.getItemTagCompound(customblade);
             ItemSlashBlade.IsBroken.set(tag,true);
             ItemSlashBlade.RepairCount.set(tag,1);
-            GameRegistry.registerCustomItemStack(name + ".broken", customblade);
+            SlashBlade.registerCustomItemStack(name + ".broken", customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name + ".broken");
 
             {
@@ -81,7 +83,7 @@ public class Doutanuki {
                 ItemSlashBlade.KillCount.set(tag,49);
                 ItemSlashBlade.RepairCount.set(tag,0);
                 cblade.setItemDamage(cblade.getMaxDamage() - 1);
-                GameRegistry.registerCustomItemStack(name + ".directdrop", cblade);
+                SlashBlade.registerCustomItemStack(name + ".directdrop", cblade);
                 ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name + ".directdrop");
             }
         }
@@ -101,7 +103,7 @@ public class Doutanuki {
             ItemSlashBlade.StandbyRenderType.set(tag, 2);
             //ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
-            GameRegistry.registerCustomItemStack(name, customblade);
+            SlashBlade.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
         }
     }
@@ -149,7 +151,7 @@ public class Doutanuki {
                 directDropRate = prop.getDouble(directDropRate);
 
                 if(0 < directDropRate)
-                    DropEventHandler.registerEntityDrop("Zombie",(float)directDropRate,SlashBlade.getCustomBlade(Doutanuki.name + ".directdrop"));
+                    DropEventHandler.registerEntityDrop("Zombie", (float) directDropRate, SlashBlade.getCustomBlade(Doutanuki.name + ".directdrop"));
             }
         }
         finally
@@ -207,8 +209,8 @@ public class Doutanuki {
                     "  P",
                     " S ",
                     "B  ",
-                    'P', GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1),
-                    'S', setDamageWildCard(GameRegistry.findItemStack(SlashBlade.modid, "slashbladeWrapper", 1)),
+                    'P', SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1),
+                    'S', setDamageWildCard(SlashBlade.findItemStack(SlashBlade.modid, "slashbladeWrapper", 1)),
                     'B', setDamageWildCard(getNoSeathBlade()));
         }
 
@@ -280,7 +282,7 @@ public class Doutanuki {
                     "  I",
                     " I ",
                     "B  ",
-                    'I', GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1),
+                    'I', SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1),
                     'B', getBrokenBlade());
         }
 
@@ -349,7 +351,7 @@ public class Doutanuki {
                     "  S",
                     " B ",
                     "S  ",
-                    'S', GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1),
+                    'S', SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1),
                     'B', getBrokenBlade());
         }
 

@@ -1,9 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
-import mods.flammpfeil.slashblade.stats.AchievementList;
-import mods.flammpfeil.slashblade.util.EnchantHelper;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -40,7 +38,7 @@ public class UpthrustBlast {
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
-        EntityPhantomSwordBase entitySS = new EntityPhantomSwordBase(user.worldObj, user, 1,0.0f);
+        EntitySummonedSwordBase entitySS = new EntitySummonedSwordBase(user.worldObj, user, 1,0.0f);
         if (entitySS != null) {
             entitySS.getEntityData().setBoolean(UpthrustBlastKey,true);
 
@@ -67,11 +65,11 @@ public class UpthrustBlast {
 
     static public void doBlast(ItemStack blade, EntityLivingBase user){
 
-        AxisAlignedBB bb = user.boundingBox.copy();
+        AxisAlignedBB bb = user.getEntityBoundingBox();
         bb = bb.expand(20, 5, 20);
-        List<EntityPhantomSwordBase> list = user.worldObj.getEntitiesWithinAABB(EntityPhantomSwordBase.class,bb);
+        List<EntitySummonedSwordBase> list = user.worldObj.getEntitiesWithinAABB(EntitySummonedSwordBase.class,bb);
 
-        for(EntityPhantomSwordBase ss : list){
+        for(EntitySummonedSwordBase ss : list){
             if(ss == null) continue;
             if(ss.isDead) continue;
             if(ss.ridingEntity2 == null) continue;

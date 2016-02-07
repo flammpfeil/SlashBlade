@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
 import net.minecraft.inventory.InventoryCrafting;
@@ -19,7 +19,7 @@ public class RecipeAwakeBladeFox extends RecipeAwakeBlade {
     public ItemStack getCraftingResult(InventoryCrafting var1) {
         ItemStack blade =  super.getCraftingResult(var1);
 
-        ItemStack katana = GameRegistry.findItemStack("BambooMod", "katana", 1);
+        ItemStack katana = SlashBlade.findItemStack("BambooMod", "katana", 1);
         if(katana != null)
             SlashBlade.wrapBlade.setWrapItem(blade,katana);
 
@@ -30,7 +30,7 @@ public class RecipeAwakeBladeFox extends RecipeAwakeBlade {
     public ItemStack getRecipeOutput() {
         ItemStack blade =  super.getRecipeOutput();
 
-        ItemStack katana = GameRegistry.findItemStack("BambooMod","katana",1);
+        ItemStack katana = SlashBlade.findItemStack("BambooMod","katana",1);
         if(katana != null)
             SlashBlade.wrapBlade.setWrapItem(blade,katana);
 

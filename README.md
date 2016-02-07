@@ -92,3 +92,13 @@ SlashBlade
     2. ビルド
         * Gradleタスクから build を実行します。
         * build/libs 配下にjarが生成されます。
+
+
+◆謝辞
+MinecraftForge 1.7.10用のコードより、objファイル関連コードを流用しています。
+後述の対象クラス、ソースは同梱の下記ライセンスに基いて改変配布されます。
+MinecraftForge-License.txt
+
+対象範囲
+下記パッケージ配下
+mods.flammpfeil.slashblade.client.model.obj

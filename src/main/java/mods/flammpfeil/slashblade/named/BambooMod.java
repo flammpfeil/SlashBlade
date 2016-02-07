@@ -1,11 +1,12 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
@@ -18,7 +19,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -29,10 +29,10 @@ public class BambooMod {
     @SubscribeEvent
     public void init(LoadEvent.InitEvent event){
 
-        ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+        ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
 
-        ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+        ItemStack reqiredBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
         {
             SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
@@ -52,7 +52,7 @@ public class BambooMod {
             reqiredBlade.setStackDisplayName(reqiredBlade.getDisplayName());
         }
         String reqiredStr = "wrap.BambooMod.katana.sample";
-        GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+        SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
     }
 
@@ -77,16 +77,16 @@ public class BambooMod {
         float attackModif;
 
         public RecipeBambooMod() {
-            super(GameRegistry.findItemStack(SlashBlade.modid,"wrap.BambooMod.katana.sample",1),
+            super(SlashBlade.findItemStack(SlashBlade.modid,"wrap.BambooMod.katana.sample",1),
                     "  P",
                     " S ",
                     "B  ",
-                    'P', GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1),
-                    'S', GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1),
-                    'B', GameRegistry.findItemStack("BambooMod","katana",1));
+                    'P', SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1),
+                    'S', SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1),
+                    'B', SlashBlade.findItemStack("BambooMod","katana",1));
 
-            this.proudSoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1);
-            this.katana = GameRegistry.findItemStack("BambooMod","katana",1);
+            this.proudSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1);
+            this.katana = SlashBlade.findItemStack("BambooMod","katana",1);
             this.attackModif = 4.0f;
         }
     //RegisterWrapable("BambooMod:katana", "BambooKatana", 4.0f);
@@ -124,7 +124,7 @@ public class BambooMod {
             target = target.copy();
 
 
-            String targetName = Item.itemRegistry.getNameForObject(target.getItem());
+            ResourceLocation targetName = Item.itemRegistry.getNameForObject(target.getItem());
 
 
             SlashBlade.wrapBlade.removeWrapItem(scabbard);

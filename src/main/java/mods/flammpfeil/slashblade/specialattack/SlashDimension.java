@@ -1,10 +1,11 @@
 package mods.flammpfeil.slashblade.specialattack;
 
-import mods.flammpfeil.slashblade.EntityDrive;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.EntityDrive;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -61,12 +62,12 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                 stack.damageItem(10, player);
             }
 
-            AxisAlignedBB bb = target.boundingBox.copy();
+            AxisAlignedBB bb = target.getEntityBoundingBox();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
 
-            List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(player, bb, ItemSlashBlade.AttackableSelector);
+            List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
 
-            if(!ItemSlashBlade.AttackableSelector.isEntityApplicable(target))
+            if(!EntitySelectorAttackable.getInstance().apply(target))
                 list.add(target);
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
@@ -95,13 +96,13 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
         World world = player.worldObj;
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
-            AxisAlignedBB bb = player.boundingBox.copy();
+            AxisAlignedBB bb = player.getEntityBoundingBox();
             Vec3 vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
             bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);
 
-            List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(player, bb, ItemSlashBlade.AttackableSelector);
+            List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
             float distance = 30.0f;
             for(Entity curEntity : list){
                 float curDist = curEntity.getDistanceToEntity(player);
@@ -119,17 +120,17 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
     private void spawnParticle(World world, Entity target){
         //target.spawnExplosionParticle();
-        world.spawnParticle("largeexplode",
+        world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
                 target.posX,
                 target.posY + target.height,
                 target.posZ,
                 3.0, 3.0, 3.0);
-        world.spawnParticle("largeexplode",
+        world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
                 target.posX + 1.0,
                 target.posY + target.height + 1.0,
                 target.posZ,
                 3.0, 3.0, 3.0);
-        world.spawnParticle("largeexplode",
+        world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
                 target.posX,
                 target.posY + target.height + 0.5,
                 target.posZ + 1.0,
@@ -170,12 +171,12 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                 stack.damageItem(10, player);
             }
 
-            AxisAlignedBB bb = target.boundingBox.copy();
+            AxisAlignedBB bb = target.getEntityBoundingBox();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
 
-            List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(player, bb, ItemSlashBlade.AttackableSelector);
+            List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
 
-            if(!ItemSlashBlade.AttackableSelector.isEntityApplicable(target))
+            if(!EntitySelectorAttackable.getInstance().apply(target))
                 list.add(target);
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();

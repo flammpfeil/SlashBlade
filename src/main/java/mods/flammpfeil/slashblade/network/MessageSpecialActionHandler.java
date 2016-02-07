@@ -1,23 +1,15 @@
 package mods.flammpfeil.slashblade.network;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import mods.flammpfeil.slashblade.EntityDirectAttackDummy;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.AirTrick;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
-import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
 import mods.flammpfeil.slashblade.specialattack.ISuperSpecialAttack;
 import mods.flammpfeil.slashblade.specialattack.SpecialAttackBase;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
-
-import java.util.List;
 
 /**
  * Created by Furia on 15/05/15.

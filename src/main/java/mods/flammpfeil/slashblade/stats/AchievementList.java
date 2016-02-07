@@ -2,12 +2,12 @@ package mods.flammpfeil.slashblade.stats;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeWrapBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
@@ -29,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.AchievementEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.ModClassLoader;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
@@ -41,22 +42,36 @@ import java.util.regex.Pattern;
  * Created by Furia on 14/11/17.
  */
 public class AchievementList {
+
     public final static AchievementList INSTANCE = new AchievementList();
 
     static public Map<String,String> craftingTrigger = Maps.newHashMap();
 
     static public Map<String,Achievement> achievements = Maps.newHashMap();
 
+
+    static public Map<String,Integer> achievementIcons = Maps.newHashMap();
+
+    static{
+        String[] icons = {
+                "rankA","rankB","rankC","rankD","rankS","rankSS"
+                ,"slash","soulEater","hundredKill","stand"};
+        int achievementIconId = 0x10000;
+        for(String s : icons) {
+            int id = achievementIconId++;
+            achievementIcons.put(s,id);
+        }
+        String[] effectIcons = {"rankSSS","thousandKill"};
+        int achievementEffectedIconId = 0x20000;
+        for(String s : effectIcons) {
+            int id = achievementEffectedIconId++;
+            achievementIcons.put(s,id);
+        }
+    }
+
     static public ItemStack getIconStack(String name){
         ItemStack stack = SlashBlade.getCustomBlade("proudsoul");
-        stack.setItemDamage(0xFFFF);
-        stack.setStackDisplayName(name);
-        return stack;
-    }
-    static public ItemStack getIconStackEffect(String name){
-        ItemStack stack = SlashBlade.getCustomBlade("proudsoul");
-        stack.setItemDamage(0x10000);
-        stack.setStackDisplayName(name);
+        stack.setItemDamage(achievementIcons.get(name));
         return stack;
     }
 
@@ -76,7 +91,7 @@ public class AchievementList {
         Stack<Achievement> parent = new Stack<Achievement>();
 
         {
-            parent.push(registerAchievement("slashWoodenSword", getIconStack("slash.png"), net.minecraft.stats.AchievementList.buildSword).initIndependentStat());
+            parent.push(registerAchievement("slashWoodenSword", getIconStack("slash"), net.minecraft.stats.AchievementList.buildSword).initIndependentStat());
             {
                 parent.push(registerCraftingAchievement("buildWoodenBlade", SlashBlade.getCustomBlade("slashbladeWood"), parent.peek()));
                 {
@@ -167,16 +182,16 @@ public class AchievementList {
             }
 
             {
-                parent.push(registerAchievement("hundredKill", getIconStack("hundredKill.png"), parent.peek()));
+                parent.push(registerAchievement("hundredKill", getIconStack("hundredKill"), parent.peek()));
                 {
-                    parent.push(registerAchievement("thousandKill", getIconStackEffect("thousandKill.png"), parent.peek()).setSpecial());
+                    parent.push(registerAchievement("thousandKill", getIconStack("thousandKill"), parent.peek()).setSpecial());
                     parent.pop();
                 }
                 parent.pop();
             }
 
             {
-                parent.push(registerAchievement("soulEater", getIconStack("soulEater.png"), parent.peek()));
+                parent.push(registerAchievement("soulEater", getIconStack("soulEater"), parent.peek()));
                 parent.pop();
             }
 
@@ -202,7 +217,7 @@ public class AchievementList {
                     parent.push(registerAchievement("enchantmentSoul", SlashBlade.getCustomBlade("tiny_bladesoul"), parent.peek()).setSpecial());
                     parent.pop();
 
-                    parent.push(registerAchievement("bladeStand", getIconStack("stand.png"), parent.peek()));
+                    parent.push(registerAchievement("bladeStand", getIconStack("stand"), parent.peek()));
                     parent.pop();
 
 
@@ -213,19 +228,19 @@ public class AchievementList {
             }
 
             {
-                parent.push(registerAchievement("rankD", getIconStack("rankD.png"), parent.peek()));
+                parent.push(registerAchievement("rankD", getIconStack("rankD"), parent.peek()));
                 {
-                    parent.push(registerAchievement("rankC", getIconStack("rankC.png"), parent.peek()));
+                    parent.push(registerAchievement("rankC", getIconStack("rankC"), parent.peek()));
                     {
-                        parent.push(registerAchievement("rankB", getIconStack("rankB.png"), parent.peek()));
+                        parent.push(registerAchievement("rankB", getIconStack("rankB"), parent.peek()));
                         {
-                            parent.push(registerAchievement("rankA", getIconStack("rankA.png"), parent.peek()));
+                            parent.push(registerAchievement("rankA", getIconStack("rankA"), parent.peek()));
                             {
-                                parent.push(registerAchievement("rankS", getIconStack("rankS.png"), parent.peek()));
+                                parent.push(registerAchievement("rankS", getIconStack("rankS"), parent.peek()));
                                 {
-                                    parent.push(registerAchievement("rankSS", getIconStack("rankSS.png"), parent.peek()));
+                                    parent.push(registerAchievement("rankSS", getIconStack("rankSS"), parent.peek()));
                                     {
-                                        parent.push(registerAchievement("rankSSS", getIconStackEffect("rankSSS.png"), parent.peek()).setSpecial());
+                                        parent.push(registerAchievement("rankSSS", getIconStack("rankSSS"), parent.peek()).setSpecial());
                                         parent.pop();
                                     }
                                     parent.pop();
@@ -270,7 +285,7 @@ public class AchievementList {
         {
             Achievement startParent = net.minecraft.stats.AchievementList.killEnemy;
             if(Loader.isModLoaded("TwilightForest")){
-                StatBase stat = StatList.func_151177_a("TwilightForest6"); //twilightKillNaga
+                StatBase stat = StatList.getOneShotStat("TwilightForest6"); //twilightKillNaga
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
@@ -289,7 +304,7 @@ public class AchievementList {
         {
             Achievement startParent = net.minecraft.stats.AchievementList.killEnemy;
             if(Loader.isModLoaded("TwilightForest")){
-                StatBase stat = StatList.func_151177_a("TwilightForest30"); //twilightKillHydra
+                StatBase stat = StatList.getOneShotStat("TwilightForest30"); //twilightKillHydra
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
@@ -313,7 +328,7 @@ public class AchievementList {
         {
             Achievement startParent = net.minecraft.stats.AchievementList.killEnemy;
             if(Loader.isModLoaded("TwilightForest")){
-                StatBase stat = StatList.func_151177_a("TwilightForest6"); //twilightKillNaga
+                StatBase stat = StatList.getOneShotStat("TwilightForest6"); //twilightKillNaga
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
@@ -327,7 +342,7 @@ public class AchievementList {
         }
 
         {
-            Achievement startParent = net.minecraft.stats.AchievementList.field_150964_J;
+            Achievement startParent = net.minecraft.stats.AchievementList.killWither;
             parent.push(registerCraftingAchievement("sange", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.sange"), startParent));
             parent.pop();
         }
@@ -387,7 +402,7 @@ public class AchievementList {
         }
 
         {
-            Achievement startParent = net.minecraft.stats.AchievementList.field_150964_J;
+            Achievement startParent = net.minecraft.stats.AchievementList.killWither;
             ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.murasamablade");
             if(blade != null){
                 parent.push(registerCraftingAchievement("murasama", blade, startParent));

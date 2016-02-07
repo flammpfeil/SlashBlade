@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.network;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
 /**

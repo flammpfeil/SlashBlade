@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -15,6 +14,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.RegistryNamespaced;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -115,9 +115,9 @@ public class StatManager {
             String statKey = keyBase + "." + key;
             StatCrafting stat;
             if(!registerdStats.containsKey(statKey)){
-                stat = new StatCrafting(statKey
+                stat = new StatCrafting(keyBase + ".",key
                         , new ChatComponentTranslation(keyBase
-                        , new Object[] {(new ItemStack(viewItem)).func_151000_E()})
+                        , new Object[] {(new ItemStack(viewItem)).getChatComponent()})
                         , viewItem);
                 stat.registerStat();
                 registerdStats.put(statKey, stat);

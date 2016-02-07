@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
 import com.google.common.collect.Sets;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

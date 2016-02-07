@@ -1,10 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.DropEventHandler;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
@@ -32,12 +31,12 @@ public class PSSange {
         ItemSlashBlade.StandbyRenderType.set(tag, 2);
         ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
-        GameRegistry.registerCustomItemStack(name, customblade);
+        SlashBlade.registerCustomItemStack(name, customblade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
     }
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("WitherBoss", -0.3f, GameRegistry.findItemStack(SlashBlade.modid, name, 1));
+        DropEventHandler.registerEntityDrop("WitherBoss", -0.3f, SlashBlade.findItemStack(SlashBlade.modid, name, 1));
     }
 }

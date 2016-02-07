@@ -1,8 +1,11 @@
 package mods.flammpfeil.slashblade.ability.client;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -27,10 +30,10 @@ public class StylishRankRenderer {
 
         mc = FMLClientHandler.instance().getClient();
         World world = mc.theWorld;
-        if (event.phase == TickEvent.Phase.START || !(Minecraft.getMinecraft().renderViewEntity instanceof EntityPlayer))
+        if (event.phase == TickEvent.Phase.START || !(Minecraft.getMinecraft().getRenderViewEntity() instanceof EntityPlayer))
             return;
 
-        player = (EntityPlayer) Minecraft.getMinecraft().renderViewEntity;
+        player = (EntityPlayer) Minecraft.getMinecraft().getRenderViewEntity();
         time = System.currentTimeMillis();
 
         if (player != null && mc.inGameHasFocus) {
@@ -105,12 +108,13 @@ public class StylishRankRenderer {
     public static void drawTexturedQuad(int par1, int par2, int par3, int par4, int par5, int par6, double zLevel) {
         float var7 = 0.00390625F;
         float var8 = 0.00390625F;
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(par1 + 0, par2 + par6, zLevel, (float) (par3 + 0) * var7, (float) (par4 + par6) * var8);
-        tessellator.addVertexWithUV(par1 + par5, par2 + par6, zLevel, (float) (par3 + par5) * var7, (float) (par4 + par6) * var8);
-        tessellator.addVertexWithUV(par1 + par5, par2 + 0, zLevel, (float) (par3 + par5) * var7, (float) (par4 + 0) * var8);
-        tessellator.addVertexWithUV(par1 + 0, par2 + 0, zLevel, (float) (par3 + 0) * var7, (float) (par4 + 0) * var8);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer wr = tessellator.getWorldRenderer();
+        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        wr.pos(par1 + 0, par2 + par6, zLevel).tex((par3 + 0.0) * var7, (par4 + par6) * var8).endVertex();
+        wr.pos(par1 + par5, par2 + par6, zLevel).tex((par3 + par5) * var7, (par4 + par6) * var8).endVertex();
+        wr.pos(par1 + par5, par2 + 0, zLevel).tex((par3 + par5) * var7, (par4 + 0) * var8).endVertex();
+        wr.pos(par1 + 0, par2 + 0, zLevel).tex(  (par3 + 0) * var7,  (par4 + 0) * var8).endVertex();
         tessellator.draw();
     }
 }

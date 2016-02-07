@@ -1,7 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.item.Item;
@@ -16,8 +18,8 @@ public class Agito {
 
     @SubscribeEvent()
     public void init(LoadEvent.InitEvent event){
-        ItemStack itemProudSoul = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr , 1);
-        ItemStack itemSphereBladeSoul = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr , 1);
+        ItemStack itemProudSoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr , 1);
+        ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr , 1);
 
         {
             //------------- false
@@ -37,7 +39,7 @@ public class Agito {
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);
                 ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
-                GameRegistry.registerCustomItemStack(nameAgito, customblade);
+                SlashBlade.registerCustomItemStack(nameAgito, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameAgito);
             }
 
@@ -60,7 +62,7 @@ public class Agito {
 
                 ItemSlashBladeNamed.TrueItemName.set(tag, nameAgito);
 
-                GameRegistry.registerCustomItemStack(nameAgitoRust, customblade);
+                SlashBlade.registerCustomItemStack(nameAgitoRust, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameAgitoRust);
 
 
@@ -73,10 +75,10 @@ public class Agito {
 
                     reqiredBlade.setStackDisplayName("agito rust");
 
-                    GameRegistry.registerCustomItemStack(nameAgitoReqired, reqiredBlade);
+                    SlashBlade.registerCustomItemStack(nameAgitoReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameAgitoReqired);
 
-                    ItemStack destBlade = GameRegistry.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
+                    ItemStack destBlade = SlashBlade.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
                     SlashBlade.addRecipe(nameAgito,
                             new RecipeAwakeBlade(destBlade,
                             reqiredBlade,
@@ -112,13 +114,13 @@ public class Agito {
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);
                 ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
-                GameRegistry.registerCustomItemStack(nameOrotiagito, customblade);
+                SlashBlade.registerCustomItemStack(nameOrotiagito, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameOrotiagito);
 
                 String brokableTest = nameOrotiagito + ".damaged";
                 ItemStack brokable = customblade.copy();
                 brokable.setItemDamage(brokable.getMaxDamage());
-                GameRegistry.registerCustomItemStack(brokableTest, brokable);
+                SlashBlade.registerCustomItemStack(brokableTest, brokable);
                 ItemSlashBladeNamed.NamedBlades.add(brokableTest);
             }
 
@@ -138,7 +140,7 @@ public class Agito {
 
                 ItemSlashBladeNamed.TrueItemName.set(tag, nameOrotiagito);
 
-                GameRegistry.registerCustomItemStack(nameOrotiagitoSeald, customblade);
+                SlashBlade.registerCustomItemStack(nameOrotiagitoSeald, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoSeald);
 
 
@@ -152,10 +154,10 @@ public class Agito {
 
                     reqiredBlade.setStackDisplayName("orotiagito seald");
 
-                    GameRegistry.registerCustomItemStack(nameOrotiagitoReqired, reqiredBlade);
+                    SlashBlade.registerCustomItemStack(nameOrotiagitoReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoReqired);
 
-                    ItemStack destBlade = GameRegistry.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
+                    ItemStack destBlade = SlashBlade.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
                     SlashBlade.addRecipe(nameOrotiagito,
                             new RecipeAwakeBlade(destBlade,
                             reqiredBlade,
@@ -187,7 +189,7 @@ public class Agito {
 
                 ItemSlashBladeNamed.TrueItemName.set(tag, nameOrotiagitoSeald);
 
-                GameRegistry.registerCustomItemStack(nameOrotiagitoRust, customblade);
+                SlashBlade.registerCustomItemStack(nameOrotiagitoRust, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoRust);
 
                 {
@@ -199,10 +201,10 @@ public class Agito {
 
                     reqiredBlade.setStackDisplayName("agito rust");
 
-                    GameRegistry.registerCustomItemStack(nameOrotiagitoSealdReqired, reqiredBlade);
+                    SlashBlade.registerCustomItemStack(nameOrotiagitoSealdReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoSealdReqired);
 
-                    ItemStack destBlade = GameRegistry.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
+                    ItemStack destBlade = SlashBlade.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
                     SlashBlade.addRecipe(nameOrotiagitoSeald,
                             new RecipeAwakeBlade(destBlade,
                             reqiredBlade,
@@ -218,8 +220,8 @@ public class Agito {
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, GameRegistry.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
-        DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,GameRegistry.findItemStack(SlashBlade.modid,"flammpfeil.slashblade.named.agito.rust",1));
+        DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, SlashBlade.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
+        DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,SlashBlade.findItemStack(SlashBlade.modid,"flammpfeil.slashblade.named.agito.rust",1));
 
     }
 

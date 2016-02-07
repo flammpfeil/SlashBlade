@@ -1,8 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.enchantment.Enchantment;
@@ -17,7 +18,7 @@ import net.minecraftforge.oredict.OreDictionary;
 public class Yamato {
     @SubscribeEvent()
     public void init(LoadEvent.InitEvent event){
-        ItemStack itemSphereBladeSoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
+        ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
 
         {
             String nameTrue = "flammpfeil.slashblade.named.yamato";
@@ -43,7 +44,7 @@ public class Yamato {
 
                 ItemSlashBlade.KillCount.set(tag,1000);
                 ItemSlashBlade.ProudSoul.set(tag, 1000);
-                GameRegistry.registerCustomItemStack(nameTrue, customblade);
+                SlashBlade.registerCustomItemStack(nameTrue, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameTrue);
             }
 
@@ -67,7 +68,7 @@ public class Yamato {
                 ItemSlashBlade.IsNoScabbard.set(tag, true);
                 ItemSlashBlade.IsSealed.set(tag, true);
                 ItemSlashBladeNamed.TrueItemName.set(tag, nameTrue);
-                GameRegistry.registerCustomItemStack(nameBrokend, customblade);
+                SlashBlade.registerCustomItemStack(nameBrokend, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameBrokend);
 
                 {
@@ -79,10 +80,10 @@ public class Yamato {
                     reqiredBlade.setStackDisplayName("thousandProudSouls");
 
                     String nameReqired = nameTrue + ".reqired";
-                    GameRegistry.registerCustomItemStack(nameReqired, reqiredBlade);
+                    SlashBlade.registerCustomItemStack(nameReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameReqired);
 
-                    ItemStack yamato = GameRegistry.findItemStack(SlashBlade.modid,nameTrue,1);
+                    ItemStack yamato = SlashBlade.findItemStack(SlashBlade.modid,nameTrue,1);
                     SlashBlade.addRecipe(nameTrue,
                             new RecipeAwakeBlade(yamato,
                                     reqiredBlade,
@@ -97,7 +98,7 @@ public class Yamato {
     }
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("HardcoreEnderExpansion.Dragon", 1.0f, GameRegistry.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.yamato.broken", 1));
-        DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, GameRegistry.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.yamato.broken", 1));
+        DropEventHandler.registerEntityDrop("HardcoreEnderExpansion.Dragon", 1.0f, SlashBlade.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.yamato.broken", 1));
+        DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, SlashBlade.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.yamato.broken", 1));
     }
 }

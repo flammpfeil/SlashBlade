@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade;
 
-import net.minecraft.init.Blocks;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;

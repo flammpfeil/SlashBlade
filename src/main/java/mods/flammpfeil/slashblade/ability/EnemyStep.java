@@ -1,10 +1,11 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -72,7 +73,7 @@ public class EnemyStep {
         }
 
         if(!wallKickJumped && !target.onGround){ //now jumping
-            if(hasCollidWallBlocks(target, target.getPosition(1.0f))){
+            if(hasCollidWallBlocks(target, target.getPositionVector())){
                 resetJump(target);
 
                 target.getEntityData().setInteger(WallKick, 1);
@@ -131,24 +132,28 @@ public class EnemyStep {
 
     public boolean hasCollidWallBlocks(Entity target, Vec3 pos)
     {
-        AxisAlignedBB bb = this.getPositionAABB(target, pos.xCoord, pos.yCoord, pos.zCoord);
+        AxisAlignedBB bb = this.getPositionAABB(target, pos);
         bb = bb.expand(1.0, 0.0, 1.0);
         List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
 
         return !blockCollidList.isEmpty();
     }
-    public AxisAlignedBB getPositionAABB(Entity target, double p_70107_1_, double p_70107_3_, double p_70107_5_)
+
+    public AxisAlignedBB getPositionAABB(Entity target, Vec3 pos) {
+        return getPositionAABB(target, pos.xCoord, pos.yCoord, pos.zCoord);
+    }
+    public AxisAlignedBB getPositionAABB(Entity target, double x, double y, double z)
     {
         float f = target.width / 2.0F;
         float f1 = target.height;
-        return AxisAlignedBB.getBoundingBox(p_70107_1_ - (double) f, p_70107_3_ - (double) target.yOffset + (double) target.ySize, p_70107_5_ - (double) f, p_70107_1_ + (double) f, p_70107_3_ - (double) target.yOffset + (double) target.ySize + (double) f1, p_70107_5_ + (double) f);
+        return new AxisAlignedBB(x - (double)f, y, z - (double)f, x + (double)f, y + (double)f1, z + (double)f);
     }
 
     private Entity getStepEntity(EntityLivingBase target){
-        AxisAlignedBB bb = target.boundingBox.copy();
+        AxisAlignedBB bb = target.getEntityBoundingBox();
         bb = bb.expand(2.0, 1.5, 2.0);
         bb = bb.offset(0,0.5,0);
-        List<Entity> list = target.worldObj.getEntitiesWithinAABBExcludingEntity(target, bb, ItemSlashBlade.AttackableSelector);
+        List<Entity> list = target.worldObj.getEntitiesInAABBexcluding(target, bb, EntitySelectorAttackable.getInstance());
         if(0 < list.size()){
             Entity enemy = null;
             float distance = 10.0f;

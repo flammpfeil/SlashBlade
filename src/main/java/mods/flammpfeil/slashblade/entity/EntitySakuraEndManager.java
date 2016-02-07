@@ -1,15 +1,14 @@
 package mods.flammpfeil.slashblade.entity;
 
-import cpw.mods.fml.common.registry.IThrowableEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.EntityDrive;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.ability.StunManager;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.util.*;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.material.Material;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,12 +17,6 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -59,23 +52,20 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
     @Override
     protected void entityInit() {
         //entityid
-        this.getDataWatcher().addObject(4, 0);
+        this.getDataWatcher().addObject(8, 0);
     }
 
     int getThrowerEntityID(){
-        return this.getDataWatcher().getWatchableObjectInt(4);
+        return this.getDataWatcher().getWatchableObjectInt(8);
     }
 
     void setThrowerEntityID(int id){
-        this.getDataWatcher().updateObject(4,id);
+        this.getDataWatcher().updateObject(8,id);
     }
 
     public EntitySakuraEndManager(World par1World, EntityLivingBase entityLiving)
     {
         this(par1World);
-
-        //■Y軸のオフセット設定
-        yOffset = entityLiving.getEyeHeight()/2.0F;
 
         //■撃った人
         thrower = entityLiving;
@@ -175,7 +165,7 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
 
         bb = bb.expand(0,dAmbit,0);
 
-        List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb,ItemSlashBlade.DestructableSelector);
+        List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
 
         StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
 
@@ -219,7 +209,11 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
                     double var4 = rand.nextGaussian() * 0.02D;
                     double var6 = rand.nextGaussian() * 0.02D;
                     double var8 = 10.0D;
-                    this.worldObj.spawnParticle("explode", curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8, curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8, curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8, var2, var4, var6);
+                    this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                            , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
+                            , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
+                            , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
+                            , var2, var4, var6);
                 }
             }
 
@@ -227,7 +221,7 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
         }
 
 
-        list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
+        list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
         list.removeAll(alreadyHitEntity);
 
 
@@ -313,15 +307,6 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
     }
 
     /**
-     * ■Whether or not the current entity is in lava
-     */
-    @Override
-    public boolean handleLavaMovement()
-    {
-        return false;
-    }
-
-    /**
      * ■環境光による暗さの描画（？）
      *    EntityXPOrbのぱくり
      */
@@ -381,16 +366,6 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
     /**
-     * ■影のサイズ
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
-    /**
      * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
      */
     @Override
@@ -407,7 +382,8 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
      * ■Called by portal blocks when an entity is within it.
      */
     @Override
-    public void setInPortal() {}
+    public void setPortal(BlockPos p_181015_1_) {
+    }
 
     /**
      * ■Returns true if the entity is on fire. Used by render to add the fire effect on rendering.

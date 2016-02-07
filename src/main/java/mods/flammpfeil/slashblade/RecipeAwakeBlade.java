@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.InventoryCrafting;
@@ -117,7 +118,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                     Map<Integer,Integer> oldItemEnchants = EnchantmentHelper.getEnchantments(curIs);
                     for(int enchantIndex : oldItemEnchants.keySet())
                     {
-                        Enchantment enchantment = Enchantment.enchantmentsList[enchantIndex];
+                        Enchantment enchantment = Enchantment.getEnchantmentById(enchantIndex);
 
                         int destLevel = newItemEnchants.containsKey(enchantIndex) ? newItemEnchants.get(enchantIndex) : 0;
                         int srcLevel = oldItemEnchants.get(enchantIndex);
@@ -129,7 +130,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                         boolean canApplyFlag = enchantment.canApply(result);
                         if(canApplyFlag){
                             for(int curEnchantIndex : newItemEnchants.keySet()){
-                                if (curEnchantIndex != enchantIndex && !enchantment.canApplyTogether(Enchantment.enchantmentsList[curEnchantIndex]))
+                                if (curEnchantIndex != enchantIndex && !enchantment.canApplyTogether(Enchantment.getEnchantmentById(curEnchantIndex)))
                                 {
                                     canApplyFlag = false;
                                     break;

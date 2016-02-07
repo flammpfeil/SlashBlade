@@ -1,20 +1,26 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.IFuelHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.EventBus;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.core.CoreProxy;
+import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.item.ItemProudSoul;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
+import mods.flammpfeil.slashblade.network.NetworkManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.IFuelHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.entity.*;
-import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.BladeMaterials;
@@ -24,7 +30,6 @@ import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import mods.flammpfeil.slashblade.util.PotionManager;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -120,31 +125,30 @@ public class SlashBlade implements IFuelHandler{
 		}
 
 
-		proudSoul = (new ItemSWaeponMaterial())
+		proudSoul = (new ItemProudSoul())
 				.setUnlocalizedName("flammpfeil.slashblade.proudsoul")
-				.setTextureName("flammpfeil.slashblade:proudsoul")
 				.setCreativeTab(tab);
 		GameRegistry.registerItem(proudSoul,"proudsoul");
 
+
 		ItemStack itemProudSoul = new ItemStack(proudSoul,1,0);
 		itemProudSoul.setRepairCost(-10);
-		GameRegistry.registerCustomItemStack(ProudSoulStr , itemProudSoul);
+		registerCustomItemStack(ProudSoulStr , itemProudSoul);
 		ItemStack itemIngotBladeSoul = new ItemStack(proudSoul,1,1);
 		itemIngotBladeSoul.setRepairCost(-25);
-		GameRegistry.registerCustomItemStack(IngotBladeSoulStr , itemIngotBladeSoul);
+		registerCustomItemStack(IngotBladeSoulStr , itemIngotBladeSoul);
         ItemStack itemSphereBladeSoul = new ItemStack(proudSoul,1,2);
         itemSphereBladeSoul.setRepairCost(-50);
-        GameRegistry.registerCustomItemStack(SphereBladeSoulStr , itemSphereBladeSoul);
+        registerCustomItemStack(SphereBladeSoulStr , itemSphereBladeSoul);
         ItemStack itemTinyBladeSoul = new ItemStack(proudSoul,1,3);
-        GameRegistry.registerCustomItemStack(TinyBladeSoulStr , itemTinyBladeSoul);
+        registerCustomItemStack(TinyBladeSoulStr , itemTinyBladeSoul);
 
         //==================================================================================================================================
 
 		weapon = (ItemSlashBlade)(new ItemSlashBlade(ToolMaterial.IRON, 4 + ToolMaterial.EMERALD.getDamageVsEntity()))
 				.setRepairMaterial(new ItemStack(Items.iron_ingot))
-				.setRepairMaterialOreDic("ingotSteel","nuggetSteel")
+				.setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
 				.setUnlocalizedName("flammpfeil.slashblade")
-				.setTextureName("flammpfeil.slashblade:proudsoul")
 				.setCreativeTab(tab);
 
 		GameRegistry.registerItem(weapon, "slashblade");
@@ -153,42 +157,38 @@ public class SlashBlade implements IFuelHandler{
 
         bladeWood = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.WOOD.getDamageVsEntity()))
                 .setDestructable(true)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/wood.png"))
+                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/wood.png"))
                 .setRepairMaterialOreDic("logWood")
                 .setMaxDamage(60)
                 .setUnlocalizedName("flammpfeil.slashblade.wood")
-                .setTextureName("flammpfeil.slashblade:proudsoul")
                 .setCreativeTab(tab);
         GameRegistry.registerItem(bladeWood, "slashbladeWood");
 
         bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
                 .setDestructable(true)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/banboo.png"))
+                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/banboo.png"))
                 .setRepairMaterialOreDic("bamboo")
                 .setMaxDamage(50)
                 .setUnlocalizedName("flammpfeil.slashblade.bamboo")
-                .setTextureName("flammpfeil.slashblade:proudsoul")
                 .setCreativeTab(tab);
         GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
 
         bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(true)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/silverbanboo.png"))
+                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/silverbanboo.png"))
                 .setRepairMaterialOreDic("bamboo")
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
-                .setTextureName("flammpfeil.slashblade:proudsoul")
                 .setCreativeTab(tab);
         GameRegistry.registerItem(bladeSilverBambooLight, "slashbladeSilverBambooLight");
 
         bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(false)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade","model/white.png"))
+                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/white.png"))
                 .setRepairMaterial(new ItemStack(Items.iron_ingot))
-                .setRepairMaterialOreDic("ingotSteel","nuggetSteel")
+                .setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
                 .setMaxDamage(70)
                 .setUnlocalizedName("flammpfeil.slashblade.white")
-                .setTextureName("flammpfeil.slashblade:proudsoul")
                 .setCreativeTab(tab);
         GameRegistry.registerItem(bladeWhiteSheath, "slashbladeWhite");
 
@@ -199,7 +199,6 @@ public class SlashBlade implements IFuelHandler{
         wrapBlade = (ItemSlashBladeWrapper)(new ItemSlashBladeWrapper(ToolMaterial.IRON))
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.wrapper")
-                .setTextureName("flammpfeil.slashblade:proudsoul")
                 .setCreativeTab(tab);
         GameRegistry.registerItem(wrapBlade, "slashbladeWrapper");
 
@@ -209,20 +208,19 @@ public class SlashBlade implements IFuelHandler{
         bladeNamed = (ItemSlashBladeNamed)(new ItemSlashBladeNamed(ToolMaterial.IRON, 4.0f))
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.named")
-                .setTextureName("flammpfeil.slashblade:proudsoul")
                 .setCreativeTab(tab);
         GameRegistry.registerItem(bladeNamed, "slashbladeNamed");
 
 
 		GameRegistry.registerFuelHandler(this);
 
-		InitProxy.proxy.initializeItemRenderer();
+		CoreProxy.proxy.initializeItemRenderer();
 
 		manager = new ConfigEntityListManager();
 
-        FMLCommonHandler.instance().bus().register(manager);
+        MinecraftForge.EVENT_BUS.register(manager);
 
-        PacketHandler.init();
+        NetworkManager.init();
 
         RecipeSorter.register("flammpfeil.slashblade:upgrade", RecipeUpgradeBlade.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:wrap", RecipeWrapBlade.class, SHAPED, "after:forge:shaped");
@@ -267,10 +265,10 @@ public class SlashBlade implements IFuelHandler{
 
         int entityId = 1;
         EntityRegistry.registerModEntity(EntityDrive.class, "Drive", entityId++, this, 250, 1, true);
-        EntityRegistry.registerModEntity(EntityPhantomSword.class, "PhantomSword", entityId++, this, 250, 1, true);
-        EntityRegistry.registerModEntity(EntityDirectAttackDummy.class, "DirectAttackDummy", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 1, true);
 
-        EntityRegistry.registerModEntity(EntityPhantomSwordBase.class, "PhantomSwordBase", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "PhantomSwordBase", entityId++, this, 250, 1, true);
 
         EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 1, true);
         EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 1, true);
@@ -343,10 +341,10 @@ public class SlashBlade implements IFuelHandler{
     @EventHandler
     public void modsLoaded(FMLPostInitializationEvent evt)
     {
-        ArrayList<ItemStack> items = OreDictionary.getOres("bamboo");
+        List<ItemStack> items = OreDictionary.getOres("bamboo");
         if(0 == items.size()){
             ItemStack itemSphereBladeSoul =
-                    GameRegistry.findItemStack(modid, SphereBladeSoulStr, 1);
+                    SlashBlade.findItemStack(modid, SphereBladeSoulStr, 1);
 
             GameRegistry.addRecipe(new ShapedOreRecipe(wrapBlade,
                     "RBL",
@@ -366,6 +364,8 @@ public class SlashBlade implements IFuelHandler{
         SpecialEffects.init();
 
         AchievementList.init();
+
+        CoreProxy.proxy.postInit();
     }
 
 
@@ -385,9 +385,37 @@ public class SlashBlade implements IFuelHandler{
     }
 */
 
+    static public Map<ResourceLocation, ItemStack> BladeRegistry = Maps.newHashMap();
+
+    static public void registerCustomItemStack(String name, ItemStack stack){
+        BladeRegistry.put(new ResourceLocation(modid, name),stack);
+    }
+
+    static public ItemStack findItemStack(String modid, String name, int count){
+        ResourceLocation key = new ResourceLocation(modid, name);
+        ItemStack stack = null;
+
+        if(BladeRegistry.containsKey(key)) {
+            stack = BladeRegistry.get(new ResourceLocation(modid, name)).copy();
+
+        }else {
+            Item item = GameRegistry.findItem(modid, name);
+            if (item != null)
+                stack = new ItemStack(item);
+
+        }
+
+        if(stack != null) {
+            stack.stackSize = count;
+        }
+
+        return stack;
+    }
+
+
 
     public static ItemStack getCustomBlade(String modid,String name){
-        ItemStack blade = GameRegistry.findItemStack(modid, name, 1);
+        ItemStack blade = SlashBlade.findItemStack(modid, name, 1);
 
         if(blade != null){
             NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);

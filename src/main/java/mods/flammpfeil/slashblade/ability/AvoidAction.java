@@ -1,17 +1,14 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.PacketHandler;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.network.NetworkManager;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -35,7 +32,7 @@ public class AvoidAction {
     @SideOnly(Side.CLIENT)
     public static void doAvoid() {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityClientPlayerMP player = mc.thePlayer;
+        EntityPlayerSP player = mc.thePlayer;
 
         long now = mc.thePlayer.worldObj.getTotalWorldTime();
 
@@ -78,7 +75,7 @@ public class AvoidAction {
             player.playSound("random.fizz", 0.3F, 10.0F);
             mc.thePlayer.moveFlying(mc.thePlayer.moveStrafing,mc.thePlayer.moveForward,speedFactor);
             mc.playerController.updateController();
-            PacketHandler.INSTANCE.sendToServer(new MessageSpecialAction((byte) 2));
+            NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 2));
         }
     }
 }

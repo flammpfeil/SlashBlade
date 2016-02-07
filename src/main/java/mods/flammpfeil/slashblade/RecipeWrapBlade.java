@@ -1,8 +1,9 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.Maps;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.stats.AchievementList;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
@@ -12,7 +13,6 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.stats.Achievement;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
@@ -28,7 +28,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
     public RecipeWrapBlade()
     {
         super(3, 3, new ItemStack[] {
-                null, null, GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1),
+                null, null, SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1),
                 null, new ItemStack(SlashBlade.wrapBlade, 1, 0), null ,
                 new ItemStack(Items.wooden_sword), null, null }
                 , new ItemStack(SlashBlade.wrapBlade, 1, 0));
@@ -53,9 +53,9 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
     static public ItemStack getWrapSampleBlade(String name,String texture){
 
-        ItemStack innerBlade = GameRegistry.findItemStack("minecraft", "wooden_sword", 1);
+        ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
-        ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
+        ItemStack reqiredBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
         {
             SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
@@ -75,7 +75,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
             reqiredBlade.setStackDisplayName(reqiredBlade.getDisplayName());
         }
         String reqiredStr = "wrap." + name.replace(':', '.') + ".sample";
-        GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+        SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
 
         return reqiredBlade;
@@ -95,9 +95,9 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
             if(target != null){
-                String targetName = Item.itemRegistry.getNameForObject(target.getItem());
+                ResourceLocation targetName = Item.itemRegistry.getNameForObject(target.getItem());
 
-                hasTarget = wrapableTextureNames.containsKey(targetName);
+                hasTarget = wrapableTextureNames.containsKey(targetName.toString());
             }
 
             return hasProudSuol && hasScabbard && hasTarget;
@@ -116,7 +116,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
         target = target.copy();
 
 
-        String targetName = Item.itemRegistry.getNameForObject(target.getItem());
+        ResourceLocation targetName = Item.itemRegistry.getNameForObject(target.getItem());
 
 
         SlashBlade.wrapBlade.removeWrapItem(scabbard);
@@ -124,7 +124,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
         SlashBlade.wrapBlade.setWrapItem(scabbard,target);
 
         NBTTagCompound tag = scabbard.getTagCompound();
-        ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + targetName.replace(':','.'));
+        ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + targetName.toString().replace(':','.'));
         ItemSlashBladeNamed.TextureName.set(tag,wrapableTextureNames.get(targetName));
         ItemSlashBladeNamed.BaseAttackModifier.set(tag,wrapableBaseAttackModifiers.get(targetName));
 

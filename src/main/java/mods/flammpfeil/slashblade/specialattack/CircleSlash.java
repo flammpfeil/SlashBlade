@@ -1,8 +1,9 @@
 package mods.flammpfeil.slashblade.specialattack;
 
-import mods.flammpfeil.slashblade.EntityDrive;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.EntityDrive;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -44,10 +45,10 @@ public class CircleSlash extends SpecialAttackBase{
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             {
-                AxisAlignedBB bb = player.boundingBox.copy();
+                AxisAlignedBB bb = player.getEntityBoundingBox();
                 bb = bb.expand(5.0f, 0.25f, 5.0f);
 
-                List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(player, bb, ItemSlashBlade.AttackableSelector);
+                List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
 
                 for(Entity curEntity : list){
                     StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.CircleSlash);

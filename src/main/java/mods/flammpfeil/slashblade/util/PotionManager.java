@@ -1,11 +1,9 @@
 package mods.flammpfeil.slashblade.util;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mods.flammpfeil.slashblade.ItemSWaeponMaterial;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 
@@ -25,7 +23,7 @@ public class PotionManager {
 
         ItemStack stack = event.getItem(factorIdx);
         if(stack == null) return;
-        if(!(stack.getItem() instanceof ItemSWaeponMaterial)) return;
+        if(!(stack.getItem() instanceof ItemProudSoul)) return;
         event.setCanceled(true);
 
         int damage = stack.getItemDamage();

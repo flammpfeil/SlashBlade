@@ -1,10 +1,12 @@
 package mods.flammpfeil.slashblade.entity;
 
-import cpw.mods.fml.common.registry.IThrowableEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.EntityDrive;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.material.Material;
@@ -55,23 +57,20 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
     @Override
     protected void entityInit() {
         //entityid
-        this.getDataWatcher().addObject(4, 0);
+        this.getDataWatcher().addObject(8, 0);
     }
 
     int getThrowerEntityID(){
-        return this.getDataWatcher().getWatchableObjectInt(4);
+        return this.getDataWatcher().getWatchableObjectInt(8);
     }
 
     void setThrowerEntityID(int id){
-        this.getDataWatcher().updateObject(4,id);
+        this.getDataWatcher().updateObject(8,id);
     }
 
     public EntityJudgmentCutManager(World par1World, EntityLivingBase entityLiving)
     {
         this(par1World);
-
-        //■Y軸のオフセット設定
-        yOffset = entityLiving.getEyeHeight()/2.0F;
 
         //■撃った人
         thrower = entityLiving;
@@ -139,7 +138,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                         double d1 = player.getRNG().nextGaussian() * 0.2D;
                         double d2 = player.getRNG().nextGaussian() * 0.2D;
                         double d3 = 16.0D;
-                        this.worldObj.spawnParticle("witchMagic"
+                        this.worldObj.spawnParticle(EnumParticleTypes.SPELL_WITCH
                                 , player.posX + (double)(player.getRNG().nextFloat() * player.width * 2.0F) - (double)player.width - d0 * d3
                                 , player.posY // + (double)(this.itemRand.nextFloat() * par3Entity.height) - d1 * d3
                                 , player.posZ + (double)(player.getRNG().nextFloat() * player.width * 2.0F) - (double)player.width - d2 * d3, d0, d1, d2);
@@ -160,11 +159,11 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         if(!worldObj.isRemote)
         {
 
-            AxisAlignedBB bb = this.boundingBox.copy().offset(0, -this.height / 2, 0);
+            AxisAlignedBB bb = this.getEntityBoundingBox().offset(0, -this.height / 2, 0);
 
             //足止め
             if(this.ticksExisted == 2 && this.getThrower() != null){
-                List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
+                List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                 list.removeAll(alreadyHitEntity);
 
                 if(blade != null){
@@ -174,8 +173,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                             int stanTicks = 40;
 
                             if(!curEntity.worldObj.isRemote){
-                                ((EntityLivingBase) curEntity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), stanTicks, 30, true));
-                                ((EntityLivingBase) curEntity).attackTime = stanTicks;
+                                ((EntityLivingBase) curEntity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), stanTicks, 30, true,false));
                             }
 
                             StunManager.setStun((EntityLivingBase) curEntity, stanTicks);
@@ -183,7 +181,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
 
 
                             for(int i = 0; i<5; i++)
-                                this.worldObj.spawnParticle("portal",
+                                this.worldObj.spawnParticle(EnumParticleTypes.PORTAL,
                                     curEntity.posX + (this.rand.nextDouble() - 0.5D) * (double)curEntity.width,
                                     curEntity.posY + this.rand.nextDouble() * (double)curEntity.height - 0.25D,
                                     curEntity.posZ + (this.rand.nextDouble() - 0.5D) * (double)curEntity.width,
@@ -197,7 +195,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
             if(this.ticksExisted == 25 && this.getThrower() != null){
 
 
-                List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
+                List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                 list.removeAll(alreadyHitEntity);
 
                 StylishRankManager.setNextAttackType(this.getThrower(), StylishRankManager.AttackTypes.JudgmentCut);
@@ -337,8 +335,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
      * ■Whether or not the current entity is in lava
      */
     @Override
-    public boolean handleLavaMovement()
-    {
+    public boolean isInLava() {
         return false;
     }
 
@@ -402,16 +399,6 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
     /**
-     * ■影のサイズ
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
-    /**
      * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
      */
     @Override
@@ -428,7 +415,8 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
      * ■Called by portal blocks when an entity is within it.
      */
     @Override
-    public void setInPortal() {}
+    public void setPortal(BlockPos p_181015_1_) {
+    }
 
     /**
      * ■Returns true if the entity is on fire. Used by render to add the fire effect on rendering.

@@ -1,10 +1,10 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -31,19 +31,19 @@ public class Tizuru {
         ItemSlashBlade.StandbyRenderType.set(tag, 2);
         ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
-        GameRegistry.registerCustomItemStack(name, customblade);
+        SlashBlade.registerCustomItemStack(name, customblade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
     }
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
 
-        ItemStack proudsoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
+        ItemStack proudsoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
 
         {
             ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,name);
 
-            ItemStack reqiredBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashblade",1);
+            ItemStack reqiredBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashblade",1);
             {
 
                 NBTTagCompound tag = new NBTTagCompound();
@@ -54,7 +54,7 @@ public class Tizuru {
                 reqiredBlade.setStackDisplayName("syoukan muramasa");
             }
             String reqiredStr = name + ".reqired";
-            GameRegistry.registerCustomItemStack(reqiredStr,reqiredBlade);
+            SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
 
             reqiredBlade = reqiredBlade.copy();

@@ -1,12 +1,8 @@
 package mods.flammpfeil.slashblade.specialattack;
 
-import mods.flammpfeil.slashblade.EntityDirectAttackDummy;
-import mods.flammpfeil.slashblade.EntityDrive;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
+import mods.flammpfeil.slashblade.entity.EntitySpearManager;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
@@ -47,9 +43,9 @@ public class Spear extends SpecialAttackBase {
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
-            player.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),10,0,true));
+            player.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),10,0,true,false));
 
-            EntityDirectAttackDummy entityDA = new EntityDirectAttackDummy(world, player, false);
+            EntitySpearManager entityDA = new EntitySpearManager(world, player, false);
             entityDA.setLifeTime(7);
             if (entityDA != null) {
                 world.spawnEntityInWorld(entityDA);

@@ -3,10 +3,13 @@ package mods.flammpfeil.slashblade.ability;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.stats.Achievement;
+import net.minecraft.stats.StatisticsFile;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.stats.AchievementList;
@@ -14,7 +17,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -23,6 +25,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * Created by Furia on 14/07/29.*/
@@ -279,8 +282,23 @@ public class StylishRankManager {
         int postRank = getStylishRank(rankPoint);
 
         if(lastRank < postRank){
-            if(e instanceof EntityPlayer)
-                AchievementList.triggerAchievement((EntityPlayer)e,"rank"+getRankText(postRank));
+            if(!e.worldObj.isRemote && e instanceof EntityPlayerMP){
+                StatisticsFile statMgr = ((EntityPlayerMP)e).getStatFile();
+                Achievement achievement = AchievementList.getAchievement("rank" + getRankText(postRank));
+                if(achievement != null && !statMgr.hasAchievementUnlocked(achievement) && !statMgr.canUnlockAchievement(achievement)) {
+                    //前提纏めて解除
+                    Stack<Achievement> stackAch = new Stack<Achievement>();
+
+                    stackAch.push(achievement);
+                    while(stackAch.peek().parentAchievement != null && !statMgr.canUnlockAchievement(stackAch.peek())){
+                        stackAch.push(stackAch.peek().parentAchievement);
+                    }
+
+                    while(!stackAch.isEmpty()){
+                        ((EntityPlayerMP) e).triggerAchievement(stackAch.pop());
+                    }
+                }
+            }
         }
 
         onRiseInRank(e, postRank, rankPoint);
@@ -315,7 +333,7 @@ public class StylishRankManager {
         if(e.source.getEntity() != null && e.source.getEntity() instanceof EntityLivingBase){
             EntityLivingBase attacker = (EntityLivingBase)e.source.getEntity();
 
-            if(attacker.func_142015_aE() == attacker.ticksExisted)
+            if(attacker.getRevengeTimer() == attacker.ticksExisted)
                 return;
         }
 

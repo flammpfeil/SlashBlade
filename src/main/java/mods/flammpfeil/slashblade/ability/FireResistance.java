@@ -1,17 +1,16 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
 /**
@@ -41,10 +40,10 @@ public class FireResistance {
 
             int ticks = stack.getMaxItemUseDuration() - event.duration;
             if(ItemSlashBlade.RequiredChargeTick < ticks){
-                ReflectionHelper.setPrivateValue(Entity.class, player, 0, "fire", "field_70151_c");
+                ReflectionAccessHelper.setFire(player,0);
             }
         }
 
-        player.addPotionEffect(new PotionEffect(Potion.fireResistance.getId(),2,level-1,true));
+        player.addPotionEffect(new PotionEffect(Potion.fireResistance.getId(),2,level-1,true,false));
     }
 }

@@ -1,21 +1,18 @@
 package mods.flammpfeil.slashblade.entity;
 
 import com.google.common.collect.Maps;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
-import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Map;
 import java.util.Random;
@@ -28,7 +25,6 @@ public class EntityBladeStand extends Entity {
         super(p_i1582_1_);
         this.preventEntitySpawning = true;
         this.setSize(1.0F, 1.0F);
-        this.yOffset = this.height / 2.0F;
     }
 
     public EntityBladeStand(World p_i1582_1_, double x, double y, double z, ItemStack blade) {
@@ -203,9 +199,10 @@ public class EntityBladeStand extends Entity {
             this.motionY = -0.1D;
         }
 
-        Block block = this.worldObj.getBlock((int)this.posX,(int)this.posY,(int)this.posZ);
-        if(!block.isAir(this.worldObj,(int)this.posX,(int)this.posY,(int)this.posZ)
-                && block.getBlockHardness(this.worldObj,(int)this.posX,(int)this.posY,(int)this.posZ) < 0){
+        BlockPos pos = new BlockPos(this.posX,this.posY,this.posZ);
+        Block block = this.worldObj.getBlockState(pos).getBlock();
+        if(!block.isAir(this.worldObj, pos)
+                && block.getBlockHardness(this.worldObj, pos) < 0){
 
             this.setPosition(this.posX,this.posY+1.5,this.posZ);
         }

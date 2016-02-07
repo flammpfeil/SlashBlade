@@ -1,23 +1,16 @@
 package mods.flammpfeil.slashblade.entity;
 
-import cpw.mods.fml.common.registry.IThrowableEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.EntityDrive;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
-import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -53,23 +46,20 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
     @Override
     protected void entityInit() {
         //entityid
-        this.getDataWatcher().addObject(4, 0);
+        this.getDataWatcher().addObject(8, 0);
     }
 
     int getThrowerEntityID(){
-        return this.getDataWatcher().getWatchableObjectInt(4);
+        return this.getDataWatcher().getWatchableObjectInt(8);
     }
 
     void setThrowerEntityID(int id){
-        this.getDataWatcher().updateObject(4,id);
+        this.getDataWatcher().updateObject(8,id);
     }
 
     public EntityJustGuardManager(World par1World, EntityLivingBase entityLiving)
     {
         this(par1World);
-
-        //■Y軸のオフセット設定
-        yOffset = entityLiving.getEyeHeight()/2.0F;
 
         //■撃った人
         thrower = entityLiving;
@@ -194,15 +184,6 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
     }
 
     /**
-     * ■Whether or not the current entity is in lava
-     */
-    @Override
-    public boolean handleLavaMovement()
-    {
-        return false;
-    }
-
-    /**
      * ■環境光による暗さの描画（？）
      *    EntityXPOrbのぱくり
      */
@@ -262,16 +243,6 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
     /**
-     * ■影のサイズ
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public float getShadowSize()
-    {
-        return 0.0F;
-    }
-
-    /**
      * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
      */
     @Override
@@ -284,11 +255,9 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
     @SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {}
 
-    /**
-     * ■Called by portal blocks when an entity is within it.
-     */
     @Override
-    public void setInPortal() {}
+    public void setPortal(BlockPos p_181015_1_) {
+    }
 
     /**
      * ■Returns true if the entity is on fire. Used by render to add the fire effect on rendering.

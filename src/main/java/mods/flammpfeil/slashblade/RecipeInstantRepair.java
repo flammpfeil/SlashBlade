@@ -1,14 +1,13 @@
 package mods.flammpfeil.slashblade;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
@@ -57,7 +56,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
                 return false;
 
 
-            ArrayList<ItemStack> ores = OreDictionary.getOres("cobblestone");
+            List<ItemStack> ores = OreDictionary.getOres("cobblestone");
             hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.cobblestone));
             //stone);
 
@@ -142,7 +141,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 		            		ItemStack stone = craftMatrix.getStackInSlot(1);
 		            		if(stone != null){
 
-                                ArrayList<ItemStack> ores = OreDictionary.getOres("cobblestone");
+                                List<ItemStack> ores = OreDictionary.getOres("cobblestone");
                                 boolean hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.cobblestone));
 
                                 if(hasGrindstone){

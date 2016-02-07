@@ -1,9 +1,8 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.DropEventHandler;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
@@ -18,7 +17,6 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -51,7 +49,7 @@ public class Koseki {
         customblade.addEnchantment(Enchantment.thorns,1);
         customblade.addEnchantment(Enchantment.power,2);
 
-        GameRegistry.registerCustomItemStack(name, customblade);
+        SlashBlade.registerCustomItemStack(name, customblade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
     }
 
@@ -68,7 +66,7 @@ public class Koseki {
         if(!event.damageSource.isExplosion()) return;
         if(!event.damageSource.getDamageType().equals("explosion.player")) return;
 
-        ItemStack targetBlade = GameRegistry.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
+        ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
 
         if(!event.blade.getUnlocalizedName().equals(targetBlade.getUnlocalizedName())) return;
 
@@ -82,9 +80,9 @@ public class Koseki {
         {
             ItemStack blade = SlashBlade.getCustomBlade(name);
 
-            Achievement startParent = net.minecraft.stats.AchievementList.field_150963_I;
+            Achievement startParent = net.minecraft.stats.AchievementList.spawnWither;
             if(blade != null){
-                ItemStack noname = GameRegistry.findItemStack(SlashBlade.modid, "slashbladeNamed", 1);
+                ItemStack noname = SlashBlade.findItemStack(SlashBlade.modid, "slashbladeNamed", 1);
 
                 NBTTagCompound displayTag = new NBTTagCompound();
                 noname.setTagInfo("display",displayTag);

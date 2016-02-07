@@ -1,9 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.DropEventHandler;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
@@ -37,7 +37,7 @@ public class PSYasha {
 
             tag.setBoolean("IsNoStandDrop",true);
 
-            GameRegistry.registerCustomItemStack(name, customblade);
+            SlashBlade.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
         }
         {
@@ -55,16 +55,16 @@ public class PSYasha {
             ItemSlashBlade.StandbyRenderType.set(tag, 2);
             ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
-            GameRegistry.registerCustomItemStack(name, customblade);
+            SlashBlade.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
         }
     }
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        ItemStack stack = GameRegistry.findItemStack(SlashBlade.modid, name, 1);
+        ItemStack stack = SlashBlade.findItemStack(SlashBlade.modid, name, 1);
         DropEventHandler.registerEntityDrop("TwilightForest.Minotaur"  , 0.05f, stack);
-        stack = GameRegistry.findItemStack(SlashBlade.modid, nameTrue, 1);
+        stack = SlashBlade.findItemStack(SlashBlade.modid, nameTrue, 1);
         DropEventHandler.registerEntityDrop("TwilightForest.Minoshroom", 0.2f , stack);
     }
 }

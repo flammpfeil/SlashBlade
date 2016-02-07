@@ -1,8 +1,8 @@
 package mods.flammpfeil.slashblade.named.event;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Created by Furia on 14/07/07.

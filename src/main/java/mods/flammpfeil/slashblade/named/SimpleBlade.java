@@ -1,9 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.ItemSlashBlade;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeUpgradeBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
@@ -11,7 +11,6 @@ import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -24,8 +23,8 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 public class SimpleBlade {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void init(LoadEvent.InitEvent event){
-        ItemStack itemIngotBladeSoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.IngotBladeSoulStr,1);
-        ItemStack itemSphereBladeSoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
+        ItemStack itemIngotBladeSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.IngotBladeSoulStr,1);
+        ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
 
         {
             ItemStack woodSword = new ItemStack(Items.wooden_sword,1,1);
@@ -48,13 +47,25 @@ public class SimpleBlade {
 
 
 
-        SlashBlade.addRecipe("slashbladeBambooLight",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeBambooLight),
-                "  #",
-                " # ",
-                "X  ",
-                '#',"bamboo",
-                'X', new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE)));
+        if(OreDictionary.getOres("bamboo").isEmpty()){
+
+            SlashBlade.addRecipe("slashbladeBambooLight",
+                    new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeBambooLight),
+                            "  #",
+                            " # ",
+                            "X  ",
+                            '#', new ItemStack(Items.reeds),
+                            'X', new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE)));
+        }else{
+
+            SlashBlade.addRecipe("slashbladeBambooLight",
+                    new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeBambooLight),
+                            "  #",
+                            " # ",
+                            "X  ",
+                            '#',"bamboo",
+                            'X', new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE)));
+        }
 
 
         SlashBlade.addRecipe("slashbladeSilverBambooLight",
@@ -113,7 +124,7 @@ public class SimpleBlade {
         brokenBladeWhite.setItemDamage(brokenBladeWhite.getMaxDamage());
         brokenBladeWhite.setStackDisplayName("BrokenBladeWhite");
         ItemSlashBlade.IsBroken.set(brokenBladeWhite.getTagCompound(), true);
-        GameRegistry.registerCustomItemStack(SlashBlade.BrokenBladeWhiteStr, brokenBladeWhite);
+        SlashBlade.registerCustomItemStack(SlashBlade.BrokenBladeWhiteStr, brokenBladeWhite);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.BrokenBladeWhiteStr);
 
 
