@@ -12,10 +12,16 @@ public class EntityAIStun extends EntityAIBase {
 
     public EntityAIStun(EntityLivingBase owner){
         this.owner = owner;
+        this.setMutexBits(0xffff);
     }
 
     static public final String StunTimeout = "StunTimeout";
     static public final long timeoutLimit = 200;
+
+    @Override
+    public boolean continueExecuting() {
+        return super.continueExecuting();
+    }
 
     @Override
     public boolean shouldExecute() {
