@@ -114,25 +114,25 @@ public class CoreProxyClient extends CoreProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntitySpearManager.class, new IRenderFactory<EntitySpearManager>() {
             @Override
             public Render<? super EntitySpearManager> createRenderFor(RenderManager manager) {
-                return null;
+                return new InvisibleRender(manager);
             }
         });
         RenderingRegistry.registerEntityRenderingHandler(EntityJudgmentCutManager.class, new IRenderFactory<EntityJudgmentCutManager>() {
             @Override
             public Render<? super EntityJudgmentCutManager> createRenderFor(RenderManager manager) {
-                return null;
+                return new InvisibleRender(manager);
             }
         });
         RenderingRegistry.registerEntityRenderingHandler(EntitySakuraEndManager.class, new IRenderFactory<EntitySakuraEndManager>() {
             @Override
             public Render<? super EntitySakuraEndManager> createRenderFor(RenderManager manager) {
-                return null;
+                return new InvisibleRender(manager);
             }
         });
         RenderingRegistry.registerEntityRenderingHandler(EntityJustGuardManager.class, new IRenderFactory<EntityJustGuardManager>() {
             @Override
             public Render<? super EntityJustGuardManager> createRenderFor(RenderManager manager) {
-                return null;
+                return new InvisibleRender(manager);
             }
         });
 
