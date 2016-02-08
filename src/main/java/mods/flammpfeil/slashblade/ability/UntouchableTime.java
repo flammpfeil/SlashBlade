@@ -67,9 +67,9 @@ public class UntouchableTime {
 
         if (timeOut < now) {
             removeUntouchableTag(target);
-            return true;
-        }else{
             return false;
+        }else{
+            return true;
         }
     }
 
