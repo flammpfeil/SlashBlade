@@ -71,8 +71,299 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         return true;
     }
 
+    void renderBack(ItemStack item, EntityLivingBase player) {
+        ItemSlashBlade iSlashBlade = ((ItemSlashBlade) item.getItem());
 
 
+        WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(item));
+
+        ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(item);
+
+        EnumSet<ItemSlashBlade.SwordType> swordType = iSlashBlade.getSwordType(item);
+
+
+        boolean isNoScabbard = swordType.contains(ItemSlashBlade.SwordType.NoScabbard);
+
+        float ax = 0;
+        float ay = 0;
+        float az = 0;
+
+        boolean isBroken = swordType.contains(ItemSlashBlade.SwordType.Broken);
+
+
+        int renderType = 0;
+
+        if (item.hasTagCompound()) {
+            NBTTagCompound tag = item.getTagCompound();
+            ay = -tag.getFloat(ItemSlashBlade.adjustYStr) / 10.0f;
+
+            renderType = ItemSlashBlade.StandbyRenderType.get(tag);
+
+            if (isNoScabbard)
+                renderType = 0;
+        }
+
+        if (renderType == 0) {
+            return;
+        }
+
+        if (item.hasTagCompound()) {
+            NBTTagCompound tag = item.getTagCompound();
+
+
+            ax = tag.getFloat(ItemSlashBlade.adjustXStr) / 10.0f;
+            ay = -tag.getFloat(ItemSlashBlade.adjustYStr) / 10.0f;
+            az = -tag.getFloat(ItemSlashBlade.adjustZStr) / 10.0f;
+        }
+
+        if (renderType != 1) {
+            ax = 0;
+            az = 0;
+        }
+
+        String renderTarget;
+
+        GL11.glPushMatrix();
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        {
+
+            if (render.getMainModel().isChild)
+            {
+                float f = 0.5F;
+                GlStateManager.translate(0.0F, 0.625F, 0.0F);
+                GlStateManager.rotate(-20.0F, -1.0F, 0.0F, 0.0F);
+                GlStateManager.scale(f, f, f);
+            }
+
+
+            ((ModelBiped)render.getMainModel()).bipedBody.postRender(0.0625F);
+            //GlStateManager.translate(-0.0625F, 0.4375F, 0.0625F);
+
+            if (player.isSneaking())
+            {
+                GlStateManager.translate(0.0F, 0.203125F, 0.0F);
+            }
+        }
+
+        {
+            GL11.glShadeModel(GL11.GL_SMOOTH);
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
+
+            //体格補正 configより
+            GL11.glTranslatef(ax, ay, az);
+
+            switch (renderType) {
+                case 2: //pso2
+                    //腰位置へ
+                    GL11.glTranslatef(0, 0.5f, 0.25f);
+
+
+                {
+                    //全体スケール補正
+                    float scale = (float) (0.075f);
+                    GL11.glScalef(scale, scale, scale);
+                }
+                GL11.glRotatef(83.0f, 0, 0, 1);
+
+                GL11.glTranslatef(0, -12.5f, 0);
+
+                break;
+
+                case 3: //ninja
+                    //腰位置へ
+                    GL11.glTranslatef(0, 0.4f, 0.25f);
+
+
+                {
+                    //全体スケール補正
+                    float scale = (float) (0.075f);
+                    GL11.glScalef(scale, scale, scale);
+                }
+    /*
+                        //先を後ろへ
+                        GL11.glRotatef(90.0f, 1, 0, 0);
+                        //先を横へ
+    */
+                GL11.glRotatef(-30.0f, 0, 0, 1);
+
+                GL11.glRotatef(-180.0f, 0, 1.0f, 0);
+
+                GL11.glTranslatef(0, -12.5f, 0);
+
+                break;
+
+
+                default:
+                    //腰位置へ
+                    GL11.glTranslatef(0.25f, 0.4f, -0.5f);
+
+
+                {
+                    //全体スケール補正
+                    float scale = (float) (0.075f);
+                    GL11.glScalef(scale, scale, scale);
+                }
+
+                //先を後ろへ
+                GL11.glRotatef(60.0f, 1, 0, 0);
+
+                //先を外へ
+                GL11.glRotatef(-20.0f, 0, 0, 1);
+
+                //刃を下に向ける（太刀差し
+                GL11.glRotatef(90.0f, 0, 1.0f, 0);
+                break;
+            }
+
+
+            //-----------------------------------------------------------------------------------------------------------------------
+            GL11.glPushMatrix();
+            {
+                if (isBroken)
+                    renderTarget = "blade_damaged";
+                else
+                    renderTarget = "blade";
+
+
+                float scaleLocal = 0.095f;
+                GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
+                GL11.glRotatef(-90.0f, 0, 0, 1);
+                this.render.bindTexture(resourceTexture);
+
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
+
+                model.renderPart(renderTarget);
+
+                GL11.glDisable(GL11.GL_LIGHTING);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+                float lastx = OpenGlHelper.lastBrightnessX;
+                float lasty = OpenGlHelper.lastBrightnessY;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
+                model.renderPart(renderTarget + "_luminous");
+
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
+                GL11.glEnable(GL11.GL_LIGHTING);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+                if (item.hasEffect()) {
+
+                    GL11.glDepthFunc(GL11.GL_EQUAL);
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    this.render.bindTexture(RES_ITEM_GLINT);
+                    GL11.glEnable(GL11.GL_BLEND);
+                    GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
+                    float f7 = 0.76F;
+
+                    Face.setColor(0xFF8040CC);
+
+                    GL11.glMatrixMode(GL11.GL_TEXTURE);
+                    GL11.glPushMatrix();
+                    float f8 = 0.125F;
+                    GL11.glScalef(f8, f8, f8);
+                    float f9 = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F * 8.0F;
+                    GL11.glTranslatef(f9, 0.0F, 0.0F);
+                    GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
+                    model.renderPart(renderTarget);
+                    GL11.glPopMatrix();
+                    GL11.glPushMatrix();
+                    GL11.glScalef(f8, f8, f8);
+                    f9 = (float) (Minecraft.getSystemTime() % 4873L) / 4873.0F * 8.0F;
+                    GL11.glTranslatef(-f9, 0.0F, 0.0F);
+                    GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
+                    model.renderPart(renderTarget);
+                    GL11.glPopMatrix();
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+                    Face.resetColor();
+
+                    OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    GL11.glDepthFunc(GL11.GL_LEQUAL);
+                }
+
+            }
+            GL11.glPopMatrix();
+
+
+            if (!isNoScabbard) {
+
+                GL11.glPushMatrix();
+
+                float scaleLocal = 0.095f;
+                GL11.glScalef(scaleLocal, scaleLocal, scaleLocal);
+                GL11.glRotatef(-90.0f, 0, 0, 1);
+                this.render.bindTexture(resourceTexture);
+
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
+
+                renderTarget = "sheath";
+                model.renderPart(renderTarget);
+
+                GL11.glDisable(GL11.GL_LIGHTING);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+                float lastx = OpenGlHelper.lastBrightnessX;
+                float lasty = OpenGlHelper.lastBrightnessY;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
+                model.renderPart(renderTarget + "_luminous");
+
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
+                GL11.glEnable(GL11.GL_LIGHTING);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+                if (item.hasEffect()) {
+                    GL11.glDepthFunc(GL11.GL_EQUAL);
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    this.render.bindTexture(RES_ITEM_GLINT);
+                    GL11.glEnable(GL11.GL_BLEND);
+                    GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
+                    float f7 = 0.76F;
+
+                    Face.setColor(0xFF8040CC);
+
+                    GL11.glMatrixMode(GL11.GL_TEXTURE);
+                    GL11.glPushMatrix();
+                    float f8 = 0.125F;
+                    GL11.glScalef(f8, f8, f8);
+                    float f9 = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F * 8.0F;
+                    GL11.glTranslatef(f9, 0.0F, 0.0F);
+                    GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
+                    model.renderPart(renderTarget);
+                    GL11.glPopMatrix();
+                    GL11.glPushMatrix();
+                    GL11.glScalef(f8, f8, f8);
+                    f9 = (float) (Minecraft.getSystemTime() % 4873L) / 4873.0F * 8.0F;
+                    GL11.glTranslatef(-f9, 0.0F, 0.0F);
+                    GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
+                    model.renderPart(renderTarget);
+                    GL11.glPopMatrix();
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+                    Face.resetColor();
+
+                    OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    GL11.glDepthFunc(GL11.GL_LEQUAL);
+                }
+
+                GL11.glPopMatrix();
+            }
+            GL11.glShadeModel(GL11.GL_FLAT);
+        }
+        GL11.glPopAttrib();
+        GL11.glPopMatrix();
+    }
 
     void render(EntityLivingBase entity,float partialTicks)
     {
@@ -82,7 +373,10 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             return;
 
 
-        /*
+
+
+        ItemStack stack = entity.getHeldItem();
+
         if(stack == null || !(stack.getItem() instanceof ItemSlashBlade)){
             if(entity instanceof EntityPlayer){
                 ItemStack firstItem = ((EntityPlayer)entity).inventory.getStackInSlot(0);
@@ -92,9 +386,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             }
             return;
         }
-        */
 
-        ItemStack stack = entity.getHeldItem();
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
