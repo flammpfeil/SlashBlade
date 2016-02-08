@@ -143,7 +143,7 @@ public class AirTrick {
 
                         entitySS.setLocationAndAngles(
                                 player.posX + eyeDir.xCoord * 2,
-                                player.posY + eyeDir.yCoord * 2,
+                                player.posY + eyeDir.yCoord * 2 + player.getEyeHeight(),
                                 player.posZ + eyeDir.zCoord * 2,
                                 player.rotationYaw,
                                 player.rotationPitch);
