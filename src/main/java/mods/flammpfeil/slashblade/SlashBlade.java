@@ -5,10 +5,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -366,6 +368,8 @@ public class SlashBlade implements IFuelHandler{
         AchievementList.init();
 
         CoreProxy.proxy.postInit();
+
+        MinecraftForge.EVENT_BUS.register(ScheduleEntitySpawner.getInstance());
     }
 
 

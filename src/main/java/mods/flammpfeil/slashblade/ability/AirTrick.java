@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
+import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
 import mods.flammpfeil.slashblade.stats.AchievementList;
@@ -153,7 +154,8 @@ public class AirTrick {
                         if(ItemSlashBlade.SummonedSwordColor.exists(tag))
                             entitySS.setColor(ItemSlashBlade.SummonedSwordColor.get(tag));
 
-                        player.worldObj.spawnEntityInWorld(entitySS);
+                        ScheduleEntitySpawner.getInstance().offer(entitySS);
+                        //player.worldObj.spawnEntityInWorld(entitySS);
 
                         if(player instanceof EntityPlayer)
                             AchievementList.triggerAchievement((EntityPlayer) player, "phantomSword");

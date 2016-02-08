@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.specialattack;
 
 import mods.flammpfeil.slashblade.entity.EntityDrive;
+import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
@@ -244,7 +245,8 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
         EntityJudgmentCutManager entityDA = new EntityJudgmentCutManager(player.worldObj, player);
         if (entityDA != null) {
-            player.worldObj.spawnEntityInWorld(entityDA);
+            ScheduleEntitySpawner.getInstance().offer(entityDA);
+            //player.worldObj.spawnEntityInWorld(entityDA);
         }
         UntouchableTime.setUntouchableTime(player, 30, true);
     }

@@ -8,6 +8,7 @@ import mods.flammpfeil.slashblade.entity.EntityDrive;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.event.ModelRegister;
+import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -2337,7 +2338,8 @@ public class ItemSlashBlade extends ItemSword {
                             if(SummonedSwordColor.exists(tag))
                                 entityDrive.setColor(SummonedSwordColor.get(tag));
 
-                            w.spawnEntityInWorld(entityDrive);
+                            ScheduleEntitySpawner.getInstance().offer(entityDrive);
+                            //w.spawnEntityInWorld(entityDrive);
 
                             if(entity instanceof EntityPlayer)
                                 AchievementList.triggerAchievement((EntityPlayer)entity,"phantomSword");
