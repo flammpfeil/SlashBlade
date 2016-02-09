@@ -34,7 +34,12 @@ public class BladeModel implements ISmartItemModel {
     ItemStack targetStack = null;
     ItemSlashBlade itemBlade = null;
 
+    /**
+     * 0 : type set
+     * 1 : texture set
+     */
     int renderPath = 0;
+    int drawStep = -1;
 
     ItemCameraTransforms.TransformType type = ItemCameraTransforms.TransformType.NONE;
 
@@ -59,6 +64,9 @@ public class BladeModel implements ISmartItemModel {
     @Override
     public List<BakedQuad> getGeneralQuads() {
 
+        //no texture;
+        if(drawStep == 0) return emptyList;
+
         if(type == ItemCameraTransforms.TransformType.THIRD_PERSON
                 || type == ItemCameraTransforms.TransformType.FIRST_PERSON) return emptyList;
 
@@ -75,6 +83,16 @@ public class BladeModel implements ISmartItemModel {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
         }else{
             Face.resetColor();
+
+            GL11.glEnable(GL11.GL_BLEND);
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GL11.glDisable(GL11.GL_CULL_FACE);
+
+
+            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
         }
 
         GL11.glPushMatrix();
@@ -148,22 +166,12 @@ public class BladeModel implements ISmartItemModel {
 
     @Override
     public boolean isBuiltInRenderer() {
+        drawStep = 1;
         renderPath = 0;
 
         //textuer bind
         ResourceLocation resourceTexture = itemBlade.getModelTexture(targetStack);
         Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
-
-        GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-
-
-        GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-
-        GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
-
 
         return false;
     }
@@ -182,6 +190,8 @@ public class BladeModel implements ISmartItemModel {
                 super.applyTransform(type);
 
                 BladeModel.this.type = type;
+
+                drawStep = 0;
             }
         };
     }
