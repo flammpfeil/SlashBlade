@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.event.DropEventHandler;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
@@ -248,6 +249,10 @@ public class SlashBlade implements IFuelHandler{
         InitEventBus.register(new BambooMod());
 
         InitEventBus.register(new Koseki());
+
+        ConfigCustomBladeManager ccb = new ConfigCustomBladeManager();
+        ccb.loadConfig(mainConfiguration);
+        InitEventBus.register(ccb);
     }
 
     StatManager statManager;

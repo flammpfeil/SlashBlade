@@ -36,7 +36,11 @@ public class BladeModelManager {
                 CacheLoader.asyncReloading(new CacheLoader<ResourceLocation, WavefrontObject>() {
                     @Override
                     public WavefrontObject load(ResourceLocation key) throws Exception {
-                        return new WavefrontObject(key);
+                        try{
+                            return new WavefrontObject(key);
+                        }catch(Exception e){
+                            return null;
+                        }
                     }
                 }, Executors.newCachedThreadPool())
         );
