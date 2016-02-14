@@ -114,7 +114,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
         if(this.blade == null && this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
             EntityPlayer player = (EntityPlayer)this.getThrower();
             ItemStack stack = player.getHeldItem();
-            if(stack.getItem() instanceof ItemSlashBlade)
+            if(stack != null && stack.getItem() instanceof ItemSlashBlade)
                 this.blade = stack;
         }
 
@@ -127,8 +127,10 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
                 EntityPlayer player = (EntityPlayer)this.getThrower();
                 player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.blaze.hit", 1.0F, 1.0F);
 
-                ItemSlashBlade itemBlade = (ItemSlashBlade)this.blade.getItem();
-                itemBlade.doAttack(this.blade, ItemSlashBlade.ComboSequence.Battou, player);
+                if(this.blade != null){
+                    ItemSlashBlade itemBlade = (ItemSlashBlade)this.blade.getItem();
+                    itemBlade.doAttack(this.blade, ItemSlashBlade.ComboSequence.Battou, player);
+                }
             }
         }
 
