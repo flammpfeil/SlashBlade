@@ -71,7 +71,11 @@ public class BladeModel implements ISmartItemModel {
                 || type == ItemCameraTransforms.TransformType.FIRST_PERSON) return emptyList;
 
         //clear drawstate
-        Tessellator.getInstance().draw();
+        try{
+            Tessellator.getInstance().draw();
+        }catch(Exception e){
+            return emptyList;
+        }
 
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         //GL11.glPushClientAttrib(GL11.GL_ALL_ATTRIB_BITS);

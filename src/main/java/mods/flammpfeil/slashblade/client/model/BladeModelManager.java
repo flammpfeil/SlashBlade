@@ -39,7 +39,7 @@ public class BladeModelManager {
                         try{
                             return new WavefrontObject(key);
                         }catch(Exception e){
-                            return null;
+                            return defaultModel;
                         }
                     }
                 }, Executors.newCachedThreadPool())
