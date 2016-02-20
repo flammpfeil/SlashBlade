@@ -1,5 +1,6 @@
 flammpfeil.slashblade=拔刀剑
 Key.SlashBlade.PS=幻影剑
+Key.SlashBlade.SA=特殊行動
 itemGroup.flammpfeil.slashblade=拔刀剑
 item.flammpfeil.slashblade.name=大太刀「」
 item.flammpfeil.slashblade.proudsoul.name=耀魂碎片
@@ -20,6 +21,9 @@ flammpfeil.slashblade.specialattack.drive=幻影刃
 flammpfeil.slashblade.specialattack.waveedge=波刀龙胆
 flammpfeil.slashblade.specialattack.spear=平突
 flammpfeil.slashblade.specialattack.circleslash=円刃
+flammpfeil.slashblade.specialattack.BlisteringWitherSwords=急襲幻影剣-衰破
+flammpfeil.slashblade.specialattack.sakuraend=終焉桜
+
 freftext.item.flammpfeil.slashblade=无铭无名的大太刀\n能很好的与附魔相结合\n赐予名字会有不可思议的魅力
 freftext.item.flammpfeil.slashblade.wood=普通的木刀\n但在斩杀千人之后\n即便是木刀也能无物不断
 freftext.item.flammpfeil.slashblade.white=白鞘之刀\n折断而变短的刀\n锻造成其他形式说不定会焕发什么能力
@@ -60,8 +64,16 @@ item.flammpfeil.slashblade.named.fox.white.name=狐月刀「白狐」
 item.flammpfeil.slashblade.named.fox.black.name=狐月刀「黑狐」
 item.flammpfeil.slashblade.named.muramasa.name=「千鹤」村正
 item.flammpfeil.slashblade.named.sabigatana.name=锈刀
-item.flammpfeil.slashblade.named.doutanuki.name=刚剑「胴田貫」」
+item.flammpfeil.slashblade.named.doutanuki.name=刚剑「胴田貫」
+
+item.flammpfeil.slashblade.named.koseki.name=枯石の大刀
+
 entity.flammpfeil.slashblade.BladeStand.name=刀挂台
+
+death.attack.directMagic=%1$sは%2$sに切裂かれた
+
+slashblade.seffect.name.WitherEdge=WitherEdge
+
 achievement.flammpfeil.slashblade.slashWoodenSword=断面之意
 achievement.flammpfeil.slashblade.slashWoodenSword.desc=一刀斩敌的木剑<br>乃拔刀术的第一部<br>§8§l§o真正的切伏之刃
 achievement.flammpfeil.slashblade.buildWoodenBlade=无铭刀「木偶」
