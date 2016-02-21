@@ -1,5 +1,6 @@
 ﻿flammpfeil.slashblade=拔刀劍
 Key.SlashBlade.PS=幻影劍
+Key.SlashBlade.SA=特殊行動
 itemGroup.flammpfeil.slashblade=拔刀劍
 item.flammpfeil.slashblade.name=大太刀「」
 item.flammpfeil.slashblade.proudsoul.name=刀魂
@@ -20,26 +21,15 @@ flammpfeil.slashblade.specialattack.drive=幻影刃
 flammpfeil.slashblade.specialattack.waveedge=波刀龍膽
 flammpfeil.slashblade.specialattack.spear=平突
 flammpfeil.slashblade.specialattack.circleslash=圓刃
-freftext.item.flammpfeil.slashblade=無銘無名的刀匠\n對於鍛造非常的熟悉\n沒有名子的依代散發著不可思議的魅色
-freftext.item.flammpfeil.slashblade.wood=只是個木刀\n只要持有撕裂般的技巧就算是木刀也能斬斷任何東西
-freftext.item.flammpfeil.slashblade.white=白鞘之刀\n損壞斷裂的白色刀刃\n重新鍛造將有不同的樣貌
-freftext.item.flammpfeil.slashblade.bamboo=未完成的竹光\n更熟練的揮舞木刀
-freftext.item.flammpfeil.slashblade.silverbamboo=竹光的完成體\n就算是竹光揮舞起來也不比太刀差\n吸取百條生命後揮斷將會有不同的樣貌
-freftext.item.flammpfeil.slashblade.wrapper=變貌之鞘\n隨著刀而變化的不可思議之鞘\n使用拔刀術揮舞起來不比其差
-freftext.item.flammpfeil.slashblade.proudsoul=刀刃榮耀的魂火\n刀的核心碎片 雖然實體是看不見的\n做為修復使用
-freftext.item.flammpfeil.slashblade.proudsoul.ingot=榮耀的魂火鍛造出的靈鐵\n做為高級修復使用
-freftext.item.flammpfeil.slashblade.proudsoul.sphere=純度增加的靈鐵\n做為最高級的修復使用
-freftext.item.flammpfeil.slashblade.proudsoul.tiny=刀刃榮耀的碎小魂火\n刀的核心小碎片 雖然實體是看不見
+flammpfeil.slashblade.specialattack.BlisteringWitherSwords=急襲幻影剣-衰破
+flammpfeil.slashblade.specialattack.sakuraend=終焉桜
+
 item.flammpfeil.slashblade.named.name=無銘「無名」
-freftext.item.flammpfeil.slashblade.named.name=無銘「無名」\n刀匠不明的無名之刃\n妖刀與名刀依代間轉變之刀
 item.flammpfeil.slashblade.named.yamato.broken.name=折斷的閻魔刀
-freftext.item.flammpfeil.slashblade.named.yamato.broken=某把魔刃的化身\n目前已經斷裂\n沒有鞘亦沒感受到力量
 item.flammpfeil.slashblade.named.yamato.name=魔刃「閻魔刀」
-freftext.item.flammpfeil.slashblade.named.yamato=某把魔刃的化身\n傳聞中不存在實體\n鞘會在刀身修復時顯現\n雖然與真身之力相差甚遠、但藉由拔刀術的力量將可與真身比擬
+
 item.flammpfeil.slashblade.named.tagayasan.name=木刀「鐵木刀」
-freftext.item.flammpfeil.slashblade.named.tagayasan=使用鐵刀木製成的木刀\n不知為何需要使用鐵修復\n容易因多次敲打而斷裂的木刀、吞噬了冠以鐵之名的魂魄而呼應轉變的堅木之刃
 item.flammpfeil.slashblade.named.yuzukitukumo.name=結月刀「付喪」
-freftext.item.flammpfeil.slashblade.named.yuzukitukumo=被冠以某一族之名而揮舞著\n某一段的表面刻著名子\n狂暴之人持有此刀將變為神佛鬼怪皆能斬殺之妖刀\n和氣之人持有此刀則變為降妖退魔的守護之刃
 item.flammpfeil.slashblade.named.agito.rust.name=顎(銹)
 item.flammpfeil.slashblade.named.agito.name=顎
 item.flammpfeil.slashblade.named.orotiagito.rust.name=顎(銹)
@@ -60,9 +50,14 @@ item.flammpfeil.slashblade.named.fox.black.name=狐月刀「黒狐」
 item.flammpfeil.slashblade.named.muramasa.name=「千鶴」村正
 item.flammpfeil.slashblade.named.sabigatana.name=銹刀
 item.flammpfeil.slashblade.named.doutanuki.name=剛刀「胴田貫」
+
+item.flammpfeil.slashblade.named.koseki.name=枯石大刀
+
 entity.flammpfeil.slashblade.BladeStand.name=刀掛台
 
 death.attack.directMagic=%1$s 被刺客用 %2$s 魔刃斬殺
+
+slashblade.seffect.name.WitherEdge=WitherEdge
 
 achievement.flammpfeil.slashblade.slashWoodenSword=斷面之意
 achievement.flammpfeil.slashblade.slashWoodenSword.desc=一刀斬裂敵人的木劍<br>拔刀術的最初步<br>§8§l§o了解斬斷的真諦成為真正的刀刃
@@ -90,6 +85,9 @@ achievement.flammpfeil.slashblade.saya=§e變貌之鞘
 achievement.flammpfeil.slashblade.saya.desc=斬殺百身後<br>銀紙竹光破碎殘存之物<br>§8§l§o無貌之鞘<br>與刀結合後將會產生變化
 achievement.flammpfeil.slashblade.noname=§8無銘「無名」
 achievement.flammpfeil.slashblade.noname.desc=多次修理後的悲劇<br>§8§l§o無貌之刀<br>妖刀與名刀間的依代<br>因失去名子而衰弱的刀刃
+achievement.flammpfeil.slashblade.koseki=§8枯石の大刀
+achievement.flammpfeil.slashblade.koseki.desc=衰枯と爆砕の力宿す大刀<br>衰枯の石は力無き者が振るえば使い手をも食らう<br>その姿は、ある龍太刀を模したもの
+
 achievement.flammpfeil.slashblade.hundredKill=§d百鬼降伏
 achievement.flammpfeil.slashblade.hundredKill.desc=百本斬<br>§8§l§o銀紙竹光斷裂後<br>殘存保留之器
 achievement.flammpfeil.slashblade.thousandKill=§c銳氣千刃
@@ -185,7 +183,7 @@ achievement.flammpfeil.slashblade.fluorescentbar.desc=§8§l§o在群星之中<b
 achievement.flammpfeil.slashblade.phantomSword=幻影劍
 achievement.flammpfeil.slashblade.phantomSword.desc=遠距離射撃<br>§8§l§o具有實質力量劍的幻影
 
-achievement.flammpfeil.slashblade.murasama=村正「惡鬼」
+achievement.flammpfeil.slashblade.murasama=HF MURASAMA BLADE
 achievement.flammpfeil.slashblade.murasama.desc=§8§l§o將古代名刀作為素體<br>實施高頻電流改造<br>以及表面強化製作而成<br>有一部分的機能被忽略
 
 
