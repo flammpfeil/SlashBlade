@@ -7,7 +7,7 @@
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authors": [ "Ferne",],
+  "authors": [ "Ferne","zh_TW.lang-LostyBear","zh_CN.lang-Mrkwtkr"],
   "credits": "Furia",
   "logoFile": "",
   "parent":"",
