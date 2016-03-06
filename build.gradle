@@ -18,7 +18,7 @@ buildscript {
 apply plugin: 'forge'
 apply plugin: 'maven'
 
-version = "mc1.7.10-r77"
+version = "mc1.7.10-r78"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
@@ -53,16 +53,11 @@ dependencies {
 }
 
 def defaultEncoding = 'UTF-8'
+def targetVer = '1.8'
 tasks.withType(AbstractCompile) each {
     it.options.encoding = defaultEncoding
-    it.options.compilerArgs += ['-source', '1.6', '-target', '1.6']
+    it.options.compilerArgs += ['-source', targetVer, '-target', targetVer]
 }
-
-compileTestJava {
-    options.encoding = defaultEncoding
-    options.compilerArgs += ['-source', '1.6', '-target', '1.6']
-}
-
 
 jar {
     manifest {

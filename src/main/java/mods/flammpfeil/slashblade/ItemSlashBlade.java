@@ -815,7 +815,7 @@ public class ItemSlashBlade extends ItemSword {
         long prevAttackTime = LastActionTime.get(tag);
         long currentTime = par3EntityPlayer.worldObj.getTotalWorldTime();
         ComboSequence comboSeq = getComboSequence(tag);
-        if(prevAttackTime + ComboInterval < currentTime) {
+        /*if(prevAttackTime + ComboInterval < currentTime)*/ {
             nextAttackSequence(sitem, comboSeq, par3EntityPlayer);
 
             SilentUpdateItem.silentUpdateItem(par3EntityPlayer);
