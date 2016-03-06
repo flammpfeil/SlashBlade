@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumSet;
@@ -401,6 +402,12 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             //todo :LayerHeldItem“I‚Érendering‚·‚é
             doHeldItemRenderLayer(entity,swordType,model);
             return;
+        }
+
+        //if(Loader.isModLoaded("SmartMoving"))
+        {
+            ((ModelBiped)render.getMainModel()).bipedBody.postRender(0.0625F);
+            //GlStateManager.translate(-0.0625F, 0.4375F, 0.0625F);
         }
 
         boolean isEnchanted = swordType.contains(ItemSlashBlade.SwordType.Enchanted);
