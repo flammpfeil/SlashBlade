@@ -29,7 +29,7 @@ public class SilentUpdateItem {
 
         if(!owner.worldObj.isRemote
                 && (!isCurrent
-                || (!((EntityPlayer) owner).isUsingItem() && !((EntityPlayer) owner).isSwingInProgress))
+                || (((EntityPlayer) owner).getActiveItemStack() == null && !((EntityPlayer) owner).isSwingInProgress))
                 && stack.hasTagCompound() && stack.getTagCompound().hasKey("markdirty")) {
 
             for(Object objSlot : ((EntityPlayer) owner).inventoryContainer.inventorySlots){

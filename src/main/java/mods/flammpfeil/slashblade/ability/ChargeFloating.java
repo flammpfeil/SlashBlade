@@ -1,5 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
+import net.minecraft.init.Enchantments;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.enchantment.Enchantment;
@@ -18,14 +20,14 @@ public class ChargeFloating {
         EntityLivingBase target = event.entityLiving;
         if(target == null) return;
         if(!(target instanceof EntityPlayer)) return;
-        if(!((EntityPlayer) target).isUsingItem()) return;
+        if(target.getActiveItemStack() == null) return;
 
-        ItemStack stack = target.getHeldItem();
+        ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId,stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling,stack);
         if(level <= 0) return;
 
         if(((EntityPlayer) target).motionY < 0)

@@ -38,8 +38,8 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
 
 
 
-                    Map<Integer,Integer> oldItemEnchants = EnchantmentHelper.getEnchantments(requiredStateBlade);
-                    for(Map.Entry<Integer,Integer> enchant: oldItemEnchants.entrySet())
+                    Map<Enchantment,Integer> oldItemEnchants = EnchantmentHelper.getEnchantments(requiredStateBlade);
+                    for(Map.Entry<Enchantment,Integer> enchant: oldItemEnchants.entrySet())
                     {
                         int level = EnchantmentHelper.getEnchantmentLevel(enchant.getKey(),curIs);
                         if(level < enchant.getValue()){
@@ -114,11 +114,11 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                     newTag.setFloat(ItemSlashBlade.adjustZStr,oldTag.getFloat(ItemSlashBlade.adjustZStr));
 
                 {
-                    Map<Integer,Integer> newItemEnchants = EnchantmentHelper.getEnchantments(result);
-                    Map<Integer,Integer> oldItemEnchants = EnchantmentHelper.getEnchantments(curIs);
-                    for(int enchantIndex : oldItemEnchants.keySet())
+                    Map<Enchantment,Integer> newItemEnchants = EnchantmentHelper.getEnchantments(result);
+                    Map<Enchantment,Integer> oldItemEnchants = EnchantmentHelper.getEnchantments(curIs);
+                    for(Enchantment enchantIndex : oldItemEnchants.keySet())
                     {
-                        Enchantment enchantment = Enchantment.getEnchantmentById(enchantIndex);
+                        Enchantment enchantment = enchantIndex;
 
                         int destLevel = newItemEnchants.containsKey(enchantIndex) ? newItemEnchants.get(enchantIndex) : 0;
                         int srcLevel = oldItemEnchants.get(enchantIndex);
@@ -129,15 +129,15 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
 
                         boolean canApplyFlag = enchantment.canApply(result);
                         if(canApplyFlag){
-                            for(int curEnchantIndex : newItemEnchants.keySet()){
-                                if (curEnchantIndex != enchantIndex && !enchantment.canApplyTogether(Enchantment.getEnchantmentById(curEnchantIndex)))
+                            for(Enchantment curEnchantIndex : newItemEnchants.keySet()){
+                                if (curEnchantIndex != enchantIndex && !enchantment.canApplyTogether(curEnchantIndex))
                                 {
                                     canApplyFlag = false;
                                     break;
                                 }
                             }
                             if (canApplyFlag)
-                                newItemEnchants.put(Integer.valueOf(enchantIndex), Integer.valueOf(srcLevel));
+                                newItemEnchants.put(enchantIndex, Integer.valueOf(srcLevel));
                         }
                     }
                     EnchantmentHelper.setEnchantments(newItemEnchants, result);

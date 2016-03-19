@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.event.DropEventHandler;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.init.Enchantments;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
@@ -28,15 +29,15 @@ public class Yamato {
                 NBTTagCompound tag = new NBTTagCompound();
                 customblade.setTagCompound(tag);
 
-                customblade.addEnchantment(Enchantment.thorns, 1);
-                customblade.addEnchantment(Enchantment.featherFalling, 4);
-                customblade.addEnchantment(Enchantment.power, 5);
-                customblade.addEnchantment(Enchantment.punch, 2);
+                customblade.addEnchantment(Enchantments.thorns, 1);
+                customblade.addEnchantment(Enchantments.featherFalling, 4);
+                customblade.addEnchantment(Enchantments.power, 5);
+                customblade.addEnchantment(Enchantments.punch, 2);
 
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameTrue);
                 ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.EMERALD.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getDamageVsEntity());
                 ItemSlashBlade.TextureName.set(tag,"named/yamato");
                 ItemSlashBlade.ModelName.set(tag,"named/yamato");
                 ItemSlashBlade.SpecialAttackType.set(tag, 0);
@@ -58,7 +59,7 @@ public class Yamato {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameBrokend);
 
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.EMERALD.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getDamageVsEntity());
                 ItemSlashBlade.TextureName.set(tag, "named/yamato");
                 ItemSlashBlade.ModelName.set(tag, "named/yamato");
                 ItemSlashBlade.SpecialAttackType.set(tag, 0);
@@ -98,6 +99,8 @@ public class Yamato {
     }
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
+
+        //todo: drop point move enderdragon egg point
         DropEventHandler.registerEntityDrop("HardcoreEnderExpansion.Dragon", 1.0f, SlashBlade.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.yamato.broken", 1));
         DropEventHandler.registerEntityDrop("EnderDragon", 1.0f, SlashBlade.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.yamato.broken", 1));
     }

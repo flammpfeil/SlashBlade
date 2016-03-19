@@ -1,5 +1,7 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
+import net.minecraft.init.MobEffects;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +26,7 @@ public class CrystalHealing implements ISpecialEffect {
         if(player.worldObj.isRemote) return;
         if((player.worldObj.getTotalWorldTime() & 0xF) != 0xF) return; //16tick cicle
 
-        ItemStack blade = player.getHeldItem();
+        ItemStack blade = player.getHeldItem(EnumHand.MAIN_HAND);
         if(!SpecialEffects.isBlade(blade)) return;
 
         switch (SpecialEffects.isEffective(player,blade,this)){
@@ -34,8 +36,8 @@ public class CrystalHealing implements ISpecialEffect {
                 return;
         }
 
-        if(!player.isUsingItem()) return;
-        if(player.getItemInUseDuration() < ItemSlashBlade.RequiredChargeTick) return;
+        if(player.getActiveItemStack() == null) return;
+        if(player.getItemInUseMaxCount() < ItemSlashBlade.RequiredChargeTick) return;
 
         boolean hasBeaconEffect = false;
         for(Object current : player.getActivePotionEffects()){
@@ -49,7 +51,7 @@ public class CrystalHealing implements ISpecialEffect {
 
         if(!hasBeaconEffect) return;
 
-        player.addPotionEffect(new PotionEffect(Potion.regeneration.getId(),8,2));
+        player.addPotionEffect(new PotionEffect(MobEffects.regeneration,8,2));
 
     }
 

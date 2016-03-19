@@ -1,8 +1,17 @@
 package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
-import net.minecraft.util.BlockPos;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -10,17 +19,13 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.material.Material;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -54,18 +59,21 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         ticksExisted = 0;
     }
 
+
+    private static final DataParameter<Integer> ThrowerEntityID = EntityDataManager.<Integer>createKey(EntityJudgmentCutManager.class, DataSerializers.VARINT);
+
     @Override
     protected void entityInit() {
         //entityid
-        this.getDataWatcher().addObject(8, 0);
+        this.getDataManager().register(ThrowerEntityID, 0);
     }
 
     int getThrowerEntityID(){
-        return this.getDataWatcher().getWatchableObjectInt(8);
+        return this.getDataManager().get(ThrowerEntityID);
     }
 
     void setThrowerEntityID(int id){
-        this.getDataWatcher().updateObject(8,id);
+        this.getDataManager().set(ThrowerEntityID,id);
     }
 
     public EntityJudgmentCutManager(World par1World, EntityLivingBase entityLiving)
@@ -77,7 +85,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
 
         setThrowerEntityID(thrower.getEntityId());
 
-        blade = entityLiving.getHeldItem();
+        blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
             blade = null;
         }
@@ -85,8 +93,8 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
         alreadyHitEntity.clear();
         alreadyHitEntity.add(thrower);
-        alreadyHitEntity.add(thrower.ridingEntity);
-        alreadyHitEntity.add(thrower.riddenByEntity);
+        alreadyHitEntity.add(thrower.getRidingEntity());
+        alreadyHitEntity.addAll(thrower.getPassengers());
 
         //■生存タイマーリセット
         ticksExisted = 0;
@@ -114,7 +122,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
 
         if(this.blade == null && this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
             EntityPlayer player = (EntityPlayer)this.getThrower();
-            ItemStack stack = player.getHeldItem();
+            ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
             if(stack.getItem() instanceof ItemSlashBlade)
                 this.blade = stack;
         }
@@ -128,7 +136,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                 EntityPlayer player = (EntityPlayer)this.getThrower();
 
                 if(this.ticksExisted < 3)
-                    player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.endermen.portal", 1.0F, 1.0F);
+                    player.playSound(SoundEvents.entity_endermen_teleport, 1.0F, 1.0F);
 
                 if(this.ticksExisted < 8){
                     for(int i = 0;i < 20; i++)
@@ -151,7 +159,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                                 (this.rand.nextDouble() - 0.5D) * 2.0D, -this.rand.nextDouble(), (this.rand.nextDouble() - 0.5D) * 2.0D);
                                 */
                     }
-                    player.worldObj.playSoundAtEntity(player, "mob.blaze.hit", 1.0F, 1.0F);
+                    player.playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
                 }
             }
         }
@@ -173,7 +181,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                             int stanTicks = 40;
 
                             if(!curEntity.worldObj.isRemote){
-                                ((EntityLivingBase) curEntity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(), stanTicks, 30, true,false));
+                                ((EntityLivingBase) curEntity).addPotionEffect(new PotionEffect(MobEffects.moveSlowdown, stanTicks, 30, true,false));
                             }
 
                             StunManager.setStun((EntityLivingBase) curEntity, stanTicks);
@@ -204,7 +212,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                     ItemSlashBlade bladeItem = (ItemSlashBlade)blade.getItem();
 
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, blade);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, blade);
                     float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
                     for(Entity curEntity : list){
                         if(!(this.getThrower() instanceof EntityPlayer)) continue;
@@ -398,11 +406,6 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
-    /**
-     * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
-     */
-    @Override
-    public void mountEntity(Entity par1Entity) {}
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,7 +27,7 @@ public class SneakMove {
         EntityLivingBase entity = event.entityLiving;
         if(entity == null) return;
 
-        IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+        IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
         if (iattributeinstance.getModifier(skillSneakMoveSpeedBoostModifierUUID) != null)
         {
@@ -35,7 +36,7 @@ public class SneakMove {
 
         if(!entity.isSneaking()) return;
 
-        ItemStack heldItem = entity.getHeldItem();
+        ItemStack heldItem = entity.getHeldItem(EnumHand.MAIN_HAND);
         if(heldItem == null) return;
         if(!(heldItem.getItem() != null && heldItem.getItem() instanceof ItemSlashBlade)) return;
 
@@ -46,7 +47,7 @@ public class SneakMove {
     @SideOnly(Side.CLIENT)
     public void onFOVUpdateEvent(FOVUpdateEvent event){
         if(event.entity == null) return;
-        IAttributeInstance iattributeinstance = event.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+        IAttributeInstance iattributeinstance = event.entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
         if (iattributeinstance.getModifier(skillSneakMoveSpeedBoostModifierUUID) != null)
         {

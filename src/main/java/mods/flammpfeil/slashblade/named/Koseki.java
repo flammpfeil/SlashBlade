@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.init.Enchantments;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -46,8 +47,8 @@ public class Koseki {
 
         SpecialEffects.addEffect(customblade,SpecialEffects.WitherEdge);
 
-        customblade.addEnchantment(Enchantment.thorns,1);
-        customblade.addEnchantment(Enchantment.power,2);
+        customblade.addEnchantment(Enchantments.thorns,1);
+        customblade.addEnchantment(Enchantments.power,2);
 
         SlashBlade.registerCustomItemStack(name, customblade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);

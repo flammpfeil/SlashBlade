@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.network;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -35,7 +36,7 @@ public class MessageRangeAttack implements IMessage, IMessageHandler<MessageRang
     public IMessage onMessage(MessageRangeAttack message, MessageContext ctx) {
         EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
 
-        ItemStack stack = entityPlayer.getHeldItem();
+        ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
         if(stack != null && stack.getItem() instanceof ItemSlashBlade){
             ((ItemSlashBlade)stack.getItem()).doRangeAttack(stack,entityPlayer,message.mode);
         }

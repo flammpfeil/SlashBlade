@@ -8,7 +8,6 @@ import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,7 +43,7 @@ public class AchievementsExtendedGuiHandler {
 
         /*
         int currentPage = (Integer)ReflectionHelper.getPrivateValue(GuiAchievements.class,guiAchievements,"currentPage");
-        if(0 < currentPage && AchievementPage.getAchievementPage(currentPage).getName().equals(StatCollector.translateToLocal("flammpfeil.slashblade")))
+        if(0 < currentPage && AchievementPage.getAchievementPage(currentPage).getName().equals(I18n.translateToLocal("flammpfeil.slashblade")))
         */
         {
 

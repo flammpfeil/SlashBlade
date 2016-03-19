@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.event.DropEventHandler;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
@@ -195,8 +196,8 @@ public class Doutanuki {
                     ItemSlashBlade.KillCount.add(tag,1000);
 
 
-                event.entityLiving.setCurrentItemOrArmor(0, blade);
-                ((EntityZombie)event.entityLiving).setEquipmentDropChance(0,dropRate);
+                event.entityLiving.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, blade);
+                ((EntityZombie)event.entityLiving).setDropChance(EntityEquipmentSlot.MAINHAND,dropRate);
             }
         }
 

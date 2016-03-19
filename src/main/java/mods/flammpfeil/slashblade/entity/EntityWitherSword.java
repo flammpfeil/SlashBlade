@@ -4,6 +4,10 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.MobEffects;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -26,20 +30,21 @@ public class EntityWitherSword extends EntitySummonedSwordBase {
         super(par1World, entityLiving, AttackLevel, roll);
     }
 
+    private static final DataParameter<Boolean> Burst = EntityDataManager.<Boolean>createKey(EntityWitherSword.class, DataSerializers.BOOLEAN);
     @Override
     protected void entityInit() {
         super.entityInit();
 
 
         //burst
-        this.getDataWatcher().addObject(11, (byte)0);
+        this.getDataManager().register(Burst, false);
     }
 
     public boolean getBurst(){
-        return this.getDataWatcher().getWatchableObjectByte(11) != 0;
+        return this.getDataManager().get(Burst);
     }
     public void setBurst(boolean value){
-        this.getDataWatcher().updateObject(11,value ? (byte)1 : (byte)0);
+        this.getDataManager().set(Burst,value);
     }
 
     @Override
@@ -68,7 +73,7 @@ public class EntityWitherSword extends EntitySummonedSwordBase {
                 ((EntityLivingBase) target).hurtTime = 1;
 
                 if(!getBurst())
-                    ((EntityLivingBase)target).addPotionEffect(new PotionEffect(Potion.wither.getId(), 20 * 5, 1));
+                    ((EntityLivingBase)target).addPotionEffect(new PotionEffect(MobEffects.wither, 20 * 5, 1));
 
                 ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
             }

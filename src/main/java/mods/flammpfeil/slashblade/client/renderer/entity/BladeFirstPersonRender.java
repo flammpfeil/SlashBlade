@@ -7,23 +7,22 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
 
-import java.time.chrono.MinguoEra;
 import java.util.EnumSet;
 
 /**
@@ -47,7 +46,7 @@ public class BladeFirstPersonRender {
 
         EntityPlayerSP player = mc.thePlayer;
 
-        ItemStack stack = player.getHeldItem();
+        ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
         if (stack == null) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
@@ -85,7 +84,10 @@ public class BladeFirstPersonRender {
             float partialTicks = event.partialTicks;
 
             if (swordType.contains(ItemSlashBlade.SwordType.NoScabbard)) {
-                //todo :LayerHeldItem“I‚Érendering‚·‚é
+                //todo :LayerHeldItemï¿½Iï¿½ï¿½renderingï¿½ï¿½ï¿½ï¿½
+
+
+                //todo :primary hand select
 
                 func_178110_a(player, partialTicks);
 
@@ -118,7 +120,7 @@ public class BladeFirstPersonRender {
     void renderNakedBlade(EntityLivingBase entity, float partialTicks){
 
 
-        ItemStack stack = entity.getHeldItem();
+        ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
         if (stack == null) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
@@ -226,7 +228,7 @@ public class BladeFirstPersonRender {
         }
         */
 
-        ItemStack stack = entity.getHeldItem();
+        ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
         if (stack == null) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
@@ -241,7 +243,7 @@ public class BladeFirstPersonRender {
 
         int charge;
         if (entity instanceof EntityPlayer)
-            charge = ((EntityPlayer) entity).getItemInUseDuration();
+            charge = ((EntityPlayer) entity).getItemInUseMaxCount();
         else
             charge = 0;
 
@@ -314,26 +316,26 @@ public class BladeFirstPersonRender {
 
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
-            //‘ÌŠi•â³ config‚æ‚è
+            //ï¿½ÌŠiï¿½â³ configï¿½ï¿½ï¿½
             GL11.glTranslatef(ax, ay, az);
 
-            //˜ˆÊ’u‚Ö
+            //ï¿½ï¿½ï¿½Ê’uï¿½ï¿½
             GL11.glTranslatef(0.25f, 0.4f, -0.5f);
 
 
             {
-                //‘S‘ÌƒXƒP[ƒ‹•â³
+                //ï¿½Sï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½â³
                 float scale = (float) (0.075f);
                 GL11.glScalef(scale, scale, scale);
             }
 
-            //æ‚ğŒã‚ë‚Ö
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             GL11.glRotatef(60.0f, 1, 0, 0);
 
-            //æ‚ğŠO‚Ö
+            //ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½
             GL11.glRotatef(-20.0f, 0, 0, 1);
 
-            //n‚ğ‰º‚ÉŒü‚¯‚éi‘¾“·‚µ
+            //ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½ÉŒï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             GL11.glRotatef(90.0f, 0, 1.0f, 0);
 
 

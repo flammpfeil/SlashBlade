@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
+import net.minecraft.init.MobEffects;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
@@ -41,7 +42,7 @@ public class WitherEdge implements ISpecialEffect{
                 break;
         }
 
-        event.target.addPotionEffect(new PotionEffect(Potion.wither.getId(),20 * 5,1));
+        event.target.addPotionEffect(new PotionEffect(MobEffects.wither,20 * 5,1));
         player.onEnchantmentCritical(event.target);
 
     }
@@ -65,12 +66,12 @@ public class WitherEdge implements ISpecialEffect{
                 return;
         }
 
-        PotionEffect haste = player.getActivePotionEffect(Potion.digSpeed);
+        PotionEffect haste = player.getActivePotionEffect(MobEffects.digSpeed);
         int check = haste != null ? haste.getAmplifier() != 1 ? 3 : 4 : 2;
 
         if (player.swingProgressInt != check) return;
 
-        player.addPotionEffect(new PotionEffect(Potion.wither.getId(),20 * 5,1));
+        player.addPotionEffect(new PotionEffect(MobEffects.wither,20 * 5,1));
 
     }
 

@@ -1,5 +1,8 @@
 package mods.flammpfeil.slashblade.ability;
 
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
@@ -53,8 +56,8 @@ public class JustGuard {
 
         EntityLivingBase el = e.entityLiving;
 
-        ItemStack stack = e.entityLiving.getHeldItem();
-        if(el instanceof  EntityPlayer && ((EntityPlayer)el).isUsingItem() && stack != null && stack.getItem() instanceof ItemSlashBlade){
+        ItemStack stack = e.entityLiving.getHeldItem(EnumHand.MAIN_HAND);
+        if(el instanceof  EntityPlayer && el.getActiveItemStack() != null && stack != null && stack.getItem() instanceof ItemSlashBlade){
 
             //mobからの攻撃は常にguard可能
             boolean guardable = e.source.getEntity() != null;
@@ -91,7 +94,7 @@ public class JustGuard {
                 ItemSlashBlade.OnJumpAttacked.set(tag,false);
 
                 ChargeStart.set(el.getEntityData(), interval);
-                e.entityLiving.worldObj.playSoundAtEntity(el, "mob.blaze.hit", 1.0F, 1.0F);
+                el.playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
 
 
                 StylishRankManager.addRankPoint(el, StylishRankManager.AttackTypes.JustGuard);
@@ -108,7 +111,7 @@ public class JustGuard {
     public void LivingUpdateEvent(LivingEvent.LivingUpdateEvent e){
         EntityLivingBase el = e.entityLiving;
 
-        ItemStack stack = el.getHeldItem();
+        ItemStack stack = el.getHeldItem(EnumHand.MAIN_HAND);
         if(stack != null && stack.getItem() instanceof ItemSlashBlade){
 
             long cs = ChargeStart.get(el.getEntityData());

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.init.Enchantments;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -29,8 +30,8 @@ public class Tagayasan {
         NBTTagCompound tag = new NBTTagCompound();
         customblade.setTagCompound(tag);
 
-        customblade.addEnchantment(Enchantment.unbreaking,3);
-        customblade.addEnchantment(Enchantment.smite,3);
+        customblade.addEnchantment(Enchantments.unbreaking,3);
+        customblade.addEnchantment(Enchantments.smite,3);
         String name = Tagayasan;
         ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
         ItemSlashBladeNamed.CurrentItemName.set(tag, name);

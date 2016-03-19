@@ -3,7 +3,6 @@ package mods.flammpfeil.slashblade.core;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
@@ -16,13 +15,14 @@ import mods.flammpfeil.slashblade.util.KeyBindingEx;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Items;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -41,10 +41,11 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -157,7 +158,7 @@ public class CoreProxyClient extends CoreProxy {
                 Minecraft mc = Minecraft.getMinecraft();
                 EntityPlayerSP player = mc.thePlayer;
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
-                    ItemStack item = player.getHeldItem();
+                    ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
                     if(item != null && item.getItem() instanceof ItemSlashBlade){
 
                         mc.playerController.updateController();
@@ -178,7 +179,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(!mc.inGameHasFocus) return;
                 if(mc.currentScreen != null) return;
 
-                ItemStack item = player.getHeldItem();
+                ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
                 if(item == null) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
@@ -204,7 +205,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(!mc.inGameHasFocus) return;
                 if(mc.currentScreen != null) return;
 
-                ItemStack item = player.getHeldItem();
+                ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
                 if(item == null) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
@@ -234,7 +235,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(!mc.inGameHasFocus) return;
                 if(mc.currentScreen != null) return;
 
-                ItemStack item = player.getHeldItem();
+                ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
                 if(item == null) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
@@ -263,10 +264,10 @@ public class CoreProxyClient extends CoreProxy {
         RenderManager rm = Minecraft.getMinecraft().getRenderManager();
 
         for(Render render : Iterables.concat(rm.getSkinMap().values(), rm.entityRenderMap.values())){
-            if(!(render instanceof RendererLivingEntity))
+            if(!(render instanceof RenderLivingBase))
                 continue;
 
-            RendererLivingEntity rle = (RendererLivingEntity) render;
+            RenderLivingBase rle = (RenderLivingBase) render;
 
 
             if(!(rle.getMainModel() instanceof ModelBiped))
@@ -280,7 +281,16 @@ public class CoreProxyClient extends CoreProxy {
                 layers.add(new LayerSlashBlade(rle));
             }
 
-            rle.addLayer(new LayerSlashBlade(rle));
+            Method addLayer = ReflectionHelper.findMethod(RenderLivingBase.class, (RenderLivingBase)rle, new String[]{"addLayer","func_177094_a"}, LayerRenderer.class);
+
+            try {
+                addLayer.setAccessible(true);
+                addLayer.invoke(rle, new LayerSlashBlade(rle));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -304,7 +314,7 @@ public class CoreProxyClient extends CoreProxy {
                 double d0 = len;;
                 mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
                 double d1 = d0;
-                Vec3 vec3 = entity.getPositionEyes(partialTicks);
+                Vec3d vec3 = entity.getPositionEyes(partialTicks);
 
 
                 if (mc.objectMouseOver != null)
@@ -312,10 +322,10 @@ public class CoreProxyClient extends CoreProxy {
                     d1 = mc.objectMouseOver.hitVec.distanceTo(vec3);
                 }
 
-                Vec3 vec31 = entity.getLook(partialTicks);
-                Vec3 vec32 = vec3.addVector(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0);
+                Vec3d vec31 = entity.getLook(partialTicks);
+                Vec3d vec32 = vec3.addVector(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0);
                 Entity pointedEntity = null;
-                Vec3 vec33 = null;
+                Vec3d vec33 = null;
                 float f = 1.0F;
                 List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
                     public boolean apply(Entity p_apply_1_) {
@@ -332,7 +342,7 @@ public class CoreProxyClient extends CoreProxy {
                     {
                         float f2 = entity1.getCollisionBorderSize();
                         AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double) f2, (double) f2, (double)f2);
-                        MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+                        RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
 
                         if (axisalignedbb.isVecInside(vec3))
                         {
@@ -349,7 +359,7 @@ public class CoreProxyClient extends CoreProxy {
 
                             if (d3 < d2 || d2 == 0.0D)
                             {
-                                if (entity1 == entity1.ridingEntity && !entity1.canRiderInteract())
+                                if (entity1 == entity.getRidingEntity() && !entity1.canRiderInteract())
                                 {
                                     if (d2 == 0.0D)
                                     {
@@ -370,7 +380,7 @@ public class CoreProxyClient extends CoreProxy {
 
                 if (pointedEntity != null && (d2 < d1 || mc.objectMouseOver == null))
                 {
-                    mc.objectMouseOver = new MovingObjectPosition(pointedEntity, vec33);
+                    mc.objectMouseOver = new RayTraceResult(pointedEntity, vec33);
 
                     if (pointedEntity instanceof EntityLivingBase || pointedEntity instanceof EntityItemFrame)
                     {

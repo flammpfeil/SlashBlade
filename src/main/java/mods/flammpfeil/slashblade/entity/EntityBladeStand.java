@@ -1,17 +1,22 @@
 package mods.flammpfeil.slashblade.entity;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Map;
@@ -34,25 +39,31 @@ public class EntityBladeStand extends Entity {
         this.setBlade(blade);
     }
 
+    private static final DataParameter<Optional<ItemStack>> WatchIndexBlade 
+            = EntityDataManager.<Optional<ItemStack>>createKey(EntityBladeStand.class, DataSerializers.OPTIONAL_ITEM_STACK);
+    private static final DataParameter<Integer> WatchIndexFlipState 
+            = EntityDataManager.<Integer>createKey(EntityBladeStand.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> WatchIndexStandType
+            = EntityDataManager.<Integer>createKey(EntityBladeStand.class, DataSerializers.VARINT);
+    
     @Override
     protected void entityInit() {
-        //this.dataWatcher.addObject(WatchIndexBlade, SlashBlade.getCustomBlade(SlashBlade.modid,"flammpfeil.slashblade.named.muramasa"));
-        this.dataWatcher.addObjectByDataType(WatchIndexBlade, 5); //ItemStack
-        this.dataWatcher.addObject(WatchIndexStandType, 0);
-        this.dataWatcher.addObject(WatchIndexFlipState, 0);
+        //this.getDataManager().register(WatchIndexBlade, SlashBlade.getCustomBlade(SlashBlade.modid,"flammpfeil.slashblade.named.muramasa"));
+        this.getDataManager().register(WatchIndexBlade, Optional.<ItemStack>absent()); //ItemStack
+        this.getDataManager().register(WatchIndexStandType, 0);
+        this.getDataManager().register(WatchIndexFlipState, 0);
     }
 
 
-    static final int WatchIndexFlipState = 10;
     public int getFlip() {
-        return this.dataWatcher.getWatchableObjectInt(WatchIndexFlipState);
+        return this.getDataManager().get(WatchIndexFlipState);
     }
     public void setFlip(int value) {
         if(hasBlade() && getBlade().getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(getBlade())){
             if(2 <= value)
                 value = 0;
         }
-        this.dataWatcher.updateObject(WatchIndexFlipState,value);
+        this.getDataManager().set(WatchIndexFlipState,value);
     }
     public void doFlip(){
         setFlip(Math.abs((getFlip() + 1) % 4));
@@ -81,20 +92,18 @@ public class EntityBladeStand extends Entity {
         }
     }
 
-    static final int WatchIndexStandType = 9;
     public int getStandType(){
-        return this.dataWatcher.getWatchableObjectInt(WatchIndexStandType);
+        return this.getDataManager().get(WatchIndexStandType);
     }
     public void setStandType(int value){
-        this.dataWatcher.updateObject(WatchIndexStandType,value);
+        this.getDataManager().set(WatchIndexStandType,value);
     }
     public static StandType getType(EntityBladeStand e){
         return StandType.getType(e.getStandType());
     }
 
-    static final int WatchIndexBlade = 8;
     public ItemStack getBlade(){
-        return this.dataWatcher.getWatchableObjectItemStack(WatchIndexBlade);
+        return this.getDataManager().get(WatchIndexBlade).orNull();
     }
     public void setBlade(ItemStack blade){
         if(blade != null && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
@@ -107,7 +116,8 @@ public class EntityBladeStand extends Entity {
             //ItemSlashBlade.PrevExp.remove(tag);
         }
 
-        this.dataWatcher.updateObject(WatchIndexBlade,blade);
+        this.getDataManager().set(WatchIndexBlade, Optional.fromNullable(blade));
+        this.getDataManager().setDirty(WatchIndexBlade);
     }
     public boolean hasBlade(){
         return getBlade() != null;
@@ -200,9 +210,8 @@ public class EntityBladeStand extends Entity {
         }
 
         BlockPos pos = new BlockPos(this.posX,this.posY,this.posZ);
-        Block block = this.worldObj.getBlockState(pos).getBlock();
-        if(!block.isAir(this.worldObj, pos)
-                && block.getBlockHardness(this.worldObj, pos) < 0){
+        if(!this.worldObj.isAirBlock(pos)
+                && this.worldObj.getBlockState(pos).getBlockHardness(this.worldObj, pos) < 0){
 
             this.setPosition(this.posX,this.posY+1.5,this.posZ);
         }
@@ -224,12 +233,12 @@ public class EntityBladeStand extends Entity {
 
             EntityPlayer p = (EntityPlayer)e;
 
-            ItemStack stack = p.getHeldItem();
+            ItemStack stack = p.getHeldItem(EnumHand.MAIN_HAND);
             if(stack == null && this.hasBlade()){
 
                 AchievementList.triggerCraftingAchievement(this.getBlade(), p);
 
-                p.setCurrentItemOrArmor(0, this.getBlade()); 
+                p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, this.getBlade());
                 this.setBlade(null);
 
                 if(getType(this) == StandType.Naked)
@@ -243,7 +252,7 @@ public class EntityBladeStand extends Entity {
 
                 this.setBlade(stack);
 
-                p.setCurrentItemOrArmor(0,null);
+                p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
 
                 return true;
             }
@@ -273,17 +282,20 @@ public class EntityBladeStand extends Entity {
     }
 
     @Override
-    public boolean interactFirst(EntityPlayer p_130002_1_) {
+    public boolean processInitialInteract(EntityPlayer player, ItemStack stack, EnumHand hand) {
 
-        if(p_130002_1_.isSneaking()){
-            doFlip();
-            return true;
+        if(hand == EnumHand.MAIN_HAND){
+
+            if(player.isSneaking()){
+                doFlip();
+                return true;
+            }
+
+            if(setStandBlade(player))
+                return true;
         }
 
-        if(setStandBlade(p_130002_1_))
-            return true;
-
-        return super.interactFirst(p_130002_1_);
+        return super.processInitialInteract(player, stack, hand);
     }
 
     @Override

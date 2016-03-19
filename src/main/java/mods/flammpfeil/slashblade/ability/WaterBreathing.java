@@ -1,5 +1,8 @@
 package mods.flammpfeil.slashblade.ability;
 
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.enchantment.Enchantment;
@@ -20,14 +23,14 @@ public class WaterBreathing {
         EntityLivingBase target = event.entityLiving;
         if(target == null) return;
         if(!(target instanceof EntityPlayer)) return;
-        if(!((EntityPlayer) target).isUsingItem()) return;
+        if(target.getActiveItemStack() == null) return;
 
-        ItemStack stack = target.getHeldItem();
+        ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.respiration.effectId, stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.respiration, stack);
         if(level <= 0) return;
 
         float speedfactor = 0.05f;
@@ -36,6 +39,6 @@ public class WaterBreathing {
         if(target.isInWater())
             target.moveFlying(target.moveStrafing,target.moveForward,0.1f + speedfactor);
 
-        target.addPotionEffect(new PotionEffect(Potion.waterBreathing.getId(),2,level-1,true,false));
+        target.addPotionEffect(new PotionEffect(MobEffects.waterBreathing,2,level-1,true,false));
     }
 }

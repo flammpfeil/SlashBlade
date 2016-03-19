@@ -1,6 +1,9 @@
 package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -11,9 +14,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.EnumSet;
@@ -35,7 +36,7 @@ public class EnemyStep {
 
         if(!target.worldObj.isRemote) return;
 
-        ItemStack stack = target.getHeldItem();
+        ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
@@ -130,16 +131,16 @@ public class EnemyStep {
         ReflectionHelper.setPrivateValue(EntityLivingBase.class, target, 0, "jumpTicks", "field_70773_bE");
     }
 
-    public boolean hasCollidWallBlocks(Entity target, Vec3 pos)
+    public boolean hasCollidWallBlocks(Entity target, Vec3d pos)
     {
         AxisAlignedBB bb = this.getPositionAABB(target, pos);
         bb = bb.expand(1.0, 0.0, 1.0);
-        List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
+        List<AxisAlignedBB> blockCollidList = target.worldObj.getCubes(target, bb);
 
         return !blockCollidList.isEmpty();
     }
 
-    public AxisAlignedBB getPositionAABB(Entity target, Vec3 pos) {
+    public AxisAlignedBB getPositionAABB(Entity target, Vec3d pos) {
         return getPositionAABB(target, pos.xCoord, pos.yCoord, pos.zCoord);
     }
     public AxisAlignedBB getPositionAABB(Entity target, double x, double y, double z)
@@ -176,7 +177,7 @@ public class EnemyStep {
         EntityLivingBase target = event.entityLiving;
         if(target == null) return;
 
-        ItemStack stack = target.getHeldItem();
+        ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 

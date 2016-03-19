@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.item;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.*;
@@ -7,12 +8,18 @@ import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.entity.EntityDrive;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
-import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.math.*;
+import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.*;
@@ -25,7 +32,6 @@ import mods.flammpfeil.slashblade.util.EnchantHelper;
 import mods.flammpfeil.slashblade.util.InventoryUtility;
 import mods.flammpfeil.slashblade.util.SilentUpdateItem;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
-import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
@@ -41,7 +47,6 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -251,8 +256,8 @@ public class ItemSlashBlade extends ItemSword {
             if(stack.isItemEnchanted() && entity instanceof EntityLivingBase){
 
                 ItemStack tinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
-                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, stack);
-                int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, stack);
+                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.unbreaking, stack);
+                int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.looting, stack);
 
                 Random rand = ((EntityLivingBase)entity).getRNG();
 
@@ -279,12 +284,12 @@ public class ItemSlashBlade extends ItemSword {
                 int enchCount = stack.getEnchantmentTagList().tagCount();
                 if(5 < enchCount){
                     if(0 < unbreakingLevel){
-                        Map enchantments = EnchantmentHelper.getEnchantments(stack);
+                        Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
 
                         if(unbreakingLevel == 1)
-                            enchantments.remove(Enchantment.unbreaking.effectId);
+                            enchantments.remove(Enchantments.unbreaking);
                         else
-                            enchantments.put(Enchantment.unbreaking.effectId,unbreakingLevel-1);
+                            enchantments.put(Enchantments.unbreaking,unbreakingLevel-1);
 
                         ItemStack rareTinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
                         rareTinySoul.addEnchantment(EnchantHelper.getEnchantmentRare(rand),1);
@@ -320,7 +325,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	public EntityLivingBase setDaunting(EntityLivingBase entity){
 		if(!entity.worldObj.isRemote){
-            entity.addPotionEffect(new PotionEffect(Potion.moveSlowdown.getId(),10,30,true,false));
+            entity.addPotionEffect(new PotionEffect(MobEffects.moveSlowdown,10,30,true,false));
 		}
 
         StunManager.setStun(entity, 20);
@@ -360,25 +365,25 @@ public class ItemSlashBlade extends ItemSword {
         if(!stack.isItemEnchanted())
             return;
 
-        int lv = EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, stack);
+        int lv = EnchantmentHelper.getEnchantmentLevel(Enchantments.fortune, stack);
 
-        int slots;
+        EntityEquipmentSlot[] slots = new EntityEquipmentSlot[]{};
 
         switch(lv){
 
             case 0:
                 return;
             case 1:
-                slots = 1;
+                slots = new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND,EntityEquipmentSlot.OFFHAND};
                 break;
             default:
-                slots = 5;
+                slots = EntityEquipmentSlot.values();
                 break;
         }
 
-        for(int i = 0; i < slots; i++){
+        for(EntityEquipmentSlot slot : slots){
             try{
-                ((EntityLiving) entity).setEquipmentDropChance(i, 0.99f);
+                ((EntityLiving) entity).setDropChance(slot, 0.99f);
             }catch(Exception e){
             }
         }
@@ -452,7 +457,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 {
 
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, stack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, stack);
                     if(0 < level){
                         target.addVelocity(0.0, 0.3D, 0.0);
                     }else{
@@ -477,7 +482,7 @@ public class ItemSlashBlade extends ItemSword {
 
             case SlashDim:
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.punch, stack);
                 if(0 < level){
                     target.motionX = 0;
                     target.motionY = 0;
@@ -520,22 +525,23 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World worldIn, Block blockIn, BlockPos pos, EntityLivingBase playerIn) {
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState blockIn, BlockPos pos, EntityLivingBase entityLiving) {
         if (blockIn.getBlockHardness(worldIn, pos) != 0.0)
-            stack.damageItem(1, playerIn);
+            stack.damageItem(1, entityLiving);
 
         return true;
     }
 
-    /**
-     * Gets a map of item attribute modifiers, used by ItemSword to increase hit damage.
-     */
-	@Override
-    public Multimap getItemAttributeModifiers()
-    {
-        Multimap multimap = super.getItemAttributeModifiers();
-        multimap.removeAll(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName());
-        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Weapon modifier", (double) defaultBaseAttackModifier, 0));
+    @Override
+    public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot equipmentSlot) {
+        Multimap<String, AttributeModifier> multimap = HashMultimap.<String, AttributeModifier>create();
+
+        if (equipmentSlot == EntityEquipmentSlot.MAINHAND)
+        {
+            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", (double)defaultBaseAttackModifier, 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4000000953674316D, 0));
+        }
+
         return multimap;
     }
 
@@ -631,7 +637,6 @@ public class ItemSlashBlade extends ItemSword {
         return result;
     }
 
-
 	public void setPlayerEffect(ItemStack itemStack, ComboSequence current, EntityPlayer player){
 
 		EnumSet<SwordType> swordType = getSwordType(itemStack);
@@ -644,7 +649,7 @@ public class ItemSlashBlade extends ItemSword {
                 player.fallDistance = 0;
 
                 if(!OnJumpAttacked.get(tag)){
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, itemStack);
                     if(level == 0){
                         player.motionY = 0;
                         player.addVelocity(0.0, 0.3D,0.0);
@@ -654,11 +659,12 @@ public class ItemSlashBlade extends ItemSword {
 			break;
 
 		case Battou:
+
 			if (!player.onGround){
                 player.fallDistance = 0;
 
 				if(!OnJumpAttacked.get(tag)){
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, itemStack);
                     if(level == 0){
                         player.motionY = 0;
                         player.addVelocity(0.0, 0.2D,0.0);
@@ -706,6 +712,21 @@ public class ItemSlashBlade extends ItemSword {
             if(current == ComboSequence.SSlashBlade){
                 doSlashBladeAttack(itemStack,player,current);
             }
+
+            {
+                double d0 = (double)(-MathHelper.sin(player.rotationYaw * 0.017453292F));
+                double d1 = (double)MathHelper.cos(player.rotationYaw * 0.017453292F);
+
+                player.playSound(SoundEvents.entity_player_attack_sweep, 1.0F, 1.0F);
+                if (player.worldObj instanceof WorldServer)
+                {
+                    ((WorldServer)player.worldObj).spawnParticle(EnumParticleTypes.SWEEP_ATTACK
+                            , player.posX + d0, player.posY + (double)player.height * 0.5D, player.posZ + d1
+                            , 0
+                            , d0, 0.0D, d1
+                            , 0.5D, new int[0]);
+                }
+            }
         }
 	}
 
@@ -749,11 +770,10 @@ public class ItemSlashBlade extends ItemSword {
 		return false;
 	}
 
-	@Override
-	public ItemStack onItemRightClick(ItemStack sitem, World par2World,
-			EntityPlayer par3EntityPlayer) {
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 
-        SlashBlade.abilityJustGuard.setJustGuardState(par3EntityPlayer);
+        SlashBlade.abilityJustGuard.setJustGuardState(playerIn);
 
         /*
         if(!par3EntityPlayer.isUsingItem()){
@@ -766,19 +786,21 @@ public class ItemSlashBlade extends ItemSword {
         */
 
         //sitem.setItemDamage(1320);
-        NBTTagCompound tag = getItemTagCompound(sitem);
+        NBTTagCompound tag = getItemTagCompound(itemStackIn);
         long prevAttackTime = LastActionTime.get(tag);
-        long currentTime = par3EntityPlayer.worldObj.getTotalWorldTime();
+        long currentTime = playerIn.worldObj.getTotalWorldTime();
         ComboSequence comboSeq = getComboSequence(tag);
         //if(prevAttackTime + ComboInterval < currentTime)
         {
-            nextAttackSequence(sitem, comboSeq, par3EntityPlayer);
+            nextAttackSequence(itemStackIn, comboSeq, playerIn);
 
-            SilentUpdateItem.silentUpdateItem(par3EntityPlayer);
+            SilentUpdateItem.silentUpdateItem(playerIn);
         }
 
-		return super.onItemRightClick(sitem, par2World, par3EntityPlayer);
-	}
+        playerIn.setActiveHand(hand);
+
+        return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+    }
 
     public void nextAttackSequence(ItemStack stack, ComboSequence prevComboSeq, EntityPlayer player) {
         ComboSequence comboSeq = getNextComboSeq(stack, prevComboSeq, true, player);
@@ -827,7 +849,7 @@ public class ItemSlashBlade extends ItemSword {
                     if (curEntity instanceof EntityLivingBase)
                     {
                         float var4 = 0;
-                        var4 = EnchantmentHelper.func_152377_a(stack, ((EntityLivingBase)curEntity).getCreatureAttribute());
+                        var4 = EnchantmentHelper.getModifierForCreature(stack, ((EntityLivingBase)curEntity).getCreatureAttribute());
                         if(var4 > 0)
                             attack += var4;
                     }
@@ -878,7 +900,7 @@ public class ItemSlashBlade extends ItemSword {
             }
 
             float baseModif = getBaseAttackModifiers(tag);
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
             float magicDamage = baseModif;
             int rank = StylishRankManager.getStylishRank(player);
             if(5 <= rank){
@@ -904,7 +926,7 @@ public class ItemSlashBlade extends ItemSword {
         if(!world.isRemote){
 
             float baseModif = getBaseAttackModifiers(tag);
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
             float magicDamage = baseModif;
             int rank = StylishRankManager.getStylishRank(player);
             if(5 <= rank){
@@ -929,6 +951,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
     public void doChargeAttack(ItemStack stack, EntityPlayer par3EntityPlayer,boolean isJust){
+
         AchievementList.triggerAchievement(par3EntityPlayer, "enchanted");
 
         SpecialAttackBase sa = getSpecialAttack(stack);
@@ -943,45 +966,46 @@ public class ItemSlashBlade extends ItemSword {
 
     }
 
-
     @Override
-    public void onUsingTick(ItemStack stack, EntityPlayer player, int count)
-    {
+    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         EnumSet<SwordType> swordType = getSwordType(stack);
         int charge = this.getMaxItemUseDuration(stack) - count;
-        if(RequiredChargeTick == charge && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
-            player.onCriticalHit(player);
+        if(player instanceof EntityPlayer && RequiredChargeTick == charge && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
+            ((EntityPlayer) player).onCriticalHit(player);
         }
     }
 
-	@Override
-	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
-			EntityPlayer par3EntityPlayer, int par4) {
+    @Override
+    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
+        super.onPlayerStoppedUsing(stack, worldIn, entityLiving, timeLeft);
 
-		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+		NBTTagCompound tag = getItemTagCompound(stack);
 
 
-		int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
+		int var6 = this.getMaxItemUseDuration(stack) - timeLeft;
 
-		EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+		EnumSet<SwordType> swordType = getSwordType(stack);
 
 		if(RequiredChargeTick < var6 && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
 
 
-            SilentUpdateItem.forceUpdate(par1ItemStack, par3EntityPlayer);
+            SilentUpdateItem.forceUpdate(stack, entityLiving);
 
-            doSwingItem(par1ItemStack, par3EntityPlayer);
+            doSwingItem(stack, entityLiving);
 
             boolean isJust = false;
 
             if(var6 < (RequiredChargeTick + 4)) {
-                par3EntityPlayer.onEnchantmentCritical(par3EntityPlayer);
+                if(entityLiving instanceof EntityPlayer)
+                    ((EntityPlayer) entityLiving).onEnchantmentCritical(entityLiving);
                 isJust = true;
             }
 
-            doChargeAttack(par1ItemStack, par3EntityPlayer, isJust);
 
-            LastActionTime.set(tag, par3EntityPlayer.worldObj.getTotalWorldTime());
+            if(entityLiving instanceof EntityPlayer)
+                doChargeAttack(stack, (EntityPlayer)entityLiving, isJust);
+
+            LastActionTime.set(tag, entityLiving.worldObj.getTotalWorldTime());
 
 		}
         /*else{
@@ -994,15 +1018,15 @@ public class ItemSlashBlade extends ItemSword {
 
 	}
 
-    public NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier)
+    public NBTTagCompound getAttrTag(String attrName ,AttributeModifier par0AttributeModifier, EntityEquipmentSlot slot)
     {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         nbttagcompound.setString("AttributeName",attrName);
         nbttagcompound.setString("Name", par0AttributeModifier.getName());
         nbttagcompound.setDouble("Amount", par0AttributeModifier.getAmount());
         nbttagcompound.setInteger("Operation", par0AttributeModifier.getOperation());
-        nbttagcompound.setLong("UUIDMost", par0AttributeModifier.getID().getMostSignificantBits());
-        nbttagcompound.setLong("UUIDLeast", par0AttributeModifier.getID().getLeastSignificantBits());
+        nbttagcompound.setUniqueId("UUID",par0AttributeModifier.getID());
+        nbttagcompound.setString("Slot", slot.getName());
         return nbttagcompound;
     }
 
@@ -1013,8 +1037,8 @@ public class ItemSlashBlade extends ItemSword {
 
     	AxisAlignedBB bb = user.getEntityBoundingBox();
 
-    	Vec3 vec = user.getLookVec();
-        vec = new Vec3(vec.xCoord,0,vec.zCoord);
+    	Vec3d vec = user.getLookVec();
+        vec = new Vec3d(vec.xCoord,0,vec.zCoord);
     	vec = vec.normalize();
 
     	switch (combo) {
@@ -1164,11 +1188,19 @@ public class ItemSlashBlade extends ItemSword {
             tag.setTag("AttributeModifiers",attrTag);
 
             attrTag.appendTag(
-                    getAttrTag(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),new AttributeModifier(itemModifierUUID, "Weapon modifier", (double)(attackAmplifier + baseModif), 0))
+                    getAttrTag(
+                            SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName()
+                            , new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", (double)(attackAmplifier + baseModif), 0)
+                            , EntityEquipmentSlot.MAINHAND)
+            );
+            attrTag.appendTag(
+                    getAttrTag(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName()
+                            , new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4000000953674316D, 0)
+                            , EntityEquipmentSlot.MAINHAND)
             );
 
-            el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers());
-            el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers());
+            el.getAttributeMap().removeAttributeModifiers(sitem.getAttributeModifiers(EntityEquipmentSlot.MAINHAND));
+            el.getAttributeMap().applyAttributeModifiers(sitem.getAttributeModifiers(EntityEquipmentSlot.MAINHAND));
         }
     }
 
@@ -1491,7 +1523,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
 
-		if(sitem.equals(el.getHeldItem())){
+		if(sitem.equals(el.getHeldItem(EnumHand.MAIN_HAND))){
 
             if(!el.worldObj.isRemote){
                 int eId = TargetEntityId.get(tag);
@@ -1531,7 +1563,7 @@ public class ItemSlashBlade extends ItemSword {
                         TargetEntityId.set(tag,eId);
                     }else{
 
-                        if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, sitem)){
+                        if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, sitem)){
                             Entity target = par2World.getEntityByID(eId);
                             if(target != null && target instanceof EntityWither
                                     && 10 > el.getDistanceToEntity(target)
@@ -1539,7 +1571,7 @@ public class ItemSlashBlade extends ItemSword {
                             {
 
 
-                                Vec3 vec = el.getLookVec();
+                                Vec3d vec = el.getLookVec();
 
                                 double y = -vec.yCoord * 2.0;
                                 if(target.posY <= el.posY + 5.0)
@@ -1700,12 +1732,12 @@ public class ItemSlashBlade extends ItemSword {
 		EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 		if(swordType.contains(SwordType.Enchanted)){
 			if(swordType.contains(SwordType.Bewitched)){
-				par3List.add(String.format("§5%s", StatCollector.translateToLocal("flammpfeil.swaepon.info.bewitched")));
+				par3List.add(String.format("§5%s", I18n.translateToLocal("flammpfeil.swaepon.info.bewitched")));
 			}else{
-				par3List.add(String.format("§3%s", StatCollector.translateToLocal("flammpfeil.swaepon.info.magic")));
+				par3List.add(String.format("§3%s", I18n.translateToLocal("flammpfeil.swaepon.info.magic")));
 			}
 		}else{
-			par3List.add(String.format("§8%s", StatCollector.translateToLocal("flammpfeil.swaepon.info.noname")));
+			par3List.add(String.format("§8%s", I18n.translateToLocal("flammpfeil.swaepon.info.noname")));
 		}
     }
 
@@ -1736,7 +1768,7 @@ public class ItemSlashBlade extends ItemSword {
 
             String key = "flammpfeil.slashblade.specialattack." + getSpecialAttack(par1ItemStack).toString();
 
-            par3List.add(String.format("SA:%s",  StatCollector.translateToLocal(key)));
+            par3List.add(String.format("SA:%s",  I18n.translateToLocal(key)));
         }
     }
 
@@ -1799,7 +1831,7 @@ public class ItemSlashBlade extends ItemSword {
             int reqiredLevel = etag.getInteger(key);
 
             par3List.add(
-                    StatCollector.translateToLocal("slashblade.seffect.name." + key)
+                    I18n.translateToLocal("slashblade.seffect.name." + key)
                     + "§r "
                     + (reqiredLevel <= playerLevel ? "§c" : "§8") + reqiredLevel);
         }
@@ -1837,7 +1869,7 @@ public class ItemSlashBlade extends ItemSword {
 	}
 
 
-    public Vec3 getEntityToEntityVec(Entity root, Entity target, float yawLimit, float pitchLimit)
+    public Vec3d getEntityToEntityVec(Entity root, Entity target, float yawLimit, float pitchLimit)
     {
         double d0 = (target.posX + target.motionX) - root.posX;
         double d1 = (target.posZ + target.motionZ) - root.posZ;
@@ -1867,7 +1899,7 @@ public class ItemSlashBlade extends ItemSword {
         x = -Math.sin(yaw);
         z = Math.cos(yaw);
 
-        return new Vec3(x, y, z).normalize();
+        return new Vec3d(x, y, z).normalize();
     }
 
 	public void ReflectionProjecTile(Entity projecTile,EntityLivingBase player){
@@ -1881,10 +1913,10 @@ public class ItemSlashBlade extends ItemSword {
 
 
     	if(target != null){
-    		Vec3 vec = this.getEntityToEntityVec(projecTile,target,360.0f,360.0f);
+    		Vec3d vec = this.getEntityToEntityVec(projecTile,target,360.0f,360.0f);
 			InductionProjecTile(projecTile,player,vec);
     	}else{
-    		Vec3 vec = new Vec3(-projecTile.motionX,-projecTile.motionY,-projecTile.motionZ);
+    		Vec3d vec = new Vec3d(-projecTile.motionX,-projecTile.motionY,-projecTile.motionZ);
     		vec = vec.normalize();
 			InductionProjecTile(projecTile,player,vec);
 //    		InductionProjecTile(projecTile,player);
@@ -1896,13 +1928,13 @@ public class ItemSlashBlade extends ItemSword {
 	public void InductionProjecTile(Entity projecTile,EntityLivingBase user){
 		InductionProjecTile(projecTile,user,user.getLookVec());
 	}
-	public void InductionProjecTile(Entity projecTile,EntityLivingBase user,Vec3 dir){
+	public void InductionProjecTile(Entity projecTile,EntityLivingBase user,Vec3d dir){
 
         if (dir != null)
         {
         	//projecTile.velocityChanged = true;
 
-        	Vec3 vector = new Vec3(projecTile.motionX,projecTile.motionY,projecTile.motionZ);
+        	Vec3d vector = new Vec3d(projecTile.motionX,projecTile.motionY,projecTile.motionZ);
 
         	projecTile.motionX = dir.xCoord;
         	projecTile.motionY = dir.yCoord;
@@ -2017,7 +2049,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             InductionProjecTile(curEntity,entityLiving);
@@ -2031,7 +2063,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             Entity target = null;
@@ -2059,7 +2091,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             InductionProjecTile(curEntity,entityLiving);
@@ -2072,7 +2104,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             InductionProjecTile(curEntity,entityLiving);
@@ -2116,33 +2148,33 @@ public class ItemSlashBlade extends ItemSword {
     }
 
 
-    public MovingObjectPosition rayTrace(EntityLivingBase owner, double par1, float par3)
+    public RayTraceResult rayTrace(EntityLivingBase owner, double par1, float par3)
     {
-        Vec3 vec3 = getPosition(owner);
-        Vec3 vec31 = owner.getLook(par3);
-        Vec3 vec32 = vec3.addVector(vec31.xCoord * par1, vec31.yCoord * par1, vec31.zCoord * par1);
+        Vec3d vec3 = getPosition(owner);
+        Vec3d vec31 = owner.getLook(par3);
+        Vec3d vec32 = vec3.addVector(vec31.xCoord * par1, vec31.yCoord * par1, vec31.zCoord * par1);
         return owner.worldObj.rayTraceBlocks(vec3, vec32, false, false, true);
     }
-    public Vec3 getPosition(EntityLivingBase owner)
+    public Vec3d getPosition(EntityLivingBase owner)
     {
-        return new Vec3(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
+        return new Vec3d(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
     }
 
     public Entity getRayTrace(EntityLivingBase owner, double reachMax){
         Entity pointedEntity;
         float par1 = 1.0f;
 
-        MovingObjectPosition objectMouseOver = rayTrace(owner, reachMax, par1);
+        RayTraceResult objectMouseOver = rayTrace(owner, reachMax, par1);
         double reachMin = reachMax;
-        Vec3 entityPos = getPosition(owner);
+        Vec3d entityPos = getPosition(owner);
 
         if (objectMouseOver != null)
         {
             reachMin = objectMouseOver.hitVec.distanceTo(entityPos);
         }
 
-        Vec3 lookVec = owner.getLook(par1);
-        Vec3 reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
+        Vec3d lookVec = owner.getLook(par1);
+        Vec3d reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
         pointedEntity = null;
         float expandFactor = 1.0F;
         List<Entity> list = owner.worldObj.getEntitiesWithinAABBExcludingEntity(
@@ -2157,7 +2189,7 @@ public class ItemSlashBlade extends ItemSword {
 
             float borderSize = entity.getCollisionBorderSize();
             AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
-            MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
+            RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 
             if (axisalignedbb.isVecInside(entityPos))
             {
@@ -2173,7 +2205,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 if (d3 < tmpDistance || tmpDistance == 0.0D)
                 {
-                    if (entity == owner.ridingEntity && !entity.canRiderInteract())
+                    if (entity == owner.getRidingEntity() && !entity.canRiderInteract())
                     {
                         if (tmpDistance == 0.0D)
                         {
@@ -2234,12 +2266,17 @@ public class ItemSlashBlade extends ItemSword {
         //return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
     }
 
-    public void doSwingItem(ItemStack stack, EntityPlayer entity){
+    public void doSwingItem(ItemStack stack, EntityLivingBase entity){
+
+
+
         if(entity.worldObj.isRemote){
+            entity.swingingHand = EnumHand.MAIN_HAND;
             entity.isSwingInProgress = true;
             entity.swingProgressInt = 0;
         }else{
-            entity.swingItem();
+            //entity.swingItem();
+            entity.swingArm(EnumHand.MAIN_HAND);
         }
     }
 
@@ -2317,7 +2354,7 @@ public class ItemSlashBlade extends ItemSword {
         if(mode == 1){
             if(types.contains(SwordType.Bewitched) && !types.contains(SwordType.Broken)){
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, item);
                 if(0 < level && ProudSoul.tryAdd(tag,-1,false)){
 
                     int rank = StylishRankManager.getStylishRank(entity);
@@ -2406,8 +2443,6 @@ public class ItemSlashBlade extends ItemSword {
 
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if(entityItem.worldObj.isRemote)
-            return false;
 
         if(entityItem.getEntityData().getBoolean("noBladeStand"))
             return false;
@@ -2427,7 +2462,8 @@ public class ItemSlashBlade extends ItemSword {
 
             e.moveEntity(entityItem.motionX * 2, entityItem.motionY * 2, entityItem.motionZ * 2);
 
-            entityItem.worldObj.spawnEntityInWorld(e);
+            if(!entityItem.worldObj.isRemote)
+                entityItem.worldObj.spawnEntityInWorld(e);
 
             entityItem.setDead();
             return true;
@@ -2462,5 +2498,10 @@ public class ItemSlashBlade extends ItemSword {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return 72000;
     }
 }

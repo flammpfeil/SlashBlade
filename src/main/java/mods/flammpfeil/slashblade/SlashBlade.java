@@ -11,7 +11,6 @@ import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -32,7 +31,6 @@ import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
-import mods.flammpfeil.slashblade.util.PotionManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -148,7 +146,7 @@ public class SlashBlade implements IFuelHandler{
 
         //==================================================================================================================================
 
-		weapon = (ItemSlashBlade)(new ItemSlashBlade(ToolMaterial.IRON, 4 + ToolMaterial.EMERALD.getDamageVsEntity()))
+		weapon = (ItemSlashBlade)(new ItemSlashBlade(ToolMaterial.IRON, 4 + ToolMaterial.DIAMOND.getDamageVsEntity()))
 				.setRepairMaterial(new ItemStack(Items.iron_ingot))
 				.setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
 				.setUnlocalizedName("flammpfeil.slashblade")
@@ -255,7 +253,7 @@ public class SlashBlade implements IFuelHandler{
         InitEventBus.register(ccb);
     }
 
-    StatManager statManager;
+    //StatManager statManager;
 
     @EventHandler
     public void init(FMLInitializationEvent evt){
@@ -329,11 +327,10 @@ public class SlashBlade implements IFuelHandler{
         abilityProjectileBarrier = new ProjectileBarrier();
         MinecraftForge.EVENT_BUS.register(abilityProjectileBarrier);
 
-        new PotionManager();
+        //statManager = new StatManager();
+        //MinecraftForge.EVENT_BUS.register(statManager);
 
-        statManager = new StatManager();
-        MinecraftForge.EVENT_BUS.register(statManager);
-
+        /*
         statManager.registerItemStat(weapon, weapon, "SlashBlade");
         statManager.registerItemStat(bladeWood, weapon, "SlashBlade");
         statManager.registerItemStat(bladeBambooLight, weapon, "SlashBlade");
@@ -341,6 +338,7 @@ public class SlashBlade implements IFuelHandler{
         statManager.registerItemStat(bladeWhiteSheath, weapon, "SlashBlade");
         statManager.registerItemStat(wrapBlade, weapon, "SlashBlade");
         statManager.registerItemStat(bladeNamed, weapon, "SlashBlade");
+*/
 
         InitEventBus.post(new LoadEvent.InitEvent(evt));
     }

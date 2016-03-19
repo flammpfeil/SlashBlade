@@ -8,16 +8,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumSet;
@@ -30,9 +29,9 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
     private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
-    private final RendererLivingEntity<?> render;
+    private final RenderLivingBase<?> render;
 
-    public LayerSlashBlade(RendererLivingEntity<?> livingEntityRendererIn)
+    public LayerSlashBlade(RenderLivingBase<?> livingEntityRendererIn)
     {
         this.render = livingEntityRendererIn;
     }
@@ -376,7 +375,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
 
 
-        ItemStack stack = entity.getHeldItem();
+        ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
 
         if(stack == null || !(stack.getItem() instanceof ItemSlashBlade)){
             if(entity instanceof EntityPlayer){
@@ -416,7 +415,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         int charge;
         if(entity instanceof EntityPlayer)
-            charge = ((EntityPlayer) entity).getItemInUseDuration();
+            charge = entity.getItemInUseMaxCount();
         else
             charge = 0;
 
@@ -878,7 +877,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         if(!(render.getMainModel() instanceof ModelBiped))
             return;
 
-        ItemStack itemstack = entitylivingbaseIn.getHeldItem();
+        ItemStack itemstack = entitylivingbaseIn.getHeldItem(EnumHand.MAIN_HAND);
 
         if (itemstack != null)
         {
@@ -893,7 +892,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             }
 
 
-            ((ModelBiped)render.getMainModel()).postRenderArm(0.0625F);
+            ((ModelBiped)render.getMainModel()).postRenderArm(0.0625F, entitylivingbaseIn.getPrimaryHand());
             GlStateManager.translate(-0.0625F, 0.4375F, 0.0625F);
 
 

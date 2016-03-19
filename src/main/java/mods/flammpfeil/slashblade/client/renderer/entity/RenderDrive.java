@@ -3,11 +3,10 @@ package mods.flammpfeil.slashblade.client.renderer.entity;
 
 import mods.flammpfeil.slashblade.entity.EntityDrive;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.Entity;
 
 import net.minecraft.util.ResourceLocation;
@@ -89,7 +88,7 @@ public class RenderDrive extends Render {
         //■スタート
         float lifetime = entityDrive.getLifeTime();
         float ticks = entityDrive.ticksExisted;
-        WorldRenderer wr = tessellator.getWorldRenderer();
+        VertexBuffer wr = tessellator.getBuffer();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
         float alpha = (float)Math.pow((lifetime - Math.min(lifetime,ticks)) / lifetime,2.0f);

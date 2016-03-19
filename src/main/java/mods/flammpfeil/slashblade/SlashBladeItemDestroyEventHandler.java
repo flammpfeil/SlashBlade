@@ -18,7 +18,7 @@ public class SlashBladeItemDestroyEventHandler {
     public void PlayerDestroyItemEvent(PlayerDestroyItemEvent event){
         if(event.entityLiving.worldObj.isRemote) return;
 
-        ItemStack stack = event.original;
+        ItemStack stack = event.getOriginal();
         EntityPlayer player = event.entityPlayer;
         if(stack != null && stack.getItem() instanceof ItemSlashBlade){
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();

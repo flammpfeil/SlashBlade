@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.network;
 
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -24,7 +25,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
 
         if(entityPlayer == null) return null;
 
-        ItemStack stack = entityPlayer.getHeldItem();
+        ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
         if(stack == null) return null;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return null;
 

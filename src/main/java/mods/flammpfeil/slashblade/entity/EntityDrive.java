@@ -8,7 +8,14 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.Block;
@@ -70,7 +77,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         //■撃った人
         thrower = entityLiving;
 
-        blade = entityLiving.getHeldItem();
+        blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
             blade = null;
         }
@@ -78,8 +85,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
         alreadyHitEntity.clear();
         alreadyHitEntity.add(thrower);
-        alreadyHitEntity.add(thrower.ridingEntity);
-        alreadyHitEntity.add(thrower.riddenByEntity);
+        alreadyHitEntity.add(thrower.getRidingEntity());
+        alreadyHitEntity.addAll(thrower.getPassengers());
 
         //■生存タイマーリセット
         ticksExisted = 0;
@@ -98,11 +105,20 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         setDriveVector(0.75F);
 
         //■プレイヤー位置より一歩進んだ所に出現する
-        Vec3 motion = thrower.getLookVec();
-        if(motion == null) motion = new Vec3(motionX,motionY,motionZ);
+        Vec3d motion = thrower.getLookVec();
+        if(motion == null) motion = new Vec3d(motionX,motionY,motionZ);
         motion = motion.normalize();
         setPosition(posX + motion.xCoord * 20, posY + motion.yCoord * 20, posZ + motion.zCoord * 20);
     }
+
+
+
+
+
+    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntityDrive.class, DataSerializers.VARINT);
+    private static final DataParameter<Float> ROLL = EntityDataManager.<Float>createKey(EntityDrive.class, DataSerializers.FLOAT);
+    private static final DataParameter<Boolean> IS_MULTI_HIT = EntityDataManager.<Boolean>createKey(EntityDrive.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> IS_SLASH_DIMENSION = EntityDataManager.<Boolean>createKey(EntityDrive.class, DataSerializers.BOOLEAN);
 
     /**
      * ■イニシャライズ
@@ -110,45 +126,45 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     @Override
     protected void entityInit() {
         //isMultiHit
-        this.getDataWatcher().addObject(8, (byte)0);
+        this.getDataManager().register(IS_MULTI_HIT, false);
 
         //Roll
-        this.getDataWatcher().addObject(5, 0.0f);
+        this.getDataManager().register(ROLL, 0.0f);
 
         //lifetime
-        this.getDataWatcher().addObject(6, 20);
+        this.getDataManager().register(LIFETIME, 20);
 
         //lifetime
-        this.getDataWatcher().addObject(7, (byte) 0);
+        this.getDataManager().register(IS_SLASH_DIMENSION, false);
 
     }
 
     public boolean getIsMultiHit(){
-        return this.getDataWatcher().getWatchableObjectByte(4) == 0;
+        return this.getDataManager().get(IS_MULTI_HIT);
     }
     public void setIsMultiHit(boolean isMultiHit){
-        this.getDataWatcher().updateObject(8, isMultiHit ? (byte) 1 : (byte) 0);
+        this.getDataManager().set(IS_MULTI_HIT,isMultiHit);
     }
 
     public float getRoll(){
-        return this.getDataWatcher().getWatchableObjectFloat(5);
+        return this.getDataManager().get(ROLL);
     }
     public void setRoll(float roll){
-        this.getDataWatcher().updateObject(5,roll);
+        this.getDataManager().set(ROLL, roll);
     }
 
     public int getLifeTime(){
-        return this.getDataWatcher().getWatchableObjectInt(6);
+        return this.getDataManager().get(LIFETIME);
     }
     public void setLifeTime(int lifetime){
-        this.getDataWatcher().updateObject(6,lifetime);
+        this.getDataManager().set(LIFETIME,lifetime);
     }
 
     public boolean getIsSlashDimension(){
-        return this.getDataWatcher().getWatchableObjectByte(7) == 1;
+        return this.getDataManager().get(IS_SLASH_DIMENSION);
     }
     public void setIsSlashDimension(boolean isSlashDimension){
-        this.getDataWatcher().updateObject(7, isSlashDimension ? (byte) 1 : (byte) 0);
+        this.getDataManager().set(IS_SLASH_DIMENSION, isSlashDimension);
     }
 
     public void setInitialSpeed(float f){
@@ -160,8 +176,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         setDriveVector(f);
 
         //■プレイヤー位置より一歩進んだ所に出現する
-        Vec3 motion = thrower.getLookVec();
-        if(motion == null) motion = new Vec3(motionX,motionY,motionZ);
+        Vec3d motion = thrower.getLookVec();
+        if(motion == null) motion = new Vec3d(motionX,motionY,motionZ);
         motion = motion.normalize();
         setPosition(posX + motion.xCoord * 1, posY + motion.yCoord * 1, posZ + motion.zCoord * 1);
     }
@@ -326,7 +342,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
             */
 
             //地形衝突で消失
-            if(!worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox()).isEmpty()) {
+            if(!worldObj.getCubes(this, this.getEntityBoundingBox()).isEmpty()) {
                 //todo: 突き刺し一定時間保持（DummyEntityに刺して止めるなど
                 this.setDead();
             }
@@ -470,12 +486,6 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
     /**
-     * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
-     */
-    @Override
-    public void mountEntity(Entity par1Entity) {}
-
-    /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
      * posY, posZ, yaw, pitch
      */
@@ -486,7 +496,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
      * ■Called by portal blocks when an entity is within it.
      */
     @Override
-    public void setPortal(BlockPos p_181015_1_) {
+    public void setPortal(BlockPos pos) {
+        //super.setPortal(pos);
     }
 
     /**

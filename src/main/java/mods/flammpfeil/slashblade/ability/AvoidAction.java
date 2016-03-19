@@ -1,6 +1,9 @@
 package mods.flammpfeil.slashblade.ability;
 
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,7 +24,7 @@ public class AvoidAction {
         EntityLivingBase target = event.entityLiving;
         if(target == null) return;
 
-        ItemStack stack = target.getHeldItem();
+        ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
@@ -72,7 +75,7 @@ public class AvoidAction {
 
             mc.thePlayer.getEntityData().setLong("SB.AvoidTimeout",now + interval);
 
-            player.playSound("random.fizz", 0.3F, 10.0F);
+            player.playSound(SoundEvents.entity_generic_extinguish_fire, 0.7F, 1.6F + (player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.4F);
             mc.thePlayer.moveFlying(mc.thePlayer.moveStrafing,mc.thePlayer.moveForward,speedFactor);
             mc.playerController.updateController();
             NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 2));

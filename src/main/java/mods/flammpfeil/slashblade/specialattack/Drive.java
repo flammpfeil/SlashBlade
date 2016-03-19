@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -47,7 +48,7 @@ public class Drive extends SpecialAttackBase {
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             float baseModif = blade.getBaseAttackModifiers(tag);
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
             float magicDamage = baseModif;
 
             int rank = StylishRankManager.getStylishRank(player);

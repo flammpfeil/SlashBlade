@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.util;
 
 import com.google.common.collect.Lists;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,17 +17,17 @@ public class EnchantHelper {
     public static List<Enchantment> normal = Lists.newArrayList();
 
     public static List<Enchantment> rare = Lists.newArrayList(
-            Enchantment.power
-            ,Enchantment.punch
-            ,Enchantment.thorns
-            ,Enchantment.fireProtection
-            ,Enchantment.featherFalling
-            ,Enchantment.fortune
-            ,Enchantment.respiration);
+            Enchantments.power
+            ,Enchantments.punch
+            ,Enchantments.thorns
+            ,Enchantments.fireProtection
+            ,Enchantments.featherFalling
+            ,Enchantments.fortune
+            , Enchantments.respiration);
 
     public static void initEnchantmentList(){
         //func_181077_c : get locationEnchantments.keySet()
-        for(ResourceLocation key : Enchantment.func_181077_c()){
+        for(ResourceLocation key : Enchantment.enchantmentRegistry.getKeys()){
             Enchantment ench = Enchantment.getEnchantmentByLocation(key.toString());
             if(ench == null) continue;
 

@@ -4,18 +4,19 @@ import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
 import mods.flammpfeil.slashblade.stats.AchievementList;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * Created by Furia on 2015/11/19.
@@ -46,7 +47,7 @@ public class AirTrick {
 
         if(entityPlayer.playerNetServerHandler == null) return false;
 
-        Vec3 look = entityPlayer.getLookVec();
+        Vec3d look = entityPlayer.getLookVec();
 
         look.normalize();
         entityPlayer.onEnchantmentCritical(entityPlayer);
@@ -55,7 +56,7 @@ public class AirTrick {
 
         boolean teleported = false;
         for(double y = 0.5; 0.0 < y; y -= 0.1){
-            Vec3 pos = new Vec3(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
+            Vec3d pos = new Vec3d(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
 
             if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
                 entityPlayer.playerNetServerHandler.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
@@ -66,7 +67,7 @@ public class AirTrick {
         }
         if(!teleported){
             for(double y = 0.6; y < 1.5; y += 0.1){
-                Vec3 pos = new Vec3(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
+                Vec3d pos = new Vec3d(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
 
                 if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
                     entityPlayer.playerNetServerHandler.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
@@ -81,7 +82,10 @@ public class AirTrick {
         if(teleported){
             //lastHitSS.setDead();
             lastHitSS.getEntityData().setLong(NextAirTrick,lastHitSS.worldObj.getTotalWorldTime() + AirHikeInterval);
-            entityPlayer.worldObj.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
+            //entityPlayer.worldObj.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
+
+            entityPlayer.worldObj.playSound((EntityPlayer)null, entityPlayer.prevPosX, entityPlayer.prevPosY, entityPlayer.prevPosZ, SoundEvents.entity_endermen_teleport, entityPlayer.getSoundCategory(), 1.0F, 1.0F);
+            entityPlayer.playSound(SoundEvents.entity_endermen_teleport, 1.0F, 1.0F);
 
             return true;
         }else{
@@ -89,13 +93,15 @@ public class AirTrick {
         }
     }
 
-    static private boolean getCanSpawnHere(Entity target,Vec3 pos,Entity... ignore)
+    static private boolean getCanSpawnHere(Entity target,Vec3d pos,Entity... ignore)
     {
         AxisAlignedBB bb = setPosition(target, pos.xCoord, pos.yCoord, pos.zCoord);
 
-        List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
+        return /*!target.worldObj.isAnyLiquid(target.getEntityBoundingBox()) && */target.worldObj.getCubes(target, bb).isEmpty() /*&& target.worldObj.checkNoEntityCollision(bb, target)*/;
 
-        return /*target.worldObj.checkNoEntityCollision(bb) && */blockCollidList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
+        //List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
+
+        //return /*target.worldObj.checkNoEntityCollision(bb) && */blockCollidList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
     }
 
     static private AxisAlignedBB setPosition(Entity target, double x, double y, double z)
@@ -111,7 +117,7 @@ public class AirTrick {
 
             if(player.worldObj.isRemote) return;
 
-            ItemStack stack = player.getHeldItem();
+            ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
             if(stack == null) return;
             if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
@@ -124,7 +130,7 @@ public class AirTrick {
 
             if(types.contains(ItemSlashBlade.SwordType.Bewitched) && !types.contains(ItemSlashBlade.SwordType.Broken)){
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
                 if(0 < level && ItemSlashBlade.ProudSoul.tryAdd(tag,-1,false)){
                     float magicDamage = 1;
 
@@ -140,7 +146,7 @@ public class AirTrick {
                         int targetid = ItemSlashBlade.TargetEntityId.get(tag);
                         entitySS.setTargetEntityId(targetid);
 
-                        Vec3 eyeDir = player.getLookVec();
+                        Vec3d eyeDir = player.getLookVec();
 
                         entitySS.setLocationAndAngles(
                                 player.posX + eyeDir.xCoord * 2,

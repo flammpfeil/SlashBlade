@@ -12,9 +12,14 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.EnumSet;
@@ -56,7 +61,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             spawnParticle(world, target);
 
-            player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.endermen.portal", 0.5F, 1.0F);
+            player.playSound(SoundEvents.entity_endermen_teleport, 0.5F, 1.0F);
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
@@ -73,7 +78,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
             float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
             for(Entity curEntity : list){
                 StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);
@@ -98,7 +103,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
             AxisAlignedBB bb = player.getEntityBoundingBox();
-            Vec3 vec = player.getLookVec();
+            Vec3d vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
             bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);
@@ -165,7 +170,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             //spawnParticle(world, target);
 
-            player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.endermen.portal", 0.5F, 1.0F);
+            player.playSound(SoundEvents.entity_endermen_teleport, 0.5F, 1.0F);
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
@@ -182,7 +187,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
             float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
             for(Entity curEntity : list){
                 StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);

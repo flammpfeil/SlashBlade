@@ -2,7 +2,7 @@ package mods.flammpfeil.slashblade.event;
 
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.model.BladeModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,6 +30,6 @@ public class ModelRegister {
 
     @SubscribeEvent
     public void onModelBake(ModelBakeEvent event){
-        event.modelRegistry.putObject(modelLoc, new BladeModel());
+        event.getModelRegistry().putObject(modelLoc, new BladeModel());
     }
 }

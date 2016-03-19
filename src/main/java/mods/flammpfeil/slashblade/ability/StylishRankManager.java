@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatisticsFile;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -17,7 +18,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -295,7 +295,7 @@ public class StylishRankManager {
                     }
 
                     while(!stackAch.isEmpty()){
-                        ((EntityPlayerMP) e).triggerAchievement(stackAch.pop());
+                        ((EntityPlayerMP) e).addStat(stackAch.pop());
                     }
                 }
             }
@@ -313,7 +313,7 @@ public class StylishRankManager {
 
         if(e instanceof EntityPlayer){
             //((EntityPlayer)e).addChatMessage(new ChatComponentText(getRankText(rank) + ":" + rankPoint + ":" + AttackType.get(tag)));
-            ((EntityPlayer)e).addChatMessage(new ChatComponentText(MessageHeader + rankPoint));
+            ((EntityPlayer)e).addChatMessage(new TextComponentString(MessageHeader + rankPoint));
         }
     }
 

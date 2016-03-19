@@ -3,6 +3,13 @@ package mods.flammpfeil.slashblade.entity;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -65,7 +72,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
         //■撃った人
         thrower = entityLiving;
 
-        blade = entityLiving.getHeldItem();
+        blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
             blade = null;
         }
@@ -73,8 +80,8 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
         alreadyHitEntity.clear();
         alreadyHitEntity.add(thrower);
-        alreadyHitEntity.add(thrower.ridingEntity);
-        alreadyHitEntity.add(thrower.riddenByEntity);
+        alreadyHitEntity.add(thrower.getRidingEntity());
+        alreadyHitEntity.addAll(thrower.getPassengers());
 
         //■生存タイマーリセット
         ticksExisted = 0;
@@ -111,41 +118,45 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
         }
     }
 
+    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntitySummonedSword.class, DataSerializers.VARINT);
+    private static final DataParameter<Float> ROLL = EntityDataManager.<Float>createKey(EntitySummonedSword.class, DataSerializers.FLOAT);
+    private static final DataParameter<Integer> TARGET_ENTITY_ID = EntityDataManager.<Integer>createKey(EntitySummonedSword.class, DataSerializers.VARINT);
+
     /**
      * ■イニシャライズ
      */
     @Override
     protected void entityInit() {
         //EntityId
-        this.getDataWatcher().addObject(8, 0);
+        this.getDataManager().register(TARGET_ENTITY_ID, 0);
 
         //Roll
-        this.getDataWatcher().addObject(5, 0.0f);
+        this.getDataManager().register(ROLL, 0.0f);
 
         //lifetime
-        this.getDataWatcher().addObject(6, 20);
+        this.getDataManager().register(LIFETIME, 20);
 
     }
 
     public int getTargetEntityId(){
-        return this.getDataWatcher().getWatchableObjectInt(8);
+        return this.getDataManager().get(TARGET_ENTITY_ID);
     }
     public void setTargetEntityId(int entityid){
-        this.getDataWatcher().updateObject(8,entityid);
+        this.getDataManager().set(TARGET_ENTITY_ID,entityid);
     }
 
     public float getRoll(){
-        return this.getDataWatcher().getWatchableObjectFloat(5);
+        return this.getDataManager().get(ROLL);
     }
     public void setRoll(float roll){
-        this.getDataWatcher().updateObject(5,roll);
+        this.getDataManager().set(ROLL,roll);
     }
 
     public int getLifeTime(){
-        return this.getDataWatcher().getWatchableObjectInt(6);
+        return this.getDataManager().get(LIFETIME);
     }
     public void setLifeTime(int lifetime){
-        this.getDataWatcher().updateObject(6,lifetime);
+        this.getDataManager().set(LIFETIME,lifetime);
     }
 
     float speed = 0.0f;
@@ -384,8 +395,8 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                     }
                     alreadyHitEntity.addAll(list);
 
-                    Vec3 vec31 = new Vec3(this.posX, this.posY, this.posZ);
-                    Vec3 vec3 = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+                    Vec3d Vec3d1 = new Vec3d(this.posX, this.posY, this.posZ);
+                    Vec3d Vec3d = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
                     double d0 = 10.0D;
                     int i;
@@ -449,7 +460,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
 
             if(this.ridingEntity2 == null)
             {
-                if(!worldObj.getCollidingBoundingBoxes(this,this.getEntityBoundingBox()).isEmpty()){
+                if(!worldObj.getCubes(this,this.getEntityBoundingBox()).isEmpty()){
                     this.setDead();
                     return;
                 }
@@ -614,7 +625,6 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
     /**
      * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
      */
-    @Override
     public void mountEntity(Entity par1Entity) {
         if(par1Entity != null){
             this.hitYaw = this.rotationYaw - par1Entity.rotationYaw;

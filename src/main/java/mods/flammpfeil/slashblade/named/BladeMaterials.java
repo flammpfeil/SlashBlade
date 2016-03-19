@@ -1,5 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.init.PotionTypes;
+import net.minecraft.item.Item;
+import net.minecraft.potion.PotionUtils;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -54,23 +58,27 @@ public class BladeMaterials {
         SlashBlade.addSmelting(SlashBlade.SphereBladeSoulStr,
                 itemIngotBladeSoul, itemSphereBladeSoul, 2.0F);
 
-        SlashBlade.addRecipe(SlashBlade.ProudSoulStr,
+        BrewingRecipeRegistry.addRecipe(new ItemStack(Items.potionitem), itemSphereBladeSoul, new ItemStack(Items.experience_bottle));
+
+        SlashBlade.addRecipe(SlashBlade.SphereBladeSoulStr,
                 new ShapedOreRecipe(new ItemStack(Items.experience_bottle),
                         " P ",
                         " S ",
                         " I ",
                         'S', new ItemStack(Items.brewing_stand),
-                        'P', itemProudSoul,
+                        'P', itemSphereBladeSoul,
                         'I', new ItemStack(Items.potionitem, 1, 8192))
                 ,true);
 
-        SlashBlade.addRecipe(SlashBlade.TinyBladeSoulStr,
-                new ShapedOreRecipe(new ItemStack(Items.potionitem,1,8233),
+        BrewingRecipeRegistry.addRecipe(new ItemStack(Items.potionitem), itemProudSoul, PotionUtils.addPotionToItemStack(new ItemStack(Items.potionitem), PotionTypes.strong_strength));
+
+        SlashBlade.addRecipe(SlashBlade.ProudSoulStr,
+                new ShapedOreRecipe(new ItemStack(Items.potionitem,1,0),
                         " P ",
                         " S ",
                         " I ",
                         'S',new ItemStack(Items.brewing_stand),
-                        'P',itemTinyBladeSoul,
+                        'P',itemProudSoul,
                         'I',new ItemStack(Items.potionitem,1,0))
                 ,true);
     }

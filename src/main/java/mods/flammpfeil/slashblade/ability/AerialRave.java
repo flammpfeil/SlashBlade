@@ -1,5 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
+import net.minecraft.init.Enchantments;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.enchantment.Enchantment;
@@ -19,11 +21,11 @@ public class AerialRave {
         EntityLivingBase target = event.entityLiving;
         if(target == null) return;
 
-        ItemStack stack = target.getHeldItem();
+        ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId,stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling,stack);
 
         if(0 == level) return;
 

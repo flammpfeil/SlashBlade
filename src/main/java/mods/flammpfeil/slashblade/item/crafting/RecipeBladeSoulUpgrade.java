@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.item.crafting;
 
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
         boolean result = super.matches(inv, world);
 
         if(result){
-            Map<Integer,Integer> all = Maps.newHashMap();
+            Map<Enchantment,Integer> all = Maps.newHashMap();
 
             int soulCount = 0;
 
@@ -34,9 +35,9 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
 
                 soulCount++;
 
-                Map<Integer,Integer> emap = EnchantmentHelper.getEnchantments(stack);
+                Map<Enchantment,Integer> emap = EnchantmentHelper.getEnchantments(stack);
 
-                for(Map.Entry<Integer,Integer> entry : emap.entrySet()){
+                for(Map.Entry<Enchantment,Integer> entry : emap.entrySet()){
                     if(all.containsKey(entry.getKey())){
 
                         int value = all.get(entry.getKey()).intValue() + entry.getValue();
@@ -50,7 +51,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
 
             result = all.size() == 1 || all.size() == 0;
             if(result){
-                for(Map.Entry<Integer,Integer> entry : all.entrySet()){
+                for(Map.Entry<Enchantment,Integer> entry : all.entrySet()){
                     result = entry.getValue() == soulCount;
                 }
             }
@@ -63,7 +64,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
     public ItemStack getCraftingResult(InventoryCrafting var1) {
         ItemStack result = super.getCraftingResult(var1);
 
-        Map<Integer,Integer> all = Maps.newHashMap();
+        Map<Enchantment,Integer> all = Maps.newHashMap();
 
         for(int idx = 0; idx < var1.getSizeInventory(); idx++){
             ItemStack stack = var1.getStackInSlot(idx);
@@ -71,7 +72,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
             if(!(stack.getItem() instanceof ItemProudSoul)) continue;
 
 
-            Map<Integer,Integer> emap = EnchantmentHelper.getEnchantments(stack);
+            Map<Enchantment,Integer> emap = EnchantmentHelper.getEnchantments(stack);
             all.putAll(emap);
         }
 

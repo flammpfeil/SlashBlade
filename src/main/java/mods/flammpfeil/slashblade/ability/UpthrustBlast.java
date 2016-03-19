@@ -7,11 +7,12 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -33,7 +34,7 @@ public class UpthrustBlast {
         if(!types.contains(ItemSlashBlade.SwordType.Bewitched)) return;
         if(types.contains(ItemSlashBlade.SwordType.Broken)) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, blade);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.punch, blade);
         if(level <= 0) return;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);

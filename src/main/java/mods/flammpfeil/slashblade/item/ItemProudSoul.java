@@ -11,12 +11,15 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -83,7 +86,7 @@ public class ItemProudSoul extends Item {
 	}
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         Block block = world.getBlockState(pos).getBlock();
 
         if(!world.isRemote && Blocks.oak_fence == block && player.isSneaking()){
@@ -96,9 +99,9 @@ public class ItemProudSoul extends Item {
 
             AchievementList.triggerAchievement(player,"bladeStand");
 
-            return true;
+            return EnumActionResult.SUCCESS;
         }else{
-            return false;
+            return super.onItemUse(stack, player, world, pos, hand, side, hitX, hitY, hitZ);
         }
 
     }
@@ -112,7 +115,7 @@ public class ItemProudSoul extends Item {
         if(ItemSlashBlade.SpecialAttackType.exists(tag)){
             String key = "flammpfeil.slashblade.specialattack." + SlashBlade.weapon.getSpecialAttack(par1ItemStack).toString();
 
-            par3List.add(String.format("SA:%s",  StatCollector.translateToLocal(key)));
+            par3List.add(String.format("SA:%s",  I18n.translateToLocal(key)));
         }
 
     }
@@ -168,11 +171,11 @@ public class ItemProudSoul extends Item {
 
                 if(player.getRNG().nextFloat() < rate){
                     ItemStack blade = stand.getBlade();
-                    Map<Integer,Integer> bladeEnchMap = EnchantmentHelper.getEnchantments(blade);
+                    Map<Enchantment,Integer> bladeEnchMap = EnchantmentHelper.getEnchantments(blade);
 
-                    Map<Integer,Integer> enchMap = EnchantmentHelper.getEnchantments(stack);
-                    for(Map.Entry<Integer,Integer> entry : enchMap.entrySet()){
-                        Enchantment ench = Enchantment.getEnchantmentById(entry.getKey());
+                    Map<Enchantment,Integer> enchMap = EnchantmentHelper.getEnchantments(stack);
+                    for(Map.Entry<Enchantment,Integer> entry : enchMap.entrySet()){
+                        Enchantment ench = entry.getKey();
 
                         int level = 1;
                         if(bladeEnchMap.containsKey(entry.getKey())){
@@ -212,7 +215,7 @@ public class ItemProudSoul extends Item {
 
             if (stack.stackSize <= 0)
             {
-                player.destroyCurrentEquippedItem();
+                player.renderBrokenItemStack(stack);
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
@@ -223,20 +226,5 @@ public class ItemProudSoul extends Item {
         super.onCreated(p_77622_1_, p_77622_2_, p_77622_3_);
 
         AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
-    }
-
-    @Override
-    public boolean isPotionIngredient(ItemStack p_150892_1_) {
-        return p_150892_1_.getItemDamage() == 0 || p_150892_1_.getItemDamage() == 3;
-    }
-
-    @Override
-    public String getPotionEffect(ItemStack p_150896_1_) {
-        switch (p_150896_1_.getItemDamage()){
-            case 0:  //soul
-                return "+14&13-13";
-            default: //tiny
-                return "+4";
-        }
     }
 }

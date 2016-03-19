@@ -3,6 +3,8 @@ package mods.flammpfeil.slashblade.specialattack;
 import mods.flammpfeil.slashblade.entity.EntitySpearManager;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
@@ -43,7 +45,7 @@ public class Spear extends SpecialAttackBase {
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
-            player.addPotionEffect(new PotionEffect(Potion.damageBoost.getId(),10,0,true,false));
+            player.addPotionEffect(new PotionEffect(MobEffects.damageBoost,10,0,true,false));
 
             EntitySpearManager entityDA = new EntitySpearManager(world, player, false);
             entityDA.setLifeTime(7);
@@ -53,7 +55,7 @@ public class Spear extends SpecialAttackBase {
         }
 
 
-        world.playSoundAtEntity(player, "random.explode", 1.0F, 1.0F);
+        player.playSound(SoundEvents.entity_generic_explode, 1.0F, 1.0F);
         ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.HiraTuki);
     }
 }

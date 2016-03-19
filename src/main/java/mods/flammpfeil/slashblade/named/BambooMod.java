@@ -1,6 +1,8 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.init.Enchantments;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -17,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -36,7 +37,7 @@ public class BambooMod {
         {
             SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
-            reqiredBlade.addEnchantment(Enchantment.looting,1);
+            reqiredBlade.addEnchantment(Enchantments.looting,1);
             NBTTagCompound tag = reqiredBlade.getTagCompound();
             ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
             ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
@@ -137,11 +138,11 @@ public class BambooMod {
             ItemSlashBladeNamed.BaseAttackModifier.set(tag,attackModif);
 
             if(target.hasDisplayName()){
-                scabbard.setStackDisplayName(String.format(StatCollector.translateToLocal("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
+                scabbard.setStackDisplayName(String.format(I18n.translateToLocal("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
             }else if(target.isItemEnchanted()){
                 scabbard.setStackDisplayName(scabbard.getDisplayName());
             }else{
-                scabbard.setStackDisplayName(String.format(StatCollector.translateToLocal("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
+                scabbard.setStackDisplayName(String.format(I18n.translateToLocal("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
             }
 
             if(target.isItemEnchanted()){

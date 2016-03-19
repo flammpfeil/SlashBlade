@@ -1,12 +1,10 @@
 package mods.flammpfeil.slashblade.ability;
 
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.item.ItemStack;
 
@@ -21,7 +19,7 @@ public class DefeatTheBoss {
 
         EntityLiving living = (EntityLiving) target;
 
-        if(!(living.hasCustomName() || target instanceof IBossDisplayData)) return;
+        if(!(living.hasCustomName() || !target.isNonBoss())) return;
 
         ItemStack tinySoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1);
 

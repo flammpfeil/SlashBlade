@@ -4,13 +4,14 @@ import mods.flammpfeil.slashblade.entity.EntityDrive;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class CircleSlash extends SpecialAttackBase{
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
-        player.worldObj.playSoundAtEntity(player, "mob.blaze.hit", 0.2F, 0.6F);
+        player.playSound(SoundEvents.entity_blaze_hurt, 0.2F, 0.6F);
 
         if(!world.isRemote){
 
@@ -58,7 +59,7 @@ public class CircleSlash extends SpecialAttackBase{
             }
 
             float baseModif = blade.getBaseAttackModifiers(tag);
-            int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack));
+            int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack));
             float magicDamage = (baseModif/2.0f);
 
             int rank = StylishRankManager.getStylishRank(player);

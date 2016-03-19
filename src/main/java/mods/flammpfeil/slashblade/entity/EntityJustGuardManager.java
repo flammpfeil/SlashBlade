@@ -1,6 +1,11 @@
 package mods.flammpfeil.slashblade.entity;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -43,18 +48,22 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
         ticksExisted = 0;
     }
 
+    private static final DataParameter<Integer> ThrowerEntityID = EntityDataManager.<Integer>createKey(EntityJustGuardManager.class, DataSerializers.VARINT);
+
     @Override
     protected void entityInit() {
         //entityid
-        this.getDataWatcher().addObject(8, 0);
+        this.getDataManager().register(ThrowerEntityID, 0);
     }
 
+
+
     int getThrowerEntityID(){
-        return this.getDataWatcher().getWatchableObjectInt(8);
+        return this.getDataManager().get(ThrowerEntityID);
     }
 
     void setThrowerEntityID(int id){
-        this.getDataWatcher().updateObject(8,id);
+        this.getDataManager().set(ThrowerEntityID,id);
     }
 
     public EntityJustGuardManager(World par1World, EntityLivingBase entityLiving)
@@ -66,7 +75,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
 
         setThrowerEntityID(thrower.getEntityId());
 
-        blade = entityLiving.getHeldItem();
+        blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
             blade = null;
         }
@@ -74,8 +83,8 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
         alreadyHitEntity.clear();
         alreadyHitEntity.add(thrower);
-        alreadyHitEntity.add(thrower.ridingEntity);
-        alreadyHitEntity.add(thrower.riddenByEntity);
+        alreadyHitEntity.add(thrower.getRidingEntity());
+        alreadyHitEntity.addAll(thrower.getPassengers());
 
         //■生存タイマーリセット
         ticksExisted = 0;
@@ -103,7 +112,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
 
         if(this.blade == null && this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
             EntityPlayer player = (EntityPlayer)this.getThrower();
-            ItemStack stack = player.getHeldItem();
+            ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
             if(stack != null && stack.getItem() instanceof ItemSlashBlade)
                 this.blade = stack;
         }
@@ -115,7 +124,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
 
             if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
                 EntityPlayer player = (EntityPlayer)this.getThrower();
-                player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.blaze.hit", 1.0F, 1.0F);
+                player.playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
 
                 if(this.blade != null){
                     ItemSlashBlade itemBlade = (ItemSlashBlade)this.blade.getItem();
@@ -243,12 +252,6 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
      */
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
-
-    /**
-     * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
-     */
-    @Override
-    public void mountEntity(Entity par1Entity) {}
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,

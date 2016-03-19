@@ -9,10 +9,11 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -76,7 +77,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
                     ((EntityLivingBase) target).hurtResistantTime = 0;
                 }
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
                 float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
 
                 int count = 1 + StylishRankManager.getStylishRank(player);
@@ -113,7 +114,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
             AxisAlignedBB bb = player.getEntityBoundingBox();
-            Vec3 vec = player.getLookVec();
+            Vec3d vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
             bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);

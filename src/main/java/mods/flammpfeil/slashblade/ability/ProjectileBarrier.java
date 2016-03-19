@@ -1,17 +1,19 @@
 package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Enchantments;
+import net.minecraft.network.play.server.SPacketAnimation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
 import java.util.List;
 
@@ -20,10 +22,10 @@ import java.util.List;
  */
 public class ProjectileBarrier {
     @SubscribeEvent
-    public void onUpdate(PlayerUseItemEvent.Tick event){
-        EntityPlayer player = event.entityPlayer;
+    public void onUpdate(LivingEntityUseItemEvent.Tick event){
+        EntityLivingBase player = event.entityLiving;
         if(player == null) return;
-        if(!player.isUsingItem()) return;
+        if(player.getActiveItemStack() == null) return;
         ItemStack stack = event.item;
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
@@ -33,13 +35,13 @@ public class ProjectileBarrier {
         int ticks = stack.getMaxItemUseDuration() - event.duration;
         if(ticks < ItemSlashBlade.RequiredChargeTick) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack);
         if(level <= 0) return;
 
         expandBarrier(player);
     }
 
-    private void expandBarrier(EntityPlayer player){
+    private void expandBarrier(EntityLivingBase player){
         AxisAlignedBB bb = player.getEntityBoundingBox().expand(2,2,2);
         List<Entity> list = player.worldObj.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
         for(Entity target : list){
@@ -56,8 +58,15 @@ public class ProjectileBarrier {
         }
     }
 
-    private void destructEntity(EntityPlayer player, Entity target){
-        player.onEnchantmentCritical(target);
+    private void destructEntity(EntityLivingBase player, Entity target){
+        //EnumParticleTypes.CRIT_MAGIC
+        if(player.worldObj instanceof WorldServer)
+            ((WorldServer)player.worldObj).getEntityTracker().func_151248_b(player, new SPacketAnimation(target, 5));
+
+        /*
+        if(player instanceof EntityPlayer)
+            ((EntityPlayer)player).onEnchantmentCritical(target);
+        */
         target.motionX = 0;
         target.motionY = 0;
         target.motionZ = 0;

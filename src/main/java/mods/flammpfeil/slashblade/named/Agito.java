@@ -108,7 +108,7 @@ public class Agito {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameOrotiagito);
 
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.EMERALD.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getDamageVsEntity());
                 ItemSlashBlade.TextureName.set(tag, "named/orotiagito");
                 ItemSlashBlade.ModelName.set(tag, "named/agito");
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);

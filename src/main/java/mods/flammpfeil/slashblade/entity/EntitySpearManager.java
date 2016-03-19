@@ -3,7 +3,12 @@ package mods.flammpfeil.slashblade.entity;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -60,7 +65,7 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
         //■撃った人
         thrower = entityLiving;
 
-        blade = entityLiving.getHeldItem();
+        blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
             blade = null;
         }
@@ -68,8 +73,8 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
         alreadyHitEntity.clear();
         alreadyHitEntity.add(thrower);
-        alreadyHitEntity.add(thrower.ridingEntity);
-        alreadyHitEntity.add(thrower.riddenByEntity);
+        alreadyHitEntity.add(thrower.getRidingEntity());
+        alreadyHitEntity.addAll(thrower.getPassengers());
 
         //■生存タイマーリセット
         ticksExisted = 0;
@@ -85,31 +90,34 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
                 thrower.rotationPitch);
     }
 
+    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntityDrive.class, DataSerializers.VARINT);
+    private static final DataParameter<Boolean> IS_MULTI_HIT = EntityDataManager.<Boolean>createKey(EntitySpearManager.class, DataSerializers.BOOLEAN);
     /**
      * ■イニシャライズ
      */
     @Override
     protected void entityInit() {
         //isMultiHit
-        this.getDataWatcher().addObject(8, (byte)0);
+        this.getDataManager().register(IS_MULTI_HIT, false);
 
         //lifetime
-        this.getDataWatcher().addObject(6, 20);
+        this.getDataManager().register(LIFETIME, 20);
 
     }
+
 
     public boolean getIsMultiHit(){
-        return this.getDataWatcher().getWatchableObjectByte(8) == 0;
+        return this.getDataManager().get(IS_MULTI_HIT);
     }
     public void setIsMultiHit(boolean isMultiHit){
-        this.getDataWatcher().updateObject(8,isMultiHit ? (byte)1 : (byte)0);
+        this.getDataManager().set(IS_MULTI_HIT,isMultiHit);
     }
 
     public int getLifeTime(){
-        return this.getDataWatcher().getWatchableObjectInt(6);
+        return this.getDataManager().get(LIFETIME);
     }
     public void setLifeTime(int lifetime){
-        this.getDataWatcher().updateObject(6, lifetime);
+        this.getDataManager().set(LIFETIME, lifetime);
     }
 
     //■毎回呼ばれる。移動処理とか当り判定とかもろもろ。
@@ -334,12 +342,6 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
      */
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
-
-    /**
-     * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
-     */
-    @Override
-    public void mountEntity(Entity par1Entity) {}
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,

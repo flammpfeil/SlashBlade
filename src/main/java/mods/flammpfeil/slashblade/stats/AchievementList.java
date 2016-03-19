@@ -2,17 +2,17 @@ package mods.flammpfeil.slashblade.stats;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.init.Enchantments;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeWrapBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -22,17 +22,10 @@ import net.minecraft.stats.IStatStringFormat;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.StatCollector;
-import net.minecraft.world.World;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.player.AchievementEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.ModClassLoader;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -149,7 +142,7 @@ public class AchievementList {
 
 
                             ItemStack blade = SlashBlade.getCustomBlade("slashblade");
-                            blade.addEnchantment(Enchantment.fireAspect, 1);
+                            blade.addEnchantment(Enchantments.fireAspect, 1);
                             {
                                 parent.push(registerAchievement("enchanted", blade, parent.peek()));
                                 {
@@ -454,7 +447,7 @@ public class AchievementList {
         AchievementPage.registerAchievementPage(new AchievementPage(SlashBlade.modname, achievements.values().toArray(new Achievement[]{})) {
             @Override
             public String getName() {
-                return StatCollector.translateToLocal("flammpfeil.slashblade");//super.getName());
+                return I18n.translateToLocal("flammpfeil.slashblade");//super.getName());
             }
         });
     }
@@ -469,7 +462,7 @@ public class AchievementList {
         int x = defaultX++;
         int y = defaultY;
 
-        String posStr = StatCollector.translateToLocal("achievement." + translateKey + ".pos");
+        String posStr = I18n.translateToLocal("achievement." + translateKey + ".pos");
 
 
         Matcher mat = PosPattern.matcher(posStr.trim());
@@ -514,7 +507,7 @@ public class AchievementList {
     static public void triggerAchievement(EntityPlayer player, String key){
         Achievement achievement = getAchievement(key);
         if(achievement != null)
-            player.triggerAchievement(achievement);
+            player.addStat(achievement);
     }
 
     static public void triggerCraftingAchievement(ItemStack stack, EntityPlayer player) {
@@ -559,7 +552,7 @@ public class AchievementList {
 
         if(!(e instanceof EntityPlayer))return;
 
-        ItemStack item = ((EntityPlayer) e).getHeldItem();
+        ItemStack item = ((EntityPlayer) e).getHeldItem(EnumHand.MAIN_HAND);
         if(item ==null) return;
         if(item.getItem() != Items.wooden_sword) return;
         if(item.getItemDamage() != 0) return;

@@ -175,11 +175,11 @@ public class WavefrontObject
 
         if (currentGroupObject != null)
         {
-            tessellator.getWorldRenderer().begin(currentGroupObject.glDrawingMode, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            tessellator.getBuffer().begin(currentGroupObject.glDrawingMode, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
         }
         else
         {
-            tessellator.getWorldRenderer().begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            tessellator.getBuffer().begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
         }
         tessellateAll(tessellator);
 

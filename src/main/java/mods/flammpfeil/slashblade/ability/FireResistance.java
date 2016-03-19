@@ -1,6 +1,10 @@
 package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -11,7 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
 /**
  * Created by Furia on 15/05/17.
@@ -19,17 +22,17 @@ import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 public class FireResistance {
 
     @SubscribeEvent
-    public void onUpdate(PlayerUseItemEvent.Tick event){
-        EntityPlayer player = event.entityPlayer;
+    public void onUpdate(LivingEntityUseItemEvent.Tick event){
+        EntityLivingBase player = event.entityLiving;
         if(player == null) return;
-        if(!player.isUsingItem()) return;
+        if(player.getActiveItemStack() == null) return;
 
         ItemStack stack = event.item;
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId, stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.fireProtection, stack);
         if(level <= 0) return;
 
         float speedfactor = 0.05f;
@@ -44,6 +47,6 @@ public class FireResistance {
             }
         }
 
-        player.addPotionEffect(new PotionEffect(Potion.fireResistance.getId(),2,level-1,true,false));
+        player.addPotionEffect(new PotionEffect(MobEffects.fireResistance,2,level-1,true,false));
     }
 }

@@ -3,6 +3,10 @@ package mods.flammpfeil.slashblade.entity;
 import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.*;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -71,7 +75,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         //■撃った人
         thrower = entityLiving;
 
-        blade = entityLiving.getHeldItem();
+        blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
             blade = null;
         }
@@ -79,8 +83,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
         alreadyHitEntity.clear();
         alreadyHitEntity.add(thrower);
-        alreadyHitEntity.add(thrower.ridingEntity);
-        alreadyHitEntity.add(thrower.riddenByEntity);
+        alreadyHitEntity.add(thrower.getRidingEntity());
+        alreadyHitEntity.addAll(thrower.getPassengers());
 
         //■生存タイマーリセット
         ticksExisted = 0;
@@ -117,60 +121,66 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }
     }
 
+    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntitySummonedSwordBase.class, DataSerializers.VARINT);
+    private static final DataParameter<Float> ROLL = EntityDataManager.<Float>createKey(EntitySummonedSwordBase.class, DataSerializers.FLOAT);
+    private static final DataParameter<Integer> TARGET_ENTITY_ID = EntityDataManager.<Integer>createKey(EntitySummonedSwordBase.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> INTERVAL = EntityDataManager.<Integer>createKey(EntitySummonedSwordBase.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> COLOR = EntityDataManager.<Integer>createKey(EntitySummonedSwordBase.class, DataSerializers.VARINT);
+
     /**
      * ■イニシャライズ
      */
     @Override
     protected void entityInit() {
         //EntityId
-        this.getDataWatcher().addObject(8, 0);
+        this.getDataManager().register(TARGET_ENTITY_ID, 0);
 
         //Roll
-        this.getDataWatcher().addObject(5, 0.0f);
+        this.getDataManager().register(ROLL, 0.0f);
 
         //lifetime
-        this.getDataWatcher().addObject(6, 20);
+        this.getDataManager().register(LIFETIME, 20);
 
         //interval
-        this.getDataWatcher().addObject(7, 7);
+        this.getDataManager().register(INTERVAL, 7);
 
         //color
-        this.getDataWatcher().addObject(10, 0x3333FF);
+        this.getDataManager().register(COLOR, 0x3333FF);
     }
 
     public int getTargetEntityId(){
-        return this.getDataWatcher().getWatchableObjectInt(8);
+        return this.getDataManager().get(TARGET_ENTITY_ID);
     }
     public void setTargetEntityId(int entityid){
-        this.getDataWatcher().updateObject(8, entityid);
+        this.getDataManager().set(TARGET_ENTITY_ID, entityid);
     }
 
     public float getRoll(){
-        return this.getDataWatcher().getWatchableObjectFloat(5);
+        return this.getDataManager().get(ROLL);
     }
     public void setRoll(float roll){
-        this.getDataWatcher().updateObject(5,roll);
+        this.getDataManager().set(ROLL,roll);
     }
 
     public int getLifeTime(){
-        return this.getDataWatcher().getWatchableObjectInt(6);
+        return this.getDataManager().get(LIFETIME);
     }
     public void setLifeTime(int lifetime){
-        this.getDataWatcher().updateObject(6,lifetime);
+        this.getDataManager().set(LIFETIME,lifetime);
     }
 
     public int getInterval(){
-        return this.getDataWatcher().getWatchableObjectInt(7);
+        return this.getDataManager().get(INTERVAL);
     }
     public void setInterval(int value){
-        this.getDataWatcher().updateObject(7,value);
+        this.getDataManager().set(INTERVAL,value);
     }
 
     public int getColor(){
-        return this.getDataWatcher().getWatchableObjectInt(10);
+        return this.getDataManager().get(COLOR);
     }
     public void setColor(int value){
-        this.getDataWatcher().updateObject(10,value);
+        this.getDataManager().set(COLOR,value);
     }
 
     float speed = 0.0f;
@@ -230,16 +240,16 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         Entity pointedEntity;
         float par1 = 1.0f;
 
-        MovingObjectPosition objectMouseOver = rayTrace(owner, reachMax, par1);
+        RayTraceResult objectMouseOver = rayTrace(owner, reachMax, par1);
         double reachMin = reachMax;
-        Vec3 entityPos = getPosition(owner);
+        Vec3d entityPos = getPosition(owner);
 
         if (objectMouseOver != null) {
             reachMin = objectMouseOver.hitVec.distanceTo(entityPos);
         }
 
-        Vec3 lookVec = getLook(owner, par1);
-        Vec3 reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
+        Vec3d lookVec = getLook(owner, par1);
+        Vec3d reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
         pointedEntity = null;
         List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this
                 , this.getEntityBoundingBox()
@@ -257,7 +267,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder; //視線外10幅まで判定拡張
             AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
-            MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
+            RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 
             if (axisalignedbb.isVecInside(entityPos)) {
                 if (0.0D < tmpDistance || tmpDistance == 0.0D) {
@@ -268,7 +278,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 double d3 = entityPos.distanceTo(movingobjectposition.hitVec);
 
                 if (d3 < tmpDistance || tmpDistance == 0.0D) {
-                    if (entity == this.ridingEntity && !entity.canRiderInteract()) {
+                    if (entity == this.getRidingEntity() && !entity.canRiderInteract()) {
                         if (tmpDistance == 0.0D) {
                             pointedEntity = entity;
                         }
@@ -283,18 +293,18 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         return pointedEntity;
     }
 
-    public static MovingObjectPosition rayTrace(Entity owner, double par1, float par3)
+    public static RayTraceResult rayTrace(Entity owner, double par1, float par3)
     {
-        Vec3 vec3 = getPosition(owner);
-        Vec3 vec31 = getLook(owner, par3);
-        Vec3 vec32 = vec3.addVector(vec31.xCoord * par1, vec31.yCoord * par1, vec31.zCoord * par1);
-        return owner.worldObj.rayTraceBlocks(vec3, vec32, false, false, true);
+        Vec3d Vec3d = getPosition(owner);
+        Vec3d Vec3d1 = getLook(owner, par3);
+        Vec3d Vec3d2 = Vec3d.addVector(Vec3d1.xCoord * par1, Vec3d1.yCoord * par1, Vec3d1.zCoord * par1);
+        return owner.worldObj.rayTraceBlocks(Vec3d, Vec3d2, false, false, true);
     }
-    public static Vec3 getPosition(Entity owner)
+    public static Vec3d getPosition(Entity owner)
     {
-        return new Vec3(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
+        return new Vec3d(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
     }
-    public static Vec3 getLook(Entity owner, float rotMax)
+    public static Vec3d getLook(Entity owner, float rotMax)
     {
         float f1;
         float f2;
@@ -307,7 +317,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             f2 =  MathHelper.sin(-owner.rotationYaw   * 0.017453292F - (float)Math.PI);
             f3 = -MathHelper.cos(-owner.rotationPitch * 0.017453292F);
             f4 =  MathHelper.sin(-owner.rotationPitch * 0.017453292F);
-            return new Vec3((double)(f2 * f3), (double)f4, (double)(f1 * f3));
+            return new Vec3d((double)(f2 * f3), (double)f4, (double)(f1 * f3));
         }
         else
         {
@@ -317,7 +327,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
             float f5 = -MathHelper.cos(-f1 * 0.017453292F);
             float f6 = MathHelper.sin(-f1 * 0.017453292F);
-            return new Vec3((double)(f4 * f5), (double)f6, (double)(f3 * f5));
+            return new Vec3d((double)(f4 * f5), (double)f6, (double)(f3 * f5));
         }
     }
 
@@ -473,16 +483,16 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      *
      * @return hitInfo : IEntitySelector (Destructable / Attackable)
      */
-    protected MovingObjectPosition getMovingObjectPosition(){
-        Vec3 vec3 = new Vec3(this.posX, this.posY, this.posZ);
-        Vec3 vec31 = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-        MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks(vec3, vec31);
-        vec3 = new Vec3(this.posX, this.posY, this.posZ);
-        vec31 = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+    protected RayTraceResult getRayTraceResult(){
+        Vec3d Vec3d = new Vec3d(this.posX, this.posY, this.posZ);
+        Vec3d Vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+        RayTraceResult movingobjectposition = this.worldObj.rayTraceBlocks(Vec3d, Vec3d1);
+        Vec3d = new Vec3d(this.posX, this.posY, this.posZ);
+        Vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
         if (movingobjectposition != null)
         {
-            vec31 = new Vec3(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+            Vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
         }
 
         Entity entity = null;
@@ -514,11 +524,11 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 {
                     f1 = 0.3F;
                     AxisAlignedBB axisalignedbb1 = entity1.getEntityBoundingBox().expand((double) f1, (double) f1, (double) f1);
-                    MovingObjectPosition movingobjectposition1 = axisalignedbb1.calculateIntercept(vec31, vec3);
+                    RayTraceResult movingobjectposition1 = axisalignedbb1.calculateIntercept(Vec3d1, Vec3d);
 
                     if (movingobjectposition1 != null)
                     {
-                        double d1 = vec31.distanceTo(movingobjectposition1.hitVec);
+                        double d1 = Vec3d1.distanceTo(movingobjectposition1.hitVec);
 
                         if (d1 < d0 || d0 == 0.0D)
                         {
@@ -531,7 +541,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
             if (entity != null)
             {
-                movingobjectposition = new MovingObjectPosition(entity);
+                movingobjectposition = new RayTraceResult(entity);
                 movingobjectposition.hitInfo = selector;
                 break;
             }
@@ -669,7 +679,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         mountEntity(target);
     }
 
-    protected boolean onImpact(MovingObjectPosition mop)
+    protected boolean onImpact(RayTraceResult mop)
     {
 
         boolean result = true;
@@ -688,7 +698,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }else{
 
 
-            if(!worldObj.getCollidingBoundingBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!worldObj.getCubes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -743,7 +753,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
             initRotation();
 
-            MovingObjectPosition movingobjectposition = getMovingObjectPosition();
+            RayTraceResult movingobjectposition = getRayTraceResult();
 
             if (movingobjectposition != null)
             {
@@ -920,7 +930,6 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     /**
      * ■Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
      */
-    @Override
     public void mountEntity(Entity par1Entity) {
         if(par1Entity != null){
             this.hitYaw = this.rotationYaw - par1Entity.rotationYaw;

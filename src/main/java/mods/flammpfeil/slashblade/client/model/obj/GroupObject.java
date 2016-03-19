@@ -36,7 +36,7 @@ public class GroupObject
         if (faces.size() > 0)
         {
             Tessellator tessellator = Tessellator.getInstance();
-            tessellator.getWorldRenderer().begin(glDrawingMode, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            tessellator.getBuffer().begin(glDrawingMode, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
             render(tessellator);
             tessellator.draw();
         }

@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.event;
 
 import com.google.common.collect.*;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.entity.EntityList;
@@ -68,7 +69,7 @@ public class DropEventHandler {
                     EntityLivingBase target =event.entityLiving.getAITarget();
                     if(target == null) return;
 
-                    ItemStack attackItem = target.getHeldItem();
+                    ItemStack attackItem = target.getHeldItem(EnumHand.MAIN_HAND);
                     if(attackItem == null) return;
                     if(!(attackItem.getItem() instanceof ItemSlashBlade)) return;
 
