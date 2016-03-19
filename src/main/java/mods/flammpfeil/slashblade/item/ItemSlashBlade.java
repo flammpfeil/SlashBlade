@@ -591,9 +591,10 @@ public class ItemSlashBlade extends ItemSword {
                     break;
 
                 case Saya2:
-
                     int rank = StylishRankManager.getStylishRank(player);
-                    if (rank < 5) {
+                    long last = LastActionTime.get(getItemTagCompound(itemStack));
+                    long now = player.worldObj.getTotalWorldTime();
+                    if (rank < 5 || (ComboSequence.Saya2.comboResetTicks * 0.4) < (now - last)) {
                         result = ComboSequence.Battou;
                     } else {
                         result = ComboSequence.SIai;
@@ -773,6 +774,10 @@ public class ItemSlashBlade extends ItemSword {
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 
+        if(hand == EnumHand.OFF_HAND){
+            return new ActionResult(EnumActionResult.PASS, itemStackIn);
+        }
+
         SlashBlade.abilityJustGuard.setJustGuardState(playerIn);
 
         /*
@@ -794,7 +799,7 @@ public class ItemSlashBlade extends ItemSword {
         {
             nextAttackSequence(itemStackIn, comboSeq, playerIn);
 
-            SilentUpdateItem.silentUpdateItem(playerIn);
+            SilentUpdateItem.silentUpdateItem(playerIn, hand);
         }
 
         playerIn.setActiveHand(hand);

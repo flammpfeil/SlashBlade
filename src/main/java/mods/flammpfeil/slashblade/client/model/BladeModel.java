@@ -75,7 +75,7 @@ public class BladeModel implements IPerspectiveAwareModel {
 
     @Override
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-
+        //todo : BakedQuard create 3 convert to 4 vertices
         if(side != null)
             return emptyList;
 

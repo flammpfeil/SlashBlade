@@ -269,18 +269,18 @@ public class SlashBlade implements IFuelHandler{
 
 
         int entityId = 1;
-        EntityRegistry.registerModEntity(EntityDrive.class, "Drive", entityId++, this, 250, 1, true);
-        EntityRegistry.registerModEntity(EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 1, true);
-        EntityRegistry.registerModEntity(EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityDrive.class, "Drive", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "PhantomSwordBase", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "PhantomSwordBase", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 1, true);
-        EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 1, true);
+        EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", 100, this, 250, 1000, false);
+        EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", entityId++, this, 250, 100, true);
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());

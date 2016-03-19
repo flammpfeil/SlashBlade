@@ -59,6 +59,12 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         super(par1World);
 
         this.noClip = true;
+
+        //■生存タイマーリセット
+        ticksExisted = 0;
+
+        //■サイズ変更
+        setSize(0.5F, 0.5F);
     }
 
     public EntitySummonedSwordBase(World par1World, EntityLivingBase entityLiving, float AttackLevel, float roll){
@@ -86,11 +92,6 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         alreadyHitEntity.add(thrower.getRidingEntity());
         alreadyHitEntity.addAll(thrower.getPassengers());
 
-        //■生存タイマーリセット
-        ticksExisted = 0;
-
-        //■サイズ変更
-        setSize(0.5F, 0.5F);
 
         {
             float dist = 2.0f;
@@ -419,11 +420,6 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             return;
         }
 
-        lastTickPosX = posX;
-        lastTickPosY = posY;
-        lastTickPosZ = posZ;
-
-
         posX = ridingEntity.posX + (this.hitX * Math.cos(Math.toRadians(ridingEntity.rotationYaw)) - this.hitZ * Math.sin(Math.toRadians(ridingEntity.rotationYaw)));
         posY = ridingEntity.posY + this.hitY;
         posZ = ridingEntity.posZ + (this.hitX * Math.sin(Math.toRadians(ridingEntity.rotationYaw)) + this.hitZ * Math.cos(Math.toRadians(ridingEntity.rotationYaw)));
@@ -744,12 +740,15 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     @Override
     public void onUpdate()
     {
+        lastTickPosX = posX;
+        lastTickPosY = posY;
+        lastTickPosZ = posZ;
+        super.onUpdate();
+
         if(this.ridingEntity2 != null){
             updateRidden();
         }else{
-            lastTickPosX = posX;
-            lastTickPosY = posY;
-            lastTickPosZ = posZ;
+
 
             initRotation();
 
@@ -817,8 +816,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(double par1, double par3, double par5) {
-        super.moveEntity(par1, par3, par5);
+    public void moveEntity(double x, double y, double z) {
+        super.moveEntity(x,y,z);
     }
 
 
@@ -934,9 +933,9 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         if(par1Entity != null){
             this.hitYaw = this.rotationYaw - par1Entity.rotationYaw;
             this.hitPitch = this.rotationPitch - par1Entity.rotationPitch;
-            this.hitX = this.posX - par1Entity.posX;
-            this.hitY = this.posY - par1Entity.posY;
-            this.hitZ = this.posZ - par1Entity.posZ;
+            this.hitX = this.lastTickPosX - par1Entity.posX;
+            this.hitY = this.lastTickPosY - par1Entity.posY;
+            this.hitZ = this.lastTickPosZ - par1Entity.posZ;
             this.ridingEntity2 = par1Entity;
 
             this.ticksExisted = 0;

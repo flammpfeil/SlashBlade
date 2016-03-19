@@ -4,13 +4,19 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 /**
  * Created by Furia on 2015/10/04.
  */
 public class SilentUpdateItem {
-    public static void silentUpdateItem(EntityPlayer player){
-        Slot slot = player.inventoryContainer.getSlotFromInventory(player.inventory,player.inventory.currentItem);
+    public static void silentUpdateItem(EntityPlayer player, EnumHand hand){
+        Slot slot;
+        if(hand == EnumHand.MAIN_HAND)
+            slot = player.inventoryContainer.getSlotFromInventory(player.inventory,player.inventory.currentItem);
+        else
+            slot = player.inventoryContainer.getSlotFromInventory(player.inventory,player.inventory.getSizeInventory()); //40 offhandslot
+
         if(slot == null) return;
 
         ItemStack stack = slot.getStack();
