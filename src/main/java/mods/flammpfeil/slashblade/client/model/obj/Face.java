@@ -58,6 +58,7 @@ public class Face
 
         for (int i = 0; i < vertices.length; ++i)
         {
+            //todo : normal vertex expand
             wr.pos(vertices[i].x, vertices[i].y, vertices[i].z);
 
             if ((textureCoordinates != null) && (textureCoordinates.length > 0))
