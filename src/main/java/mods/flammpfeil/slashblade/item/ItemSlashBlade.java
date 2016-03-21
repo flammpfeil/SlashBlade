@@ -16,6 +16,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.WorldServer;
@@ -2449,21 +2450,37 @@ public class ItemSlashBlade extends ItemSword {
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
 
+        if(entityItem.worldObj.isRemote) {
+            if(entityItem.serverPosX == 0 &&
+                    entityItem.serverPosY == 0 &&
+                    entityItem.serverPosZ == 0) {
+                entityItem.setDead();
+            }
+            return false;
+        }
+
+
         if(entityItem.getEntityData().getBoolean("noBladeStand"))
             return false;
 
+        boolean forceDrop = entityItem.getTags().contains("SB.DeathDrop");
+
         ItemStack stack = entityItem.getEntityItem();
 
-        if(stack.getItem() instanceof ItemSlashBladeWrapper){
+        if(!forceDrop && stack.getItem() instanceof ItemSlashBladeWrapper){
             if(!ItemSlashBladeWrapper.hasWrapedItem(stack))
                 return false;
         }
 
-        if(stack.getRarity() != EnumRarity.COMMON || stack.hasDisplayName() || stack.hasTagCompound() && ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())){
+
+        if(forceDrop || stack.getRarity() != EnumRarity.COMMON || stack.hasDisplayName() || stack.hasTagCompound() && ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())){
 
             EntityBladeStand e = new EntityBladeStand(entityItem.worldObj, entityItem.posX, entityItem.posY, entityItem.posZ, stack);
 
             e.setFlip(e.getRand().nextInt(2));
+
+            if(forceDrop)
+                e.setGlowing(true);
 
             e.moveEntity(entityItem.motionX * 2, entityItem.motionY * 2, entityItem.motionZ * 2);
 

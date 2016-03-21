@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.event.PlayerDropsEventHandler;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -273,14 +274,16 @@ public class SlashBlade implements IFuelHandler{
         EntityRegistry.registerModEntity(EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 10, false);
         EntityRegistry.registerModEntity(EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "PhantomSwordBase", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "SummonedSwordBase", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntityWitherSword.class, "WitherSword", entityId++, this, 250, 10, false);
 
         EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 10, false);
         EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntitySpearManager.class, "SpearManager", entityId++, this, 250, 10, false);
 
         EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", entityId++, this, 250, 100, true);
+        EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", entityId++, this, 250, 20, true);
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
@@ -326,6 +329,8 @@ public class SlashBlade implements IFuelHandler{
 
         abilityProjectileBarrier = new ProjectileBarrier();
         MinecraftForge.EVENT_BUS.register(abilityProjectileBarrier);
+
+        MinecraftForge.EVENT_BUS.register(new PlayerDropsEventHandler());
 
         //statManager = new StatManager();
         //MinecraftForge.EVENT_BUS.register(statManager);

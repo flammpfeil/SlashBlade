@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -60,39 +61,63 @@ public class BladeStandRender extends Render{
     }
 
     /*
-    * Š|‘ä—pƒ‚ƒfƒ‹–½–¼‹K‘¥
+    * ï¿½|ï¿½ï¿½pï¿½ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½ï¿½
 
     stand_[dual|single|upright|wall][_damaged][_ns][_r|_l][_u|_d]
 
 
     dual
-        âE“‚Ì2’i
+        ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½2ï¿½i
     single
-        â“ü‚è“‚Ì1’i
+        ï¿½ï¿½ï¿½ï¿½è“ï¿½ï¿½1ï¿½i
     upright
-        cŠ|‚¯
+        ï¿½cï¿½|ï¿½ï¿½
     wall
-        â“ü‚è“‚Ì1’i•Ç—p
+        ï¿½ï¿½ï¿½ï¿½è“ï¿½ï¿½1ï¿½iï¿½Ç—p
 
 
     _damaged
-        Ü‚ê‚½ó‘Ô
+        ï¿½Ü‚ê‚½ï¿½ï¿½ï¿½
 
     _ns
-        â–³‚µ—p
+        ï¿½â–³ï¿½ï¿½ï¿½p
 
-    ¦ˆÈ‰º‚Í–³‚­‚Ä‚à‚æ‚¢
+    ï¿½ï¿½ï¿½È‰ï¿½ï¿½Í–ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½æ‚¢
 
     _r or _l
-        ‰¡”½“]@¦c‚Æ•K‚¸ƒZƒbƒg‚Åw’è
+        ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½@ï¿½ï¿½ï¿½cï¿½Æ•Kï¿½ï¿½ï¿½Zï¿½bï¿½gï¿½Åwï¿½ï¿½
     _u or _d
-        c”½“]@¦‰¡‚Æ•K‚¸ƒZƒbƒg‚Åw’è
+        ï¿½cï¿½ï¿½ï¿½]ï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½Æ•Kï¿½ï¿½ï¿½Zï¿½bï¿½gï¿½Åwï¿½ï¿½
 
     * */
 
     @Override
     public void doRender(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
+        if(renderOutlines){
+            GlStateManager.disableLighting();
+            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.disableTexture2D();
+            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 
+            GlStateManager.enableColorMaterial();
+            float h = (entity.ticksExisted % 80) / 80.0f;
+            GlStateManager.enableOutlineMode(Color.getHSBColor(h,0.5f,1.0f).getRGB());
+        }
+
+        renderModel(entity, x, y, z, yaw, partialRenderTick);
+
+        if(renderOutlines){
+            GlStateManager.disableOutlineMode();
+            GlStateManager.disableColorMaterial();
+
+            GlStateManager.enableLighting();
+            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.enableTexture2D();
+            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        }
+
+    }
+    public void renderModel(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
         if(standModel == null){
             standModel = new WavefrontObject(modelLocation);
         }

@@ -179,14 +179,26 @@ public class EntityBladeStand extends Entity {
     }
 
     @Override
+    public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_) {
+        super.setPositionAndRotation2(x, y, z, yaw, pitch, posRotationIncrements, p_180426_10_);
+    }
+
+    @Override
+    public void setPosition(double x, double y, double z) {
+        super.setPosition(x, y, z);
+    }
+
+    @Override
     public void onUpdate() {
 
         if(SlashBladeHooks.onEntityBladeStandUpdateHooks(this)){
             return;
         }
+        this.prevPosX = this.posX;
+        this.prevPosY = this.posY;
+        this.prevPosZ = this.posZ;
 
-        super.onUpdate();
-
+        //super.onUpdate();
 
         this.motionX = 0;
         this.motionZ = 0;
@@ -209,11 +221,15 @@ public class EntityBladeStand extends Entity {
             this.motionY = -0.1D;
         }
 
+        noClip = false;
         BlockPos pos = new BlockPos(this.posX,this.posY,this.posZ);
         if(!this.worldObj.isAirBlock(pos)
                 && this.worldObj.getBlockState(pos).getBlockHardness(this.worldObj, pos) < 0){
 
-            this.setPosition(this.posX,this.posY+1.5,this.posZ);
+            this.motionX = 0;
+            this.motionZ = 0;
+            this.motionY = 0;
+            this.setPositionAndUpdate(this.posX,this.posY+1.5,this.posZ);
         }
 
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
