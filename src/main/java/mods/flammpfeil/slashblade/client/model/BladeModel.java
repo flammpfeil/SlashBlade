@@ -1,12 +1,11 @@
 package mods.flammpfeil.slashblade.client.model;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
+import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -23,9 +22,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ItemModelMesherForge;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.ModelLoader;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -38,7 +36,22 @@ import java.util.List;
  */
 public class BladeModel implements IPerspectiveAwareModel {
 
-    static final List<BakedQuad> emptyList = Lists.newArrayList();
+    List<BakedQuad> emptyList = null;
+    List<BakedQuad> getEmptyList(){
+        if(emptyList == null)
+            emptyList = Lists.newArrayList(new BakedQuad(new int[28], 0, EnumFacing.UP, getParticleTexture(), false, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM));
+        return emptyList;
+    }
+
+    ItemStack proudsoul = null;
+    ItemModelMesher modelMesher = null;
+    List<BakedQuad> getDefaultQuards(){
+        if(modelMesher == null) {
+            modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+            proudsoul = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1);
+        }
+        return modelMesher.getItemModel(proudsoul).getQuads(null,null,0);
+    }
 
     ItemStack targetStack = null;
     ItemSlashBlade itemBlade = null;
@@ -77,21 +90,21 @@ public class BladeModel implements IPerspectiveAwareModel {
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
         //todo : BakedQuard create 3 convert to 4 vertices
         if(side != null)
-            return emptyList;
+            return getEmptyList();
 
         //no texture;
-        if(drawStep == 0) return emptyList;
+        if(drawStep == 0) return getDefaultQuards();
 
         if(type == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
                 || type == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND
                 || type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND
-                || type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) return emptyList;
+                || type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) return getEmptyList();
 
         //clear drawstate
         try{
             Tessellator.getInstance().draw();
         }catch(Exception e){
-            return emptyList;
+            return getDefaultQuards();
         }
 
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -172,7 +185,7 @@ public class BladeModel implements IPerspectiveAwareModel {
         Face.resetColor();
         //reset drawstate
         Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        return emptyList;
+        return getEmptyList();
     }
 
     @Override
@@ -206,27 +219,12 @@ public class BladeModel implements IPerspectiveAwareModel {
     public ItemCameraTransforms getItemCameraTransforms() {
         return ItemCameraTransforms.DEFAULT;
     }
-/*
-    @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
-        return new ItemCameraTransforms(ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT){
-
-            @Override
-            public void applyTransform(TransformType type) {
-                super.applyTransform(type);
-
-                BladeModel.this.type = type;
-
-                drawStep = 0;
-            }
-        };
-    }*/
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
         this.type = cameraTransformType;
 
         drawStep = 0;
-        return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, ItemTransformVec3f.DEFAULT ,cameraTransformType);
+        return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, ModelRotation.X0_Y0, cameraTransformType);
     }
 }

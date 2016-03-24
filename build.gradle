@@ -18,7 +18,7 @@ group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-nami
 archivesBaseName = "SlashBlade"
 
 minecraft {
-    version = "1.9-12.16.0.1773-1.9"
+    version = "1.9-12.16.0.1804-1.9"
     runDir = "run"
     
     mappings = "snapshot_20160312"

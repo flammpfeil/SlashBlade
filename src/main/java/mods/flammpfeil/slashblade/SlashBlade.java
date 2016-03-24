@@ -270,18 +270,18 @@ public class SlashBlade implements IFuelHandler{
 
 
         int entityId = 1;
-        EntityRegistry.registerModEntity(EntityDrive.class, "Drive", entityId++, this, 250, 10, false);
-        EntityRegistry.registerModEntity(EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 10, false);
-        EntityRegistry.registerModEntity(EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntityDrive.class, "Drive", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 10, true);
 
-        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "SummonedSwordBase", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "SummonedSwordBase", entityId++, this, 250, 10, true);
         EntityRegistry.registerModEntity(EntityWitherSword.class, "WitherSword", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 10, false);
-        EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 10, false);
-        EntityRegistry.registerModEntity(EntitySpearManager.class, "SpearManager", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntitySpearManager.class, "SpearManager", entityId++, this, 250, 10, true);
 
-        EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 10, true);
 
         EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", entityId++, this, 250, 20, true);
 
