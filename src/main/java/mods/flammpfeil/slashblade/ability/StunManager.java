@@ -17,15 +17,15 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 public class StunManager {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorldEvent(EntityJoinWorldEvent event){
-        if(!(event.entity instanceof EntityLiving)) return;
-        EntityLiving entity = (EntityLiving)event.entity;
+        if(!(event.getEntity() instanceof EntityLiving)) return;
+        EntityLiving entity = (EntityLiving) event.getEntity();
 
         entity.tasks.addTask(-1,new EntityAIStun(entity));
     }
 
     @SubscribeEvent
     public void onEntityLivingUpdate(LivingEvent.LivingUpdateEvent event){
-        EntityLivingBase target = event.entityLiving;
+        EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
         if(target.worldObj == null) return;
 
@@ -56,7 +56,7 @@ public class StunManager {
     @SubscribeEvent
     public void onEntityCanUpdate(EntityEvent.CanUpdate event){
         if(event.isCanceled()) return;
-        Entity target = event.entity;
+        Entity target = event.getEntity();
         if(target == null) return;
         if(target.worldObj == null) return;
 
@@ -68,7 +68,7 @@ public class StunManager {
             target.getEntityData().removeTag(FreezeTimeout);
             return;
         }else{
-            event.canUpdate = false;
+            event.setCanUpdate(false);
         }
     }
 

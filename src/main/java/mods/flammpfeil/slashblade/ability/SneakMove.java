@@ -24,7 +24,7 @@ public class SneakMove {
 
     @SubscribeEvent
     public void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event){
-        EntityLivingBase entity = event.entityLiving;
+        EntityLivingBase entity = event.getEntityLiving();
         if(entity == null) return;
 
         IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
@@ -46,12 +46,12 @@ public class SneakMove {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onFOVUpdateEvent(FOVUpdateEvent event){
-        if(event.entity == null) return;
-        IAttributeInstance iattributeinstance = event.entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+        if(event.getEntity() == null) return;
+        IAttributeInstance iattributeinstance = event.getEntity().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
         if (iattributeinstance.getModifier(skillSneakMoveSpeedBoostModifierUUID) != null)
         {
-            event.newfov = 1.0f;
+            event.setNewfov(1.0f);
         }
     }
 }

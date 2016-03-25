@@ -23,11 +23,11 @@ public class FireResistance {
 
     @SubscribeEvent
     public void onUpdate(LivingEntityUseItemEvent.Tick event){
-        EntityLivingBase player = event.entityLiving;
+        EntityLivingBase player = event.getEntityLiving();
         if(player == null) return;
         if(player.getActiveItemStack() == null) return;
 
-        ItemStack stack = event.item;
+        ItemStack stack = event.getItem();
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
@@ -41,7 +41,7 @@ public class FireResistance {
         if(player.isBurning()){
             player.moveFlying(player.moveStrafing,player.moveForward,0.25f + speedfactor);
 
-            int ticks = stack.getMaxItemUseDuration() - event.duration;
+            int ticks = stack.getMaxItemUseDuration() - event.getDuration();
             if(ItemSlashBlade.RequiredChargeTick < ticks){
                 ReflectionAccessHelper.setFire(player,0);
             }

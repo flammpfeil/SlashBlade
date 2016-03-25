@@ -48,27 +48,27 @@ public class JustGuard {
 
     @SubscribeEvent
     public void LivingHurtEvent(LivingHurtEvent e){
-        String type = e.source.getDamageType();
+        String type = e.getSource().getDamageType();
 
         if(e.isCanceled()) return;
-        if(e.entity == null) return;
-        if(!(e.entity instanceof EntityPlayer)) return;
+        if(e.getEntity() == null) return;
+        if(!(e.getEntity() instanceof EntityPlayer)) return;
 
-        EntityLivingBase el = e.entityLiving;
+        EntityLivingBase el = e.getEntityLiving();
 
-        ItemStack stack = e.entityLiving.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack stack = e.getEntityLiving().getHeldItem(EnumHand.MAIN_HAND);
         if(el instanceof  EntityPlayer && el.getActiveItemStack() != null && stack != null && stack.getItem() instanceof ItemSlashBlade){
 
             //mobからの攻撃は常にguard可能
-            boolean guardable = e.source.getEntity() != null;
+            boolean guardable = e.getSource().getEntity() != null;
             //特殊guardも通常guard不可なものはguard不可
-            if(!guardable && e.source.isUnblockable()) return;
+            if(!guardable && e.getSource().isUnblockable()) return;
 
             long cs = ChargeStart.get(el.getEntityData());
             if(0 < cs && el.worldObj.getTotalWorldTime() - cs < activeTicks){
 
                 e.setCanceled(true);
-                e.ammount = 0;
+                e.setAmount(0);
                 UntouchableTime.setUntouchableTime(el,20);
 
 
@@ -109,7 +109,7 @@ public class JustGuard {
     }
     @SubscribeEvent
     public void LivingUpdateEvent(LivingEvent.LivingUpdateEvent e){
-        EntityLivingBase el = e.entityLiving;
+        EntityLivingBase el = e.getEntityLiving();
 
         ItemStack stack = el.getHeldItem(EnumHand.MAIN_HAND);
         if(stack != null && stack.getItem() instanceof ItemSlashBlade){

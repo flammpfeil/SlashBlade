@@ -31,7 +31,7 @@ public class EnemyStep {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event){
-        EntityLivingBase target = event.entityLiving;
+        EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
 
         if(!target.worldObj.isRemote) return;
@@ -174,7 +174,7 @@ public class EnemyStep {
 
     @SubscribeEvent
     public void onLivingJump(LivingEvent.LivingJumpEvent event){
-        EntityLivingBase target = event.entityLiving;
+        EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);

@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class PlayerDropsEventHandler {
     @SubscribeEvent
     public void onPlayerDropsEvent(LivingDropsEvent event){
-        boolean isPlayer = event.entityLiving instanceof EntityPlayer;
-        for(EntityItem item : event.drops){
+        boolean isPlayer = event.getEntityLiving() instanceof EntityPlayer;
+        for(EntityItem item : event.getDrops()){
             if(!(item.getEntityItem().getItem() instanceof ItemSlashBlade))
                 continue;
 

@@ -56,7 +56,7 @@ public class BladeFirstPersonRender {
 
         GlStateManager.clear(256);
 
-        int xOffset = event.renderPass;
+        int xOffset = event.getRenderPass();
 
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();
@@ -81,7 +81,7 @@ public class BladeFirstPersonRender {
         {
             mc.entityRenderer.enableLightmap();
 
-            float partialTicks = event.partialTicks;
+            float partialTicks = event.getPartialTicks();
 
             if (swordType.contains(ItemSlashBlade.SwordType.NoScabbard)) {
                 //todo :LayerHeldItem�I��rendering����

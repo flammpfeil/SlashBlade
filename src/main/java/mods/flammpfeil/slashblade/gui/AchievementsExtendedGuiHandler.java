@@ -34,12 +34,12 @@ public class AchievementsExtendedGuiHandler {
 
     @SubscribeEvent
     public void guiRenderHandler(GuiScreenEvent.DrawScreenEvent.Post event){
-        if(!(event.gui instanceof GuiAchievements)){
+        if(!(event.getGui() instanceof GuiAchievements)){
             visible = false;
             return;
         }
 
-        GuiAchievements guiAchievements = (GuiAchievements)event.gui;
+        GuiAchievements guiAchievements = (GuiAchievements)event.getGui();
 
         /*
         int currentPage = (Integer)ReflectionHelper.getPrivateValue(GuiAchievements.class,guiAchievements,"currentPage");
@@ -49,10 +49,10 @@ public class AchievementsExtendedGuiHandler {
 
             if(currentRecipe == null){
                 currentRecipe = new GuiSlashBladeRecipe();
-                currentRecipe.setWorldAndResolution(Minecraft.getMinecraft(), event.gui.width, event.gui.height);
+                currentRecipe.setWorldAndResolution(Minecraft.getMinecraft(), event.getGui().width, event.getGui().height);
             }else{
-                if(event.gui.width != currentRecipe.width || event.gui.height != currentRecipe.height){
-                    currentRecipe.setWorldAndResolution(Minecraft.getMinecraft(), event.gui.width, event.gui.height);
+                if(event.getGui().width != currentRecipe.width || event.getGui().height != currentRecipe.height){
+                    currentRecipe.setWorldAndResolution(Minecraft.getMinecraft(), event.getGui().width, event.getGui().height);
                 }
             }
 
@@ -82,7 +82,7 @@ public class AchievementsExtendedGuiHandler {
             }
 
             if(visible)
-                currentRecipe.drawScreen(event.mouseX, event.mouseY, event.renderPartialTicks);
+                currentRecipe.drawScreen(event.getMouseX(), event.getMouseY(), event.getRenderPartialTicks());
 
 
         }

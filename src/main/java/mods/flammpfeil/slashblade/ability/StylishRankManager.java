@@ -3,10 +3,12 @@ package mods.flammpfeil.slashblade.ability;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatisticsFile;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -321,17 +323,17 @@ public class StylishRankManager {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void LivingHurtEvent(LivingHurtEvent e){
-        String type = e.source.getDamageType();
+        String type = e.getSource().getDamageType();
         if(e.isCanceled()) return;
-        if(e.entity == null) return;
-        if(!(e.entity instanceof EntityPlayer)) return;
+        if(e.getEntity() == null) return;
+        if(!(e.getEntity() instanceof EntityPlayer)) return;
 
         //guard不可でかつ、mobからの攻撃ではない
-        if(e.source.isUnblockable() && e.source.getEntity() != null) return;
+        if(e.getSource().isUnblockable() && e.getSource().getEntity() != null) return;
 
         //反射攻撃ではないこと
-        if(e.source.getEntity() != null && e.source.getEntity() instanceof EntityLivingBase){
-            EntityLivingBase attacker = (EntityLivingBase)e.source.getEntity();
+        if(e.getSource().getEntity() != null && e.getSource().getEntity() instanceof EntityLivingBase){
+            EntityLivingBase attacker = (EntityLivingBase)e.getSource().getEntity();
 
             if(attacker.getRevengeTimer() == attacker.ticksExisted)
                 return;
@@ -339,25 +341,25 @@ public class StylishRankManager {
 
         if(ignoreDamageTypes.contains(type)) return;
 
-        NBTTagCompound tag = getTag(e.entity);
+        NBTTagCompound tag = getTag(e.getEntity());
 
         long lastUpdate = LastRankPointUpdate.get(tag);
-        long now = e.entity.worldObj.getTotalWorldTime();
+        long now = e.getEntity().worldObj.getTotalWorldTime();
 
         if(RankRange * 2 < now - lastUpdate){
             RankPoint.set(tag, 0);
-            onRiseInRank(e.entity, 0, 0);
+            onRiseInRank(e.getEntity(), 0, 0);
         }else{
             RankPoint.add(tag, -RankRange * 2);
-            onRiseInRank(e.entity, 0, RankPoint.get(tag));
+            onRiseInRank(e.getEntity(), 0, RankPoint.get(tag));
         }
         LastRankPointUpdate.set(tag, now);
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void ClientChatReceivedEvent(net.minecraftforge.client.event.ClientChatReceivedEvent e){
-        String text = e.message.getUnformattedText();
+    public void ClientChatReceivedEvent(ClientChatReceivedEvent e){
+        String text = e.getMessage().getUnformattedText();
         if(text.startsWith(MessageHeader)){
 
             String value = text.substring(MessageHeader.length());
@@ -368,7 +370,7 @@ public class StylishRankManager {
                 rankPoint = 0;
             }
 
-            Entity el = net.minecraft.client.Minecraft.getMinecraft().thePlayer;
+            Entity el = Minecraft.getMinecraft().thePlayer;
             NBTTagCompound tag = getTag(el);
             RankPoint.set(tag,rankPoint);
             LastRankPointUpdate.set(tag,el.worldObj.getTotalWorldTime());

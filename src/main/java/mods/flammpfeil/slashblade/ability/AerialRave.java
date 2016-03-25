@@ -18,7 +18,7 @@ public class AerialRave {
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event){
 
-        EntityLivingBase target = event.entityLiving;
+        EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);

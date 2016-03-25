@@ -20,8 +20,8 @@ public class CrystalHealing implements ISpecialEffect {
     @SubscribeEvent
     public void onUpdate(LivingEvent.LivingUpdateEvent event){
 
-        if(!SpecialEffects.isPlayer(event.entityLiving)) return;
-        EntityPlayer player = (EntityPlayer)event.entityLiving;
+        if(!SpecialEffects.isPlayer(event.getEntityLiving())) return;
+        EntityPlayer player = (EntityPlayer) event.getEntityLiving();
 
         if(player.worldObj.isRemote) return;
         if((player.worldObj.getTotalWorldTime() & 0xF) != 0xF) return; //16tick cicle

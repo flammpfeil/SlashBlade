@@ -20,7 +20,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 public class WaterBreathing {
     @SubscribeEvent
     public void onUpdate(LivingEvent.LivingUpdateEvent event){
-        EntityLivingBase target = event.entityLiving;
+        EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
         if(!(target instanceof EntityPlayer)) return;
         if(target.getActiveItemStack() == null) return;

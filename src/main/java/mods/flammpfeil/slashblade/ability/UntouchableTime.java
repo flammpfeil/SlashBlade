@@ -87,33 +87,33 @@ public class UntouchableTime {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onLivingHurt(LivingHurtEvent event){
-        EntityLivingBase target = event.entityLiving;
+        EntityLivingBase target = event.getEntityLiving();
         if(!isUntouchable(target)) return;
 
         doAvoid(target);
 
-        WitchTime(event.source.getEntity(), 10);
+        WitchTime(event.getSource().getEntity(), 10);
 
         event.setCanceled(true);
-        event.ammount = 0;
+        event.setAmount(0);
     }
 
     @SubscribeEvent
     public void onLivingAttackEvent(LivingAttackEvent event){
-        EntityLivingBase target = event.entityLiving;
+        EntityLivingBase target = event.getEntityLiving();
         if(!isUntouchable(target)) return;
 
         doAvoid(target);
 
-        WitchTime(event.source.getEntity(), 10);
+        WitchTime(event.getSource().getEntity(), 10);
 
         event.setCanceled(true);
     }
 
     @SubscribeEvent
     public void LivingUpdateEvent(LivingEvent.LivingUpdateEvent event){
-        if(isUntouchable(event.entityLiving))
-            restorePotionEffect(event.entityLiving);
+        if(isUntouchable(event.getEntityLiving()))
+            restorePotionEffect(event.getEntityLiving());
     }
 
     static private void storePotionEffect(EntityLivingBase entity){

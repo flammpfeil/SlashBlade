@@ -47,10 +47,10 @@ public class DropEventHandler {
 
     @SubscribeEvent
     public void LivingDrops(LivingDropsEvent event){
-        String key = EntityList.getEntityString(event.entityLiving);
+        String key = EntityList.getEntityString(event.getEntityLiving());
 
         if(dropData.containsKey(key)){
-            Random rand = event.entityLiving.getRNG();
+            Random rand = event.getEntityLiving().getRNG();
 
             Multimap<Float,ItemStack> drops = dropData.get(key);
 
@@ -61,12 +61,12 @@ public class DropEventHandler {
                 float rate = Math.abs(drop.getKey());
                 boolean requiredBlade = drop.getKey() < 0;
 
-                isDrop = rate * (1.0f + 0.5f * event.lootingLevel) > rand.nextFloat();
+                isDrop = rate * (1.0f + 0.5f * event.getLootingLevel()) > rand.nextFloat();
 
                 boolean forceDrop = rate > 1.1f;
 
                 if(requiredBlade){
-                    EntityLivingBase target =event.entityLiving.getAITarget();
+                    EntityLivingBase target =event.getEntityLiving().getAITarget();
                     if(target == null) return;
 
                     ItemStack attackItem = target.getHeldItem(EnumHand.MAIN_HAND);
@@ -75,7 +75,7 @@ public class DropEventHandler {
 
                 }
 
-                if((event.recentlyHit || forceDrop) && isDrop && drop.getValue() != null){
+                if((event.isRecentlyHit() || forceDrop) && isDrop && drop.getValue() != null){
                     ItemStack dropitem = drop.getValue().copy();
 
                     dropitem.stackSize =
@@ -88,20 +88,20 @@ public class DropEventHandler {
 
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(dropitem);
                         if(!tag.getBoolean("IsNoStandDrop")){
-                            EntityBladeStand e = new EntityBladeStand(event.entityLiving.worldObj
-                                    ,event.entityLiving.posX
-                                    ,event.entityLiving.posY
-                                    ,event.entityLiving.posZ
+                            EntityBladeStand e = new EntityBladeStand(event.getEntityLiving().worldObj
+                                    ,event.getEntityLiving().posX
+                                    ,event.getEntityLiving().posY
+                                    ,event.getEntityLiving().posZ
                                     ,dropitem);
                             e.setGlowing(true);
-                            event.entityLiving.worldObj.spawnEntityInWorld(e);
+                            event.getEntityLiving().worldObj.spawnEntityInWorld(e);
 
                             return;
                         }
                     }
 
                     if(dropitem.stackSize != 0)
-                        event.entityLiving.entityDropItem(dropitem,1);
+                        event.getEntityLiving().entityDropItem(dropitem,1);
                 }
             }
         }

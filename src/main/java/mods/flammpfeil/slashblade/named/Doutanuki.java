@@ -173,8 +173,8 @@ public class Doutanuki {
 
     @SubscribeEvent
     public void specialSpawn(LivingSpawnEvent.SpecialSpawn event){
-        if(event.entityLiving instanceof EntityZombie){
-            if (spawnRate > event.entityLiving.getRNG().nextFloat())
+        if(event.getEntityLiving() instanceof EntityZombie){
+            if (spawnRate > event.getEntityLiving().getRNG().nextFloat())
             {
 
                 ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid , name);
@@ -182,22 +182,22 @@ public class Doutanuki {
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
 
-                if (noSheathRate > event.entityLiving.getRNG().nextFloat())
+                if (noSheathRate > event.getEntityLiving().getRNG().nextFloat())
                     ItemSlashBlade.IsNoScabbard.set(tag,true);
 
-                if(isBrokenRate > event.entityLiving.getRNG().nextFloat())
+                if(isBrokenRate > event.getEntityLiving().getRNG().nextFloat())
                     ItemSlashBlade.IsBroken.set(tag,true);
 
 
 
-                ItemSlashBlade.KillCount.set(tag,event.entityLiving.getRNG().nextInt(200));
+                ItemSlashBlade.KillCount.set(tag,event.getEntityLiving().getRNG().nextInt(200));
 
-                if (0.1 > event.entityLiving.getRNG().nextFloat())
+                if (0.1 > event.getEntityLiving().getRNG().nextFloat())
                     ItemSlashBlade.KillCount.add(tag,1000);
 
 
-                event.entityLiving.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, blade);
-                ((EntityZombie)event.entityLiving).setDropChance(EntityEquipmentSlot.MAINHAND,dropRate);
+                event.getEntityLiving().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, blade);
+                ((EntityZombie)event.getEntityLiving()).setDropChance(EntityEquipmentSlot.MAINHAND,dropRate);
             }
         }
 

@@ -16,10 +16,10 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 public class SlashBladeItemDestroyEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void PlayerDestroyItemEvent(PlayerDestroyItemEvent event){
-        if(event.entityLiving.worldObj.isRemote) return;
+        if(event.getEntityLiving().worldObj.isRemote) return;
 
         ItemStack stack = event.getOriginal();
-        EntityPlayer player = event.entityPlayer;
+        EntityPlayer player = event.getEntityPlayer();
         if(stack != null && stack.getItem() instanceof ItemSlashBlade){
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
@@ -47,7 +47,7 @@ public class SlashBladeItemDestroyEventHandler {
                 }
 
                 if(blade == SlashBlade.bladeWhiteSheath){
-                    AchievementList.triggerAchievement(event.entityPlayer, "brokenWhiteSheath");
+                    AchievementList.triggerAchievement(event.getEntityPlayer(), "brokenWhiteSheath");
                 }
 /*
                 if(player.inventory.mainInventory[player.inventory.currentItem] == null)

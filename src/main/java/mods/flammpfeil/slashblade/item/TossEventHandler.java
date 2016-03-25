@@ -10,12 +10,12 @@ public class TossEventHandler {
 
     @SubscribeEvent
     public void itemTossEvent(ItemTossEvent event){
-        if(!event.player.isSneaking())
+        if(!event.getPlayer().isSneaking())
             return;
 
-        if(!(event.entityItem.getEntityItem().getItem() instanceof ItemSlashBlade))
+        if(!(event.getEntityItem().getEntityItem().getItem() instanceof ItemSlashBlade))
             return;
 
-        event.entityItem.getEntityData().setBoolean("noBladeStand",true);
+        event.getEntityItem().getEntityData().setBoolean("noBladeStand",true);
     }
 }

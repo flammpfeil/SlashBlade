@@ -544,7 +544,7 @@ public class AchievementList {
 
     @SubscribeEvent
     public void livingAttackEvent(LivingAttackEvent event){
-        DamageSource src = event.source;
+        DamageSource src = event.getSource();
         if(src.getDamageType() != "player") return;
 
         Entity e = src.getEntity();

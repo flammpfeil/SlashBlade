@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.named;
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -64,7 +65,7 @@ public class BambooMod {
             RecipeBambooMod recipe = new BambooMod.RecipeBambooMod();
             SlashBlade.addRecipe("wrap.BambooMod.katana.sample", recipe);
 
-            FMLCommonHandler.instance().bus().register(recipe);
+            MinecraftForge.EVENT_BUS.register(recipe);
 
             RecipeSorter.register("flammpfeil.slashblade:bamboomod", RecipeBambooMod.class, RecipeSorter.Category.SHAPED, "after:forge:shaped");
         }
