@@ -133,14 +133,15 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      */
     @Override
     protected void entityInit() {
-        //EntityId
-        this.getDataManager().register(TARGET_ENTITY_ID, 0);
+
+        //lifetime
+        this.getDataManager().register(LIFETIME, 20);
 
         //Roll
         this.getDataManager().register(ROLL, 0.0f);
 
-        //lifetime
-        this.getDataManager().register(LIFETIME, 20);
+        //EntityId
+        this.getDataManager().register(TARGET_ENTITY_ID, 0);
 
         //interval
         this.getDataManager().register(INTERVAL, 7);

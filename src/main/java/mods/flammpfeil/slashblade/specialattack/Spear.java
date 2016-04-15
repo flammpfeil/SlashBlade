@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.specialattack;
 
+import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntitySpearManager;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,6 +55,7 @@ public class Spear extends SpecialAttackBase {
             }
         }
 
+        UntouchableTime.setUntouchableTime(player, 10);
 
         player.playSound(SoundEvents.entity_generic_explode, 1.0F, 1.0F);
         ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.HiraTuki);

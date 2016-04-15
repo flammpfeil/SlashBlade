@@ -115,8 +115,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
 
 
 
-    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntityDrive.class, DataSerializers.VARINT);
     private static final DataParameter<Float> ROLL = EntityDataManager.<Float>createKey(EntityDrive.class, DataSerializers.FLOAT);
+    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntityDrive.class, DataSerializers.VARINT);
     private static final DataParameter<Boolean> IS_MULTI_HIT = EntityDataManager.<Boolean>createKey(EntityDrive.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> IS_SLASH_DIMENSION = EntityDataManager.<Boolean>createKey(EntityDrive.class, DataSerializers.BOOLEAN);
 
@@ -125,14 +125,14 @@ public class EntityDrive extends Entity implements IThrowableEntity {
      */
     @Override
     protected void entityInit() {
-        //isMultiHit
-        this.getDataManager().register(IS_MULTI_HIT, false);
-
         //Roll
         this.getDataManager().register(ROLL, 0.0f);
 
         //lifetime
         this.getDataManager().register(LIFETIME, 20);
+
+        //isMultiHit
+        this.getDataManager().register(IS_MULTI_HIT, false);
 
         //lifetime
         this.getDataManager().register(IS_SLASH_DIMENSION, false);
