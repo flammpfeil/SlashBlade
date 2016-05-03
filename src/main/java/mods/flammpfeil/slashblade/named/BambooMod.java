@@ -61,7 +61,9 @@ public class BambooMod {
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
 
-        if(Loader.isModLoaded("BambooMod")){
+        ItemStack katana = SlashBlade.findItemStack("BambooMod","katana",1);
+
+        if(Loader.isModLoaded("BambooMod") && katana != null){
             RecipeBambooMod recipe = new BambooMod.RecipeBambooMod();
             SlashBlade.addRecipe("wrap.BambooMod.katana.sample", recipe);
 
