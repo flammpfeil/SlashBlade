@@ -734,7 +734,9 @@ public class ItemSlashBlade extends ItemSword {
                 case Saya2:
 
                     int rank = StylishRankManager.getStylishRank(player);
-                    if (rank < 5) {
+                    long last = LastActionTime.get(getItemTagCompound(itemStack));
+                    long now = player.worldObj.getTotalWorldTime();
+                    if (rank < 5 || (ComboSequence.Saya2.comboResetTicks * 0.4) < (now - last)) {
                         result = ComboSequence.Battou;
                     } else {
                         result = ComboSequence.SIai;
