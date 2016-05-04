@@ -105,15 +105,15 @@ public class StylishRankManager {
 
         public static String SlashEdge = registerAttackType("SlashEdge", 0.2f);
         public static String ReturnEdge = registerAttackType("ReturnEdge", 0.2f);
-        public static String SSlashEdge = registerAttackType("SSlashEdge", 0.2f);
-        public static String SReturnEdge = registerAttackType("SReturnEdge", 0.2f);
-        public static String SIai = registerAttackType("SIai", 0.2f);
+        public static String SSlashEdge = registerAttackType("SSlashEdge", 0.3f);
+        public static String SReturnEdge = registerAttackType("SReturnEdge", 0.3f);
+        public static String SIai = registerAttackType("SIai", 0.3f);
         public static String SSlashBlade = registerAttackType("SSlashBlade", -0.2f);
 
-        public static String ASlashEdge = registerAttackType("ASlashEdge", 0.2f);
-        public static String AKiriorosi = registerAttackType("AKiriorosi", 0.2f);
-        public static String AKiriage = registerAttackType("AKiriage", 0.2f);
-        public static String AKiriorosiFinish = registerAttackType("AKiriorosiFinish", 0.2f);
+        public static String ASlashEdge = registerAttackType("ASlashEdge", 0.3f);
+        public static String AKiriorosi = registerAttackType("AKiriorosi", 0.3f);
+        public static String AKiriage = registerAttackType("AKiriage", 0.4f);
+        public static String AKiriorosiFinish = registerAttackType("AKiriorosiFinish", 0.5f);
 
         public static String registerAttackType(String key,float factor){
             types.put(key,factor);
