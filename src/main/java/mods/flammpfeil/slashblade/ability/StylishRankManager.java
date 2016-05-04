@@ -110,6 +110,11 @@ public class StylishRankManager {
         public static String SIai = registerAttackType("SIai", 0.2f);
         public static String SSlashBlade = registerAttackType("SSlashBlade", -0.2f);
 
+        public static String ASlashEdge = registerAttackType("ASlashEdge", 0.2f);
+        public static String AKiriorosi = registerAttackType("AKiriorosi", 0.2f);
+        public static String AKiriage = registerAttackType("AKiriage", 0.2f);
+        public static String AKiriorosiFinish = registerAttackType("AKiriorosiFinish", 0.2f);
+
         public static String registerAttackType(String key,float factor){
             types.put(key,factor);
             return key;
@@ -319,7 +324,7 @@ public class StylishRankManager {
         }
     }
 
-    static public Set<String> ignoreDamageTypes = Sets.newHashSet("thrown");
+    static public Set<String> ignoreDamageTypes = Sets.newHashSet("thorns","fall");
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void LivingHurtEvent(LivingHurtEvent e){

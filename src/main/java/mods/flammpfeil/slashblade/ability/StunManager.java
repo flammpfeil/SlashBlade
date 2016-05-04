@@ -50,6 +50,13 @@ public class StunManager {
         target.getEntityData().setLong(EntityAIStun.StunTimeout,target.worldObj.getTotalWorldTime() + duration);
     }
 
+    public static void removeStun(EntityLivingBase target){
+        if(target.worldObj == null) return;
+        if(!(target instanceof EntityLiving)) return;
+        target.getEntityData().removeTag(EntityAIStun.StunTimeout);
+        target.getEntityData().removeTag(FreezeTimeout);
+    }
+
     static final String FreezeTimeout = "FreezeTimeout";
     static final long freezeLimit = 200;
 
