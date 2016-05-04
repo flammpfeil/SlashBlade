@@ -173,6 +173,14 @@ public class ItemSlashBlade extends ItemSword {
         SSlashEdge(false, 240.0f,20.0f,false,25),
         SReturnEdge(false, 250.0f,-160.0f,false,25),
         SSlashBlade(false, 200.0f,-315.0f,false,25),
+
+        AerialRave(false, 240.0f, 20.0f,false,25), //startflag
+        ASlashEdge(false, 240.0f, 20.0f,false,25),
+        AKiriorosi(false, 200.0f, -360.0f+120f,false,25),
+
+        AKiriorosiB(false, 200.0f,-360.0f+80f,false,25), //changeflag
+        AKiriage(false, 360.0f+180f+60f, -360.0f+180f+80f,false,12),
+        AKiriorosiFinish(false, 200.0f,-360.0f+90f,false,25),
     	;
 
 	    /**
@@ -464,6 +472,55 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
 
+
+            //AerialRave
+            case ASlashEdge:
+            case AKiriorosi:
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+
+            {
+
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, stack);
+                if(0 < level){
+                    target.addVelocity(0.0, 0.3D, 0.0);
+                }else{
+                    target.addVelocity(0.0, 0.2D, 0.0);
+                }
+            }
+
+            setDaunting(target);
+
+            break;
+            case AKiriage:
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+
+                target.addVelocity(0.0, 0.7D, 0.0);
+
+                setDaunting(target);
+
+                break;
+            case AKiriorosiFinish:
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+
+                target.fallDistance += 4;
+
+                target.addVelocity(0.0, -0.8D, 0.0);
+
+                target.hurtResistantTime = 0;
+
+
+                StunManager.removeStun(target);
+
+                break;
+
+                //==================================
+
             case Saya1:
             case Saya2:
 
@@ -559,6 +616,23 @@ public class ItemSlashBlade extends ItemSword {
 		return tag;
 	}
 
+    Map<ComboSequence, ComboSequence> AerialRave = createAerialRaveMap();
+    static Map<ComboSequence, ComboSequence> createAerialRaveMap(){
+        Map<ComboSequence, ComboSequence> result = Maps.newHashMap();
+
+        //result.put(ComboSequence.None, ComboSequence.Iai);
+        result.put(ComboSequence.Iai, ComboSequence.Battou);
+
+        result.put(ComboSequence.AerialRave, ComboSequence.ASlashEdge);
+        result.put(ComboSequence.ASlashEdge, ComboSequence.AKiriorosi);
+        result.put(ComboSequence.AKiriorosi, ComboSequence.Battou);
+
+        result.put(ComboSequence.AKiriorosiB,ComboSequence.AKiriage);
+        result.put(ComboSequence.AKiriage,ComboSequence.AKiriorosiFinish);
+
+        return result;
+    }
+
 	public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player) {
         ComboSequence result = ComboSequence.None;
 
@@ -566,6 +640,34 @@ public class ItemSlashBlade extends ItemSword {
         if (types.contains(SwordType.NoScabbard)) {
             result = ComboSequence.None;
         } else if (!player.onGround) {
+
+            int rank = StylishRankManager.getStylishRank(player);
+
+            switch (current) {
+                case AKiriorosi:
+                {
+                    long last = LastActionTime.get(getItemTagCompound(itemStack));
+                    long now = player.worldObj.getTotalWorldTime();
+
+                    if (7 < (now - last))
+                        current = ComboSequence.AKiriorosiB;
+
+                    result = AerialRave.get(current);
+
+                    break;
+                }
+                default:
+                    result = AerialRave.get(current);
+            }
+
+            if(result == null){
+                if (isRightClick)
+                    result = AerialRave.get(ComboSequence.AerialRave);
+                else
+                    result = ComboSequence.Iai;
+            }
+
+            /*
             switch (current) {
                 case Iai:
                     result = ComboSequence.Battou;
@@ -574,7 +676,7 @@ public class ItemSlashBlade extends ItemSword {
                 default:
                     result = ComboSequence.Iai;
                     break;
-            }
+            }*/
 
         } else if (isRightClick) {
 
@@ -639,6 +741,34 @@ public class ItemSlashBlade extends ItemSword {
 		NBTTagCompound tag = getItemTagCompound(itemStack);
 
 		switch (current) {
+            case ASlashEdge:
+            case AKiriorosi:
+                player.fallDistance = 0;
+
+                if(!OnJumpAttacked.get(tag)){
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, itemStack);
+                    if(level == 0){
+                        player.motionY = 0;
+                        player.addVelocity(0.0, 0.3D,0.0);
+                    }
+                }
+
+                break;
+
+            case AKiriage:
+                player.fallDistance = 0;
+                player.motionY = 0;
+                player.addVelocity(0.0, 0.7D,0.0);
+
+                break;
+            case AKiriorosiFinish:
+                player.fallDistance = 0;
+
+                player.motionY = 0;
+                player.addVelocity(0.0, 0.1D,0.0);
+
+                break;
+
         case Iai:
             if (!player.onGround){
                 player.fallDistance = 0;
@@ -1631,6 +1761,20 @@ public class ItemSlashBlade extends ItemSword {
                 break;
             case SSlashBlade:
                 StylishRankManager.setNextAttackType(e, AttackTypes.SSlashBlade);
+                break;
+
+            case ASlashEdge:
+                StylishRankManager.setNextAttackType(e, AttackTypes.ASlashEdge);
+                break;
+            case AKiriorosi:
+                StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosi);
+                break;
+
+            case AKiriage:
+                StylishRankManager.setNextAttackType(e, AttackTypes.AKiriage);
+                break;
+            case AKiriorosiFinish:
+                StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosiFinish);
                 break;
 
         }
