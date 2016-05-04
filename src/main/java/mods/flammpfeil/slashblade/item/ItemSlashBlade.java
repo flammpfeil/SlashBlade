@@ -482,7 +482,7 @@ public class ItemSlashBlade extends ItemSword {
 
             {
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, stack);
                 if(0 < level){
                     target.addVelocity(0.0, 0.3D, 0.0);
                 }else{
@@ -746,7 +746,7 @@ public class ItemSlashBlade extends ItemSword {
                 player.fallDistance = 0;
 
                 if(!OnJumpAttacked.get(tag)){
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, itemStack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack);
                     if(level == 0){
                         player.motionY = 0;
                         player.addVelocity(0.0, 0.3D,0.0);
