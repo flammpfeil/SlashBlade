@@ -1586,7 +1586,7 @@ public class ItemSlashBlade extends ItemSword {
 					case Noutou:
 						//※動かず納刀完了させ、敵に囲まれている場合にボーナス付与。
 
-						if(tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posY + el.posZ) * 10.0)){
+						if(tag.getInteger(lastPosHashStr) == (int)((el.posX + el.posZ) * 10.0)){
 
                             SoulEater.fire(sitem, el);
 
