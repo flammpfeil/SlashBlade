@@ -18,11 +18,14 @@ import java.util.List;
  */
 public class EntitySummonedBlade extends EntitySummonedSwordBase {
     public long hitTime = 0;
+    public float hitStopFactor = 0;
 
     public EntitySummonedBlade(World par1World) {
         super(par1World);
 
         setInterval(0);
+
+        hitStopFactor = rand.nextFloat();
     }
 
     public EntitySummonedBlade(World par1World, EntityLivingBase entityLiving, float AttackLevel) {
@@ -130,23 +133,33 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
             double tmpDistance = 15;
 
             Entity pointedEntity = null;
-            for (Entity entity : list) {
-                if (entity == null || !entity.canBeCollidedWith()) continue;
 
-                if (!EntitySelectorAttackable.getInstance().apply(entity))
-                    continue;
+            EntityLivingBase viewer = null;
+            if(getThrower() != null && getThrower() instanceof EntityLivingBase)
+                viewer = (EntityLivingBase)getThrower();
 
+            if(viewer != null) {
+                for (Entity entity : list) {
+                    if (entity == null || !entity.canBeCollidedWith())
+                        continue;
 
-                double d3 = this.getDistanceToEntity(entity);
+                    if (!EntitySelectorAttackable.getInstance().apply(entity))
+                        continue;
 
-                if (d3 < tmpDistance || tmpDistance == 0.0D) {
-                    if (entity == this.getRidingEntity() && !entity.canRiderInteract()) {
-                        if (tmpDistance == 0.0D) {
+                    if(!viewer.canEntityBeSeen(entity))
+                        continue;
+
+                    double d3 = this.getDistanceToEntity(entity);
+
+                    if (d3 < tmpDistance || tmpDistance == 0.0D) {
+                        if (entity == this.getRidingEntity() && !entity.canRiderInteract()) {
+                            if (tmpDistance == 0.0D) {
+                                pointedEntity = entity;
+                            }
+                        } else {
                             pointedEntity = entity;
+                            tmpDistance = d3;
                         }
-                    } else {
-                        pointedEntity = entity;
-                        tmpDistance = d3;
                     }
                 }
             }
