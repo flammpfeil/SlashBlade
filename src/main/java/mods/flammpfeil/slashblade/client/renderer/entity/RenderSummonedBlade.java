@@ -143,7 +143,9 @@ public class RenderSummonedBlade extends Render {
         GL11.glRotatef(-entitySummonedBlade.rotationPitch, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(entitySummonedBlade.getRoll(),0,0,1);
 
-        float time = entitySummonedBlade.hitTime != 0 ? entitySummonedBlade.hitTime : entitySummonedBlade.getEntityWorld().getWorldTime() + f1;
+        float time = entitySummonedBlade.hitTime != 0
+                ? entitySummonedBlade.hitTime % 6 + entitySummonedBlade.hitStopFactor
+                : entitySummonedBlade.getEntityWorld().getWorldTime() % 6 + f1;
         GL11.glRotatef(time * 60.0f ,0,1,0);
 
         //GL11.glRotatef(fRot, 0.0F, 1.0F, 0.0F);

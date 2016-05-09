@@ -2540,7 +2540,7 @@ public class ItemSlashBlade extends ItemSword {
                             EntitySummonedBlade summonedBlade = new EntitySummonedBlade(w, entity, magicDamage, 90.0f);
                             if (summonedBlade != null) {
                                 summonedBlade.setLifeTime(100);
-                                summonedBlade.setInterval(7);
+                                summonedBlade.setInterval(10);
 
                                 int targetid = ItemSlashBlade.TargetEntityId.get(tag);
                                 summonedBlade.setTargetEntityId(targetid);
