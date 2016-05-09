@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.entity.EntityDrive;
+import mods.flammpfeil.slashblade.entity.EntitySummonedBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
@@ -2515,22 +2516,40 @@ public class ItemSlashBlade extends ItemSword {
 
 
                     if(!w.isRemote){
-                        EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage,90.0f);
-                        if (entityDrive != null) {
-                            entityDrive.setLifeTime(30);
 
-                            int targetid = ItemSlashBlade.TargetEntityId.get(tag);
-                            entityDrive.setTargetEntityId(targetid);
+                        if(tag.getInteger("RangeAttackType") != 0) {
+                            EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage, 90.0f);
+                            if (entityDrive != null) {
+                                entityDrive.setLifeTime(30);
+
+                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                                entityDrive.setTargetEntityId(targetid);
 
                             if(SummonedSwordColor.exists(tag))
-                                entityDrive.setColor(SummonedSwordColor.get(tag));
+                                    entityDrive.setColor(SummonedSwordColor.get(tag));
 
-                            ScheduleEntitySpawner.getInstance().offer(entityDrive);
-                            //w.spawnEntityInWorld(entityDrive);
+                                ScheduleEntitySpawner.getInstance().offer(entityDrive);
+                                //w.spawnEntityInWorld(entityDrive);
 
                             if(entity instanceof EntityPlayer)
                                 AchievementList.triggerAchievement((EntityPlayer)entity,"phantomSword");
 
+                            }
+
+                        }else {
+                            EntitySummonedBlade summonedBlade = new EntitySummonedBlade(w, entity, magicDamage, 90.0f);
+                            if (summonedBlade != null) {
+                                summonedBlade.setLifeTime(100);
+                                summonedBlade.setInterval(7);
+
+                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                                summonedBlade.setTargetEntityId(targetid);
+
+                                if (SummonedSwordColor.exists(tag))
+                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
+
+                                ScheduleEntitySpawner.getInstance().offer(summonedBlade);
+                            }
                         }
 
                     }else{

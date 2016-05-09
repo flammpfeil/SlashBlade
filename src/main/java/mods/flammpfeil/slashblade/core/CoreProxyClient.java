@@ -151,6 +151,12 @@ public class CoreProxyClient extends CoreProxy {
             }
         });
 
+        RenderingRegistry.registerEntityRenderingHandler(EntitySummonedBlade.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderSummonedBlade(manager);
+            }
+        });
 
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override
