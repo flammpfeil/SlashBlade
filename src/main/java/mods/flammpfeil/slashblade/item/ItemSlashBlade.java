@@ -2517,7 +2517,7 @@ public class ItemSlashBlade extends ItemSword {
 
                     if(!w.isRemote){
 
-                        if(tag.getInteger("RangeAttackType") != 0) {
+                        if(tag.getInteger("RangeAttackType") == 0) {
                             EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage, 90.0f);
                             if (entityDrive != null) {
                                 entityDrive.setLifeTime(30);
