@@ -31,6 +31,8 @@ public class EnchantHelper {
             Enchantment ench = Enchantment.getEnchantmentByLocation(key.toString());
             if(ench == null) continue;
 
+            if(ench.type == null) continue;
+
             if(ench.type.canEnchantItem(Items.iron_sword)){
                 normal.add(ench);
             }
