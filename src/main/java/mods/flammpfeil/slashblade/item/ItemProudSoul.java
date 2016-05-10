@@ -26,7 +26,7 @@ public class ItemProudSoul extends Item {
 
 	public ItemProudSoul() {
         setHasSubtypes(true);
-	}
+    }
 
 	@Override
 	public boolean hasEffect(ItemStack par1ItemStack) {
@@ -80,7 +80,7 @@ public class ItemProudSoul extends Item {
             stack.addEnchantment(ench, 1);
             par3List.add(stack);
         }
-	}
+    }
 
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
@@ -126,23 +126,48 @@ public class ItemProudSoul extends Item {
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
-        if(stack.getItemDamage() == 2 && ItemSlashBlade.SpecialAttackType.exists(tag)){
-            int saType = ItemSlashBlade.SpecialAttackType.get(tag);
-
-            if (entity instanceof EntityBladeStand)
+        if(stack.getItemDamage() == 2){
+            if(ItemSlashBlade.SpecialAttackType.exists(tag))
             {
-                EntityBladeStand stand = (EntityBladeStand)entity;
+                int saType = ItemSlashBlade.SpecialAttackType.get(tag);
 
-                if(stand.hasBlade()){
-                    using = true;
+                if (entity instanceof EntityBladeStand)
+                {
+                    EntityBladeStand stand = (EntityBladeStand)entity;
 
-                    ItemStack blade = stand.getBlade();
+                    if(stand.hasBlade()){
+                        using = true;
 
-                    NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+                        ItemStack blade = stand.getBlade();
 
-                    ItemSlashBlade.SpecialAttackType.set(bladeTag,saType);
+                        NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
 
-                    player.onEnchantmentCritical(stand);
+                        ItemSlashBlade.SpecialAttackType.set(bladeTag,saType);
+
+                        player.onEnchantmentCritical(stand);
+                    }
+                }
+            }else{
+                if (entity instanceof EntityBladeStand)
+                {
+                    EntityBladeStand stand = (EntityBladeStand)entity;
+
+                    if(stand.hasBlade()){
+
+                        ItemStack blade = stand.getBlade();
+
+                        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId,blade);
+
+                        if(0 < level){
+                            NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+
+                            bladeTag.setBoolean("RangeAttackType",!bladeTag.getBoolean("RangeAttackType"));
+
+                            player.onCriticalHit(stand);
+
+                            using = true;
+                        }
+                    }
                 }
             }
         }

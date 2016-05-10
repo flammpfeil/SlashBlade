@@ -85,6 +85,11 @@ public class StunManager {
         if(duration <= 0) return;
 
         duration = Math.min(duration, freezeLimit);
-        target.getEntityData().setLong(FreezeTimeout,target.worldObj.getTotalWorldTime() + duration);
+        long oldTimeout = target.getEntityData().getLong(FreezeTimeout);
+        long timeout = target.worldObj.getTotalWorldTime() + duration;
+
+        timeout = Math.max(oldTimeout, timeout);
+
+        target.getEntityData().setLong(FreezeTimeout,timeout);
     }
 }

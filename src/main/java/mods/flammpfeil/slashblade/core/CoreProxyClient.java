@@ -3,13 +3,14 @@ package mods.flammpfeil.slashblade.core;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
+import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.KeyBindingEx;
@@ -18,9 +19,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Items;
 import net.minecraft.util.*;
 import net.minecraftforge.client.model.ModelLoader;
@@ -41,15 +40,19 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
 public class CoreProxyClient extends CoreProxy {
+
+    static public KeyBindingEx lockon = null;
+    static public KeyBindingEx camera = null;
 
 	@Override
 	public void initializeItemRenderer() {
@@ -135,9 +138,45 @@ public class CoreProxyClient extends CoreProxy {
                 return new InvisibleRender(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityRapidSlashManager.class, new IRenderFactory<EntityRapidSlashManager>() {
+            @Override
+            public Render<? super EntityRapidSlashManager> createRenderFor(RenderManager manager) {
+                return new InvisibleRender(manager);
+            }
+        });
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySummonedSwordBase.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntitySummonedSwordAirTrickMarker.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityBlisteringSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityHeavyRainSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntitySpiralSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityStormSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
             @Override
             public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
                 return new RenderPhantomSwordBase(manager);
@@ -150,10 +189,17 @@ public class CoreProxyClient extends CoreProxy {
             }
         });
 
+        RenderingRegistry.registerEntityRenderingHandler(EntitySummonedBlade.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderSummonedBlade(manager);
+            }
+        });
 
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override
             public void upkey(int count) {
+                charged = false;
                 Minecraft mc = Minecraft.getMinecraft();
                 EntityPlayerSP player = mc.thePlayer;
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
@@ -162,7 +208,56 @@ public class CoreProxyClient extends CoreProxy {
 
                         mc.playerController.updateController();
 
-                        ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, 1);
+                        ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, MessageRangeAttack.RangeAttackState.UPKEY);
+                    }
+                }
+            }
+
+            boolean charged = false;
+
+            @Override
+            public void downkey() {
+                super.downkey();
+
+                charged = false;
+            }
+
+            @Override
+            public void presskey(int count) {
+                super.presskey(count);
+
+                final int ChargeTime = 7;
+                if(ChargeTime < count && !charged){
+                    charged = true;
+                    Minecraft mc = Minecraft.getMinecraft();
+                    EntityPlayerSP player = mc.thePlayer;
+                    if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
+                        ItemStack item = player.getHeldItem();
+                        if(item != null && item.getItem() instanceof ItemSlashBlade){
+
+                            mc.playerController.updateController();
+
+                            long currentTime = player.getEntityWorld().getTotalWorldTime();
+
+                            long backKeyLastActiveTime = player.getEntityData().getLong("SB.MCS.B");
+                            final int TypeAheadBuffer = 7;
+
+                            MessageRangeAttack.RangeAttackState command;
+                            int heavyRainState = MessageMoveCommandState.FORWARD | MessageMoveCommandState.SNEAK;
+                            int blisteringState = MessageMoveCommandState.FORWARD | MessageMoveCommandState.SNEAK;
+                            int stormState = MessageMoveCommandState.BACK | MessageMoveCommandState.SNEAK;
+                            if((currentTime - backKeyLastActiveTime) <= (ChargeTime + TypeAheadBuffer)
+                                    && (heavyRainState == (player.getEntityData().getByte("SB.MCS") & heavyRainState))){
+                                command = MessageRangeAttack.RangeAttackState.HEAVY_RAIN;
+                            }else if(blisteringState == (player.getEntityData().getByte("SB.MCS") & blisteringState)){
+                                command = MessageRangeAttack.RangeAttackState.BLISTERING;
+                            }else if(stormState == (player.getEntityData().getByte("SB.MCS") & stormState)){
+                                command = MessageRangeAttack.RangeAttackState.STORM;
+                            }else{
+                                command = MessageRangeAttack.RangeAttackState.SPIRAL;
+                            }
+                            ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, command);
+                        }
                     }
                 }
             }
@@ -182,7 +277,8 @@ public class CoreProxyClient extends CoreProxy {
                 if(item == null) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
-                if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)){
+                if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)
+                        && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
 
                     mc.playerController.updateController();
                     NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));
@@ -252,6 +348,11 @@ public class CoreProxyClient extends CoreProxy {
 
 
             }
+        };
+
+        lockon = new KeyBindingEx("Key.SlashBlade.LO", Keyboard.KEY_LSHIFT, "flammpfeil.slashblade"){
+        };
+        camera = new KeyBindingEx("Key.SlashBlade.CA", Keyboard.KEY_LCONTROL, "flammpfeil.slashblade"){
         };
 
         AchievementsExtendedGuiHandler extendedGuiHandler = new AchievementsExtendedGuiHandler();

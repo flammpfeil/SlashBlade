@@ -185,7 +185,7 @@ public class EnemyStep {
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
         ItemSlashBlade.ComboSequence seq = ItemSlashBlade.getComboSequence(tag);
-        if(seq == ItemSlashBlade.ComboSequence.Iai)
+        if(seq != ItemSlashBlade.ComboSequence.Kiriage)
             ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.None);
 
         //EnemyStepEffect

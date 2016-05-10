@@ -24,6 +24,8 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.entity.*;
+import mods.flammpfeil.slashblade.event.MoveImputHandler;
+import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.BladeMaterials;
@@ -89,7 +91,6 @@ public class SlashBlade implements IFuelHandler{
     //ability
     public static JustGuard abilityJustGuard;
     public static StylishRankManager stylishRankManager;
-    public static SneakMove abilitySneakMove;
     public static ChargeFloating abilityChargeFloating;
     public static FireResistance abilityFireResistance;
     public static WaterBreathing abilityWaterBreathing;
@@ -284,6 +285,15 @@ public class SlashBlade implements IFuelHandler{
 
         EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", 100, this, 250, 1000, false);
 
+        EntityRegistry.registerModEntity(EntitySummonedBlade.class, "SummonedBlade", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntitySummonedSwordAirTrickMarker.class, "SummonedSwordATM", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntityBlisteringSwords.class, "BlisteringSwords", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(EntityHeavyRainSwords.class, "HeavyRainSwords", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(EntitySpiralSwords.class, "SpiralSwords", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(EntityStormSwords.class, "StormSwords", entityId++, this, 250, 200, true);
+
+        EntityRegistry.registerModEntity(EntityRapidSlashManager.class, "RapidSlashManager", entityId++, this, 250, 10, true);
+
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
 
@@ -293,9 +303,6 @@ public class SlashBlade implements IFuelHandler{
         //ability
         abilityJustGuard = new JustGuard();
         MinecraftForge.EVENT_BUS.register(abilityJustGuard);
-
-        abilitySneakMove = new SneakMove();
-        MinecraftForge.EVENT_BUS.register(abilitySneakMove);
 
         abilityChargeFloating = new ChargeFloating();
         MinecraftForge.EVENT_BUS.register(abilityChargeFloating);
@@ -330,6 +337,8 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(abilityProjectileBarrier);
 
         new PotionManager();
+
+        FMLCommonHandler.instance().bus().register(new MoveImputHandler());
 
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);

@@ -3,6 +3,9 @@ package mods.flammpfeil.slashblade.entity;
 import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -69,7 +72,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         this.AttackLevel = AttackLevel;
 
         //■撃った人
-        thrower = entityLiving;
+        setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem();
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
@@ -117,11 +120,17 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }
     }
 
+    static final int THROWER_ENTITY_ID = 11;
+
     /**
      * ■イニシャライズ
      */
     @Override
     protected void entityInit() {
+
+        //thrower
+        this.getDataWatcher().addObject(11, 0);
+
         //EntityId
         this.getDataWatcher().addObject(8, 0);
 
@@ -136,6 +145,13 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         //color
         this.getDataWatcher().addObject(10, 0x3333FF);
+    }
+
+    public int getThrowerEntityId(){
+        return this.getDataWatcher().getWatchableObjectInt(THROWER_ENTITY_ID);
+    }
+    public void setThrowerEntityId(int entityid){
+        this.getDataWatcher().updateObject(THROWER_ENTITY_ID, entityid);
     }
 
     public int getTargetEntityId(){
@@ -179,7 +195,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
     public boolean doTargeting(){
 
-        if(this.ticksExisted > 7) return false;
+        if(this.ticksExisted > getInterval()) return false;
 
         int targetid = this.getTargetEntityId();
 
@@ -249,10 +265,15 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         double tmpDistance = reachMin;
 
+        EntityLivingBase viewer = (owner instanceof EntityLivingBase) ? (EntityLivingBase) owner : null;
+
         for (Entity entity : list) {
             if (entity == null || !entity.canBeCollidedWith()) continue;
 
             if (!EntitySelectorAttackable.getInstance().apply(entity))
+                continue;
+
+            if(viewer != null && !viewer.canEntityBeSeen(entity))
                 continue;
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder; //視線外10幅まで判定拡張
@@ -482,7 +503,18 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         if (movingobjectposition != null)
         {
-            vec31 = new Vec3(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+            IBlockState state = null;
+            BlockPos pos = movingobjectposition.getBlockPos();
+            if(pos != null)
+                state = worldObj.getBlockState(pos);
+            Block block = null;
+            if(state != null)
+                block = state.getBlock();
+
+            if(block != null)
+                if(block.getCollisionBoundingBox(worldObj, pos, state) == null) movingobjectposition = null;
+            else
+                vec31 = new Vec3(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
         }
 
         Entity entity = null;
@@ -509,6 +541,10 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             for (i = 0; i < list.size(); ++i)
             {
                 Entity entity1 = (Entity)list.get(i);
+
+                if(entity1 instanceof EntitySummonedSwordBase)
+                    if(((EntitySummonedSwordBase) entity1).getThrower() == this.getThrower())
+                        continue;
 
                 if (entity1.canBeCollidedWith())
                 {
@@ -669,6 +705,29 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         mountEntity(target);
     }
 
+    protected void blastAttackEntity(Entity target){
+        if(!this.worldObj.isRemote){
+            float magicDamage = 1;
+            target.hurtResistantTime = 0;
+            DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
+            target.attackEntityFrom(ds, magicDamage);
+
+            if(blade != null && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+                StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
+                ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
+
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+                target.addVelocity(0.0, 0.1D, 0.0);
+
+                ((EntityLivingBase) target).hurtTime = 1;
+
+                ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
+            }
+        }
+    }
+
     protected boolean onImpact(MovingObjectPosition mop)
     {
 
@@ -690,11 +749,12 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
             if(!worldObj.getCollidingBoundingBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
+                /*
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
-                this.setDead();
-            }else{
-                result = false;
+                */
+                //this.setDead();
+                result = true;
             }
         }
 
@@ -734,12 +794,19 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     @Override
     public void onUpdate()
     {
+        lastTickPosX = posX;
+        lastTickPosY = posY;
+        lastTickPosZ = posZ;
+        super.onUpdate();
+
         if(this.ridingEntity2 != null){
             updateRidden();
         }else{
-            lastTickPosX = posX;
-            lastTickPosY = posY;
-            lastTickPosZ = posZ;
+
+            if (this.ticksExisted >= getLifeTime())
+            {
+                this.setDead();
+            }
 
             initRotation();
 
@@ -762,11 +829,6 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
             spawnParticle();
 
-            if (this.ticksExisted >= getLifeTime())
-            {
-                this.setDead();
-            }
-
         }
     }
 
@@ -778,6 +840,17 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         if(!this.worldObj.isRemote)
             System.out.println("dead" + this.ticksExisted);
             */
+
+        this.worldObj.playSoundEffect(this.prevPosX, this.prevPosY, this.prevPosZ, "dig.glass", 0.25F, 1.6F);
+
+        AxisAlignedBB bb = this.getEntityBoundingBox().expand(1.0D, 1.0D, 1.0D);
+        List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());
+        list.removeAll(alreadyHitEntity);
+        for(Entity target : list){
+            if(target == null) continue;
+            blastAttackEntity(target);
+        }
+
         super.setDead();
     }
 
@@ -931,13 +1004,6 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             this.ridingEntity2 = par1Entity;
 
             this.ticksExisted = 0;
-
-            if(!this.worldObj.isRemote){
-                if(this.getEntityData().getBoolean("IsAirTrick")){
-                    if(this.getThrower() instanceof EntityPlayerMP)
-                        AirTrick.doAirTrick((EntityPlayerMP)this.getThrower());
-                }
-            }
         }
     }
 
@@ -983,11 +1049,20 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     //IThrowableEntity
     @Override
     public Entity getThrower() {
+        if(this.thrower == null){
+            int id = getThrowerEntityId();
+            if(id != 0){
+                this.thrower = this.worldObj.getEntityByID(id);
+            }
+        }
+
         return this.thrower;
     }
 
     @Override
     public void setThrower(Entity entity) {
+        if(entity != null)
+            setThrowerEntityId(entity.getEntityId());
         this.thrower = entity;
     }
 }
