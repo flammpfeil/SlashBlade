@@ -1911,7 +1911,7 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void addInformationSpecialAttack(ItemStack par1ItemStack,
-                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                            EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
         if(swordType.contains(SwordType.Bewitched)){
@@ -1920,6 +1920,19 @@ public class ItemSlashBlade extends ItemSword {
             String key = "flammpfeil.slashblade.specialattack." + getSpecialAttack(par1ItemStack).toString();
 
             par3List.add(String.format("SA:%s",  I18n.translateToLocal(key)));
+        }
+    }
+
+    public void addInformationRangeAttack(ItemStack par1ItemStack,
+                                            EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+
+        if(swordType.contains(SwordType.Bewitched) && 0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.power,par1ItemStack)){
+            NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
+            String key = "slashblade.rangeattack." + Boolean.toString(tag.getBoolean("RangeAttackType")).toLowerCase();
+
+            par3List.add(I18n.translateToLocal(key));
         }
     }
 
@@ -2004,6 +2017,8 @@ public class ItemSlashBlade extends ItemSword {
         addInformationSpecialAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
         addInformationRepairCount(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        addInformationRangeAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
         addInformationSpecialEffec(par1ItemStack, par2EntityPlayer, par3List, par4);
 
@@ -2541,6 +2556,9 @@ public class ItemSlashBlade extends ItemSword {
                             if (summonedBlade != null) {
                                 summonedBlade.setLifeTime(100);
                                 summonedBlade.setInterval(10);
+
+                                if(SummonedSwordColor.exists(tag))
+                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
 
                                 int targetid = ItemSlashBlade.TargetEntityId.get(tag);
                                 summonedBlade.setTargetEntityId(targetid);
