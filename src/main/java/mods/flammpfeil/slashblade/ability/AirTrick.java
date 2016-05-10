@@ -139,7 +139,7 @@ public class AirTrick {
 
                         entitySS.getEntityData().setBoolean("IsAirTrick",true);
 
-                        entitySS.ticksExisted = 6;
+                        entitySS.setInterval(0);
 
                         entitySS.setLifeTime(30);
 
