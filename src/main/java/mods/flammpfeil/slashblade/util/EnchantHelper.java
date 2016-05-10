@@ -27,6 +27,8 @@ public class EnchantHelper {
         for(Enchantment ench : Enchantment.enchantmentsList){
             if(ench == null) continue;
 
+            if(ench.type == null) continue;
+
             if(ench.type.canEnchantItem(Items.iron_sword)){
                 normal.add(ench);
             }
