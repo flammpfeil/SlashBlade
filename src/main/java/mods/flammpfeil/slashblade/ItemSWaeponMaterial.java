@@ -151,24 +151,24 @@ public class ItemSWaeponMaterial extends Item {
         if(stack.getItemDamage() == 2){
             if(ItemSlashBlade.SpecialAttackType.exists(tag))
             {
-            int saType = ItemSlashBlade.SpecialAttackType.get(tag);
+                int saType = ItemSlashBlade.SpecialAttackType.get(tag);
 
-            if (entity instanceof EntityBladeStand)
-            {
-                EntityBladeStand stand = (EntityBladeStand)entity;
+                if (entity instanceof EntityBladeStand)
+                {
+                    EntityBladeStand stand = (EntityBladeStand)entity;
 
-                if(stand.hasBlade()){
-                    using = true;
+                    if(stand.hasBlade()){
+                        using = true;
 
-                    ItemStack blade = stand.getBlade();
+                        ItemStack blade = stand.getBlade();
 
-                    NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+                        NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
 
-                    ItemSlashBlade.SpecialAttackType.set(bladeTag,saType);
+                        ItemSlashBlade.SpecialAttackType.set(bladeTag,saType);
 
-                    player.onEnchantmentCritical(stand);
+                        player.onEnchantmentCritical(stand);
+                    }
                 }
-            }
             }else{
                 if (entity instanceof EntityBladeStand)
                 {
@@ -184,6 +184,8 @@ public class ItemSWaeponMaterial extends Item {
                             NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
 
                             bladeTag.setBoolean("RangeAttackType",!bladeTag.getBoolean("RangeAttackType"));
+
+                            player.onCriticalHit(stand);
 
                             using = true;
                         }
