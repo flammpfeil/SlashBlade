@@ -58,8 +58,8 @@ death.attack.directMagic=%1$s was hacked by %2$s using magic blade
 
 slashblade.seffect.name.WitherEdge=WitherEdge
 
-slashblade.rangeattack.false = SummonedSword
-slashblade.rangeattack.true = SummonedBlade
+slashblade.rangeattack.false=SummonedSword
+slashblade.rangeattack.true=SummonedBlade
 
 achievement.flammpfeil.slashblade.slashWoodenSword=Fighting Spirit
 achievement.flammpfeil.slashblade.slashWoodenSword.desc=1 damaged wooden sword
