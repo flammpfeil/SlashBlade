@@ -1,5 +1,5 @@
 flammpfeil.slashblade=SlashBlade
-Key.SlashBlade.PS=PhantomSword
+Key.SlashBlade.PS=SummonedSword
 Key.SlashBlade.SA=StyleAction
 itemGroup.flammpfeil.slashblade=SlashBlade
 item.flammpfeil.slashblade.name=SlashBlade--
@@ -58,6 +58,8 @@ death.attack.directMagic=%1$s was hacked by %2$s using magic blade
 
 slashblade.seffect.name.WitherEdge=WitherEdge
 
+slashblade.rangeattack.false = SummonedSword
+slashblade.rangeattack.true = SummonedBlade
 
 achievement.flammpfeil.slashblade.slashWoodenSword=Fighting Spirit
 achievement.flammpfeil.slashblade.slashWoodenSword.desc=1 damaged wooden sword

@@ -9,6 +9,7 @@ import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
+import mods.flammpfeil.slashblade.entity.EntitySummonedBlade;
 import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
@@ -1918,7 +1919,7 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void addInformationSpecialAttack(ItemStack par1ItemStack,
-                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                            EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
         if(swordType.contains(SwordType.Bewitched)){
@@ -1927,6 +1928,19 @@ public class ItemSlashBlade extends ItemSword {
             String key = "flammpfeil.slashblade.specialattack." + getSpecialAttack(par1ItemStack).toString();
 
             par3List.add(String.format("SA:%s",  StatCollector.translateToLocal(key)));
+        }
+    }
+
+    public void addInformationRangeAttack(ItemStack par1ItemStack,
+                                            EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+
+        if(swordType.contains(SwordType.Bewitched) && 0 < EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId,par1ItemStack)){
+            NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
+            String key = "slashblade.rangeattack." + Boolean.toString(tag.getBoolean("RangeAttackType")).toLowerCase();
+
+            par3List.add(StatCollector.translateToLocal(key));
         }
     }
 
@@ -2011,6 +2025,8 @@ public class ItemSlashBlade extends ItemSword {
         addInformationSpecialAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
         addInformationRepairCount(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        addInformationRangeAttack(par1ItemStack, par2EntityPlayer, par3List, par4);
 
         addInformationSpecialEffec(par1ItemStack, par2EntityPlayer, par3List, par4);
 
@@ -2510,21 +2526,42 @@ public class ItemSlashBlade extends ItemSword {
 
 
                     if(!w.isRemote){
-                        EntityPhantomSwordBase entityDrive = new EntityPhantomSwordBase(w, entity, magicDamage,90.0f);
-                        if (entityDrive != null) {
-                            entityDrive.setLifeTime(30);
 
-                            int targetid = ItemSlashBlade.TargetEntityId.get(tag);
-                            entityDrive.setTargetEntityId(targetid);
+                        if(tag.getInteger("RangeAttackType") == 0) {
+                            EntityPhantomSwordBase entityDrive = new EntityPhantomSwordBase(w, entity, magicDamage, 90.0f);
+                            if (entityDrive != null) {
+                                entityDrive.setLifeTime(30);
 
-                            if(SummonedSwordColor.exists(tag))
-                                entityDrive.setColor(SummonedSwordColor.get(tag));
+                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                                entityDrive.setTargetEntityId(targetid);
 
-                            w.spawnEntityInWorld(entityDrive);
+                                if(SummonedSwordColor.exists(tag))
+                                    entityDrive.setColor(SummonedSwordColor.get(tag));
 
-                            if(entity instanceof EntityPlayer)
-                                AchievementList.triggerAchievement((EntityPlayer)entity,"phantomSword");
+                                w.spawnEntityInWorld(entityDrive);
 
+                                if(entity instanceof EntityPlayer)
+                                    AchievementList.triggerAchievement((EntityPlayer)entity,"phantomSword");
+
+                            }
+
+                        }else {
+                            EntitySummonedBlade summonedBlade = new EntitySummonedBlade(w, entity, magicDamage, 90.0f);
+                            if (summonedBlade != null) {
+                                summonedBlade.setLifeTime(100);
+                                summonedBlade.setInterval(7);
+
+                                if(SummonedSwordColor.exists(tag))
+                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
+
+                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                                summonedBlade.setTargetEntityId(targetid);
+
+                                if (SummonedSwordColor.exists(tag))
+                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
+
+                                w.spawnEntityInWorld(summonedBlade);
+                            }
                         }
 
                     }else{

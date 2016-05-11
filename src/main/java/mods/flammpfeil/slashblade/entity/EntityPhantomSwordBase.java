@@ -183,7 +183,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
     public boolean doTargeting(){
 
-        if(this.ticksExisted > 7) return false;
+        if(this.ticksExisted > getInterval()) return false;
 
         int targetid = this.getTargetEntityId();
 

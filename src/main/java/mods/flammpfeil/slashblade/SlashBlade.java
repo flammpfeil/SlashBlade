@@ -284,6 +284,8 @@ public class SlashBlade implements IFuelHandler{
 
         EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", 100, this, 250, 1000, false);
 
+        EntityRegistry.registerModEntity(EntitySummonedBlade.class, "SummonedBlade", entityId++, this, 250, 10, true);
+
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
 
