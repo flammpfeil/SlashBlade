@@ -1635,7 +1635,7 @@ public class ItemSlashBlade extends ItemSword {
 							setComboSequence(tag, ComboSequence.None);
 						}else{
 
-                            tag.setInteger(lastPosHashStr, (int) ((el.posX + el.posY + el.posZ) * 10.0));
+                            tag.setInteger(lastPosHashStr, (int) ((el.posX + el.posZ) * 10.0));
                             LastActionTime.set(tag, currentTime + 5);
                             setComboSequence(tag, ComboSequence.Noutou);
 
