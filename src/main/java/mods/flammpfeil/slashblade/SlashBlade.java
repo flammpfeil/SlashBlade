@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.event.DropEventHandler;
+import mods.flammpfeil.slashblade.event.MoveImputHandler;
 import mods.flammpfeil.slashblade.event.PlayerDropsEventHandler;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
@@ -333,6 +334,8 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(abilityProjectileBarrier);
 
         MinecraftForge.EVENT_BUS.register(new PlayerDropsEventHandler());
+
+        MinecraftForge.EVENT_BUS.register(new MoveImputHandler());
 
         //statManager = new StatManager();
         //MinecraftForge.EVENT_BUS.register(statManager);

@@ -10,9 +10,11 @@ import mods.flammpfeil.slashblade.entity.EntitySummonedBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
+import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
@@ -54,6 +56,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -688,7 +691,13 @@ public class ItemSlashBlade extends ItemSword {
 
         } else if (isRightClick) {
 
-            switch (current) {
+
+            //todo: backmove uppercut key state send server
+
+            if(0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.BACK) && current != ComboSequence.Kiriage){
+                result = ComboSequence.Kiriage;
+
+            }else switch (current) {
 
                 case Saya1:
                     result = ComboSequence.Saya2;
@@ -1107,6 +1116,22 @@ public class ItemSlashBlade extends ItemSword {
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         EnumSet<SwordType> swordType = getSwordType(stack);
         int charge = this.getMaxItemUseDuration(stack) - count;
+
+        if(player.worldObj.isRemote && player.onGround){
+            NBTTagCompound tag = getItemTagCompound(stack);
+            if(charge == 3 && getComboSequence(tag) == ComboSequence.Kiriage){
+                Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player,new String[]{"jump","func_70664_aZ"});
+                try {
+                    if(jump != null)
+                        jump.invoke(player);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         if(player instanceof EntityPlayer && RequiredChargeTick == charge && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
             ((EntityPlayer) player).onCriticalHit(player);
         }
@@ -1855,7 +1880,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
         owner.rotationPitch = this.updateRotation(owner.rotationPitch, f3, par3);
-        owner.rotationPitch = (float)Math.min(Math.max(owner.rotationPitch,-30), 60);
+        owner.rotationPitch = (float)Math.min(Math.max(owner.rotationPitch,0), 60);
 
         owner.rotationYaw = this.updateRotation(owner.rotationYaw, f2, par2);
     }
