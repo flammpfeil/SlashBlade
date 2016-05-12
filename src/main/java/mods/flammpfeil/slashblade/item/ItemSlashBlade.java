@@ -692,9 +692,9 @@ public class ItemSlashBlade extends ItemSword {
         } else if (isRightClick) {
 
 
-            //todo: backmove uppercut key state send server
-
-            if(0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.BACK) && current != ComboSequence.Kiriage){
+            if(player.isSneaking()
+                    &&  0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.BACK)
+                    && current != ComboSequence.Kiriage){
                 result = ComboSequence.Kiriage;
 
             }else switch (current) {
@@ -1714,6 +1714,8 @@ public class ItemSlashBlade extends ItemSword {
 
                             List<Entity> list = par2World.getEntitiesInAABBexcluding(el, bb, EntitySelectorAttackable.getInstance());
                             for(Entity curEntity : list){
+                                if(!el.canEntityBeSeen(curEntity)) continue;
+
                                 float curDist = curEntity.getDistanceToEntity(el);
                                 if(curDist < distance)
                                 {
@@ -1757,7 +1759,7 @@ public class ItemSlashBlade extends ItemSword {
                 if(eId != 0){
                     Entity target = par2World.getEntityByID(eId);
                     if(target != null)
-                        this.faceEntity(el,target, 1000.0f,1000.0f);
+                        this.faceEntity(el,target, 5.0f,5.0f);
                 }
             }
 
