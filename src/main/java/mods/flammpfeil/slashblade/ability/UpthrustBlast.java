@@ -79,6 +79,10 @@ public class UpthrustBlast {
 
             Entity target = ss.ridingEntity2;
 
+            if(user instanceof EntityPlayer)
+                ((EntityPlayer) user).onEnchantmentCritical(ss);
+            ss.setDead();
+
             if(!user.worldObj.isRemote){
                 target.hurtResistantTime = 0;
                 DamageSource ds = new EntityDamageSource("directMagic",user).setDamageBypassesArmor().setMagicDamage().setDamageIsAbsolute();
@@ -98,10 +102,6 @@ public class UpthrustBlast {
                     ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
                 }
             }
-
-            if(user instanceof EntityPlayer)
-                ((EntityPlayer) user).onEnchantmentCritical(ss);
-            ss.setDead();
         }
     }
 }

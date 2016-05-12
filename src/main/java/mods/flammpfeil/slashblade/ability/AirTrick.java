@@ -1,9 +1,11 @@
 package mods.flammpfeil.slashblade.ability;
 
+import mods.flammpfeil.slashblade.EntityPhantomSword;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.MessageRangeAttack;
 import mods.flammpfeil.slashblade.PacketHandler;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
+import mods.flammpfeil.slashblade.entity.EntitySummonedSwordAirTrickMarker;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -45,6 +47,16 @@ public class AirTrick {
 
         if(target == null)
             target = lastHitSS;
+        else{
+            ItemStack blade = entityPlayer.getHeldItem();
+            if(blade != null && blade.getItem() instanceof ItemSlashBlade){
+                NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+                int lockonId = ItemSlashBlade.TargetEntityId.get(tag);
+
+                if(lockonId != 0 && lockonId != target.getEntityId())
+                    return false;
+            }
+        }
 
         if(entityPlayer.playerNetServerHandler == null) return false;
 
@@ -85,6 +97,14 @@ public class AirTrick {
             //lastHitSS.setDead();
             lastHitSS.getEntityData().setLong(NextAirTrick,lastHitSS.worldObj.getTotalWorldTime() + AirHikeInterval);
             entityPlayer.worldObj.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
+
+            if(!(target instanceof EntityPhantomSwordBase)){
+                ItemStack blade = entityPlayer.getHeldItem();
+                if(blade != null && blade.getItem() instanceof ItemSlashBlade){
+                    NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+                    ItemSlashBlade.TargetEntityId.set(tag,target.getEntityId());
+                }
+            }
 
             return true;
         }else{
@@ -131,10 +151,8 @@ public class AirTrick {
                 if(0 < level && ItemSlashBlade.ProudSoul.tryAdd(tag,-1,false)){
                     float magicDamage = 1;
 
-                    EntityPhantomSwordBase entitySS = new EntityPhantomSwordBase(player.worldObj, player, magicDamage,90.0f);
+                    EntitySummonedSwordAirTrickMarker entitySS = new EntitySummonedSwordAirTrickMarker(player.worldObj, player, magicDamage,90.0f);
                     if (entitySS != null) {
-
-                        entitySS.getEntityData().setBoolean("IsAirTrick",true);
 
                         entitySS.setInterval(0);
 
@@ -142,17 +160,6 @@ public class AirTrick {
 
                         int targetid = ItemSlashBlade.TargetEntityId.get(tag);
                         entitySS.setTargetEntityId(targetid);
-
-                        Vec3 eyeDir = player.getLookVec();
-
-                        entitySS.setLocationAndAngles(
-                                player.posX + eyeDir.xCoord * 2,
-                                player.posY + eyeDir.yCoord * 2 + player.getEyeHeight(),
-                                player.posZ + eyeDir.zCoord * 2,
-                                player.rotationYaw,
-                                player.rotationPitch);
-
-                        entitySS.setDriveVector(1.75f,true);
 
                         if(ItemSlashBlade.SummonedSwordColor.exists(tag))
                             entitySS.setColor(ItemSlashBlade.SummonedSwordColor.get(tag));

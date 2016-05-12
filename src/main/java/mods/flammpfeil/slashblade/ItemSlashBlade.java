@@ -7,9 +7,9 @@ import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
-import mods.flammpfeil.slashblade.entity.EntitySummonedBlade;
+import mods.flammpfeil.slashblade.entity.*;
+import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
+import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
@@ -42,6 +42,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -217,7 +218,11 @@ public class ItemSlashBlade extends ItemSword {
         AKiriorosiB(false, 200.0f,-360.0f+80f,false,25), //changeflag
         AKiriage(false, 360.0f+180f+60f, -360.0f+180f+80f,false,12),
         AKiriorosiFinish(false, 200.0f,-360.0f+90f,false,25),
-    	;
+
+        RapidSlash(false, 240.0f,20.0f,false,12),
+        RapidSlashEnd(false, 240.0f,20.0f,false,12),
+        RisingStar(false, 250.0f,-160.0f,false,12), //rize
+        ;
 
 	    /**
 	     * ordinal : コンボ進行ID
@@ -435,6 +440,16 @@ public class ItemSlashBlade extends ItemSword {
             return;
 
         switch (comboSec) {
+            case RisingStar:
+                target.onGround = false;
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+                target.addVelocity(0.0, 0.6D, 0.0);
+
+                setDaunting(target);
+                break;
+
             case Kiriage:
                 target.onGround = false;
                 target.motionX = 0;
@@ -485,6 +500,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
+            case RapidSlash:
             case SlashEdge:
             case SIai:
             case SSlashEdge:
@@ -726,7 +742,21 @@ public class ItemSlashBlade extends ItemSword {
 
         } else if (isRightClick) {
 
-            switch (current) {
+            int upperSlashState = MessageMoveCommandState.BACK + MessageMoveCommandState.SNEAK;
+
+            int rapidSlashState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
+            if(rapidSlashState == (player.getEntityData().getByte("SB.MCS") & rapidSlashState)
+                    && current != ComboSequence.RapidSlash && current != ComboSequence.RapidSlashEnd){
+                result = ComboSequence.RapidSlash;
+
+            }else if(upperSlashState == (player.getEntityData().getByte("SB.MCS") & upperSlashState)
+                    && current != ComboSequence.Kiriage){
+                result = ComboSequence.Kiriage;
+
+            }else switch (current) {
+                case RapidSlash:
+                    result = ComboSequence.RapidSlashEnd;
+                    break;
 
                 case Saya1:
                     result = ComboSequence.Saya2;
@@ -745,7 +775,10 @@ public class ItemSlashBlade extends ItemSword {
                     break;
 
                 case Kiriage:
-                    result = ComboSequence.Kiriorosi;
+                    if(!( 0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)))
+                        result = ComboSequence.Kiriorosi;
+                    else
+                        result = ComboSequence.Saya1;
                     break;
 
                 case SIai:
@@ -789,6 +822,26 @@ public class ItemSlashBlade extends ItemSword {
 		NBTTagCompound tag = getItemTagCompound(itemStack);
 
 		switch (current) {
+            case RapidSlash: {
+                double playerDist = 2.5;
+
+                if(!player.onGround)
+                    playerDist *= 0.35f;
+                player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
+                player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
+
+                UntouchableTime.setUntouchableTime(player, 6, false);
+
+                player.playSound("mob.enderdragon.wings", 0.5F, 0.5F);
+
+                EntityRapidSlashManager mgr = new EntityRapidSlashManager(player.worldObj,player,false);
+                if(mgr != null){
+                    mgr.setLifeTime(6);
+
+                    player.worldObj.spawnEntityInWorld(mgr);
+                }
+                break;
+            }
             case ASlashEdge:
             case AKiriorosi:
                 player.fallDistance = 0;
@@ -964,7 +1017,7 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void doAttack(ItemStack stack, ComboSequence comboSeq, EntityPlayer player){
-        World world = player.getEntityWorld();
+        World world = player.worldObj;
         NBTTagCompound tag = getItemTagCompound(stack);
         EnumSet<SwordType> swordType = getSwordType(stack);
 
@@ -1126,8 +1179,44 @@ public class ItemSlashBlade extends ItemSword {
     {
         EnumSet<SwordType> swordType = getSwordType(stack);
         int charge = this.getMaxItemUseDuration(stack) - count;
-        if(RequiredChargeTick == charge && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
-            player.onCriticalHit(player);
+        NBTTagCompound tag = getItemTagCompound(stack);
+
+        if(player.worldObj.isRemote && player.onGround) {
+            if (charge == 3 && getComboSequence(tag) == ComboSequence.Kiriage) {
+                Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player, new String[]{"jump", "func_70664_aZ"});
+                try {
+                    if (jump != null)
+                        jump.invoke(player);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                player.addVelocity(0.0, 0.2D, 0.0);
+
+            } else if (charge == 7 && getComboSequence(tag) == ComboSequence.RapidSlash) {
+                if (player.worldObj.isRemote) {
+                    Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player, new String[]{"jump", "func_70664_aZ"});
+                    try {
+                        if (jump != null)
+                            jump.invoke(player);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    player.addVelocity(0.0, 0.2D, 0.0);
+
+                    PacketHandler.INSTANCE.sendToServer(new MessageSpecialAction((byte) 4));
+                }
+
+                setComboSequence(tag, ComboSequence.RisingStar);
+                doSwingItem(stack, player);
+            }
+        }
+
+        if(player instanceof EntityPlayer && RequiredChargeTick == charge && swordType.contains(SwordType.Enchanted) && !swordType.contains(SwordType.Broken)){
+            ((EntityPlayer) player).onCriticalHit(player);
         }
     }
 
@@ -1195,6 +1284,8 @@ public class ItemSlashBlade extends ItemSword {
     	vec = vec.normalize();
 
     	switch (combo) {
+        case RapidSlash:
+        case RisingStar:
         case SlashEdge:
         case ReturnEdge:
         case SSlashEdge:
@@ -1643,7 +1734,7 @@ public class ItemSlashBlade extends ItemSword {
 							setComboSequence(tag, ComboSequence.None);
 						}else{
 
-                            tag.setInteger(lastPosHashStr, (int) ((el.posX + el.posY + el.posZ) * 10.0));
+                            tag.setInteger(lastPosHashStr, (int) ((el.posX + el.posZ) * 10.0));
                             LastActionTime.set(tag, currentTime + 5);
                             setComboSequence(tag, ComboSequence.Noutou);
 
@@ -1673,12 +1764,15 @@ public class ItemSlashBlade extends ItemSword {
             if(!el.worldObj.isRemote){
                 int eId = TargetEntityId.get(tag);
 
-                if(el.isSneaking()){
+                if(0 < (el.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)){
                     if(eId == 0){
 
 
 
                         Entity rayEntity = getRayTrace(el,10.0f);
+
+                        if(rayEntity == null)
+                            rayEntity = getRayTrace(el,10.0f,5.0f);
 
                         if(rayEntity !=null){
                             if(!AttackableSelector.isEntityApplicable(rayEntity)){
@@ -1697,6 +1791,8 @@ public class ItemSlashBlade extends ItemSword {
 
                             List<Entity> list = par2World.getEntitiesWithinAABBExcludingEntity(el, bb, AttackableSelector);
                             for(Entity curEntity : list){
+                                if(!el.canEntityBeSeen(curEntity)) continue;
+
                                 float curDist = curEntity.getDistanceToEntity(el);
                                 if(curDist < distance)
                                 {
@@ -1740,7 +1836,50 @@ public class ItemSlashBlade extends ItemSword {
                 if(eId != 0){
                     Entity target = par2World.getEntityByID(eId);
                     if(target != null)
-                        this.faceEntity(el,target, 1000.0f,1000.0f);
+                        this.faceEntity(el,target, 10.0f,10.0f);
+                }else{
+                    int camState = el.getEntityData().getByte("camerareset");
+                    if(0 < (el.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.CAMERA)){
+                        switch (camState){
+                            case 0:
+                                el.getEntityData().setByte("camerareset",(byte)1);
+                                break;
+                            case 1: {
+
+                                float par2 = 180f;
+                                float par3 = 180f;
+                                {
+                                    double d0 = el.motionX;
+                                    double d1 = el.motionZ;
+                                    double d2;
+
+                                    if((Vec3.createVectorHelper(d0,0,d1)).lengthVector() < 0.05f) {
+                                        el.getEntityData().setByte("camerareset",(byte)2);
+                                        break;
+                                    };
+
+                                    d2 = el.posY + (double) el.getEyeHeight() - (el.posY + (double) el.getEyeHeight());
+
+                                    double d3 = (double) MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+                                    float f2 = (float) (Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
+                                    float f3 = (float) (-(Math.atan2(d2, d3) * 180.0D / Math.PI));
+
+
+                                    el.rotationPitch = this.updateRotation(el.rotationPitch, f3, par3);
+                                    el.rotationPitch = (float) Math.min(Math.max(el.rotationPitch, 0), 60);
+
+                                    el.rotationYaw = this.updateRotation(el.rotationYaw, f2, par2);
+                                }
+                                el.getEntityData().setByte("camerareset",(byte)2);
+                                break;
+                            }
+
+                            default:
+
+                        }
+                    }else if(camState != 0){
+                        el.getEntityData().setByte("camerareset",(byte)0);
+                    }
                 }
             }
 
@@ -1822,6 +1961,11 @@ public class ItemSlashBlade extends ItemSword {
                 break;
             case AKiriorosiFinish:
                 StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosiFinish);
+
+            case RapidSlash:
+                StylishRankManager.setNextAttackType(e, AttackTypes.RapidSlash);
+            case RisingStar:
+                StylishRankManager.setNextAttackType(e, AttackTypes.RisingStar);
                 break;
 
         }
@@ -1863,7 +2007,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
         owner.rotationPitch = this.updateRotation(owner.rotationPitch, f3, par3);
-        owner.rotationPitch = (float)Math.min(Math.max(owner.rotationPitch,-30), 60);
+        owner.rotationPitch = (float)Math.min(Math.max(owner.rotationPitch,0), 60);
 
         owner.rotationYaw = this.updateRotation(owner.rotationYaw, f2, par2);
     }
@@ -2331,6 +2475,10 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public Entity getRayTrace(EntityLivingBase owner, double reachMax){
+        return getRayTrace(owner,reachMax, 0.0f);
+    }
+
+    public Entity getRayTrace(EntityLivingBase owner, double reachMax, float expandBorder){
         Entity pointedEntity;
         float par1 = 1.0f;
 
@@ -2353,8 +2501,10 @@ public class ItemSlashBlade extends ItemSword {
         for(Entity entity : list){
             if (entity == null || !entity.canBeCollidedWith()) continue;
 
-            float borderSize = entity.getCollisionBorderSize();
-            AxisAlignedBB axisalignedbb = entity.boundingBox.expand((double)borderSize, (double)borderSize, (double)borderSize);
+            if(0.01f < expandBorder && (!owner.canEntityBeSeen(entity) || !AttackableSelector.isEntityApplicable(entity))) continue;
+
+            float borderSize = entity.getCollisionBorderSize() + expandBorder;
+            AxisAlignedBB axisalignedbb = entity.boundingBox.expand((double) borderSize, (double) borderSize, (double) borderSize);
             MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 
             if (axisalignedbb.isVecInside(entityPos))
@@ -2507,69 +2657,246 @@ public class ItemSlashBlade extends ItemSword {
         return specialAttacks.containsKey(key) ? specialAttacks.get(key) : defaultSA;
     }
 
-    public void doRangeAttack(ItemStack item, EntityLivingBase entity, int mode) {
+    public void doRangeAttack(ItemStack item, EntityLivingBase entity, MessageRangeAttack.RangeAttackState mode) {
         World w = entity.worldObj;
         NBTTagCompound tag = getItemTagCompound(item);
         EnumSet<SwordType> types = getSwordType(item);
 
-        if(mode == 1){
-            if(types.contains(SwordType.Bewitched) && !types.contains(SwordType.Broken)){
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
-                if(0 < level && ProudSoul.tryAdd(tag,-1,false)){
+        if (!types.contains(SwordType.Bewitched)) return;
+        if(types.contains(SwordType.Broken)) return;
 
-                    int rank = StylishRankManager.getStylishRank(entity);
-                    if(rank < 3)
-                        level = Math.min(1, level);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, item);
 
-                    float magicDamage = level;
+        if(level <= 0) return;
 
+        if (w.isRemote) {
+            PacketHandler.INSTANCE.sendToServer(new MessageRangeAttack(mode));
+            return;
+        }
+        int rank = StylishRankManager.getStylishRank(entity);
 
-                    if(!w.isRemote){
+        switch(mode) {
+            case UPKEY: {
+                if(entity.getEntityData().hasKey("SB.BSHOLDLIMIT")){
+                    long holdLimit = entity.getEntityData().getLong("SB.BSHOLDLIMIT");
+                    long currentTime = entity.worldObj.getTotalWorldTime();
 
-                        if(tag.getInteger("RangeAttackType") == 0) {
-                            EntityPhantomSwordBase entityDrive = new EntityPhantomSwordBase(w, entity, magicDamage, 90.0f);
-                            if (entityDrive != null) {
-                                entityDrive.setLifeTime(30);
+                    if(currentTime < holdLimit) {
+                        entity.getEntityData().setLong("SB.BSHOLDLIMIT", currentTime);
+                        return;
+                    }
+                }
 
-                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
-                                entityDrive.setTargetEntityId(targetid);
+                if (!ProudSoul.tryAdd(tag, -1, false)) return;
 
-                                if(SummonedSwordColor.exists(tag))
-                                    entityDrive.setColor(SummonedSwordColor.get(tag));
+                if (rank < 3)
+                    level = Math.min(1, level);
 
-                                w.spawnEntityInWorld(entityDrive);
+                float magicDamage = level;
 
-                                if(entity instanceof EntityPlayer)
-                                    AchievementList.triggerAchievement((EntityPlayer)entity,"phantomSword");
+                if (tag.getInteger("RangeAttackType") == 0) {
+                    EntityPhantomSwordBase entityDrive = new EntityPhantomSwordBase(w, entity, magicDamage, 90.0f);
+                    if (entityDrive != null) {
+                        entityDrive.setLifeTime(30);
 
-                            }
+                        int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                        entityDrive.setTargetEntityId(targetid);
 
-                        }else {
-                            EntitySummonedBlade summonedBlade = new EntitySummonedBlade(w, entity, magicDamage, 90.0f);
-                            if (summonedBlade != null) {
-                                summonedBlade.setLifeTime(100);
-                                summonedBlade.setInterval(7);
+                        if (SummonedSwordColor.exists(tag))
+                            entityDrive.setColor(SummonedSwordColor.get(tag));
 
-                                if(SummonedSwordColor.exists(tag))
-                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
+                        w.spawnEntityInWorld(entityDrive);
 
-                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
-                                summonedBlade.setTargetEntityId(targetid);
-
-                                if (SummonedSwordColor.exists(tag))
-                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
-
-                                w.spawnEntityInWorld(summonedBlade);
-                            }
-                        }
-
-                    }else{
-                        PacketHandler.INSTANCE.sendToServer(new MessageRangeAttack((byte)1));
+                        if (entity instanceof EntityPlayer)
+                            AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
 
                     }
 
+                } else {
+                    EntitySummonedBlade summonedBlade = new EntitySummonedBlade(w, entity, magicDamage, 90.0f);
+                    if (summonedBlade != null) {
+                        summonedBlade.setLifeTime(100);
+                        summonedBlade.setInterval(10);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedBlade.setColor(SummonedSwordColor.get(tag));
+
+                        int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                        summonedBlade.setTargetEntityId(targetid);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedBlade.setColor(SummonedSwordColor.get(tag));
+
+                        w.spawnEntityInWorld(summonedBlade);
+                    }
                 }
+                break;
+            }
+            case BLISTERING: {
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                long currentTime = entity.worldObj.getTotalWorldTime();
+                final int holdLimit = 400;
+                entity.getEntityData().setLong("SB.BSHOLDLIMIT", currentTime + holdLimit);
+
+                entity.playSound("mob.endermen.portal", 0.5F, 1.0F);
+
+                int count = 4;
+                if (3 < rank)
+                    count +=2;
+                if (5 <= rank)
+                    count +=2;
+
+                float magicDamage = level * 2;
+
+                for(int i = 0; i<count;i++){
+
+                    EntityBlisteringSwords summonedSword = new EntityBlisteringSwords(w, entity, magicDamage, 90.0f, i);
+                    if (summonedSword != null) {
+                        summonedSword.setLifeTime(30);
+                        summonedSword.setIsJudgement(types.contains(SwordType.FiercerEdge));
+
+                        int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                        summonedSword.setTargetEntityId(targetid);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                        w.spawnEntityInWorld(summonedSword);
+
+                        /*
+                        if (entity instanceof EntityPlayer)
+                            AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                        */
+                    }
+                }
+
+                break;
+            }
+            case SPIRAL: {
+
+
+                if(entity.getEntityData().hasKey("SB.SPHOLDID")){
+                    entity.getEntityData().removeTag("SB.SPHOLDID");
+                    return;
+                }
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                entity.worldObj.playSoundEffect(entity.prevPosX, entity.prevPosY, entity.prevPosZ, "mob.endermen.portal", 0.7F, 1.0F);
+
+                int count = 6;
+
+                if (rank < 3)
+                    level = Math.min(1, level);
+
+                float magicDamage = level;
+
+                float arc = 360.0f / count;
+
+                int currentTime = (int)entity.worldObj.getWorldTime();
+                entity.getEntityData().setInteger("SB.SPHOLDID", currentTime);
+
+                final int holdLimit = 200;
+                for (int i = 0; i < count; i++) {
+
+                    float offset = i * arc;
+
+                    EntitySpiralSwords summonedSword = new EntitySpiralSwords(w, entity, magicDamage, 0, offset);
+                    if (summonedSword != null) {
+                        summonedSword.setHoldId(currentTime);
+                        summonedSword.setInterval(holdLimit);
+                        summonedSword.setLifeTime(holdLimit);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                        w.spawnEntityInWorld(summonedSword);
+
+                    }
+                }
+                /*
+                if (entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                */
+                break;
+            }
+            case STORM: {
+
+                int targetId = TargetEntityId.get(tag);
+                if (targetId == 0) return;
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                entity.worldObj.playSoundEffect(entity.prevPosX, entity.prevPosY, entity.prevPosZ,"mob.endermen.portal", 0.7F, 1.0F);
+
+                int count = 6;
+
+                if (rank < 3)
+                    level = Math.min(1, level);
+
+                float magicDamage = level / 2.0f;
+
+                float arc = 360.0f / count;
+
+                final int holdLimit = (int) (20 * 2);
+                for (int i = 0; i < count; i++) {
+
+                    float offset = i * arc;
+
+                    EntityStormSwords summonedSword = new EntityStormSwords(w, entity, magicDamage, 0, offset, targetId);
+                    if (summonedSword != null) {
+                        summonedSword.setInterval(holdLimit);
+                        summonedSword.setLifeTime(holdLimit + 30);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                        w.spawnEntityInWorld(summonedSword);
+
+                    }
+                }
+                /*
+                if (entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                */
+                break;
+            }
+            case HEAVY_RAIN: {
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                entity.worldObj.playSoundEffect(entity.prevPosX, entity.prevPosY, entity.prevPosZ, "mob.endermen.portal", 0.7F, 1.0F);
+
+                int count = 10;
+                int multiplier = 2;
+                if (5 <= rank)
+                    multiplier += 1;
+
+                float magicDamage = 1;
+                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+
+                for (int i = 0; i < count; i++) {
+                    for (int j = 0; j < multiplier; j++) {
+
+                        EntityHeavyRainSwords summonedSword = new EntityHeavyRainSwords(w, entity, magicDamage, entity.getRNG().nextFloat() * 360.0f, i, targetid);
+                        if (summonedSword != null) {
+                            summonedSword.setLifeTime(30 + i);
+
+                            if (SummonedSwordColor.exists(tag))
+                                summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                            w.spawnEntityInWorld(summonedSword);
+                        }
+                    }
+                }
+                /*
+                if (entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                */
+                break;
             }
         }
     }

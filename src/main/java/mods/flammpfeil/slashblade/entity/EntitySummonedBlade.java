@@ -72,7 +72,7 @@ public class EntitySummonedBlade extends EntityPhantomSwordBase {
 
             //■初期位置・初期角度等の設定
             setLocationAndAngles(thrower.posX + x,
-                    thrower.posY + thrower.getEyeHeight()/2.0f + y,
+                    thrower.posY + /*thrower.getEyeHeight()/2.0f + */y,
                     thrower.posZ + z,
                     thrower.rotationYaw,
                     thrower.rotationPitch);

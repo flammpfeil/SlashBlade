@@ -8,6 +8,7 @@ import mods.flammpfeil.slashblade.ability.AirTrick;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -73,7 +74,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         yOffset = entityLiving.getEyeHeight()/2.0F;
 
         //■撃った人
-        thrower = entityLiving;
+        setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem();
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
@@ -121,11 +122,17 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         }
     }
 
+    static final int THROWER_ENTITY_ID = 11;
+
     /**
      * ■イニシャライズ
      */
     @Override
     protected void entityInit() {
+
+        //thrower
+        this.getDataWatcher().addObject(11, 0);
+
         //EntityId
         this.getDataWatcher().addObject(4, 0);
 
@@ -140,6 +147,13 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
         //color
         this.getDataWatcher().addObject(10, 0x3333FF);
+    }
+
+    public int getThrowerEntityId(){
+        return this.getDataWatcher().getWatchableObjectInt(THROWER_ENTITY_ID);
+    }
+    public void setThrowerEntityId(int entityid){
+        this.getDataWatcher().updateObject(THROWER_ENTITY_ID, entityid);
     }
 
     public int getTargetEntityId(){
@@ -251,10 +265,15 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
         double tmpDistance = reachMin;
 
-        for(Entity entity : list){
+        EntityLivingBase viewer = (owner instanceof EntityLivingBase) ? (EntityLivingBase) owner : null;
+
+        for (Entity entity : list) {
             if (entity == null || !entity.canBeCollidedWith()) continue;
 
             if(!ItemSlashBlade.AttackableSelector.isEntityApplicable(entity))
+                continue;
+
+            if(viewer != null && !viewer.canEntityBeSeen(entity))
                 continue;
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder; //視線外10幅まで判定拡張
@@ -674,6 +693,29 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         mountEntity(target);
     }
 
+    protected void blastAttackEntity(Entity target){
+        if(!this.worldObj.isRemote){
+            float magicDamage = 1;
+            target.hurtResistantTime = 0;
+            DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
+            target.attackEntityFrom(ds, magicDamage);
+
+            if(blade != null && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+                StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
+                ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
+
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+                target.addVelocity(0.0, 0.1D, 0.0);
+
+                ((EntityLivingBase) target).hurtTime = 1;
+
+                ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
+            }
+        }
+    }
+
     protected boolean onImpact(MovingObjectPosition mop)
     {
 
@@ -698,11 +740,12 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
             if (!block.isAir(worldObj,i,j,k) &&
                     block.getCollisionBoundingBoxFromPool(worldObj, i,j,k) != null)
             {
+                /*
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
-                this.setDead();
-            }else{
-                result = false;
+                */
+                //this.setDead();
+                result = true;
             }
         }
 
@@ -738,12 +781,19 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
     @Override
     public void onUpdate()
     {
+        lastTickPosX = posX;
+        lastTickPosY = posY;
+        lastTickPosZ = posZ;
+        super.onUpdate();
+
         if(this.ridingEntity2 != null){
             updateRidden();
         }else{
-            lastTickPosX = posX;
-            lastTickPosY = posY;
-            lastTickPosZ = posZ;
+
+            if (this.ticksExisted >= getLifeTime())
+            {
+                this.setDead();
+            }
 
             initRotation();
 
@@ -766,11 +816,6 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
             spawnParticle();
 
-            if (this.ticksExisted >= getLifeTime())
-            {
-                this.setDead();
-            }
-
         }
     }
 
@@ -782,6 +827,17 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         if(!this.worldObj.isRemote)
             System.out.println("dead" + this.ticksExisted);
             */
+
+        this.worldObj.playSoundEffect(this.prevPosX, this.prevPosY, this.prevPosZ, "dig.glass", 0.25F, 1.6F);
+
+        AxisAlignedBB bb = this.boundingBox.expand(1.0D, 1.0D, 1.0D);
+        List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, bb, ItemSlashBlade.AttackableSelector);
+        list.removeAll(alreadyHitEntity);
+        for(Entity target : list){
+            if(target == null) continue;
+            blastAttackEntity(target);
+        }
+
         super.setDead();
     }
 
@@ -946,13 +1002,6 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
             this.ridingEntity2 = par1Entity;
 
             this.ticksExisted = 0;
-
-            if(!this.worldObj.isRemote){
-                if(this.getEntityData().getBoolean("IsAirTrick")){
-                    if(this.getThrower() instanceof EntityPlayerMP)
-                        AirTrick.doAirTrick((EntityPlayerMP)this.getThrower());
-                }
-            }
         }
     }
 
@@ -1000,11 +1049,20 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
     //IThrowableEntity
     @Override
     public Entity getThrower() {
+        if(this.thrower == null){
+            int id = getThrowerEntityId();
+            if(id != 0){
+                this.thrower = this.worldObj.getEntityByID(id);
+            }
+        }
+
         return this.thrower;
     }
 
     @Override
     public void setThrower(Entity entity) {
+        if(entity != null)
+            setThrowerEntityId(entity.getEntityId());
         this.thrower = entity;
     }
 }
