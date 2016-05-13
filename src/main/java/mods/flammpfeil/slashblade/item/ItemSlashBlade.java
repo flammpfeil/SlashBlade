@@ -1763,6 +1763,44 @@ public class ItemSlashBlade extends ItemSword {
                     Entity target = par2World.getEntityByID(eId);
                     if(target != null)
                         this.faceEntity(el,target, 5.0f,5.0f);
+                }else{
+                    int camState = el.getEntityData().getByte("camerareset");
+                    if(el.isSneaking()){
+                        switch (camState){
+                            case 0:
+                                el.getEntityData().setByte("camerareset",(byte)1);
+                                break;
+                            case 1: {
+
+                                float par2 = 180f;
+                                float par3 = 180f;
+                                {
+                                    double d0 = el.motionX;
+                                    double d1 = el.motionZ;
+                                    double d2;
+
+                                    d2 = el.posY + (double) el.getEyeHeight() - (el.posY + (double) el.getEyeHeight());
+
+                                    double d3 = (double) MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+                                    float f2 = (float) (Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
+                                    float f3 = (float) (-(Math.atan2(d2, d3) * 180.0D / Math.PI));
+
+
+                                    el.rotationPitch = this.updateRotation(el.rotationPitch, f3, par3);
+                                    el.rotationPitch = (float) Math.min(Math.max(el.rotationPitch, 0), 60);
+
+                                    el.rotationYaw = this.updateRotation(el.rotationYaw, f2, par2);
+                                }
+                                el.getEntityData().setByte("camerareset",(byte)2);
+                                break;
+                            }
+
+                            default:
+
+                        }
+                    }else if(camState != 0){
+                        el.getEntityData().setByte("camerareset",(byte)0);
+                    }
                 }
             }
 
