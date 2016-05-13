@@ -1697,6 +1697,9 @@ public class ItemSlashBlade extends ItemSword {
 
                         Entity rayEntity = getRayTrace(el,10.0f);
 
+                        if(rayEntity == null)
+                            rayEntity = getRayTrace(el,10.0f,5.0f);
+
                         if(rayEntity !=null){
                             if(!EntitySelectorAttackable.getInstance().apply(rayEntity)){
 
@@ -2354,6 +2357,10 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public Entity getRayTrace(EntityLivingBase owner, double reachMax){
+        return getRayTrace(owner,reachMax, 0.0f);
+    }
+
+    public Entity getRayTrace(EntityLivingBase owner, double reachMax, float expandBorder){
         Entity pointedEntity;
         float par1 = 1.0f;
 
@@ -2380,7 +2387,9 @@ public class ItemSlashBlade extends ItemSword {
         for(Entity entity : list){
             if (entity == null || !entity.canBeCollidedWith()) continue;
 
-            float borderSize = entity.getCollisionBorderSize();
+            if(0.01f < expandBorder && !owner.canEntityBeSeen(entity)) continue;
+
+            float borderSize = entity.getCollisionBorderSize() + expandBorder;
             AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
             RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 

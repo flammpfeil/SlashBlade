@@ -261,10 +261,15 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         double tmpDistance = reachMin;
 
+        EntityLivingBase viewer = (owner instanceof EntityLivingBase) ? (EntityLivingBase) owner : null;
+
         for (Entity entity : list) {
             if (entity == null || !entity.canBeCollidedWith()) continue;
 
             if (!EntitySelectorAttackable.getInstance().apply(entity))
+                continue;
+
+            if(viewer != null && !viewer.canEntityBeSeen(entity))
                 continue;
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder; //視線外10幅まで判定拡張
