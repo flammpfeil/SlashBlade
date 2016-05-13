@@ -144,6 +144,12 @@ public class CoreProxyClient extends CoreProxy {
                 return new RenderPhantomSwordBase(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntitySummonedSwordAirTrickMarker.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
         RenderingRegistry.registerEntityRenderingHandler(EntityBladeStand.class, new IRenderFactory<EntityBladeStand>() {
             @Override
             public Render<? super EntityBladeStand> createRenderFor(RenderManager manager) {
@@ -189,7 +195,8 @@ public class CoreProxyClient extends CoreProxy {
                 if(item == null) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
-                if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)){
+                if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)
+                        && player.isSneaking()){
 
                     mc.playerController.updateController();
                     NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));

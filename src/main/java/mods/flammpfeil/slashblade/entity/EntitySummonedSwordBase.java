@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.ability.AirTrick;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -945,13 +944,6 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             this.ridingEntity2 = par1Entity;
 
             this.ticksExisted = 0;
-
-            if(!this.worldObj.isRemote){
-                if(this.getEntityData().getBoolean("IsAirTrick")){
-                    if(this.getThrower() instanceof EntityPlayerMP)
-                        AirTrick.doAirTrick((EntityPlayerMP)this.getThrower());
-                }
-            }
         }
     }
 
