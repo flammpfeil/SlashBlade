@@ -16,7 +16,7 @@ public class NetworkManager {
 
 
     public static void init() {
-        INSTANCE.registerMessage(MessageRangeAttack.class, MessageRangeAttack.class, 0, Side.SERVER);
+        INSTANCE.registerMessage(MessageRangeAttackHandler.class, MessageRangeAttack.class, 0, Side.SERVER);
         INSTANCE.registerMessage(MessageSpecialActionHandler.class, MessageSpecialAction.class, 1, Side.SERVER);
         INSTANCE.registerMessage(MessageMoveCommandStateHandler.class, MessageMoveCommandState.class, 2, Side.SERVER);
     }

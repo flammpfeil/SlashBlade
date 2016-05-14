@@ -12,9 +12,9 @@ import net.minecraft.item.ItemStack;
 /**
  * Created by Furia on 14/06/09.
  */
-public class MessageRangeAttack implements IMessage, IMessageHandler<MessageRangeAttack,IMessage> {
+public class MessageRangeAttack implements IMessage {
 
-    private byte mode;
+    public byte mode;
 
     public MessageRangeAttack(){};
 
@@ -30,16 +30,5 @@ public class MessageRangeAttack implements IMessage, IMessageHandler<MessageRang
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeByte(this.mode);
-    }
-
-    @Override
-    public IMessage onMessage(MessageRangeAttack message, MessageContext ctx) {
-        EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
-
-        ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack != null && stack.getItem() instanceof ItemSlashBlade){
-            ((ItemSlashBlade)stack.getItem()).doRangeAttack(stack,entityPlayer,message.mode);
-        }
-        return null;
     }
 }
