@@ -89,7 +89,6 @@ public class SlashBlade implements IFuelHandler{
     //ability
     public static JustGuard abilityJustGuard;
     public static StylishRankManager stylishRankManager;
-    public static SneakMove abilitySneakMove;
     public static ChargeFloating abilityChargeFloating;
     public static FireResistance abilityFireResistance;
     public static WaterBreathing abilityWaterBreathing;
@@ -298,9 +297,6 @@ public class SlashBlade implements IFuelHandler{
         //ability
         abilityJustGuard = new JustGuard();
         MinecraftForge.EVENT_BUS.register(abilityJustGuard);
-
-        abilitySneakMove = new SneakMove();
-        MinecraftForge.EVENT_BUS.register(abilitySneakMove);
 
         abilityChargeFloating = new ChargeFloating();
         MinecraftForge.EVENT_BUS.register(abilityChargeFloating);
