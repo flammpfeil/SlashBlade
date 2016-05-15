@@ -9,6 +9,7 @@ import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.KeyBindingEx;
@@ -150,6 +151,12 @@ public class CoreProxyClient extends CoreProxy {
                 return new RenderPhantomSwordBase(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityBlisteringSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
         RenderingRegistry.registerEntityRenderingHandler(EntityBladeStand.class, new IRenderFactory<EntityBladeStand>() {
             @Override
             public Render<? super EntityBladeStand> createRenderFor(RenderManager manager) {
@@ -175,7 +182,43 @@ public class CoreProxyClient extends CoreProxy {
 
                         mc.playerController.updateController();
 
-                        ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, 1);
+                        ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, MessageRangeAttack.RangeAttackState.UPKEY);
+                    }
+                }
+            }
+
+            @Override
+            public void presskey(int count) {
+                super.presskey(count);
+
+                final int ChargeTime = 10; //0.5seq
+                if(ChargeTime == count){
+                    Minecraft mc = Minecraft.getMinecraft();
+                    EntityPlayerSP player = mc.thePlayer;
+                    if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
+                        ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
+                        if(item != null && item.getItem() instanceof ItemSlashBlade){
+
+                            mc.playerController.updateController();
+
+                            long currentTime = player.getEntityWorld().getTotalWorldTime();
+
+                            long backKeyLastActiveTime = player.getEntityData().getLong("SB.MCS.B");
+                            final int TypeAheadBuffer = 20;
+
+                            MessageRangeAttack.RangeAttackState command;
+                            if((currentTime - backKeyLastActiveTime) <= (ChargeTime + TypeAheadBuffer)
+                                && player.movementInput.forwardKeyDown){
+                                command = MessageRangeAttack.RangeAttackState.HEAVY_RAIN;
+                            }else if(player.movementInput.forwardKeyDown){
+                                command = MessageRangeAttack.RangeAttackState.BLISTERING;
+                            }else if(player.movementInput.backKeyDown){
+                                command = MessageRangeAttack.RangeAttackState.STORM;
+                            }else{
+                                command = MessageRangeAttack.RangeAttackState.SPIRAL;
+                            }
+                            ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, command);
+                        }
                     }
                 }
             }

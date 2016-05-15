@@ -78,7 +78,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         this.AttackLevel = AttackLevel;
 
         //■撃った人
-        thrower = entityLiving;
+        setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
@@ -121,6 +121,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }
     }
 
+    private static final DataParameter<Integer> THROWER_ENTITY_ID = EntityDataManager.<Integer>createKey(EntitySummonedSwordBase.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntitySummonedSwordBase.class, DataSerializers.VARINT);
     private static final DataParameter<Float> ROLL = EntityDataManager.<Float>createKey(EntitySummonedSwordBase.class, DataSerializers.FLOAT);
     private static final DataParameter<Integer> TARGET_ENTITY_ID = EntityDataManager.<Integer>createKey(EntitySummonedSwordBase.class, DataSerializers.VARINT);
@@ -132,6 +133,9 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      */
     @Override
     protected void entityInit() {
+
+        //EntityId
+        this.getDataManager().register(THROWER_ENTITY_ID, 0);
 
         //lifetime
         this.getDataManager().register(LIFETIME, 20);
@@ -147,6 +151,13 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         //color
         this.getDataManager().register(COLOR, 0x3333FF);
+    }
+
+    public int getThrowerEntityId(){
+        return this.getDataManager().get(THROWER_ENTITY_ID);
+    }
+    public void setThrowerEntityId(int entityid){
+        this.getDataManager().set(THROWER_ENTITY_ID, entityid);
     }
 
     public int getTargetEntityId(){
@@ -1019,11 +1030,20 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     //IThrowableEntity
     @Override
     public Entity getThrower() {
+        if(this.thrower == null){
+            int id = getThrowerEntityId();
+            if(id != 0){
+                this.thrower = this.getEntityWorld().getEntityByID(id);
+            }
+        }
+
         return this.thrower;
     }
 
     @Override
     public void setThrower(Entity entity) {
+        if(entity != null)
+            setThrowerEntityId(entity.getEntityId());
         this.thrower = entity;
     }
 }

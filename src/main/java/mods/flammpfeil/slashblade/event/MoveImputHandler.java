@@ -30,6 +30,13 @@ public class MoveImputHandler {
 
         byte lastCommand = player.getEntityData().getByte("SB.MCS");
 
+        long currentTime = player.getEntityWorld().getTotalWorldTime();
+
+        if(player.movementInput.forwardKeyDown)
+            player.getEntityData().setLong("SB.MCS.F",currentTime);
+        if(player.movementInput.backKeyDown)
+            player.getEntityData().setLong("SB.MCS.B",currentTime);
+
         if(lastCommand != message.command){
             player.getEntityData().setByte("SB.MCS",message.command);
             NetworkManager.INSTANCE.sendToServer(message);

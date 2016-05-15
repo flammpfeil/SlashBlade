@@ -5,8 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.core.CoreProxy;
-import mods.flammpfeil.slashblade.entity.EntityDrive;
-import mods.flammpfeil.slashblade.entity.EntitySummonedBlade;
+import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
@@ -14,22 +13,17 @@ import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
 import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
@@ -1779,6 +1773,11 @@ public class ItemSlashBlade extends ItemSword {
                                     double d1 = el.motionZ;
                                     double d2;
 
+                                    if((new Vec3d(d0,0,d1)).lengthVector() < 0.2f) {
+                                        el.getEntityData().setByte("camerareset",(byte)2);
+                                        break;
+                                    };
+
                                     d2 = el.posY + (double) el.getEyeHeight() - (el.posY + (double) el.getEyeHeight());
 
                                     double d3 = (double) MathHelper.sqrt_double(d0 * d0 + d1 * d1);
@@ -2586,71 +2585,131 @@ public class ItemSlashBlade extends ItemSword {
         return specialAttacks.containsKey(key) ? specialAttacks.get(key) : defaultSA;
     }
 
-    public void doRangeAttack(ItemStack item, EntityLivingBase entity, int mode) {
+    public void doRangeAttack(ItemStack item, EntityLivingBase entity, MessageRangeAttack.RangeAttackState mode) {
         World w = entity.worldObj;
         NBTTagCompound tag = getItemTagCompound(item);
         EnumSet<SwordType> types = getSwordType(item);
 
-        if(mode == 1){
-            if(types.contains(SwordType.Bewitched) && !types.contains(SwordType.Broken)){
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, item);
-                if(0 < level && ProudSoul.tryAdd(tag,-1,false)){
+        if (!types.contains(SwordType.Bewitched)) return;
+        if(types.contains(SwordType.Broken)) return;
 
-                    int rank = StylishRankManager.getStylishRank(entity);
-                    if(rank < 3)
-                        level = Math.min(1, level);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, item);
 
-                    float magicDamage = level;
+        if(level <= 0) return;
 
+        if (w.isRemote) {
+            NetworkManager.INSTANCE.sendToServer(new MessageRangeAttack(mode));
+            return;
+        }
+        int rank = StylishRankManager.getStylishRank(entity);
 
-                    if(!w.isRemote){
+        switch(mode) {
+            case UPKEY: {
+                if(entity.getEntityData().hasKey("SB.BSHOLDLIMIT")){
+                    long holdLimit = entity.getEntityData().getLong("SB.BSHOLDLIMIT");
+                    long currentTime = entity.getEntityWorld().getTotalWorldTime();
 
-                        if(tag.getInteger("RangeAttackType") == 0) {
-                            EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage, 90.0f);
-                            if (entityDrive != null) {
-                                entityDrive.setLifeTime(30);
+                    if(currentTime < holdLimit) {
+                        entity.getEntityData().setLong("SB.BSHOLDLIMIT", currentTime);
+                        return;
+                    }
+                }
 
-                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
-                                entityDrive.setTargetEntityId(targetid);
+                if (!ProudSoul.tryAdd(tag, -1, false)) return;
 
-                            if(SummonedSwordColor.exists(tag))
-                                    entityDrive.setColor(SummonedSwordColor.get(tag));
+                if (rank < 3)
+                    level = Math.min(1, level);
 
-                                ScheduleEntitySpawner.getInstance().offer(entityDrive);
-                                //w.spawnEntityInWorld(entityDrive);
+                float magicDamage = level;
 
-                            if(entity instanceof EntityPlayer)
-                                AchievementList.triggerAchievement((EntityPlayer)entity,"phantomSword");
+                if (tag.getInteger("RangeAttackType") == 0) {
+                    EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage, 90.0f);
+                    if (entityDrive != null) {
+                        entityDrive.setLifeTime(30);
 
-                            }
+                        int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                        entityDrive.setTargetEntityId(targetid);
 
-                        }else {
-                            EntitySummonedBlade summonedBlade = new EntitySummonedBlade(w, entity, magicDamage, 90.0f);
-                            if (summonedBlade != null) {
-                                summonedBlade.setLifeTime(100);
-                                summonedBlade.setInterval(10);
+                        if (SummonedSwordColor.exists(tag))
+                            entityDrive.setColor(SummonedSwordColor.get(tag));
 
-                                if(SummonedSwordColor.exists(tag))
-                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
+                        ScheduleEntitySpawner.getInstance().offer(entityDrive);
+                        //w.spawnEntityInWorld(entityDrive);
 
-                                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
-                                summonedBlade.setTargetEntityId(targetid);
-
-                                if (SummonedSwordColor.exists(tag))
-                                    summonedBlade.setColor(SummonedSwordColor.get(tag));
-
-                                ScheduleEntitySpawner.getInstance().offer(summonedBlade);
-                            }
-                        }
-
-                    }else{
-                        NetworkManager.INSTANCE.sendToServer(new MessageRangeAttack((byte)1));
+                        if (entity instanceof EntityPlayer)
+                            AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
 
                     }
 
+                } else {
+                    EntitySummonedBlade summonedBlade = new EntitySummonedBlade(w, entity, magicDamage, 90.0f);
+                    if (summonedBlade != null) {
+                        summonedBlade.setLifeTime(100);
+                        summonedBlade.setInterval(10);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedBlade.setColor(SummonedSwordColor.get(tag));
+
+                        int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                        summonedBlade.setTargetEntityId(targetid);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedBlade.setColor(SummonedSwordColor.get(tag));
+
+                        ScheduleEntitySpawner.getInstance().offer(summonedBlade);
+                    }
                 }
+                break;
             }
+            case BLISTERING: {
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                long currentTime = entity.getEntityWorld().getTotalWorldTime();
+                final int holdLimit = 400;
+                entity.getEntityData().setLong("SB.BSHOLDLIMIT", currentTime + holdLimit);
+
+                entity.playSound(SoundEvents.entity_endermen_teleport, 0.5F, 1.0F);
+
+                int count = 4;
+                if (3 < rank)
+                    count +=2;
+                if (5 <= rank)
+                    count +=2;
+
+                float magicDamage = level * 2;
+
+                for(int i = 0; i<count;i++){
+
+                    EntityBlisteringSwords summonedSword = new EntityBlisteringSwords(w, entity, magicDamage, 90.0f, i);
+                    if (summonedSword != null) {
+                        summonedSword.setLifeTime(30);
+
+                        int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                        summonedSword.setTargetEntityId(targetid);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                        ScheduleEntitySpawner.getInstance().offer(summonedSword);
+                        //w.spawnEntityInWorld(entityDrive);
+
+                        /*
+                        if (entity instanceof EntityPlayer)
+                            AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                        */
+                    }
+                }
+
+                break;
+            }
+            case SPIRAL:
+                break;
+            case STORM:
+                break;
+            case HEAVY_RAIN:
+                break;
         }
     }
 
