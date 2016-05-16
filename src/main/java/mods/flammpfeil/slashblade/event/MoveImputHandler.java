@@ -32,9 +32,9 @@ public class MoveImputHandler {
 
         long currentTime = player.getEntityWorld().getTotalWorldTime();
 
-        if(player.movementInput.forwardKeyDown)
+        if(player.movementInput.forwardKeyDown && player.isSneaking())
             player.getEntityData().setLong("SB.MCS.F",currentTime);
-        if(player.movementInput.backKeyDown)
+        if(player.movementInput.backKeyDown && player.isSneaking())
             player.getEntityData().setLong("SB.MCS.B",currentTime);
 
         if(lastCommand != message.command){

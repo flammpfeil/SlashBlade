@@ -709,7 +709,10 @@ public class ItemSlashBlade extends ItemSword {
                     break;
 
                 case Kiriage:
-                    result = ComboSequence.Kiriorosi;
+                    if(!player.isSneaking())
+                        result = ComboSequence.Kiriorosi;
+                    else
+                        result = ComboSequence.Saya1;
                     break;
 
                 case SIai:
@@ -1773,7 +1776,7 @@ public class ItemSlashBlade extends ItemSword {
                                     double d1 = el.motionZ;
                                     double d2;
 
-                                    if((new Vec3d(d0,0,d1)).lengthVector() < 0.2f) {
+                                    if((new Vec3d(d0,0,d1)).lengthVector() < 0.05f) {
                                         el.getEntityData().setByte("camerareset",(byte)2);
                                         break;
                                     };
@@ -2623,6 +2626,8 @@ public class ItemSlashBlade extends ItemSword {
 
                 float magicDamage = level;
 
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.35F, 1.0F);
+
                 if (tag.getInteger("RangeAttackType") == 0) {
                     EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage, 90.0f);
                     if (entityDrive != null) {
@@ -2670,7 +2675,7 @@ public class ItemSlashBlade extends ItemSword {
                 final int holdLimit = 400;
                 entity.getEntityData().setLong("SB.BSHOLDLIMIT", currentTime + holdLimit);
 
-                entity.playSound(SoundEvents.entity_endermen_teleport, 0.5F, 1.0F);
+                entity.worldObj.playSound((EntityPlayer)null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
 
                 int count = 4;
                 if (3 < rank)
@@ -2708,8 +2713,42 @@ public class ItemSlashBlade extends ItemSword {
                 break;
             case STORM:
                 break;
-            case HEAVY_RAIN:
+            case HEAVY_RAIN: {
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+
+                int count = 10;
+                int multiplier = 2;
+                if (5 <= rank)
+                    multiplier += 1;
+
+                float magicDamage = 1;
+                int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+
+                for (int i = 0; i < count; i++) {
+                    for (int j = 0; j < multiplier; j++) {
+
+                        EntityHeavyRainSwords summonedSword = new EntityHeavyRainSwords(w, entity, magicDamage, entity.getRNG().nextFloat() * 360.0f, i , targetid);
+                        if (summonedSword != null) {
+                            summonedSword.setLifeTime(30+i);
+
+                            if (SummonedSwordColor.exists(tag))
+                                summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                            ScheduleEntitySpawner.getInstance().offer(summonedSword);
+                            //w.spawnEntityInWorld(entityDrive);
+
+                        }
+                    }
+                }
+                /*
+                if (entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                */
                 break;
+            }
         }
     }
 
@@ -2826,6 +2865,10 @@ public class ItemSlashBlade extends ItemSword {
             try {
                 int exp = (Integer)getExperiencePoints.invoke(target, (EntityPlayer) player);
                 exp = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(target, (EntityPlayer) player, exp);
+
+                float rank = StylishRankManager.getStylishRank(player);
+
+                exp *= 1.0 + rank * 0.1;
 
                 NBTTagCompound tag = getItemTagCompound(stack);
                 PrevExp.set(tag,exp);

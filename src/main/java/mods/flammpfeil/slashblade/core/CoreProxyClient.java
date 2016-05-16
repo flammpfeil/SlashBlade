@@ -157,6 +157,12 @@ public class CoreProxyClient extends CoreProxy {
                 return new RenderPhantomSwordBase(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityHeavyRainSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
         RenderingRegistry.registerEntityRenderingHandler(EntityBladeStand.class, new IRenderFactory<EntityBladeStand>() {
             @Override
             public Render<? super EntityBladeStand> createRenderFor(RenderManager manager) {
@@ -174,6 +180,7 @@ public class CoreProxyClient extends CoreProxy {
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override
             public void upkey(int count) {
+                charged = false;
                 Minecraft mc = Minecraft.getMinecraft();
                 EntityPlayerSP player = mc.thePlayer;
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
@@ -187,12 +194,22 @@ public class CoreProxyClient extends CoreProxy {
                 }
             }
 
+            boolean charged = false;
+
+            @Override
+            public void downkey() {
+                super.downkey();
+
+                charged = false;
+            }
+
             @Override
             public void presskey(int count) {
                 super.presskey(count);
 
-                final int ChargeTime = 10; //0.5seq
-                if(ChargeTime == count){
+                final int ChargeTime = 7;
+                if(ChargeTime < count && !charged){
+                    charged = true;
                     Minecraft mc = Minecraft.getMinecraft();
                     EntityPlayerSP player = mc.thePlayer;
                     if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
@@ -204,15 +221,15 @@ public class CoreProxyClient extends CoreProxy {
                             long currentTime = player.getEntityWorld().getTotalWorldTime();
 
                             long backKeyLastActiveTime = player.getEntityData().getLong("SB.MCS.B");
-                            final int TypeAheadBuffer = 20;
+                            final int TypeAheadBuffer = 7;
 
                             MessageRangeAttack.RangeAttackState command;
                             if((currentTime - backKeyLastActiveTime) <= (ChargeTime + TypeAheadBuffer)
-                                && player.movementInput.forwardKeyDown){
+                                && player.movementInput.forwardKeyDown && player.isSneaking()){
                                 command = MessageRangeAttack.RangeAttackState.HEAVY_RAIN;
-                            }else if(player.movementInput.forwardKeyDown){
+                            }else if(player.movementInput.forwardKeyDown && player.isSneaking()){
                                 command = MessageRangeAttack.RangeAttackState.BLISTERING;
-                            }else if(player.movementInput.backKeyDown){
+                            }else if(player.movementInput.backKeyDown && player.isSneaking()){
                                 command = MessageRangeAttack.RangeAttackState.STORM;
                             }else{
                                 command = MessageRangeAttack.RangeAttackState.SPIRAL;

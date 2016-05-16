@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.entity;
 import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -824,6 +825,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         if(!this.worldObj.isRemote)
             System.out.println("dead" + this.ticksExisted);
             */
+
+        this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.block_glass_break, SoundCategory.NEUTRAL, 0.25F, 1.6F);
 
         AxisAlignedBB bb = this.getEntityBoundingBox().expand(1.0D, 1.0D, 1.0D);
         List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());

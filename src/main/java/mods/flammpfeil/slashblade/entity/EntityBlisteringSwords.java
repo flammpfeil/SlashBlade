@@ -5,9 +5,12 @@ import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -35,47 +38,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
             interval = Math.max(0,Math.min(interval,7));
             setInterval(interval);
 
-            float dist = 1.0f;
-
-            //side, height, width
-            int[][] pattern = {
-                    {1,1,0},
-                    {-1,1,0},
-                    {1,0,1},
-                    {-1,0,1},
-                    {1,-1,2},
-                    {-1,-1,2},
-                    {1,-2,3},
-                    {-1,-2,3}
-            };
-
-            double yaw =  Math.toRadians(-getThrower().rotationYaw + 90 * pattern[interval][0]);
-
-
-            double x = Math.sin(yaw);
-            double y = pattern[interval][1] * 0.25f;
-            double z = Math.cos(yaw);
-
-            x*=(dist + 0.1 * pattern[interval][2]);
-            //y*=dist;
-            z*=(dist + 0.1 * pattern[interval][2]);
-
-            Vec3d vec = getThrower().getLookVec();
-
-            if(vec != null){
-                x -= vec.xCoord;
-                y -= vec.yCoord;
-                z -= vec.zCoord;
-            }
-
-            //■初期位置・初期角度等の設定
-            setLocationAndAngles(getThrower().posX + x,
-                    getThrower().posY + getThrower().getEyeHeight()/2.0f + y,
-                    getThrower().posZ + z,
-                    getThrower().rotationYaw,
-                    getThrower().rotationPitch);
-
-            setRotation( getThrower().rotationYaw, getThrower().rotationPitch);
+            faceEntityStandby();
 
             this.setDriveVector(1.75f,true);
 
@@ -103,14 +66,18 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
 
         if(hasFired()) {
             if(ridingEntity2 == thrower){
-                Vec3d vec = ridingEntity2.getLookVec();
+
+                Vec3d vec = this.ridingEntity2.getLook(1.0f);
                 this.ridingEntity2 = null;
                 this.ticksExisted = 0;
 
-                if(vec != null)
-                    this.setPosition(this.posX - vec.xCoord,
-                            this.posY - vec.yCoord,
-                            this.posZ - vec.zCoord);
+
+                if(vec != null) {
+                    vec = vec.normalize().scale(-0.25).add(getPositionVector());
+                    this.setPosition(vec.xCoord,
+                            vec.yCoord,
+                            vec.zCoord);
+                }
             }else {
                 super.updateRidden();
             }
@@ -129,52 +96,18 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
             long currentTime = getEntityWorld().getTotalWorldTime();
             if(holdlimit < currentTime) {
                 setHasFired(true);
+
+                this.getEntityWorld().updateEntityWithOptionalForce(this,true);
+
                 this.ticksExisted = 0;
+
+                this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.entity_enderdragon_flap, SoundCategory.NEUTRAL, 0.35F, 0.2F);
+
                 return;
             }
         }
 
-        int interval = Math.max(0,Math.min(getInterval(),7));
-
-        float dist = 0.8f;
-
-        //side, height, width
-        int[][] pattern = {
-                {1,1,0},
-                {-1,1,0},
-                {1,0,1},
-                {-1,0,1},
-                {1,-1,2},
-                {-1,-1,2},
-                {1,-2,3},
-                {-1,-2,3}
-        };
-
-        double yaw =  Math.toRadians(-getThrower().rotationYaw + 90 * pattern[interval][0]);
-
-
-        double x = Math.sin(yaw);
-        double y = pattern[interval][1] * 0.25f;
-        double z = Math.cos(yaw);
-
-        x*=(dist + 0.15 * pattern[interval][2]);
-        //y*=dist;
-        z*=(dist + 0.15 * pattern[interval][2]);
-
-        Vec3d vec = getThrower().getLookVec();
-
-        if(vec != null){
-            x -= vec.xCoord;
-            y -= vec.yCoord;
-            z -= vec.zCoord;
-        }
-
-        //■初期位置・初期角度等の設定
-        setPosition(getThrower().posX + x,
-                getThrower().posY + getThrower().getEyeHeight()/2.0f + y,
-                getThrower().posZ + z);
-        setRotation(-getThrower().rotationYaw,
-                -getThrower().rotationPitch);
+        faceEntityStandby();
 
         doTargeting();
     }
@@ -186,6 +119,24 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         if(ridingEntity2 == null && !hasFired() && getThrower() != null){
             if(getEntityWorld().isRemote)
                 mountEntity(getThrower());
+        }
+    }
+
+    @Override
+    public void spawnParticle() {
+        super.spawnParticle();
+
+        if(hasFired()){
+            float trailLength;
+            for (int l = 0; l < 4; ++l)
+            {
+                trailLength = 0.25F;
+                this.worldObj.spawnParticle(EnumParticleTypes.PORTAL
+                        , this.posX - this.motionX * (double)trailLength
+                        , this.posY - this.motionY * (double)trailLength
+                        , this.posZ - this.motionZ * (double)trailLength
+                        , this.motionX, this.motionY, this.motionZ);
+            }
         }
     }
 
@@ -248,7 +199,9 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
                 iniYaw = getThrower().rotationYaw;
                 iniPitch = getThrower().rotationPitch;
             }
-            faceEntityV(getThrower(),10,10);
+
+            if(getThrower() != null)
+                faceEntityV(getThrower(),10,10);
             setDriveVector(1.75f, false);
         }
 
@@ -256,10 +209,55 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
     }
 
 
+    private void faceEntityStandby(){
+
+        int interval = Math.max(0,Math.min(getInterval(),7));
+
+        float dist = 0.8f;
+
+        //side, height, width
+        int[][] pattern = {
+                {1,1,0},
+                {-1,1,0},
+                {1,0,1},
+                {-1,0,1},
+                {1,-1,2},
+                {-1,-1,2},
+                {1,-2,3},
+                {-1,-2,3}
+        };
+
+        double yaw =  Math.toRadians(-getThrower().rotationYaw + 90 * pattern[interval][0]);
+
+
+        double x = Math.sin(yaw);
+        double y = pattern[interval][1] * 0.25f;
+        double z = Math.cos(yaw);
+
+        x*=(dist + 0.15 * pattern[interval][2]);
+        //y*=dist;
+        z*=(dist + 0.15 * pattern[interval][2]);
+
+        Vec3d vec = getThrower().getLookVec();
+
+        if(vec != null){
+            x -= vec.xCoord;
+            y -= vec.yCoord;
+            z -= vec.zCoord;
+        }
+
+        //■初期位置・初期角度等の設定
+        setPosition(getThrower().posX + x,
+                getThrower().posY + getThrower().getEyeHeight()/2.0f + y,
+                getThrower().posZ + z);
+        setRotation(-getThrower().rotationYaw,
+                -getThrower().rotationPitch);
+    }
+
 
     public void faceEntityV(Entity viewer, float yawStep, float pitchStep)
     {
-        Vec3d lookVec = viewer.getLookVec();
+        Vec3d lookVec = viewer.getLook(1.0f);
 
         if(lookVec == null) return;
 
