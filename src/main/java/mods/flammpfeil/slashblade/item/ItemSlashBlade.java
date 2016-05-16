@@ -2825,6 +2825,7 @@ public class ItemSlashBlade extends ItemSword {
             Method getExperiencePoints = ReflectionHelper.findMethod(EntityLivingBase.class, target, new String[]{"getExperiencePoints", "func_70693_a"}, EntityPlayer.class);
             try {
                 int exp = (Integer)getExperiencePoints.invoke(target, (EntityPlayer) player);
+                exp = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(target, (EntityPlayer) player, exp);
 
                 NBTTagCompound tag = getItemTagCompound(stack);
                 PrevExp.set(tag,exp);
