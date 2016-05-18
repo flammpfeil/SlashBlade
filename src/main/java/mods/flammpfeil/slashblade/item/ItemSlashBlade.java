@@ -50,6 +50,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -869,7 +870,7 @@ public class ItemSlashBlade extends ItemSword {
         }
 	}
 
-	@Override
+    @Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
 			Entity entity) {
 
@@ -2427,7 +2428,7 @@ public class ItemSlashBlade extends ItemSword {
         for(Entity entity : list){
             if (entity == null || !entity.canBeCollidedWith()) continue;
 
-            if(0.01f < expandBorder && !owner.canEntityBeSeen(entity)) continue;
+            if(0.01f < expandBorder && (!owner.canEntityBeSeen(entity) || !EntitySelectorAttackable.getInstance().apply(entity))) continue;
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder;
             AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
@@ -2709,10 +2710,97 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
-            case SPIRAL:
+            case SPIRAL: {
+
+
+                if(entity.getEntityData().hasKey("SB.SPHOLDID")){
+                    entity.getEntityData().removeTag("SB.SPHOLDID");
+                    return;
+                }
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+
+                int count = 6;
+
+                if (rank < 3)
+                    level = Math.min(1, level);
+
+                float magicDamage = level;
+
+                float arc = 360.0f / count;
+
+                int currentTime = (int)entity.getEntityWorld().getWorldTime();
+                entity.getEntityData().setInteger("SB.SPHOLDID", currentTime);
+
+                final int holdLimit = 200;
+                for (int i = 0; i < count; i++) {
+
+                    float offset = i * arc;
+
+                    EntitySpiralSwords summonedSword = new EntitySpiralSwords(w, entity, magicDamage, 0, offset);
+                    if (summonedSword != null) {
+                        summonedSword.setHoldId(currentTime);
+                        summonedSword.setInterval(holdLimit);
+                        summonedSword.setLifeTime(holdLimit);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                        ScheduleEntitySpawner.getInstance().offer(summonedSword);
+                        //w.spawnEntityInWorld(entityDrive);
+
+                    }
+                }
+                /*
+                if (entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                */
                 break;
-            case STORM:
+            }
+            case STORM: {
+
+                int targetId = TargetEntityId.get(tag);
+                if (targetId == 0) return;
+
+                if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+
+                int count = 6;
+
+                if (rank < 3)
+                    level = Math.min(1, level);
+
+                float magicDamage = level / 2.0f;
+
+                float arc = 360.0f / count;
+
+                final int holdLimit = (int) (20 * 2);
+                for (int i = 0; i < count; i++) {
+
+                    float offset = i * arc;
+
+                    EntityStormSwords summonedSword = new EntityStormSwords(w, entity, magicDamage, 0, offset, targetId);
+                    if (summonedSword != null) {
+                        summonedSword.setInterval(holdLimit);
+                        summonedSword.setLifeTime(holdLimit + 30);
+
+                        if (SummonedSwordColor.exists(tag))
+                            summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                        ScheduleEntitySpawner.getInstance().offer(summonedSword);
+                        //w.spawnEntityInWorld(entityDrive);
+
+                    }
+                }
+                /*
+                if (entity instanceof EntityPlayer)
+                    AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                */
                 break;
+            }
             case HEAVY_RAIN: {
 
                 if (!ProudSoul.tryAdd(tag, -10, false)) return;

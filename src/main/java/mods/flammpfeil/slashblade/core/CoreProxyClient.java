@@ -163,6 +163,18 @@ public class CoreProxyClient extends CoreProxy {
                 return new RenderPhantomSwordBase(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntitySpiralSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityStormSwords.class, new IRenderFactory<EntitySummonedSwordBase>() {
+            @Override
+            public Render<? super EntitySummonedSwordBase> createRenderFor(RenderManager manager) {
+                return new RenderPhantomSwordBase(manager);
+            }
+        });
         RenderingRegistry.registerEntityRenderingHandler(EntityBladeStand.class, new IRenderFactory<EntityBladeStand>() {
             @Override
             public Render<? super EntityBladeStand> createRenderFor(RenderManager manager) {
