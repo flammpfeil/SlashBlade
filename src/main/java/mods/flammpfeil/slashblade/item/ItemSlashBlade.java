@@ -687,8 +687,8 @@ public class ItemSlashBlade extends ItemSword {
         } else if (isRightClick) {
 
 
-            if(player.isSneaking()
-                    &&  0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.BACK)
+            int state = MessageMoveCommandState.BACK + MessageMoveCommandState.SNEAK;
+            if(state == (player.getEntityData().getByte("SB.MCS") & state)
                     && current != ComboSequence.Kiriage){
                 result = ComboSequence.Kiriage;
 
@@ -710,7 +710,7 @@ public class ItemSlashBlade extends ItemSword {
                     break;
 
                 case Kiriage:
-                    if(!player.isSneaking())
+                    if(!( 0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)))
                         result = ComboSequence.Kiriorosi;
                     else
                         result = ComboSequence.Saya1;
@@ -1688,7 +1688,7 @@ public class ItemSlashBlade extends ItemSword {
             if(!el.worldObj.isRemote){
                 int eId = TargetEntityId.get(tag);
 
-                if(el.isSneaking()){
+                if(0 < (el.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)){
                     if(eId == 0){
 
 

@@ -237,11 +237,11 @@ public class CoreProxyClient extends CoreProxy {
 
                             MessageRangeAttack.RangeAttackState command;
                             if((currentTime - backKeyLastActiveTime) <= (ChargeTime + TypeAheadBuffer)
-                                && player.movementInput.forwardKeyDown && player.isSneaking()){
+                                && player.movementInput.forwardKeyDown && player.movementInput.sneak){
                                 command = MessageRangeAttack.RangeAttackState.HEAVY_RAIN;
-                            }else if(player.movementInput.forwardKeyDown && player.isSneaking()){
+                            }else if(player.movementInput.forwardKeyDown && player.movementInput.sneak){
                                 command = MessageRangeAttack.RangeAttackState.BLISTERING;
-                            }else if(player.movementInput.backKeyDown && player.isSneaking()){
+                            }else if(player.movementInput.backKeyDown && player.movementInput.sneak){
                                 command = MessageRangeAttack.RangeAttackState.STORM;
                             }else{
                                 command = MessageRangeAttack.RangeAttackState.SPIRAL;
@@ -268,7 +268,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)
-                        && player.isSneaking()){
+                        && player.movementInput.sneak){
 
                     mc.playerController.updateController();
                     NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));

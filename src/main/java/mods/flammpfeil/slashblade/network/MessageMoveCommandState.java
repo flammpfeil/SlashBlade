@@ -15,6 +15,7 @@ public class MessageMoveCommandState implements IMessage {
     public static final int BACK = 2;
     public static final int LEFT = 4;
     public static final int RIGHT = 8;
+    public static final int SNEAK = 0x10;
 
     public MessageMoveCommandState(){};
 
@@ -28,6 +29,8 @@ public class MessageMoveCommandState implements IMessage {
             command += LEFT;
         if(input.rightKeyDown)
             command += RIGHT;
+        if(input.sneak)
+            command += SNEAK;
     }
 
     @Override
