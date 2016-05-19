@@ -30,9 +30,9 @@ public class Tukumo {
             NBTTagCompound tag = new NBTTagCompound();
             customblade.setTagCompound(tag);
 
-            customblade.addEnchantment(Enchantments.sharpness, 4);
-            customblade.addEnchantment(Enchantments.unbreaking, 3);
-            customblade.addEnchantment(Enchantments.fireAspect, 2);
+            customblade.addEnchantment(Enchantments.SHARPNESS, 4);
+            customblade.addEnchantment(Enchantments.UNBREAKING, 3);
+            customblade.addEnchantment(Enchantments.FIRE_ASPECT, 2);
 
             String name = YuzukiTukumo;
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
@@ -54,7 +54,7 @@ public class Tukumo {
                 NBTTagCompound tagReqired = new NBTTagCompound();
                 custombladeReqired.setTagCompound(tagReqired);
 
-                custombladeReqired.addEnchantment(Enchantments.fireAspect, 1);
+                custombladeReqired.addEnchantment(Enchantments.FIRE_ASPECT, 1);
 
                 ItemSlashBlade.KillCount.set(tagReqired, 1000);
 
@@ -68,12 +68,12 @@ public class Tukumo {
                                 "ESD",
                                 "RBL",
                                 "ISG",
-                                'E', new ItemStack(Blocks.emerald_block),
-                                'D', new ItemStack(Blocks.diamond_block),
-                                'R', new ItemStack(Blocks.redstone_block),
-                                'L', new ItemStack(Blocks.lapis_block),
-                                'I', new ItemStack(Blocks.iron_block),
-                                'G', new ItemStack(Blocks.gold_block),
+                                'E', new ItemStack(Blocks.EMERALD_BLOCK),
+                                'D', new ItemStack(Blocks.DIAMOND_BLOCK),
+                                'R', new ItemStack(Blocks.REDSTONE_BLOCK),
+                                'L', new ItemStack(Blocks.LAPIS_BLOCK),
+                                'I', new ItemStack(Blocks.IRON_BLOCK),
+                                'G', new ItemStack(Blocks.GOLD_BLOCK),
                                 'S', SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1),
                                 'B', custombladeReqired));
 

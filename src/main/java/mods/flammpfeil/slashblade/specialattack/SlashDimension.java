@@ -61,7 +61,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             spawnParticle(world, target);
 
-            player.playSound(SoundEvents.entity_endermen_teleport, 0.5F, 1.0F);
+            player.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.5F, 1.0F);
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
@@ -78,7 +78,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
             float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
             for(Entity curEntity : list){
                 StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);
@@ -170,7 +170,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             //spawnParticle(world, target);
 
-            player.playSound(SoundEvents.entity_endermen_teleport, 0.5F, 1.0F);
+            player.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.5F, 1.0F);
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
@@ -187,7 +187,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
             float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
             for(Entity curEntity : list){
                 StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);

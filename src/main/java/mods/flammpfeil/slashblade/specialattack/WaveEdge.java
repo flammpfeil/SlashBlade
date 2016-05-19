@@ -36,7 +36,7 @@ public class WaveEdge extends SpecialAttackBase {
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             float baseModif = blade.getBaseAttackModifiers(tag);
-            int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack));
+            int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack));
             float magicDamage = (baseModif/2.0f);
 
             int rank = StylishRankManager.getStylishRank(player);

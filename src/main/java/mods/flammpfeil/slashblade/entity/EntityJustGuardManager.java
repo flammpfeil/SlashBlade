@@ -124,7 +124,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
 
             if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
                 EntityPlayer player = (EntityPlayer)this.getThrower();
-                player.playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
+                player.playSound(SoundEvents.ENTITY_BLAZE_HURT, 1.0F, 1.0F);
 
                 if(this.blade != null){
                     ItemSlashBlade itemBlade = (ItemSlashBlade)this.blade.getItem();

@@ -135,7 +135,7 @@ public class EnemyStep {
     {
         AxisAlignedBB bb = this.getPositionAABB(target, pos);
         bb = bb.expand(1.0, 0.0, 1.0);
-        List<AxisAlignedBB> blockCollidList = target.worldObj.getCubes(target, bb);
+        List<AxisAlignedBB> blockCollidList = target.worldObj.getCollisionBoxes(target, bb);
 
         return !blockCollidList.isEmpty();
     }

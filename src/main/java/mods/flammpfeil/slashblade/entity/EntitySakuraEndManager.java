@@ -131,7 +131,7 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
             this.getThrower().motionZ = 0;
 
             if(this.getThrower() != null){
-                this.getThrower().playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
+                this.getThrower().playSound(SoundEvents.ENTITY_BLAZE_HURT, 1.0F, 1.0F);
             }
 
             doAttack(ItemSlashBlade.ComboSequence.SlashEdge);
@@ -148,7 +148,7 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
                     bladeItem.doSwingItem(blade, (EntityLivingBase) this.getThrower());
 
-                    this.getThrower().playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
+                    this.getThrower().playSound(SoundEvents.ENTITY_BLAZE_HURT, 1.0F, 1.0F);
                 }
 
                 doAttack(ItemSlashBlade.ComboSequence.ReturnEdge);

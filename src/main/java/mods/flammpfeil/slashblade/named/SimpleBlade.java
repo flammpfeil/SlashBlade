@@ -27,7 +27,7 @@ public class SimpleBlade {
         ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
 
         {
-            ItemStack woodSword = new ItemStack(Items.wooden_sword,1,1);
+            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD,1,1);
             NBTTagCompound displayTag = new NBTTagCompound();
             woodSword.setTagInfo("display",displayTag);
             NBTTagList loreList = new NBTTagList();
@@ -54,7 +54,7 @@ public class SimpleBlade {
                             "  #",
                             " # ",
                             "X  ",
-                            '#', new ItemStack(Items.reeds),
+                            '#', new ItemStack(Items.REEDS),
                             'X', new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE)));
         }else{
 
@@ -73,24 +73,24 @@ public class SimpleBlade {
                 " TI",
                 "SXK",
                 "PS ",
-                'T', Items.egg,
-                'I', Items.iron_ingot,
-                'S', Items.string,
+                'T', Items.EGG,
+                'I', Items.IRON_INGOT,
+                'S', Items.STRING,
                 'X', new ItemStack(SlashBlade.bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
                 'K', "dyeBlack",
-                'P', Items.paper //S
+                'P', Items.PAPER //S
         ));
         SlashBlade.addRecipe("slashbladeSilverBambooLight",
                 new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeSilverBambooLight),
                 " TI",
                 "SXK",
                 "PS ",
-                'T', Items.egg,
+                'T', Items.EGG,
                 'I', "ingotSilver",
-                'S', Items.string,
+                'S', Items.STRING,
                 'X', new ItemStack(SlashBlade.bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
                 'K', "dyeBlack",
-                'P', Items.paper
+                'P', Items.PAPER
         ));
 
 
@@ -99,8 +99,8 @@ public class SimpleBlade {
                 "  #",
                 " # ",
                 "XG ",
-                '#', Items.iron_ingot,
-                'G', Items.gold_ingot,
+                '#', Items.IRON_INGOT,
+                'G', Items.GOLD_INGOT,
                 'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
         SlashBlade.addRecipe("slashbladeWhite",
                 new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1, SlashBlade.bladeWhiteSheath.getMaxDamage() / 4),
@@ -108,7 +108,7 @@ public class SimpleBlade {
                 " # ",
                 "XG ",
                 '#', "ingotSteel",
-                'G', Items.gold_ingot,
+                'G', Items.GOLD_INGOT,
                 'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
         SlashBlade.addRecipe("slashbladeWhite",
                 new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1),
@@ -116,7 +116,7 @@ public class SimpleBlade {
                 " # ",
                 "XG ",
                 '#', itemIngotBladeSoul,
-                'G', Items.gold_ingot,
+                'G', Items.GOLD_INGOT,
                 'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
 
 
@@ -133,12 +133,12 @@ public class SimpleBlade {
                 " BI",
                 "L#C",
                 "SG ",
-                'L', Blocks.lapis_block,
-                'C', Blocks.coal_block,
+                'L', Blocks.LAPIS_BLOCK,
+                'C', Blocks.COAL_BLOCK,
                 'I', itemSphereBladeSoul,
-                'B', Items.blaze_rod,
-                'G', Items.gold_ingot,
-                'S', Items.string,
+                'B', Items.BLAZE_ROD,
+                'G', Items.GOLD_INGOT,
+                'S', Items.STRING,
                 '#', brokenBladeWhite
         ));
     }

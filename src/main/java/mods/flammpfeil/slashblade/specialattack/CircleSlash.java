@@ -34,7 +34,7 @@ public class CircleSlash extends SpecialAttackBase{
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
-        player.playSound(SoundEvents.entity_blaze_hurt, 0.2F, 0.6F);
+        player.playSound(SoundEvents.ENTITY_BLAZE_HURT, 0.2F, 0.6F);
 
         if(!world.isRemote){
 
@@ -59,7 +59,7 @@ public class CircleSlash extends SpecialAttackBase{
             }
 
             float baseModif = blade.getBaseAttackModifiers(tag);
-            int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack));
+            int level = Math.max(1, EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack));
             float magicDamage = (baseModif/2.0f);
 
             int rank = StylishRankManager.getStylishRank(player);

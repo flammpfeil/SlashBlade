@@ -57,7 +57,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 
 
             List<ItemStack> ores = OreDictionary.getOres("cobblestone");
-            hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.cobblestone));
+            hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.COBBLESTONE));
             //stone);
 
         	if(hasGrindstone){
@@ -142,7 +142,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 		            		if(stone != null){
 
                                 List<ItemStack> ores = OreDictionary.getOres("cobblestone");
-                                boolean hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.cobblestone));
+                                boolean hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.COBBLESTONE));
 
                                 if(hasGrindstone){
                                     if(stone.stackSize < repair){

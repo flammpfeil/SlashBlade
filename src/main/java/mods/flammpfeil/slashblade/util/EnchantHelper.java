@@ -17,23 +17,23 @@ public class EnchantHelper {
     public static List<Enchantment> normal = Lists.newArrayList();
 
     public static List<Enchantment> rare = Lists.newArrayList(
-            Enchantments.power
-            ,Enchantments.punch
-            ,Enchantments.thorns
-            ,Enchantments.fireProtection
-            ,Enchantments.featherFalling
-            ,Enchantments.fortune
-            , Enchantments.respiration);
+            Enchantments.POWER
+            ,Enchantments.PUNCH
+            ,Enchantments.THORNS
+            ,Enchantments.FIRE_PROTECTION
+            ,Enchantments.FEATHER_FALLING
+            ,Enchantments.FORTUNE
+            , Enchantments.RESPIRATION);
 
     public static void initEnchantmentList(){
         //func_181077_c : get locationEnchantments.keySet()
-        for(ResourceLocation key : Enchantment.enchantmentRegistry.getKeys()){
+        for(ResourceLocation key : Enchantment.REGISTRY.getKeys()){
             Enchantment ench = Enchantment.getEnchantmentByLocation(key.toString());
             if(ench == null) continue;
 
             if(ench.type == null) continue;
 
-            if(ench.type.canEnchantItem(Items.iron_sword)){
+            if(ench.type.canEnchantItem(Items.IRON_SWORD)){
                 normal.add(ench);
             }
         }

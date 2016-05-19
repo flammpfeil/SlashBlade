@@ -20,6 +20,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.vecmath.*;
+
 /**
  * Created by Furia on 2016/05/09.
  */
@@ -123,7 +125,7 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
                 setInterval(ticksExisted + waitTime);
                 setLifeTime(ticksExisted + 30);
 
-                this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.entity_enderdragon_flap, SoundCategory.NEUTRAL, 0.35F, 0.2F);
+                this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.NEUTRAL, 0.35F, 0.2F);
 
                 setHasFired(true);
                 this.getEntityWorld().updateEntityWithOptionalForce(this,true);
@@ -197,7 +199,7 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
         }else{
             if(this.ticksExisted < getInterval())
                 return false;
-            if(!worldObj.getCubes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -252,21 +254,43 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
     private void faceEntityStandby() {
 
         int ticks = this.ticksExisted;
-        if((getInterval() - waitTime) < ticks){
+        if ((getInterval() - waitTime) < ticks) {
             ticks = getInterval() - waitTime;
         }
 
-        double rotParTick = 360.0 / 40;
+        double rotParTick = 360.0 / 30.0;
         double offset = getRotOffset();
         double degYaw = ticks * rotParTick + offset;
         double yaw = Math.toRadians(degYaw);
 
-        Vec3d pos = new Vec3d(
-                Math.sin(yaw),
-                Math.sin(yaw + ticks / 10.0) * 0.1f,
-                Math.cos(yaw));
 
-        pos = pos.scale(1.5);
+        Matrix4d rotMat = new Matrix4d();
+        rotMat.setIdentity();
+
+        final double pitch = 7.5;
+        {
+            Matrix4d rotA = new Matrix4d();
+            rotA.rotY(-Math.toRadians((ticks * 5.0) % 360.0));
+            rotMat.mul(rotA);
+        }
+        {
+            Matrix4d rot = new Matrix4d();
+            rot.rotZ(Math.toRadians(pitch));
+            rotMat.mul(rot);
+        }
+        {
+            Matrix4d rot = new Matrix4d();
+            rot.rotY(yaw);
+            rotMat.mul(rot);
+        }
+
+        Vector3d vector3d = new Vector3d(0,0,1);
+        rotMat.transform(vector3d);
+
+        vector3d.normalize();
+        vector3d.scale(1.5);
+
+        Vec3d pos = new Vec3d(vector3d.x, vector3d.y, vector3d.z);
 
         if (getThrower() != null) {
             pos = pos.add(getThrower().getPositionVector());
@@ -275,7 +299,7 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
 
         //■初期位置・初期角度等の設定
         setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-        setRotation((float) -degYaw, 0);
+        setRotation((float) (-degYaw + (ticks * 5.0) ), (float)(-pitch * Math.sin(yaw))/**/);
     }
 
     public void setMotionVector(float fYVecOfst,boolean init)
@@ -301,7 +325,7 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
 
     private float updateRotation(float par1, float par2, float par3)
     {
-        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
+        float f3 = MathHelper.wrapDegrees(par2 - par1);
 
         if (f3 > par3)
         {

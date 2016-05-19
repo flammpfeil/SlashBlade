@@ -136,7 +136,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                 EntityPlayer player = (EntityPlayer)this.getThrower();
 
                 if(this.ticksExisted < 3)
-                    player.playSound(SoundEvents.entity_endermen_teleport, 1.0F, 1.0F);
+                    player.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
 
                 if(this.ticksExisted < 8){
                     for(int i = 0;i < 20; i++)
@@ -159,7 +159,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                                 (this.rand.nextDouble() - 0.5D) * 2.0D, -this.rand.nextDouble(), (this.rand.nextDouble() - 0.5D) * 2.0D);
                                 */
                     }
-                    player.playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
+                    player.playSound(SoundEvents.ENTITY_BLAZE_HURT, 1.0F, 1.0F);
                 }
             }
         }
@@ -181,7 +181,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                             int stanTicks = 40;
 
                             if(!curEntity.worldObj.isRemote){
-                                ((EntityLivingBase) curEntity).addPotionEffect(new PotionEffect(MobEffects.moveSlowdown, stanTicks, 30, true,false));
+                                ((EntityLivingBase) curEntity).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, stanTicks, 30, true,false));
                             }
 
                             StunManager.setStun((EntityLivingBase) curEntity, stanTicks);
@@ -212,7 +212,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                     ItemSlashBlade bladeItem = (ItemSlashBlade)blade.getItem();
 
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, blade);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, blade);
                     float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
                     for(Entity curEntity : list){
                         if(!(this.getThrower() instanceof EntityPlayer)) continue;

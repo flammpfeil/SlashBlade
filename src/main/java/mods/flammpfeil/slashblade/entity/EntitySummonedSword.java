@@ -214,7 +214,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
 
     private float updateRotation(float par1, float par2, float par3)
     {
-        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
+        float f3 = MathHelper.wrapDegrees(par2 - par1);
 
         if (f3 > par3)
         {
@@ -460,7 +460,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
 
             if(this.ridingEntity2 == null)
             {
-                if(!worldObj.getCubes(this,this.getEntityBoundingBox()).isEmpty()){
+                if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty()){
                     this.setDead();
                     return;
                 }

@@ -48,7 +48,7 @@ public class Drive extends SpecialAttackBase {
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             float baseModif = blade.getBaseAttackModifiers(tag);
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
             float magicDamage = baseModif;
 
             int rank = StylishRankManager.getStylishRank(player);

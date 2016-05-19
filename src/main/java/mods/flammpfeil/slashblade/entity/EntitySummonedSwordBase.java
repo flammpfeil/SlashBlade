@@ -382,7 +382,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
     private float updateRotation(float par1, float par2, float par3)
     {
-        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
+        float f3 = MathHelper.wrapDegrees(par2 - par1);
 
         if (f3 > par3)
         {
@@ -734,7 +734,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }else{
 
 
-            if(!worldObj.getCubes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -826,7 +826,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             System.out.println("dead" + this.ticksExisted);
             */
 
-        this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.block_glass_break, SoundCategory.NEUTRAL, 0.25F, 1.6F);
+        this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.NEUTRAL, 0.25F, 1.6F);
 
         AxisAlignedBB bb = this.getEntityBoundingBox().expand(1.0D, 1.0D, 1.0D);
         List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());

@@ -101,7 +101,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
 
                 this.ticksExisted = 0;
 
-                this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.entity_enderdragon_flap, SoundCategory.NEUTRAL, 0.35F, 0.2F);
+                this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.NEUTRAL, 0.35F, 0.2F);
 
                 return;
             }
@@ -162,7 +162,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         }else{
             if(ticksExisted < 10)
                 return false;
-            if(!worldObj.getCubes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -290,7 +290,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
     }
     private float updateRotation(float par1, float par2, float par3)
     {
-        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
+        float f3 = MathHelper.wrapDegrees(par2 - par1);
 
         if (f3 > par3)
         {

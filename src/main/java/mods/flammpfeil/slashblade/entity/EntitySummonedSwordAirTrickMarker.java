@@ -59,7 +59,7 @@ public class EntitySummonedSwordAirTrickMarker extends EntitySummonedSwordBase {
                 result = true;
             }
         }else{
-            if(!worldObj.getCubes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);

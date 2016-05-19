@@ -94,7 +94,7 @@ public class JustGuard {
                 ItemSlashBlade.OnJumpAttacked.set(tag,false);
 
                 ChargeStart.set(el.getEntityData(), interval);
-                el.playSound(SoundEvents.entity_blaze_hurt, 1.0F, 1.0F);
+                el.playSound(SoundEvents.ENTITY_BLAZE_HURT, 1.0F, 1.0F);
 
 
                 StylishRankManager.addRankPoint(el, StylishRankManager.AttackTypes.JustGuard);

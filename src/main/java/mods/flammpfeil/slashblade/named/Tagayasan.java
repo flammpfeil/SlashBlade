@@ -30,8 +30,8 @@ public class Tagayasan {
         NBTTagCompound tag = new NBTTagCompound();
         customblade.setTagCompound(tag);
 
-        customblade.addEnchantment(Enchantments.unbreaking,3);
-        customblade.addEnchantment(Enchantments.smite,3);
+        customblade.addEnchantment(Enchantments.UNBREAKING,3);
+        customblade.addEnchantment(Enchantments.SMITE,3);
         String name = Tagayasan;
         ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
         ItemSlashBladeNamed.CurrentItemName.set(tag, name);
@@ -65,8 +65,8 @@ public class Tagayasan {
                     "XEX",
                     'X',itemSphereBladeSoul,
                     'B',reqiredBlade,
-                    'P',new ItemStack(Items.ender_pearl),
-                    'E',new ItemStack(Items.ender_eye)));
+                    'P',new ItemStack(Items.ENDER_PEARL),
+                    'E',new ItemStack(Items.ENDER_EYE)));
         }
     }
 }

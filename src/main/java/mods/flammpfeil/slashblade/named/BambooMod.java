@@ -38,7 +38,7 @@ public class BambooMod {
         {
             SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
-            reqiredBlade.addEnchantment(Enchantments.looting,1);
+            reqiredBlade.addEnchantment(Enchantments.LOOTING,1);
             NBTTagCompound tag = reqiredBlade.getTagCompound();
             ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
             ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
@@ -128,7 +128,7 @@ public class BambooMod {
             target = target.copy();
 
 
-            ResourceLocation targetName = Item.itemRegistry.getNameForObject(target.getItem());
+            ResourceLocation targetName = Item.REGISTRY.getNameForObject(target.getItem());
 
 
             SlashBlade.wrapBlade.removeWrapItem(scabbard);

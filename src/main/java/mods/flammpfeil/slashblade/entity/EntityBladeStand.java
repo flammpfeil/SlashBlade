@@ -178,10 +178,12 @@ public class EntityBladeStand extends Entity {
         return super.attackEntityFrom(p_70097_1_, p_70097_2_);
     }
 
+    /*
     @Override
     public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_) {
         super.setPositionAndRotation2(x, y, z, yaw, pitch, posRotationIncrements, p_180426_10_);
     }
+    */
 
     @Override
     public void setPosition(double x, double y, double z) {

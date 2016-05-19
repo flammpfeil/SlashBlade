@@ -44,7 +44,7 @@ public class BladeMaterials {
                 " P ",
                 "PIP",
                 " P ",
-                'I', Items.iron_ingot,
+                'I', Items.IRON_INGOT,
                 'P', itemProudSoul));
 
         SlashBlade.addRecipe(SlashBlade.IngotBladeSoulStr,
@@ -58,28 +58,28 @@ public class BladeMaterials {
         SlashBlade.addSmelting(SlashBlade.SphereBladeSoulStr,
                 itemIngotBladeSoul, itemSphereBladeSoul, 2.0F);
 
-        BrewingRecipeRegistry.addRecipe(new ItemStack(Items.potionitem), itemSphereBladeSoul, new ItemStack(Items.experience_bottle));
+        BrewingRecipeRegistry.addRecipe(new ItemStack(Items.POTIONITEM), itemSphereBladeSoul, new ItemStack(Items.EXPERIENCE_BOTTLE));
 
         SlashBlade.addRecipe(SlashBlade.SphereBladeSoulStr,
-                new ShapedOreRecipe(new ItemStack(Items.experience_bottle),
+                new ShapedOreRecipe(new ItemStack(Items.EXPERIENCE_BOTTLE),
                         " P ",
                         " S ",
                         " I ",
-                        'S', new ItemStack(Items.brewing_stand),
+                        'S', new ItemStack(Items.BREWING_STAND),
                         'P', itemSphereBladeSoul,
-                        'I', new ItemStack(Items.potionitem, 1, 8192))
+                        'I', new ItemStack(Items.POTIONITEM, 1, 8192))
                 ,true);
 
-        BrewingRecipeRegistry.addRecipe(new ItemStack(Items.potionitem), itemProudSoul, PotionUtils.addPotionToItemStack(new ItemStack(Items.potionitem), PotionTypes.strong_strength));
+        BrewingRecipeRegistry.addRecipe(new ItemStack(Items.POTIONITEM), itemProudSoul, PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.STRONG_STRENGTH));
 
         SlashBlade.addRecipe(SlashBlade.ProudSoulStr,
-                new ShapedOreRecipe(new ItemStack(Items.potionitem,1,0),
+                new ShapedOreRecipe(new ItemStack(Items.POTIONITEM,1,0),
                         " P ",
                         " S ",
                         " I ",
-                        'S',new ItemStack(Items.brewing_stand),
+                        'S',new ItemStack(Items.BREWING_STAND),
                         'P',itemProudSoul,
-                        'I',new ItemStack(Items.potionitem,1,0))
+                        'I',new ItemStack(Items.POTIONITEM,1,0))
                 ,true);
     }
 }

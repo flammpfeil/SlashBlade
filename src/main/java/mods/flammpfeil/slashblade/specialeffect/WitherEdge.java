@@ -42,7 +42,7 @@ public class WitherEdge implements ISpecialEffect{
                 break;
         }
 
-        event.target.addPotionEffect(new PotionEffect(MobEffects.wither,20 * 5,1));
+        event.target.addPotionEffect(new PotionEffect(MobEffects.WITHER,20 * 5,1));
         player.onEnchantmentCritical(event.target);
 
     }
@@ -66,12 +66,12 @@ public class WitherEdge implements ISpecialEffect{
                 return;
         }
 
-        PotionEffect haste = player.getActivePotionEffect(MobEffects.digSpeed);
+        PotionEffect haste = player.getActivePotionEffect(MobEffects.MINING_FATIGUE);
         int check = haste != null ? haste.getAmplifier() != 1 ? 3 : 4 : 2;
 
         if (player.swingProgressInt != check) return;
 
-        player.addPotionEffect(new PotionEffect(MobEffects.wither,20 * 5,1));
+        player.addPotionEffect(new PotionEffect(MobEffects.WITHER,20 * 5,1));
 
     }
 

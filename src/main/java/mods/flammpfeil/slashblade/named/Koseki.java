@@ -47,8 +47,8 @@ public class Koseki {
 
         SpecialEffects.addEffect(customblade,SpecialEffects.WitherEdge);
 
-        customblade.addEnchantment(Enchantments.thorns,1);
-        customblade.addEnchantment(Enchantments.power,2);
+        customblade.addEnchantment(Enchantments.THORNS,1);
+        customblade.addEnchantment(Enchantments.POWER,2);
 
         SlashBlade.registerCustomItemStack(name, customblade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
@@ -81,7 +81,7 @@ public class Koseki {
         {
             ItemStack blade = SlashBlade.getCustomBlade(name);
 
-            Achievement startParent = net.minecraft.stats.AchievementList.spawnWither;
+            Achievement startParent = net.minecraft.stats.AchievementList.SPAWN_WITHER;
             if(blade != null){
                 ItemStack noname = SlashBlade.findItemStack(SlashBlade.modid, "slashbladeNamed", 1);
 

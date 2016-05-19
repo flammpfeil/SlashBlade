@@ -25,7 +25,7 @@ public class AerialRave {
         if(stack == null) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling,stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING,stack);
 
         if(0 == level) return;
 

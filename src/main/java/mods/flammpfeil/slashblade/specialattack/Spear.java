@@ -46,7 +46,7 @@ public class Spear extends SpecialAttackBase {
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
-            player.addPotionEffect(new PotionEffect(MobEffects.damageBoost,10,0,true,false));
+            player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH,10,0,true,false));
 
             EntitySpearManager entityDA = new EntitySpearManager(world, player, false);
             entityDA.setLifeTime(7);
@@ -57,7 +57,7 @@ public class Spear extends SpecialAttackBase {
 
         UntouchableTime.setUntouchableTime(player, 10);
 
-        player.playSound(SoundEvents.entity_generic_explode, 1.0F, 1.0F);
+        player.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 1.0F, 1.0F);
         ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.HiraTuki);
     }
 }

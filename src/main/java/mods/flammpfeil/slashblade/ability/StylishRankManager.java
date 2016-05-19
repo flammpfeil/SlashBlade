@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.Achievement;
-import net.minecraft.stats.StatisticsFile;
+import net.minecraft.stats.StatisticsManagerServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -290,7 +290,7 @@ public class StylishRankManager {
 
         if(lastRank < postRank){
             if(!e.worldObj.isRemote && e instanceof EntityPlayerMP){
-                StatisticsFile statMgr = ((EntityPlayerMP)e).getStatFile();
+                StatisticsManagerServer statMgr = ((EntityPlayerMP)e).getStatFile();
                 Achievement achievement = AchievementList.getAchievement("rank" + getRankText(postRank));
                 if(achievement != null && !statMgr.hasAchievementUnlocked(achievement) && !statMgr.canUnlockAchievement(achievement)) {
                     //前提纏めて解除

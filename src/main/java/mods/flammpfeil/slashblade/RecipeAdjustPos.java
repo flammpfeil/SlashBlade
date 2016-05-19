@@ -12,7 +12,7 @@ public class RecipeAdjustPos extends ShapedRecipes
 {
 
     static private ItemStack dirIS(String name){
-        return new ItemStack(Items.stick, 0, 0).setStackDisplayName(name);
+        return new ItemStack(Items.STICK, 0, 0).setStackDisplayName(name);
     }
 
     public RecipeAdjustPos()
@@ -25,7 +25,7 @@ public class RecipeAdjustPos extends ShapedRecipes
     }
 
     public boolean isFactor(ItemStack itemStack){
-        return itemStack != null && itemStack.getItem() == Items.stick;
+        return itemStack != null && itemStack.getItem() == Items.STICK;
     }
 
     @Override

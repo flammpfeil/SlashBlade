@@ -30,15 +30,15 @@ public class WaterBreathing {
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.respiration, stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.RESPIRATION, stack);
         if(level <= 0) return;
 
         float speedfactor = 0.05f;
         speedfactor *= (float)level;
 
         if(target.isInWater())
-            target.moveFlying(target.moveStrafing,target.moveForward,0.1f + speedfactor);
+            target.moveRelative(target.moveStrafing,target.moveForward,0.1f + speedfactor);
 
-        target.addPotionEffect(new PotionEffect(MobEffects.waterBreathing,2,level-1,true,false));
+        target.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING,2,level-1,true,false));
     }
 }

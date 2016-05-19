@@ -29,10 +29,10 @@ public class Yamato {
                 NBTTagCompound tag = new NBTTagCompound();
                 customblade.setTagCompound(tag);
 
-                customblade.addEnchantment(Enchantments.thorns, 1);
-                customblade.addEnchantment(Enchantments.featherFalling, 4);
-                customblade.addEnchantment(Enchantments.power, 5);
-                customblade.addEnchantment(Enchantments.punch, 2);
+                customblade.addEnchantment(Enchantments.THORNS, 1);
+                customblade.addEnchantment(Enchantments.FEATHER_FALLING, 4);
+                customblade.addEnchantment(Enchantments.POWER, 5);
+                customblade.addEnchantment(Enchantments.PUNCH, 2);
 
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameTrue);
                 ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);

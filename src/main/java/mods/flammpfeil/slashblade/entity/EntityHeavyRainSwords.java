@@ -83,7 +83,7 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
         super.spawnParticle();
 
         if(!getEntityWorld().isRemote && this.ticksExisted == this.getInterval()){
-            this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.entity_blaze_hurt, SoundCategory.NEUTRAL, 0.40F, 2.0F);
+            this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_BLAZE_HURT, SoundCategory.NEUTRAL, 0.40F, 2.0F);
         }
 
         if(this.ticksExisted < this.getInterval() && this.ridingEntity2 == null){

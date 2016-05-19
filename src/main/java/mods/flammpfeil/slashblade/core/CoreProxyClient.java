@@ -88,8 +88,8 @@ public class CoreProxyClient extends CoreProxy {
         }
         */
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 0, new ModelResourceLocation(SlashBlade.modid + ":" + "proudsoul"));
-        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 1, new ModelResourceLocation(((ResourceLocation)Item.itemRegistry.getNameForObject(Items.iron_ingot)).toString()));
-        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 2, new ModelResourceLocation(((ResourceLocation)Item.itemRegistry.getNameForObject(Items.snowball)).toString()));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 1, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.IRON_INGOT)).toString()));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 2, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.SNOWBALL)).toString()));
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 3, new ModelResourceLocation(SlashBlade.modid + ":" + "tinyps"));
         for(Map.Entry<String, Integer> entry : AchievementList.achievementIcons.entrySet()) {
             ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, entry.getValue(), new ModelResourceLocation(SlashBlade.modid + ":" + entry.getKey()));
@@ -359,10 +359,10 @@ public class CoreProxyClient extends CoreProxy {
                 continue;
 
             if(rle instanceof RenderZombie){
-                List<LayerRenderer> layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle, "field_177121_n");
+                List<LayerRenderer> layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle, "villagerLayers","field_177121_n");
                 layers.add(new LayerSlashBlade(rle));
 
-                layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle,"field_177122_o");
+                layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle,"defaultLayers", "field_177122_o");
                 layers.add(new LayerSlashBlade(rle));
             }
 

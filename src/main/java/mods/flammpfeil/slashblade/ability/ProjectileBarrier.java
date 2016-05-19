@@ -35,7 +35,7 @@ public class ProjectileBarrier {
         int ticks = stack.getMaxItemUseDuration() - event.getDuration();
         if(ticks < ItemSlashBlade.RequiredChargeTick) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, stack);
         if(level <= 0) return;
 
         expandBarrier(player);
@@ -61,7 +61,7 @@ public class ProjectileBarrier {
     private void destructEntity(EntityLivingBase player, Entity target){
         //EnumParticleTypes.CRIT_MAGIC
         if(player.worldObj instanceof WorldServer)
-            ((WorldServer)player.worldObj).getEntityTracker().func_151248_b(player, new SPacketAnimation(target, 5));
+            ((WorldServer)player.worldObj).getEntityTracker().sendToAllTrackingEntity(player, new SPacketAnimation(target, 5));
 
         /*
         if(player instanceof EntityPlayer)

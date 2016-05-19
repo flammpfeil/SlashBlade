@@ -90,7 +90,7 @@ public class ItemProudSoul extends Item {
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         Block block = world.getBlockState(pos).getBlock();
 
-        if(!world.isRemote && Blocks.oak_fence == block && player.isSneaking()){
+        if(!world.isRemote && Blocks.OAK_FENCE == block && player.isSneaking()){
 
             world.setBlockToAir(pos);
             EntityBladeStand e = new EntityBladeStand(world);
@@ -160,7 +160,7 @@ public class ItemProudSoul extends Item {
 
                         ItemStack blade = stand.getBlade();
 
-                        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power,blade);
+                        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER,blade);
 
                         if(0 < level){
                             NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);

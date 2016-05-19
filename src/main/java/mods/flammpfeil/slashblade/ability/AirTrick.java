@@ -56,7 +56,7 @@ public class AirTrick {
             }
         }
 
-        if(entityPlayer.playerNetServerHandler == null) return false;
+        if(entityPlayer.connection == null) return false;
 
         Vec3d look = entityPlayer.getLookVec();
 
@@ -70,7 +70,7 @@ public class AirTrick {
             Vec3d pos = new Vec3d(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
 
             if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
-                entityPlayer.playerNetServerHandler.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
+                entityPlayer.connection.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
                 entityPlayer.onEnchantmentCritical(entityPlayer);
                 teleported = true;
                 break;
@@ -81,7 +81,7 @@ public class AirTrick {
                 Vec3d pos = new Vec3d(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
 
                 if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
-                    entityPlayer.playerNetServerHandler.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
+                    entityPlayer.connection.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
                     entityPlayer.onEnchantmentCritical(entityPlayer);
                     teleported = true;
                     break;
@@ -95,8 +95,8 @@ public class AirTrick {
             lastHitSS.getEntityData().setLong(NextAirTrick,lastHitSS.worldObj.getTotalWorldTime() + AirHikeInterval);
             //entityPlayer.worldObj.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
 
-            entityPlayer.worldObj.playSound((EntityPlayer)null, entityPlayer.prevPosX, entityPlayer.prevPosY, entityPlayer.prevPosZ, SoundEvents.entity_endermen_teleport, entityPlayer.getSoundCategory(), 1.0F, 1.0F);
-            entityPlayer.playSound(SoundEvents.entity_endermen_teleport, 1.0F, 1.0F);
+            entityPlayer.worldObj.playSound((EntityPlayer)null, entityPlayer.prevPosX, entityPlayer.prevPosY, entityPlayer.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, entityPlayer.getSoundCategory(), 1.0F, 1.0F);
+            entityPlayer.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
 
             if(!(target instanceof EntitySummonedSwordBase)){
                 ItemStack blade = entityPlayer.getHeldItemMainhand();
@@ -116,7 +116,7 @@ public class AirTrick {
     {
         AxisAlignedBB bb = setPosition(target, pos.xCoord, pos.yCoord, pos.zCoord);
 
-        return /*!target.worldObj.isAnyLiquid(target.getEntityBoundingBox()) && */target.worldObj.getCubes(target, bb).isEmpty() /*&& target.worldObj.checkNoEntityCollision(bb, target)*/;
+        return /*!target.worldObj.isAnyLiquid(target.getEntityBoundingBox()) && */target.worldObj.getCollisionBoxes(target, bb).isEmpty() /*&& target.worldObj.checkNoEntityCollision(bb, target)*/;
 
         //List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
 
@@ -149,7 +149,7 @@ public class AirTrick {
 
             if(types.contains(ItemSlashBlade.SwordType.Bewitched) && !types.contains(ItemSlashBlade.SwordType.Broken)){
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
                 if(0 < level && ItemSlashBlade.ProudSoul.tryAdd(tag,-1,false)){
                     float magicDamage = 1;
 

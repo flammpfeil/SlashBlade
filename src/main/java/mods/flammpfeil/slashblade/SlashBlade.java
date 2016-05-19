@@ -129,8 +129,9 @@ public class SlashBlade implements IFuelHandler{
 
 		proudSoul = (new ItemProudSoul())
 				.setUnlocalizedName("flammpfeil.slashblade.proudsoul")
-				.setCreativeTab(tab);
-		GameRegistry.registerItem(proudSoul,"proudsoul");
+				.setCreativeTab(tab)
+                .setRegistryName("proudsoul");
+		GameRegistry.register(proudSoul);
 
 
 		ItemStack itemProudSoul = new ItemStack(proudSoul,1,0);
@@ -148,12 +149,13 @@ public class SlashBlade implements IFuelHandler{
         //==================================================================================================================================
 
 		weapon = (ItemSlashBlade)(new ItemSlashBlade(ToolMaterial.IRON, 4 + ToolMaterial.DIAMOND.getDamageVsEntity()))
-				.setRepairMaterial(new ItemStack(Items.iron_ingot))
+				.setRepairMaterial(new ItemStack(Items.IRON_INGOT))
 				.setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
 				.setUnlocalizedName("flammpfeil.slashblade")
-				.setCreativeTab(tab);
+				.setCreativeTab(tab)
+                .setRegistryName("slashblade");
 
-		GameRegistry.registerItem(weapon, "slashblade");
+		GameRegistry.register(weapon);
 
         //==================================================================================================================================
 
@@ -163,8 +165,9 @@ public class SlashBlade implements IFuelHandler{
                 .setRepairMaterialOreDic("logWood")
                 .setMaxDamage(60)
                 .setUnlocalizedName("flammpfeil.slashblade.wood")
-                .setCreativeTab(tab);
-        GameRegistry.registerItem(bladeWood, "slashbladeWood");
+                .setCreativeTab(tab)
+                .setRegistryName("slashbladeWood");
+        GameRegistry.register(bladeWood);
 
         bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
                 .setDestructable(true)
@@ -172,8 +175,9 @@ public class SlashBlade implements IFuelHandler{
                 .setRepairMaterialOreDic("bamboo")
                 .setMaxDamage(50)
                 .setUnlocalizedName("flammpfeil.slashblade.bamboo")
-                .setCreativeTab(tab);
-        GameRegistry.registerItem(bladeBambooLight, "slashbladeBambooLight");
+                .setCreativeTab(tab)
+                .setRegistryName("slashbladeBambooLight");
+        GameRegistry.register(bladeBambooLight);
 
         bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(true)
@@ -181,18 +185,20 @@ public class SlashBlade implements IFuelHandler{
                 .setRepairMaterialOreDic("bamboo")
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
-                .setCreativeTab(tab);
-        GameRegistry.registerItem(bladeSilverBambooLight, "slashbladeSilverBambooLight");
+                .setCreativeTab(tab)
+                .setRegistryName("slashbladeSilverBambooLight");
+        GameRegistry.register(bladeSilverBambooLight);
 
         bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(false)
                 .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/white.png"))
-                .setRepairMaterial(new ItemStack(Items.iron_ingot))
+                .setRepairMaterial(new ItemStack(Items.IRON_INGOT))
                 .setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
                 .setMaxDamage(70)
                 .setUnlocalizedName("flammpfeil.slashblade.white")
-                .setCreativeTab(tab);
-        GameRegistry.registerItem(bladeWhiteSheath, "slashbladeWhite");
+                .setCreativeTab(tab)
+                .setRegistryName("slashbladeWhite");
+        GameRegistry.register(bladeWhiteSheath);
 
 
 
@@ -201,8 +207,9 @@ public class SlashBlade implements IFuelHandler{
         wrapBlade = (ItemSlashBladeWrapper)(new ItemSlashBladeWrapper(ToolMaterial.IRON))
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.wrapper")
-                .setCreativeTab(tab);
-        GameRegistry.registerItem(wrapBlade, "slashbladeWrapper");
+                .setCreativeTab(tab)
+                .setRegistryName("slashbladeWrapper");
+        GameRegistry.register(wrapBlade);
 
 
 
@@ -210,8 +217,9 @@ public class SlashBlade implements IFuelHandler{
         bladeNamed = (ItemSlashBladeNamed)(new ItemSlashBladeNamed(ToolMaterial.IRON, 4.0f))
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.named")
-                .setCreativeTab(tab);
-        GameRegistry.registerItem(bladeNamed, "slashbladeNamed");
+                .setCreativeTab(tab)
+                .setRegistryName("slashbladeNamed");
+        GameRegistry.register(bladeNamed);
 
 
 		GameRegistry.registerFuelHandler(this);
@@ -366,9 +374,9 @@ public class SlashBlade implements IFuelHandler{
                     "RBL",
                     "CIC",
                     "LBR",
-                    'C', Blocks.coal_block,
-                    'R', Blocks.lapis_block,
-                    'B', Blocks.obsidian,
+                    'C', Blocks.COAL_BLOCK,
+                    'R', Blocks.LAPIS_BLOCK,
+                    'B', Blocks.OBSIDIAN,
                     'I', itemSphereBladeSoul,
                     'L', "logWood"));
         }
@@ -417,7 +425,7 @@ public class SlashBlade implements IFuelHandler{
             stack = BladeRegistry.get(new ResourceLocation(modid, name)).copy();
 
         }else {
-            Item item = GameRegistry.findItem(modid, name);
+            Item item = Item.REGISTRY.getObject(new ResourceLocation(modid, name));
             if (item != null)
                 stack = new ItemStack(item);
 

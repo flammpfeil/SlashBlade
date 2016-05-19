@@ -77,7 +77,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
                     ((EntityLivingBase) target).hurtResistantTime = 0;
                 }
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
                 float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
 
                 int count = 1 + StylishRankManager.getStylishRank(player);

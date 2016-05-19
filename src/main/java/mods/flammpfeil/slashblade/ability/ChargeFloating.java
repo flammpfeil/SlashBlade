@@ -27,7 +27,7 @@ public class ChargeFloating {
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling,stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING,stack);
         if(level <= 0) return;
 
         if(((EntityPlayer) target).motionY < 0)

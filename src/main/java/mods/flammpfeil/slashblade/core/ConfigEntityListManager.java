@@ -60,10 +60,10 @@ public class ConfigEntityListManager {
 
 
 
-				for(Object key : EntityList.classToStringMapping.keySet()){
+				for(Object key : EntityList.CLASS_TO_NAME.keySet()){
 					Class cls = (Class)key;
 
-					String name = (String)EntityList.classToStringMapping.get(key);
+					String name = (String)EntityList.CLASS_TO_NAME.get(key);
 					if(name == null || name.length() == 0)
 						continue;
 

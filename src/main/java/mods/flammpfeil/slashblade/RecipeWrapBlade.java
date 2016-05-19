@@ -31,7 +31,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
         super(3, 3, new ItemStack[] {
                 null, null, SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1),
                 null, new ItemStack(SlashBlade.wrapBlade, 1, 0), null ,
-                new ItemStack(Items.wooden_sword), null, null }
+                new ItemStack(Items.WOODEN_SWORD), null, null }
                 , new ItemStack(SlashBlade.wrapBlade, 1, 0));
 
         proudSoul = new ItemStack(SlashBlade.proudSoul,1,0);
@@ -60,7 +60,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
         {
             SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
-            reqiredBlade.addEnchantment(Enchantments.looting,1);
+            reqiredBlade.addEnchantment(Enchantments.LOOTING,1);
             NBTTagCompound tag = reqiredBlade.getTagCompound();
             ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + name.replace(':', '.'));
             ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
@@ -96,7 +96,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
             if(target != null){
-                ResourceLocation targetName = Item.itemRegistry.getNameForObject(target.getItem());
+                ResourceLocation targetName = Item.REGISTRY.getNameForObject(target.getItem());
 
                 hasTarget = wrapableTextureNames.containsKey(targetName.toString());
             }
@@ -117,7 +117,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
         target = target.copy();
 
 
-        ResourceLocation targetName = Item.itemRegistry.getNameForObject(target.getItem());
+        ResourceLocation targetName = Item.REGISTRY.getNameForObject(target.getItem());
 
 
         SlashBlade.wrapBlade.removeWrapItem(scabbard);

@@ -75,8 +75,8 @@ public class AvoidAction {
 
             mc.thePlayer.getEntityData().setLong("SB.AvoidTimeout",now + interval);
 
-            player.playSound(SoundEvents.entity_generic_extinguish_fire, 0.7F, 1.6F + (player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.4F);
-            mc.thePlayer.moveFlying(mc.thePlayer.moveStrafing,mc.thePlayer.moveForward,speedFactor);
+            player.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.7F, 1.6F + (player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.4F);
+            mc.thePlayer.moveRelative(mc.thePlayer.moveStrafing,mc.thePlayer.moveForward,speedFactor);
             mc.playerController.updateController();
             NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 2));
         }

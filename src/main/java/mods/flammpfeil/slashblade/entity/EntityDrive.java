@@ -342,7 +342,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
             */
 
             //地形衝突で消失
-            if(!worldObj.getCubes(this, this.getEntityBoundingBox()).isEmpty()) {
+            if(!worldObj.getCollisionBoxes(this, this.getEntityBoundingBox()).isEmpty()) {
                 //todo: 突き刺し一定時間保持（DummyEntityに刺して止めるなど
                 this.setDead();
             }

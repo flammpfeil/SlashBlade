@@ -84,7 +84,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
         if(!result && tag.hasKey(RepairMaterialNameStr))
         {
             String matName = tag.getString(RepairMaterialNameStr);
-            Item material = (Item)Item.itemRegistry.getObject(new ResourceLocation(matName));
+            Item material = (Item)Item.REGISTRY.getObject(new ResourceLocation(matName));
             if(material != null)
                 result = par2ItemStack.getItem() == material;
         }

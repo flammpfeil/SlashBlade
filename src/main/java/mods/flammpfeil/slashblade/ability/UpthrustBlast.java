@@ -34,7 +34,7 @@ public class UpthrustBlast {
         if(!types.contains(ItemSlashBlade.SwordType.Bewitched)) return;
         if(types.contains(ItemSlashBlade.SwordType.Broken)) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.punch, blade);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, blade);
         if(level <= 0) return;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
@@ -78,6 +78,8 @@ public class UpthrustBlast {
 
             Entity target = ss.ridingEntity2;
 
+            ss.setDead();
+
             if(!user.worldObj.isRemote){
                 target.hurtResistantTime = 0;
                 DamageSource ds = new EntityDamageSource("directMagic",user).setDamageBypassesArmor().setMagicDamage().setDamageIsAbsolute();
@@ -100,7 +102,6 @@ public class UpthrustBlast {
 
             if(user instanceof EntityPlayer)
                 ((EntityPlayer) user).onEnchantmentCritical(ss);
-            ss.setDead();
         }
     }
 }

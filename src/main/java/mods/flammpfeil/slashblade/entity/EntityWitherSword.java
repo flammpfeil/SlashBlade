@@ -73,7 +73,7 @@ public class EntityWitherSword extends EntitySummonedSwordBase {
                 ((EntityLivingBase) target).hurtTime = 1;
 
                 if(!getBurst())
-                    ((EntityLivingBase)target).addPotionEffect(new PotionEffect(MobEffects.wither, 20 * 5, 1));
+                    ((EntityLivingBase)target).addPotionEffect(new PotionEffect(MobEffects.WITHER, 20 * 5, 1));
 
                 ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
             }

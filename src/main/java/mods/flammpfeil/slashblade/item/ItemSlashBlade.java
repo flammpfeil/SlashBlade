@@ -264,8 +264,8 @@ public class ItemSlashBlade extends ItemSword {
             if(stack.isItemEnchanted() && entity instanceof EntityLivingBase){
 
                 ItemStack tinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
-                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.unbreaking, stack);
-                int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.looting, stack);
+                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+                int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, stack);
 
                 Random rand = ((EntityLivingBase)entity).getRNG();
 
@@ -295,9 +295,9 @@ public class ItemSlashBlade extends ItemSword {
                         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
 
                         if(unbreakingLevel == 1)
-                            enchantments.remove(Enchantments.unbreaking);
+                            enchantments.remove(Enchantments.UNBREAKING);
                         else
-                            enchantments.put(Enchantments.unbreaking,unbreakingLevel-1);
+                            enchantments.put(Enchantments.UNBREAKING,unbreakingLevel-1);
 
                         ItemStack rareTinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
                         rareTinySoul.addEnchantment(EnchantHelper.getEnchantmentRare(rand),1);
@@ -333,7 +333,7 @@ public class ItemSlashBlade extends ItemSword {
 
 	public EntityLivingBase setDaunting(EntityLivingBase entity){
 		if(!entity.worldObj.isRemote){
-            entity.addPotionEffect(new PotionEffect(MobEffects.moveSlowdown,10,30,true,false));
+            entity.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS,10,30,true,false));
 		}
 
         StunManager.setStun(entity, 20);
@@ -373,7 +373,7 @@ public class ItemSlashBlade extends ItemSword {
         if(!stack.isItemEnchanted())
             return;
 
-        int lv = EnchantmentHelper.getEnchantmentLevel(Enchantments.fortune, stack);
+        int lv = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
 
         EntityEquipmentSlot[] slots = new EntityEquipmentSlot[]{};
 
@@ -465,7 +465,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 {
 
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, stack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING, stack);
                     if(0 < level){
                         target.addVelocity(0.0, 0.3D, 0.0);
                     }else{
@@ -487,7 +487,7 @@ public class ItemSlashBlade extends ItemSword {
 
             {
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING, stack);
                 if(0 < level){
                     target.addVelocity(0.0, 0.3D, 0.0);
                 }else{
@@ -539,7 +539,7 @@ public class ItemSlashBlade extends ItemSword {
 
             case SlashDim:
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.punch, stack);
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
                 if(0 < level){
                     target.motionX = 0;
                     target.motionY = 0;
@@ -761,7 +761,7 @@ public class ItemSlashBlade extends ItemSword {
                 player.fallDistance = 0;
 
                 if(!OnJumpAttacked.get(tag)){
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, itemStack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING, itemStack);
                     if(level == 0){
                         player.motionY = 0;
                         player.addVelocity(0.0, 0.3D,0.0);
@@ -789,7 +789,7 @@ public class ItemSlashBlade extends ItemSword {
                 player.fallDistance = 0;
 
                 if(!OnJumpAttacked.get(tag)){
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, itemStack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING, itemStack);
                     if(level == 0){
                         player.motionY = 0;
                         player.addVelocity(0.0, 0.3D,0.0);
@@ -804,7 +804,7 @@ public class ItemSlashBlade extends ItemSword {
                 player.fallDistance = 0;
 
 				if(!OnJumpAttacked.get(tag)){
-                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.featherFalling, itemStack);
+                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING, itemStack);
                     if(level == 0){
                         player.motionY = 0;
                         player.addVelocity(0.0, 0.2D,0.0);
@@ -857,7 +857,7 @@ public class ItemSlashBlade extends ItemSword {
                 double d0 = (double)(-MathHelper.sin(player.rotationYaw * 0.017453292F));
                 double d1 = (double)MathHelper.cos(player.rotationYaw * 0.017453292F);
 
-                player.playSound(SoundEvents.entity_player_attack_sweep, 1.0F, 1.0F);
+                player.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
                 if (player.worldObj instanceof WorldServer)
                 {
                     ((WorldServer)player.worldObj).spawnParticle(EnumParticleTypes.SWEEP_ATTACK
@@ -877,7 +877,7 @@ public class ItemSlashBlade extends ItemSword {
 		NBTTagCompound tag = getItemTagCompound(stack);
 
 		if(!OnClick.get(tag) ){ // onClick中は rightClickなので無視
-	        if (entity.canAttackWithItem()){
+	        if (entity.canBeAttackedWithItem()){
 	            if (!entity.hitByEntity(player) || entity instanceof EntityLivingBase){
 
 	            	//左クリック攻撃は無敵時間を考慮する コンボインターバルが入っている
@@ -1044,7 +1044,7 @@ public class ItemSlashBlade extends ItemSword {
             }
 
             float baseModif = getBaseAttackModifiers(tag);
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
             float magicDamage = baseModif;
             int rank = StylishRankManager.getStylishRank(player);
             if(5 <= rank){
@@ -1070,7 +1070,7 @@ public class ItemSlashBlade extends ItemSword {
         if(!world.isRemote){
 
             float baseModif = getBaseAttackModifiers(tag);
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, stack);
+            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
             float magicDamage = baseModif;
             int rank = StylishRankManager.getStylishRank(player);
             if(5 <= rank){
@@ -1728,7 +1728,7 @@ public class ItemSlashBlade extends ItemSword {
                         TargetEntityId.set(tag,eId);
                     }else{
 
-                        if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, sitem)){
+                        if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, sitem)){
                             Entity target = par2World.getEntityByID(eId);
                             if(target != null && target instanceof EntityWither
                                     && 10 > el.getDistanceToEntity(target)
@@ -1933,7 +1933,7 @@ public class ItemSlashBlade extends ItemSword {
 
     private float updateRotation(float par1, float par2, float par3)
     {
-        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
+        float f3 = MathHelper.wrapDegrees(par2 - par1);
 
         if (f3 > par3)
         {
@@ -1998,7 +1998,7 @@ public class ItemSlashBlade extends ItemSword {
                                             EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
-        if(swordType.contains(SwordType.Bewitched) && 0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.power,par1ItemStack)){
+        if(swordType.contains(SwordType.Bewitched) && 0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER,par1ItemStack)){
             NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
             String key = "slashblade.rangeattack." + Boolean.toString(tag.getBoolean("RangeAttackType")).toLowerCase();
@@ -2286,7 +2286,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             InductionProjecTile(curEntity,entityLiving);
@@ -2300,7 +2300,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             Entity target = null;
@@ -2328,7 +2328,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             InductionProjecTile(curEntity,entityLiving);
@@ -2341,7 +2341,7 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if(isDestruction && swordType.contains(SwordType.Bewitched)){
-                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.thorns, stack)){
+                        if(0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, stack)){
                             ReflectionProjecTile(curEntity,entityLiving);
                         }else{
                             InductionProjecTile(curEntity,entityLiving);
@@ -2598,7 +2598,7 @@ public class ItemSlashBlade extends ItemSword {
         if (!types.contains(SwordType.Bewitched)) return;
         if(types.contains(SwordType.Broken)) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.power, item);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, item);
 
         if(level <= 0) return;
 
@@ -2627,7 +2627,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 float magicDamage = level;
 
-                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.35F, 1.0F);
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.35F, 1.0F);
 
                 if (tag.getInteger("RangeAttackType") == 0) {
                     EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage, 90.0f);
@@ -2676,7 +2676,7 @@ public class ItemSlashBlade extends ItemSword {
                 final int holdLimit = 400;
                 entity.getEntityData().setLong("SB.BSHOLDLIMIT", currentTime + holdLimit);
 
-                entity.worldObj.playSound((EntityPlayer)null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+                entity.worldObj.playSound((EntityPlayer)null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.7F, 1.0F);
 
                 int count = 4;
                 if (3 < rank)
@@ -2713,14 +2713,19 @@ public class ItemSlashBlade extends ItemSword {
             case SPIRAL: {
 
 
+                int currentTime = (int)entity.getEntityWorld().getWorldTime();
+                final int holdLimit = 200;
+
                 if(entity.getEntityData().hasKey("SB.SPHOLDID")){
-                    entity.getEntityData().removeTag("SB.SPHOLDID");
-                    return;
+                    if(currentTime < (entity.getEntityData().getInteger("SB.SPHOLDID") + holdLimit)){
+                        entity.getEntityData().removeTag("SB.SPHOLDID");
+                        return;
+                    }
                 }
 
                 if (!ProudSoul.tryAdd(tag, -10, false)) return;
 
-                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.7F, 1.0F);
 
                 int count = 6;
 
@@ -2731,10 +2736,8 @@ public class ItemSlashBlade extends ItemSword {
 
                 float arc = 360.0f / count;
 
-                int currentTime = (int)entity.getEntityWorld().getWorldTime();
                 entity.getEntityData().setInteger("SB.SPHOLDID", currentTime);
 
-                final int holdLimit = 200;
                 for (int i = 0; i < count; i++) {
 
                     float offset = i * arc;
@@ -2766,7 +2769,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 if (!ProudSoul.tryAdd(tag, -10, false)) return;
 
-                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.7F, 1.0F);
 
                 int count = 6;
 
@@ -2805,7 +2808,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 if (!ProudSoul.tryAdd(tag, -10, false)) return;
 
-                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.entity_endermen_teleport, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+                entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.7F, 1.0F);
 
                 int count = 10;
                 int multiplier = 2;

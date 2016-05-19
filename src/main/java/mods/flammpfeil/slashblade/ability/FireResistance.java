@@ -32,14 +32,14 @@ public class FireResistance {
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.fireProtection, stack);
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FIRE_PROTECTION, stack);
         if(level <= 0) return;
 
         float speedfactor = 0.05f;
         speedfactor *= (float)level;
 
         if(player.isBurning()){
-            player.moveFlying(player.moveStrafing,player.moveForward,0.25f + speedfactor);
+            player.moveRelative(player.moveStrafing,player.moveForward,0.25f + speedfactor);
 
             int ticks = stack.getMaxItemUseDuration() - event.getDuration();
             if(ItemSlashBlade.RequiredChargeTick < ticks){
@@ -47,6 +47,6 @@ public class FireResistance {
             }
         }
 
-        player.addPotionEffect(new PotionEffect(MobEffects.fireResistance,2,level-1,true,false));
+        player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE,2,level-1,true,false));
     }
 }

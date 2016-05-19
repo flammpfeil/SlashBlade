@@ -34,11 +34,11 @@ public class Fox {
             ItemStack customblade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
             SlashBlade.wrapBlade.removeWrapItem(customblade);
 
-            customblade.addEnchantment(Enchantments.knockback,2);
-            customblade.addEnchantment(Enchantments.baneOfArthropods,2);
-            customblade.addEnchantment(Enchantments.unbreaking,3);
-            customblade.addEnchantment(Enchantments.looting,3);
-            customblade.addEnchantment(Enchantments.fireAspect,2);
+            customblade.addEnchantment(Enchantments.KNOCKBACK,2);
+            customblade.addEnchantment(Enchantments.BANE_OF_ARTHROPODS,2);
+            customblade.addEnchantment(Enchantments.UNBREAKING,3);
+            customblade.addEnchantment(Enchantments.LOOTING,3);
+            customblade.addEnchantment(Enchantments.FIRE_ASPECT,2);
 
             NBTTagCompound tag = customblade.getTagCompound();
 
@@ -79,9 +79,9 @@ public class Fox {
             ItemStack customblade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
             SlashBlade.wrapBlade.removeWrapItem(customblade);
 
-            customblade.addEnchantment(Enchantments.smite,4);
-            customblade.addEnchantment(Enchantments.knockback,2);
-            customblade.addEnchantment(Enchantments.fireAspect, 2);
+            customblade.addEnchantment(Enchantments.SMITE,4);
+            customblade.addEnchantment(Enchantments.KNOCKBACK,2);
+            customblade.addEnchantment(Enchantments.FIRE_ASPECT, 2);
 
             NBTTagCompound tag = customblade.getTagCompound();
 
@@ -129,7 +129,7 @@ public class Fox {
         if(inari != null)
             inari.setItemDamage(14);
         else
-            inari = new ItemStack(Items.wheat,1);
+            inari = new ItemStack(Items.WHEAT,1);
 
         ItemStack proudsoul = SlashBlade.findItemStack(SlashBlade.modid,"proudsoul",1);
 
@@ -140,7 +140,7 @@ public class Fox {
             {
                 SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
-                reqiredBlade.addEnchantment(Enchantments.looting,1);
+                reqiredBlade.addEnchantment(Enchantments.LOOTING,1);
                 NBTTagCompound tag = reqiredBlade.getTagCompound();
                 ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
                 ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
@@ -176,7 +176,7 @@ public class Fox {
             {
                 SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
-                reqiredBlade.addEnchantment(Enchantments.smite,1);
+                reqiredBlade.addEnchantment(Enchantments.SMITE,1);
                 NBTTagCompound tag = reqiredBlade.getTagCompound();
                 ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
                 ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
