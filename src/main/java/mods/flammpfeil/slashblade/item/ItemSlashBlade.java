@@ -2691,6 +2691,7 @@ public class ItemSlashBlade extends ItemSword {
                     EntityBlisteringSwords summonedSword = new EntityBlisteringSwords(w, entity, magicDamage, 90.0f, i);
                     if (summonedSword != null) {
                         summonedSword.setLifeTime(30);
+                        summonedSword.setIsJudgement(types.contains(SwordType.FiercerEdge));
 
                         int targetid = ItemSlashBlade.TargetEntityId.get(tag);
                         summonedSword.setTargetEntityId(targetid);
