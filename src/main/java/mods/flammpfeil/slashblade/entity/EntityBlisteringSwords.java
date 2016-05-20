@@ -46,12 +46,14 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         }
     }
     private static final DataParameter<Boolean> HAS_FIRED = EntityDataManager.<Boolean>createKey(EntityBlisteringSwords.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> IS_JUDGMENT = EntityDataManager.<Boolean>createKey(EntityBlisteringSwords.class, DataSerializers.BOOLEAN);
 
     @Override
     protected void entityInit() {
         super.entityInit();
 
         this.getDataManager().register(HAS_FIRED, false);
+        this.getDataManager().register(IS_JUDGMENT, false);
     }
 
     public boolean hasFired(){
@@ -59,6 +61,12 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
     }
     public void setHasFired(boolean hasFired){
         this.getDataManager().set(HAS_FIRED,hasFired);
+    }
+    public boolean isJudgement(){
+        return this.getDataManager().get(IS_JUDGMENT);
+    }
+    public void setIsJudgement(boolean isJudgement){
+        this.getDataManager().set(IS_JUDGMENT,isJudgement);
     }
 
     @Override
@@ -208,6 +216,18 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         return true;
     }
 
+    @Override
+    protected void attackEntity(Entity target) {
+        if(target instanceof EntityLivingBase && isJudgement()){
+            float health = ((EntityLivingBase) target).getHealth();
+            if(0 < health){
+                this.AttackLevel /= 2;
+                health = Math.max(1,health - this.AttackLevel);
+                ((EntityLivingBase) target).setHealth(health);
+            }
+        }
+        super.attackEntity(target);
+    }
 
     private void faceEntityStandby(){
 

@@ -66,6 +66,8 @@ public class UpthrustBlast {
 
     static public void doBlast(ItemStack blade, EntityLivingBase user){
 
+        if(!user.onGround) return;
+
         AxisAlignedBB bb = user.getEntityBoundingBox();
         bb = bb.expand(20, 5, 20);
         List<EntitySummonedSwordBase> list = user.worldObj.getEntitiesWithinAABB(EntitySummonedSwordBase.class,bb);
@@ -77,6 +79,10 @@ public class UpthrustBlast {
             if(!ss.getEntityData().getBoolean(UpthrustBlastKey)) continue;
 
             Entity target = ss.ridingEntity2;
+
+            if(user instanceof EntityPlayer)
+                ((EntityPlayer) user).onEnchantmentCritical(ss);
+            ss.setDead();
 
             if(!user.worldObj.isRemote){
                 target.hurtResistantTime = 0;
@@ -97,10 +103,6 @@ public class UpthrustBlast {
                     ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
                 }
             }
-
-            if(user instanceof EntityPlayer)
-                ((EntityPlayer) user).onEnchantmentCritical(ss);
-            ss.setDead();
         }
     }
 }

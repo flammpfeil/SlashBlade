@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.entity;
 
+import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
@@ -175,15 +176,15 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
     @Override
     protected void attackEntity(Entity target){
 
-        if(!this.worldObj.isRemote){
+        if(!this.worldObj.isRemote) {
             float magicDamage = Math.max(1.0f, AttackLevel);
             target.hurtResistantTime = 0;
-            DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
+            DamageSource ds = new EntityDamageSource("directMagic", this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(blade != null && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
-                StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
-                ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
+            if (blade != null && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase) {
+                StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.PhantomSword);
+                ((ItemSlashBlade) blade.getItem()).hitEntity(blade, (EntityLivingBase) target, (EntityLivingBase) thrower);
 
                 target.motionX = 0;
                 target.motionY = 0;
@@ -192,11 +193,23 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
 
                 ((EntityLivingBase) target).hurtTime = 1;
 
-                ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
+                ((ItemSlashBlade) blade.getItem()).setDaunting(((EntityLivingBase) target));
+                StunManager.setFreeze((EntityLivingBase) target, 20);
             }
         }
 
         mountEntity(target);
+    }
+
+    @Override
+    protected void blastAttackEntity(Entity target) {
+        super.blastAttackEntity(target);
+
+        if(!this.worldObj.isRemote){
+            if (target instanceof EntityLivingBase) {
+                StunManager.setFreeze((EntityLivingBase) target, 20);
+            }
+        }
     }
 
     @Override

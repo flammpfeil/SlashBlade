@@ -1,10 +1,12 @@
 package mods.flammpfeil.slashblade.event;
 
+import mods.flammpfeil.slashblade.core.CoreProxyClient;
 import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MovementInput;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -26,15 +28,32 @@ public class MoveImputHandler {
 
         EntityPlayerSP player = (EntityPlayerSP)event.player;
 
-        MessageMoveCommandState message = new MessageMoveCommandState(player.movementInput);
+
+        MessageMoveCommandState message = new MessageMoveCommandState();
+
+        message.command = 0;
+        if(player.movementInput.forwardKeyDown)
+            message.command += MessageMoveCommandState.FORWARD;
+        if(player.movementInput.backKeyDown)
+            message.command += MessageMoveCommandState.BACK;
+        if(player.movementInput.leftKeyDown)
+            message.command += MessageMoveCommandState.LEFT;
+        if(player.movementInput.rightKeyDown)
+            message.command += MessageMoveCommandState.RIGHT;
+        if(player.movementInput.sneak || CoreProxyClient.lockon.isKeyDown())
+            message.command += MessageMoveCommandState.SNEAK;
+
+        if(CoreProxyClient.camera.isKeyDown())
+            message.command += MessageMoveCommandState.CAMERA;
+
 
         byte lastCommand = player.getEntityData().getByte("SB.MCS");
 
         long currentTime = player.getEntityWorld().getTotalWorldTime();
 
-        if(player.movementInput.forwardKeyDown && player.isSneaking())
+        if(player.movementInput.forwardKeyDown &&  (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)))
             player.getEntityData().setLong("SB.MCS.F",currentTime);
-        if(player.movementInput.backKeyDown && player.isSneaking())
+        if(player.movementInput.backKeyDown &&  (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)))
             player.getEntityData().setLong("SB.MCS.B",currentTime);
 
         if(lastCommand != message.command){
