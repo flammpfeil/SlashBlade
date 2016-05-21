@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.MovementInput;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 /**
@@ -19,20 +18,6 @@ public class MessageMoveCommandState implements IMessage {
     public static final int CAMERA = 0x20;
 
     public MessageMoveCommandState(){};
-
-    public MessageMoveCommandState(MovementInput input){
-        command = 0;
-        if(input.forwardKeyDown)
-            command += FORWARD;
-        if(input.backKeyDown)
-            command += BACK;
-        if(input.leftKeyDown)
-            command += LEFT;
-        if(input.rightKeyDown)
-            command += RIGHT;
-        if(input.sneak)
-            command += SNEAK;
-    }
 
     @Override
     public void fromBytes(ByteBuf buf) {
