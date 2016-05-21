@@ -11,6 +11,7 @@ import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
+import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Enchantments;
@@ -186,7 +187,11 @@ public class ItemSlashBlade extends ItemSword {
         AKiriorosiB(false, 200.0f,-360.0f+80f,false,25), //changeflag
         AKiriage(false, 360.0f+180f+60f, -360.0f+180f+80f,false,12),
         AKiriorosiFinish(false, 200.0f,-360.0f+90f,false,25),
-    	;
+
+        RapidSlash(false, 240.0f,20.0f,false,12),
+        RapidSlashEnd(false, 240.0f,20.0f,false,12),
+        RisingStar(false, 250.0f,-160.0f,false,12), //rize
+        ;
 
 	    /**
 	     * ordinal : コンボ進行ID
@@ -403,6 +408,16 @@ public class ItemSlashBlade extends ItemSword {
             return;
 
         switch (comboSec) {
+            case RisingStar:
+                target.onGround = false;
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+                target.addVelocity(0.0, 0.6D, 0.0);
+
+                setDaunting(target);
+                break;
+
             case Kiriage:
                 target.onGround = false;
                 target.motionX = 0;
@@ -453,6 +468,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
+            case RapidSlash:
             case SlashEdge:
             case SIai:
             case SSlashEdge:
@@ -686,13 +702,21 @@ public class ItemSlashBlade extends ItemSword {
 
         } else if (isRightClick) {
 
+            int upperSlashState = MessageMoveCommandState.BACK + MessageMoveCommandState.SNEAK;
 
-            int state = MessageMoveCommandState.BACK + MessageMoveCommandState.SNEAK;
-            if(state == (player.getEntityData().getByte("SB.MCS") & state)
+            int rapidSlashState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
+            if(rapidSlashState == (player.getEntityData().getByte("SB.MCS") & rapidSlashState)
+                    && current != ComboSequence.RapidSlash && current != ComboSequence.RapidSlashEnd){
+                result = ComboSequence.RapidSlash;
+
+            }else if(upperSlashState == (player.getEntityData().getByte("SB.MCS") & upperSlashState)
                     && current != ComboSequence.Kiriage){
                 result = ComboSequence.Kiriage;
 
             }else switch (current) {
+                case RapidSlash:
+                    result = ComboSequence.RapidSlashEnd;
+                    break;
 
                 case Saya1:
                     result = ComboSequence.Saya2;
@@ -756,6 +780,24 @@ public class ItemSlashBlade extends ItemSword {
 		NBTTagCompound tag = getItemTagCompound(itemStack);
 
 		switch (current) {
+            case RapidSlash: {
+                double playerDist = 2.5;
+
+                if(!player.onGround)
+                    playerDist *= 0.35f;
+                player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
+                player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
+
+                UntouchableTime.setUntouchableTime(player, 6, false);
+
+                EntityRapidSlashManager mgr = new EntityRapidSlashManager(player.worldObj,player,false);
+                if(mgr != null){
+                    mgr.setLifeTime(6);
+
+                    player.worldObj.spawnEntityInWorld(mgr);
+                }
+                break;
+            }
             case ASlashEdge:
             case AKiriorosi:
                 player.fallDistance = 0;
@@ -1114,19 +1156,39 @@ public class ItemSlashBlade extends ItemSword {
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         EnumSet<SwordType> swordType = getSwordType(stack);
         int charge = this.getMaxItemUseDuration(stack) - count;
+        NBTTagCompound tag = getItemTagCompound(stack);
 
-        if(player.worldObj.isRemote && player.onGround){
-            NBTTagCompound tag = getItemTagCompound(stack);
-            if(charge == 3 && getComboSequence(tag) == ComboSequence.Kiriage){
-                Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player,new String[]{"jump","func_70664_aZ"});
+        if(player.worldObj.isRemote && player.onGround) {
+            if (charge == 3 && getComboSequence(tag) == ComboSequence.Kiriage) {
+                Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player, new String[]{"jump", "func_70664_aZ"});
                 try {
-                    if(jump != null)
+                    if (jump != null)
                         jump.invoke(player);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
+                player.addVelocity(0.0, 0.2D, 0.0);
+
+            } else if (charge == 7 && getComboSequence(tag) == ComboSequence.RapidSlash) {
+                if (player.worldObj.isRemote) {
+                    Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player, new String[]{"jump", "func_70664_aZ"});
+                    try {
+                        if (jump != null)
+                            jump.invoke(player);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    player.addVelocity(0.0, 0.2D, 0.0);
+
+                    NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 4));
+                }
+
+                setComboSequence(tag, ComboSequence.RisingStar);
+                doSwingItem(stack, player);
             }
         }
 
@@ -1202,6 +1264,8 @@ public class ItemSlashBlade extends ItemSword {
     	vec = vec.normalize();
 
     	switch (combo) {
+        case RapidSlash:
+        case RisingStar:
         case SlashEdge:
         case ReturnEdge:
         case SSlashEdge:
@@ -1760,10 +1824,10 @@ public class ItemSlashBlade extends ItemSword {
                 if(eId != 0){
                     Entity target = par2World.getEntityByID(eId);
                     if(target != null)
-                        this.faceEntity(el,target, 5.0f,5.0f);
+                        this.faceEntity(el,target, 10.0f,10.0f);
                 }else{
                     int camState = el.getEntityData().getByte("camerareset");
-                    if(el.isSneaking()){
+                    if(0 < (el.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.CAMERA)){
                         switch (camState){
                             case 0:
                                 el.getEntityData().setByte("camerareset",(byte)1);
@@ -1885,6 +1949,11 @@ public class ItemSlashBlade extends ItemSword {
                 break;
             case AKiriorosiFinish:
                 StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosiFinish);
+
+            case RapidSlash:
+                StylishRankManager.setNextAttackType(e, AttackTypes.RapidSlash);
+            case RisingStar:
+                StylishRankManager.setNextAttackType(e, AttackTypes.RisingStar);
                 break;
 
         }

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.event;
 
+import mods.flammpfeil.slashblade.core.CoreProxyClient;
 import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.network.NetworkManager;
@@ -26,7 +27,15 @@ public class MoveImputHandler {
 
         EntityPlayerSP player = (EntityPlayerSP)event.player;
 
+
+        boolean tmp = player.movementInput.sneak;
+        player.movementInput.sneak |= CoreProxyClient.lockon.isKeyDown();
         MessageMoveCommandState message = new MessageMoveCommandState(player.movementInput);
+        player.movementInput.sneak = tmp;
+
+        if(CoreProxyClient.camera.isKeyDown())
+            message.command += MessageMoveCommandState.CAMERA;
+
 
         byte lastCommand = player.getEntityData().getByte("SB.MCS");
 

@@ -16,6 +16,7 @@ public class MessageMoveCommandState implements IMessage {
     public static final int LEFT = 4;
     public static final int RIGHT = 8;
     public static final int SNEAK = 0x10;
+    public static final int CAMERA = 0x20;
 
     public MessageMoveCommandState(){};
 

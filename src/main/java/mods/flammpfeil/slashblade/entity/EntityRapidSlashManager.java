@@ -1,18 +1,9 @@
 package mods.flammpfeil.slashblade.entity;
 
-import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,7 +13,19 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,7 @@ import java.util.Random;
 /**
  * Created by Furia on 14/05/08.
  */
-public class EntitySpearManager extends Entity implements IThrowableEntity {
+public class EntityRapidSlashManager extends Entity implements IThrowableEntity {
     /**
      * ★撃った人
      */
@@ -48,17 +51,17 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
      * ■コンストラクタ
      * @param par1World
      */
-    public EntitySpearManager(World par1World)
+    public EntityRapidSlashManager(World par1World)
     {
         super(par1World);
     }
 
-    public EntitySpearManager(World par1World, EntityLivingBase entityLiving, boolean multiHit){
+    public EntityRapidSlashManager(World par1World, EntityLivingBase entityLiving, boolean isSingleHit){
         this(par1World, entityLiving);
-        this.setIsMultiHit(multiHit);
+        this.setIsSingleHit(isSingleHit);
     }
 
-    public EntitySpearManager(World par1World, EntityLivingBase entityLiving)
+    public EntityRapidSlashManager(World par1World, EntityLivingBase entityLiving)
     {
         this(par1World);
 
@@ -90,27 +93,31 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
                 thrower.rotationPitch);
     }
 
-    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntitySpearManager.class, DataSerializers.VARINT);
-    private static final DataParameter<Boolean> IS_MULTI_HIT = EntityDataManager.<Boolean>createKey(EntitySpearManager.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> SINGLE_HIT = EntityDataManager.<Boolean>createKey(EntityRapidSlashManager.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntityRapidSlashManager.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> THROWER_ENTITY_ID = EntityDataManager.<Integer>createKey(EntityRapidSlashManager.class, DataSerializers.VARINT);
     /**
      * ■イニシャライズ
      */
     @Override
     protected void entityInit() {
         //isMultiHit
-        this.getDataManager().register(IS_MULTI_HIT, false);
+        this.getDataManager().register(SINGLE_HIT, false);
 
         //lifetime
         this.getDataManager().register(LIFETIME, 20);
 
+        //lifetime
+        this.getDataManager().register(THROWER_ENTITY_ID, 0);
+
     }
 
 
-    public boolean getIsMultiHit(){
-        return this.getDataManager().get(IS_MULTI_HIT);
+    public boolean isSingleHit(){
+        return this.getDataManager().get(SINGLE_HIT);
     }
-    public void setIsMultiHit(boolean isMultiHit){
-        this.getDataManager().set(IS_MULTI_HIT,isMultiHit);
+    public void setIsSingleHit(boolean isSingleHit){
+        this.getDataManager().set(SINGLE_HIT,isSingleHit);
     }
 
     public int getLifeTime(){
@@ -118,6 +125,13 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
     }
     public void setLifeTime(int lifetime){
         this.getDataManager().set(LIFETIME, lifetime);
+    }
+
+    public int getThrowerEntityId(){
+        return this.getDataManager().get(THROWER_ENTITY_ID);
+    }
+    public void setThrowerEntityId(int entityid){
+        this.getDataManager().set(THROWER_ENTITY_ID, entityid);
     }
 
     //■毎回呼ばれる。移動処理とか当り判定とかもろもろ。
@@ -192,15 +206,14 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
                         StylishRankManager.doAttack(this.thrower);
                     }
                 }
-
-                if(!getIsMultiHit() || this.ticksExisted % 2 == 0){
+                if(isSingleHit() || this.ticksExisted % 3 == 0){
                     List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                     list.removeAll(alreadyHitEntity);
 
-                    if(!getIsMultiHit())
+                    if(isSingleHit())
                         alreadyHitEntity.addAll(list);
 
-                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.Spear);
+                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.RapidSlash);
 
                     if(blade != null){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
@@ -222,6 +235,9 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
             }
         }
 
+        if(this.getThrower() != null)
+            spawnParticle(this.worldObj, this.getThrower());
+
 
         //■死亡チェック
         if(ticksExisted >= getLifeTime()) {
@@ -229,6 +245,16 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
             alreadyHitEntity = null;
             setDead();
         }
+    }
+
+    private void spawnParticle(World world, Entity target) {
+        //target.spawnExplosionParticle();
+        if (this.ticksExisted % 2 == 0)
+            world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+                    target.posX + (this.getRand().nextFloat() - 0.5f) * 3,
+                    target.posY + target.getEyeHeight(),
+                    target.posZ + (this.getRand().nextFloat() - 0.5f) * 3,
+                    3.0, 3.0, 3.0);
     }
 
     /**
@@ -379,13 +405,23 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
     public void setInWeb() {}
 
 
+    //IThrowableEntity
     @Override
     public Entity getThrower() {
+        if(this.thrower == null){
+            int id = getThrowerEntityId();
+            if(id != 0){
+                this.thrower = this.getEntityWorld().getEntityByID(id);
+            }
+        }
+
         return this.thrower;
     }
 
     @Override
     public void setThrower(Entity entity) {
+        if(entity != null)
+            setThrowerEntityId(entity.getEntityId());
         this.thrower = entity;
     }
 }

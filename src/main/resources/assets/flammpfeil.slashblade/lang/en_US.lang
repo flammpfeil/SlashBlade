@@ -1,6 +1,8 @@
 flammpfeil.slashblade=SlashBlade
-Key.SlashBlade.PS=SummonedSword
+Key.SlashBlade.PS=Summoned Sword
 Key.SlashBlade.SA=StyleAction
+Key.SlashBlade.LO=Lock-on
+Key.SlashBlade.CA=QuickTurn
 itemGroup.flammpfeil.slashblade=SlashBlade
 item.flammpfeil.slashblade.name=SlashBlade--
 item.flammpfeil.slashblade.proudsoul.name=ProudSoul

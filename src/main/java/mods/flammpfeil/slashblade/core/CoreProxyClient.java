@@ -9,6 +9,7 @@ import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import mods.flammpfeil.slashblade.stats.AchievementList;
@@ -52,6 +53,9 @@ import java.util.List;
 import java.util.Map;
 
 public class CoreProxyClient extends CoreProxy {
+
+    static public KeyBindingEx lockon = null;
+    static public KeyBindingEx camera = null;
 
 	@Override
 	public void initializeItemRenderer() {
@@ -134,6 +138,12 @@ public class CoreProxyClient extends CoreProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityJustGuardManager.class, new IRenderFactory<EntityJustGuardManager>() {
             @Override
             public Render<? super EntityJustGuardManager> createRenderFor(RenderManager manager) {
+                return new InvisibleRender(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityRapidSlashManager.class, new IRenderFactory<EntityRapidSlashManager>() {
+            @Override
+            public Render<? super EntityRapidSlashManager> createRenderFor(RenderManager manager) {
                 return new InvisibleRender(manager);
             }
         });
@@ -237,11 +247,11 @@ public class CoreProxyClient extends CoreProxy {
 
                             MessageRangeAttack.RangeAttackState command;
                             if((currentTime - backKeyLastActiveTime) <= (ChargeTime + TypeAheadBuffer)
-                                && player.movementInput.forwardKeyDown && player.movementInput.sneak){
+                                && player.movementInput.forwardKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
                                 command = MessageRangeAttack.RangeAttackState.HEAVY_RAIN;
-                            }else if(player.movementInput.forwardKeyDown && player.movementInput.sneak){
+                            }else if(player.movementInput.forwardKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
                                 command = MessageRangeAttack.RangeAttackState.BLISTERING;
-                            }else if(player.movementInput.backKeyDown && player.movementInput.sneak){
+                            }else if(player.movementInput.backKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
                                 command = MessageRangeAttack.RangeAttackState.STORM;
                             }else{
                                 command = MessageRangeAttack.RangeAttackState.SPIRAL;
@@ -268,7 +278,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)
-                        && player.movementInput.sneak){
+                        && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
 
                     mc.playerController.updateController();
                     NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));
@@ -338,6 +348,11 @@ public class CoreProxyClient extends CoreProxy {
 
 
             }
+        };
+
+        lockon = new KeyBindingEx("Key.SlashBlade.LO", Keyboard.KEY_LSHIFT, "flammpfeil.slashblade"){
+        };
+        camera = new KeyBindingEx("Key.SlashBlade.CA", Keyboard.KEY_LCONTROL, "flammpfeil.slashblade"){
         };
 
         AchievementsExtendedGuiHandler extendedGuiHandler = new AchievementsExtendedGuiHandler();
