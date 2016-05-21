@@ -221,9 +221,9 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         if(target instanceof EntityLivingBase && isJudgement()){
             float health = ((EntityLivingBase) target).getHealth();
             if(0 < health){
+                this.AttackLevel /= 2;
                 health = Math.max(1,health - this.AttackLevel);
                 ((EntityLivingBase) target).setHealth(health);
-                this.AttackLevel /= 2;
             }
         }
         super.attackEntity(target);
