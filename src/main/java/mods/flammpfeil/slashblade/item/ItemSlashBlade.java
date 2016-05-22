@@ -589,8 +589,30 @@ public class ItemSlashBlade extends ItemSword {
 
         setImpactEffect(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase, comboSec);
 
-        if(!comboSec.useScabbard || IsNoScabbard.get(tag))
+        if(!comboSec.useScabbard || IsNoScabbard.get(tag)) {
             par1ItemStack.damageItem(1, par3EntityLivingBase);
+
+            if(par1ItemStack.stackSize <= 0) {
+                ItemSlashBlade blade = (ItemSlashBlade)par1ItemStack.getItem();
+
+                if(!this.isDestructable(par1ItemStack)){
+                    par1ItemStack.stackSize = 1;
+                    IsBroken.set(tag,true);
+
+                    if(blade instanceof ItemSlashBladeWrapper){
+                        if(!ItemSlashBladeWrapper.TrueItemName.exists(tag)){
+                            ((ItemSlashBladeWrapper)blade).removeWrapItem(par1ItemStack);
+                        }
+                    }
+
+                    if(blade == SlashBlade.bladeWhiteSheath && par3EntityLivingBase instanceof EntityPlayer){
+                        AchievementList.triggerAchievement((EntityPlayer) par3EntityLivingBase, "brokenWhiteSheath");
+                    }
+
+                    blade.dropItemDestructed(par3EntityLivingBase, par1ItemStack);
+                }
+            }
+        }
 
         StylishRankManager.doAttack(par3EntityLivingBase);
 
