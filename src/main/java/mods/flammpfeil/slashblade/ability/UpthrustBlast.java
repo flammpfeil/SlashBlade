@@ -67,6 +67,8 @@ public class UpthrustBlast {
 
     static public void doBlast(ItemStack blade, EntityLivingBase user){
 
+        if(!user.onGround) return;
+
         AxisAlignedBB bb = user.boundingBox.copy();
         bb = bb.expand(20, 5, 20);
         List<EntityPhantomSwordBase> list = user.worldObj.getEntitiesWithinAABB(EntityPhantomSwordBase.class,bb);

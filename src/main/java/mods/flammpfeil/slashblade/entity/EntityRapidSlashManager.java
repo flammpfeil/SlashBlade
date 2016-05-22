@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.UpthrustBlast;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -38,6 +39,8 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
      * ★多段Hit防止用List
      */
     protected List<Entity> alreadyHitEntity = new ArrayList<Entity>();
+
+    protected List<Entity> alreadyStuckEntity = new ArrayList<Entity>();
 
     /**
      * ■コンストラクタ
@@ -211,6 +214,13 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
                             curEntity.hurtResistantTime = 0;
+
+                            if(!alreadyStuckEntity.contains(curEntity)){
+                                //UpthrustBlast
+                                if(getThrower() instanceof EntityLivingBase && curEntity instanceof EntityLivingBase)
+                                    UpthrustBlast.setUpthrustBlastSword(blade, (EntityLivingBase)getThrower(), (EntityLivingBase)curEntity);
+                            }
+
                             if(thrower instanceof EntityPlayer){
                                 ItemSlashBlade itemBlade = (ItemSlashBlade)blade.getItem();
                                 itemBlade.attackTargetEntity(blade, curEntity, (EntityPlayer)thrower, true);
