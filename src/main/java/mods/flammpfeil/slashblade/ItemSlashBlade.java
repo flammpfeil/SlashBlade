@@ -2800,9 +2800,14 @@ public class ItemSlashBlade extends ItemSword {
             case SPIRAL: {
 
 
+                int currentTime = (int)entity.getEntityWorld().getWorldTime();
+                final int holdLimit = 200;
+
                 if(entity.getEntityData().hasKey("SB.SPHOLDID")){
+                    if(currentTime < (entity.getEntityData().getInteger("SB.SPHOLDID") + holdLimit)){
                     entity.getEntityData().removeTag("SB.SPHOLDID");
                     return;
+                }
                 }
 
                 if (!ProudSoul.tryAdd(tag, -10, false)) return;
@@ -2818,10 +2823,8 @@ public class ItemSlashBlade extends ItemSword {
 
                 float arc = 360.0f / count;
 
-                int currentTime = (int)entity.worldObj.getWorldTime();
                 entity.getEntityData().setInteger("SB.SPHOLDID", currentTime);
 
-                final int holdLimit = 200;
                 for (int i = 0; i < count; i++) {
 
                     float offset = i * arc;
@@ -3020,6 +3023,10 @@ public class ItemSlashBlade extends ItemSword {
             Method getExperiencePoints = ReflectionHelper.findMethod(EntityLivingBase.class, target, new String[]{"getExperiencePoints", "func_70693_a"}, EntityPlayer.class);
             try {
                 int exp = (Integer)getExperiencePoints.invoke(target, (EntityPlayer) player);
+
+                float rank = StylishRankManager.getStylishRank(player);
+
+                exp *= 1.0 + rank * 0.1;
 
                 NBTTagCompound tag = getItemTagCompound(stack);
                 PrevExp.set(tag,exp);
