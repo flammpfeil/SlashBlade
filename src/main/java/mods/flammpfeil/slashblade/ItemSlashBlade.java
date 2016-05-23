@@ -2800,7 +2800,7 @@ public class ItemSlashBlade extends ItemSword {
             case SPIRAL: {
 
 
-                int currentTime = (int)entity.getEntityWorld().getWorldTime();
+                int currentTime = (int)entity.worldObj.getWorldTime();
                 final int holdLimit = 200;
 
                 if(entity.getEntityData().hasKey("SB.SPHOLDID")){

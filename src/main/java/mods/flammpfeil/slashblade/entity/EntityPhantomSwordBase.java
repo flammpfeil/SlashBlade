@@ -508,9 +508,18 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
         vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
         vec31 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
-        if (movingobjectposition != null)
-        {
-            vec31 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+        if (movingobjectposition != null) {
+            int x = MathHelper.floor_double(movingobjectposition.hitVec.xCoord);
+            int y = MathHelper.floor_double(movingobjectposition.hitVec.yCoord);
+            int z = MathHelper.floor_double(movingobjectposition.hitVec.zCoord);
+
+            Block block = worldObj.getBlock(x, y, z);
+
+            if (block != null)
+                if (block.getCollisionBoundingBoxFromPool(worldObj, x, y, z) == null)
+                    movingobjectposition = null;
+                else
+                    vec31 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
         }
 
         Entity entity = null;
@@ -537,6 +546,10 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
             for (i = 0; i < list.size(); ++i)
             {
                 Entity entity1 = (Entity)list.get(i);
+
+                if(entity1 instanceof EntityPhantomSwordBase)
+                    if(((EntityPhantomSwordBase) entity1).getThrower() == this.getThrower())
+                        continue;
 
                 if (entity1.canBeCollidedWith())
                 {
