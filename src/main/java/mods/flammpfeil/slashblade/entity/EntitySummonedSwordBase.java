@@ -3,6 +3,8 @@ package mods.flammpfeil.slashblade.entity;
 import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -505,7 +507,14 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         if (movingobjectposition != null)
         {
-            Vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+            IBlockState state = null;
+            BlockPos pos = movingobjectposition.getBlockPos();
+            if(pos != null)
+                state = worldObj.getBlockState(pos);
+            if(state != null && state.getCollisionBoundingBox(worldObj, pos) == null)
+                movingobjectposition = null;
+            else
+                Vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
         }
 
         Entity entity = null;
@@ -532,6 +541,10 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             for (i = 0; i < list.size(); ++i)
             {
                 Entity entity1 = (Entity)list.get(i);
+
+                if(entity1 instanceof EntitySummonedSwordBase)
+                    if(((EntitySummonedSwordBase) entity1).getThrower() == this.getThrower())
+                        continue;
 
                 if (entity1.canBeCollidedWith())
                 {
