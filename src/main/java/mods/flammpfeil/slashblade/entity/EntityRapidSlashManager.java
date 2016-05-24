@@ -217,6 +217,7 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
 
                             if(!alreadyStuckEntity.contains(curEntity)){
                                 //UpthrustBlast
+                                alreadyStuckEntity.add(curEntity);
                                 if(getThrower() instanceof EntityLivingBase && curEntity instanceof EntityLivingBase)
                                     UpthrustBlast.setUpthrustBlastSword(blade, (EntityLivingBase)getThrower(), (EntityLivingBase)curEntity);
                             }
