@@ -513,10 +513,11 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
             int y = MathHelper.floor_double(movingobjectposition.hitVec.yCoord);
             int z = MathHelper.floor_double(movingobjectposition.hitVec.zCoord);
 
-            Block block = worldObj.getBlock(x, y, z);
+            int offset = -1;
+            Block block = worldObj.getBlock(x, y + offset, z);
 
             if (block != null)
-                if (block.getCollisionBoundingBoxFromPool(worldObj, x, y, z) == null)
+                if (block.getCollisionBoundingBoxFromPool(worldObj, x, y + offset, z) == null)
                     movingobjectposition = null;
                 else
                     vec31 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
@@ -746,12 +747,7 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
                 destructEntity(target);
             }
         }else{
-            int i = mop.blockX;
-            int j = mop.blockY;
-            int k = mop.blockZ;
-            Block block = this.worldObj.getBlock(i,j,k);
-            if (!block.isAir(worldObj,i,j,k) &&
-                    block.getCollisionBoundingBoxFromPool(worldObj, i,j,k) != null)
+            if(!worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty())
             {
                 /*
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
