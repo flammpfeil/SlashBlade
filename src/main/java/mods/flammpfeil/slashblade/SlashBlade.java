@@ -339,6 +339,10 @@ public class SlashBlade implements IFuelHandler{
 
         FMLCommonHandler.instance().bus().register(new MoveImputHandler());
 
+        AttackLimitter limitter = new AttackLimitter();
+        limitter.loadConfig(mainConfiguration);
+        MinecraftForge.EVENT_BUS.register(limitter);
+
         statManager = new StatManager();
         MinecraftForge.EVENT_BUS.register(statManager);
 
