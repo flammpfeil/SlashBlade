@@ -58,7 +58,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
 
                 final int cost = -40;
                 if(!ItemSlashBlade.ProudSoul.tryAdd(tag,cost,false)){
-                    stack.damageItem(10, player);
+                    ItemSlashBlade.damageItem(stack, 10, player);
                 }
 
 

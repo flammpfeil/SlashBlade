@@ -590,7 +590,7 @@ public class ItemSlashBlade extends ItemSword {
         setImpactEffect(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase, comboSec);
 
         if(!comboSec.useScabbard || IsNoScabbard.get(tag)) {
-            par1ItemStack.damageItem(1, par3EntityLivingBase);
+            ItemSlashBlade.damageItem(par1ItemStack, 1, par3EntityLivingBase);
 
             if(par1ItemStack.stackSize <= 0) {
                 ItemSlashBlade blade = (ItemSlashBlade)par1ItemStack.getItem();
@@ -622,7 +622,7 @@ public class ItemSlashBlade extends ItemSword {
     @Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState blockIn, BlockPos pos, EntityLivingBase entityLiving) {
         if (blockIn.getBlockHardness(worldIn, pos) != 0.0)
-            stack.damageItem(1, entityLiving);
+            ItemSlashBlade.damageItem(stack, 1, entityLiving);
 
         return true;
     }
@@ -1091,7 +1091,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
         if (swordType.containsAll(SwordType.BewitchedPerfect) && comboSeq.equals(ComboSequence.Battou)) {
-            stack.damageItem(10, player);
+            ItemSlashBlade.damageItem(stack, 10, player);
             //todo 超短距離Drive周囲にばら撒くことで居合い再現はどーか
         }
     }
@@ -1104,7 +1104,7 @@ public class ItemSlashBlade extends ItemSword {
 
             final int cost = -10;
             if(!ProudSoul.tryAdd(tag, cost, false)){
-                stack.damageItem(5, player);
+                ItemSlashBlade.damageItem(stack, 5, player);
             }
 
             float baseModif = getBaseAttackModifiers(tag);
@@ -1677,7 +1677,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
 					if(swordType.containsAll(SwordType.BewitchedPerfect) && comboSeq.equals(ComboSequence.Battou)){
-						sitem.damageItem(10, el);
+						ItemSlashBlade.damageItem(sitem, 10, el);
                         //todo 超短距離Drive周囲にばら撒くことで居合い再現はどーか
 					}
 				}
@@ -2470,7 +2470,7 @@ public class ItemSlashBlade extends ItemSword {
             }
 
             if(0 < destructedCount){
-                stack.damageItem(1,entityLiving);
+                ItemSlashBlade.damageItem(stack, 1,entityLiving);
             }
         }
     }
@@ -2630,6 +2630,7 @@ public class ItemSlashBlade extends ItemSword {
         NBTTagCompound tag = getItemTagCompound(stack);
         return IsDestructable.get(tag);
     }
+    static final String IsManagedDamage = "IsManagedDamage";
 
     @Override
     public void setDamage(ItemStack stack, int damage) {
@@ -2644,12 +2645,43 @@ public class ItemSlashBlade extends ItemSword {
                 IsBroken.set(tag, false);
 
             }else if(maxDamage < damage){
-                if(IsBroken.get(tag)){
-                    damage = Math.min(damage,maxDamage);
+                if(IsBroken.get(tag) || !tag.getBoolean(IsManagedDamage)) {
+                    damage = Math.min(damage, maxDamage);
                 }
             }
         }
         super.setDamage(stack,damage);
+    }
+
+
+    static public void damageItem(ItemStack stack, int damage, EntityLivingBase user) {
+
+        NBTTagCompound tag = getItemTagCompound(stack);
+        tag.setBoolean(IsManagedDamage, true);
+        stack.damageItem(damage, user);
+        tag.setBoolean(IsManagedDamage, false);
+
+        if(stack.stackSize <= 0) {
+            ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
+
+            if(!blade.isDestructable(stack)){
+                stack.stackSize = 1;
+                stack.setItemDamage(stack.getMaxDamage());
+                IsBroken.set(tag,true);
+
+                if(blade instanceof ItemSlashBladeWrapper){
+                    if(!ItemSlashBladeWrapper.TrueItemName.exists(tag)){
+                        ((ItemSlashBladeWrapper)blade).removeWrapItem(stack);
+                    }
+                }
+
+                if(blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer){
+                    AchievementList.triggerAchievement((EntityPlayer) user, "brokenWhiteSheath");
+                }
+
+                blade.dropItemDestructed(user, stack);
+            }
+        }
     }
 
     public void attackTargetEntity(ItemStack stack, Entity target, EntityPlayer player, Boolean isRightClick){

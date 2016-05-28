@@ -26,7 +26,7 @@ public class SakuraEnd extends SpecialAttackBase {
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag,cost,false)){
-                stack.damageItem(10, player);
+                ItemSlashBlade.damageItem(stack, 10, player);
             }
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
