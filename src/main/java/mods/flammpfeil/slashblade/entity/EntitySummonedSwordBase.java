@@ -677,6 +677,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
     protected void attackEntity(Entity target){
 
+        mountEntity(target);
 
         if(this.thrower != null)
             this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
@@ -701,8 +702,6 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
             }
         }
-
-        mountEntity(target);
     }
 
     protected void blastAttackEntity(Entity target){
