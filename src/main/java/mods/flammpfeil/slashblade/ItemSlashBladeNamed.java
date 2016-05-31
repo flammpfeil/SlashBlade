@@ -50,6 +50,11 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
                             List par3List) {
 
+        ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(targetBlade);
+        ItemSlashBlade.ProudSoul.set(tag,1000);
+        par3List.add(targetBlade);
+
         for(String bladename : NamedBlades){
             ItemStack blade = SlashBlade.getCustomBlade(bladename);
             if(blade.getItemDamage() == OreDictionary.WILDCARD_VALUE)

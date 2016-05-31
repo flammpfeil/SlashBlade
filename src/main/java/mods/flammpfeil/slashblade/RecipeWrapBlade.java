@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
@@ -50,6 +51,13 @@ public class RecipeWrapBlade extends ShapedRecipes {
     static public void RegisterWrapable(String name,String texture,float attackModifier){
         wrapableTextureNames.put(name, texture);
         wrapableBaseAttackModifiers.put(name, attackModifier);
+
+        ItemStack blade = getWrapSampleBlade(name, texture);
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+        ItemSlashBladeNamed.BaseAttackModifier.set(tag,attackModifier);
+        tag.removeTag("display");
+
+        NamedBladeManager.registerBladeSoul(tag , blade.getDisplayName());
     }
 
     static public ItemStack getWrapSampleBlade(String name,String texture){

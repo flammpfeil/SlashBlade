@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
 import mods.flammpfeil.slashblade.entity.EntityGrimGripKey;
+import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
@@ -93,6 +94,10 @@ public class ItemProudSoul extends Item {
             stack.addEnchantment(ench, 1);
             par3List.add(stack);
         }
+
+        for(ItemStack stack : NamedBladeManager.namedbladeSouls){
+            par3List.add(stack);
+        }
 	}
 
     @Override
@@ -112,33 +117,36 @@ public class ItemProudSoul extends Item {
             return EnumActionResult.SUCCESS;
         }else if(stack.getItemDamage() == 4 //crystal
                 && stack.hasTagCompound() && stack.getTagCompound().hasKey("GPX")
-                && !world.isRemote
                 && Blocks.QUARTZ_BLOCK == block
                 && player.isSneaking()) {
-            //world.setBlockToAir(pos);
-            EntityGrimGripKey e = new EntityGrimGripKey(world);
-            e.setPositionAndRotation(
-                    pos.getX() + 0.5 + side.getFrontOffsetX(),
-                    pos.getY() + 0.5 + side.getFrontOffsetY(),
-                    pos.getZ() + 0.5 + side.getFrontOffsetZ(), e.rotationYaw, e.rotationPitch);
-            //e.setLifeTime(1000);
 
             NBTTagCompound tag = stack.getTagCompound();
             int x = tag.getInteger("GPX");
             int y = tag.getInteger("GPY");
             int z = tag.getInteger("GPZ");
 
-            BlockPos gripPos = new BlockPos(x,y,z);
+            BlockPos gripPos = new BlockPos(x, y, z);
 
-            if(30 > gripPos.distanceSq(pos))
+            if (30 > gripPos.distanceSq(pos))
                 return EnumActionResult.FAIL;
 
-            e.setGrimGripPos(gripPos);
-            //e.ticksExisted = 0;
-            //e.setGlowing(true);
-            if(world.spawnEntityInWorld(e)){
-                stack.stackSize--;
+            //world.setBlockToAir(pos);
+            if (!world.isRemote) {
+                EntityGrimGripKey e = new EntityGrimGripKey(world);
+                e.setPositionAndRotation(
+                        pos.getX() + 0.5 + side.getFrontOffsetX(),
+                        pos.getY() + 0.5 + side.getFrontOffsetY(),
+                        pos.getZ() + 0.5 + side.getFrontOffsetZ(), e.rotationYaw, e.rotationPitch);
+                //e.setLifeTime(1000);
+
+
+                e.setGrimGripPos(gripPos);
+                //e.ticksExisted = 0;
+                //e.setGlowing(true);
+                world.spawnEntityInWorld(e);
             }
+
+            stack.stackSize--;
 
             return EnumActionResult.SUCCESS;
         }else if(stack.getItemDamage() == 4 //crystal
@@ -185,7 +193,7 @@ public class ItemProudSoul extends Item {
         boolean using = false;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
-        if(stack.getItemDamage() == 0 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
+        if(stack.getItemDamage() == 0 && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
             if(stand.hasBlade() && stand.isBurning()){
@@ -199,7 +207,28 @@ public class ItemProudSoul extends Item {
 
                     using = true;
 
-                    ItemStack bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
+                    boolean isLottery = false;
+                    if(stack.isItemEnchanted()){
+                        stack.getTagCompound().removeTag("ench");
+                        isLottery = true;
+                    }
+
+                    ItemStack bladeSoulCrystal = null;
+
+                    if(isLottery) {
+                        if(stand.getType(stand) == EntityBladeStand.StandType.Dual){
+                            int lotNum = stand.getEntityData().getInteger("LastLotNumber");
+                            lotNum++;
+                            lotNum %= NamedBladeManager.namedbladeSouls.size();
+                            stand.getEntityData().setInteger("LastLotNumber",lotNum);
+
+                            bladeSoulCrystal = NamedBladeManager.getNamedSoulSequential(lotNum);
+                        }else{
+                            bladeSoulCrystal = NamedBladeManager.getNamedSoul(Item.itemRand);
+                        }
+                    }else
+                        bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
+
 
                     bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
 

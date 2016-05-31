@@ -37,6 +37,7 @@ public class PSYasha {
 
             tag.setBoolean("IsNoStandDrop",true);
 
+            NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
             SlashBlade.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
         }
@@ -55,6 +56,7 @@ public class PSYasha {
             ItemSlashBlade.StandbyRenderType.set(tag, 2);
             ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
 
+            NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
             SlashBlade.registerCustomItemStack(name, customblade);
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + name);
         }

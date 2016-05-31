@@ -59,6 +59,7 @@ public class Fox {
 
             ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
 
+            NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
             SlashBlade.registerCustomItemStack(name, customblade);
 
             customblade = customblade.copy();
@@ -101,6 +102,8 @@ public class Fox {
             ItemSlashBlade.StandbyRenderType.set(tag, 1);
 
             ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
+
+            NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
             SlashBlade.registerCustomItemStack(name, customblade);
 
             customblade = customblade.copy();
