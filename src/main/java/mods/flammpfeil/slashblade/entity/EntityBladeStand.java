@@ -2,7 +2,6 @@ package mods.flammpfeil.slashblade.entity;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import com.sun.istack.internal.NotNull;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.stats.AchievementList;
@@ -19,7 +18,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 import java.util.Random;
