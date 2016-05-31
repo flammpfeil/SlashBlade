@@ -97,7 +97,7 @@ public class EntitySummonedSwordAirTrickMarker extends EntitySummonedSwordBase {
                     iniPitch = thrower.rotationPitch;
                 }
 
-                faceEntity(this,target, 10.0f, 10.0f);
+                faceEntity(this,target, 90f, 90.0f);
 
                 double vec = 1.1 * (new Vec3d(this.motionX,this.motionY,this.motionZ)).lengthVector();
 

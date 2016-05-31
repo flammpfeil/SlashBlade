@@ -677,10 +677,10 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
     protected void attackEntity(Entity target){
 
-        mountEntity(target);
-
         if(this.thrower != null)
             this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
+
+        mountEntity(target);
 
         if(!this.worldObj.isRemote){
             float magicDamage = Math.max(1.0f, AttackLevel);

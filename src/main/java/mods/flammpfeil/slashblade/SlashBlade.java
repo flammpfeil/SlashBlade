@@ -5,10 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
-import mods.flammpfeil.slashblade.event.DropEventHandler;
-import mods.flammpfeil.slashblade.event.MoveImputHandler;
-import mods.flammpfeil.slashblade.event.PlayerDropsEventHandler;
-import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
+import mods.flammpfeil.slashblade.event.*;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
@@ -81,6 +78,7 @@ public class SlashBlade implements IFuelHandler{
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
     public static final String SphereBladeSoulStr = "sphere_bladesoul";
     public static final String TinyBladeSoulStr = "tiny_bladesoul";
+    public static final String CrystalBladeSoulStr = "crystal_bladesoul";
 
     public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade");
 
@@ -137,14 +135,21 @@ public class SlashBlade implements IFuelHandler{
 		ItemStack itemProudSoul = new ItemStack(proudSoul,1,0);
 		itemProudSoul.setRepairCost(-10);
 		registerCustomItemStack(ProudSoulStr , itemProudSoul);
+
 		ItemStack itemIngotBladeSoul = new ItemStack(proudSoul,1,1);
 		itemIngotBladeSoul.setRepairCost(-25);
 		registerCustomItemStack(IngotBladeSoulStr , itemIngotBladeSoul);
+
         ItemStack itemSphereBladeSoul = new ItemStack(proudSoul,1,2);
         itemSphereBladeSoul.setRepairCost(-50);
         registerCustomItemStack(SphereBladeSoulStr , itemSphereBladeSoul);
+
         ItemStack itemTinyBladeSoul = new ItemStack(proudSoul,1,3);
         registerCustomItemStack(TinyBladeSoulStr , itemTinyBladeSoul);
+
+        ItemStack itemCrystalBladeSoul = new ItemStack(proudSoul,1,4);
+        itemCrystalBladeSoul.setRepairCost(-10);
+        registerCustomItemStack(CrystalBladeSoulStr , itemCrystalBladeSoul);
 
         //==================================================================================================================================
 
@@ -302,8 +307,12 @@ public class SlashBlade implements IFuelHandler{
 
         EntityRegistry.registerModEntity(EntityRapidSlashManager.class, "RapidSlashManager", entityId++, this, 250, 10, true);
 
+        EntityRegistry.registerModEntity(EntityGrimGrip.class, "GrimGrip", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntityGrimGripKey.class, "GrimGripKey", entityId++, this, 250, 200, false);
+
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
+        MinecraftForge.EVENT_BUS.register(new AnvilEventHandler());
 
         MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
         MinecraftForge.EVENT_BUS.register(new TossEventHandler());

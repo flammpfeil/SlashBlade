@@ -1777,19 +1777,18 @@ public class ItemSlashBlade extends ItemSword {
                 if(0 < (el.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)){
                     if(eId == 0){
 
-
-
-                        Entity rayEntity = getRayTrace(el,10.0f);
+                        Entity rayEntity = getRayTrace(el,20.0f);
 
                         if(rayEntity == null)
                             rayEntity = getRayTrace(el,10.0f,5.0f);
 
+                        /*
                         if(rayEntity !=null){
                             if(!EntitySelectorAttackable.getInstance().apply(rayEntity)){
 
                             }
                         }
-
+                        */
 
                         if(rayEntity != null){
                             eId = rayEntity.getEntityId();
@@ -1813,7 +1812,12 @@ public class ItemSlashBlade extends ItemSword {
                         }
                         TargetEntityId.set(tag,eId);
                     }else{
-
+                        {
+                            Entity target = par2World.getEntityByID(eId);
+                            if (target != null)
+                                if(!target.isEntityAlive())
+                                    TargetEntityId.set(tag,0);
+                        }
                         if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, sitem)){
                             Entity target = par2World.getEntityByID(eId);
                             if(target != null && target instanceof EntityWither

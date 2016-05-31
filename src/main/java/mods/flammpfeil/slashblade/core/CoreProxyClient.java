@@ -18,6 +18,7 @@ import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.init.Items;
@@ -95,6 +96,7 @@ public class CoreProxyClient extends CoreProxy {
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 1, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.IRON_INGOT)).toString()));
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 2, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.SNOWBALL)).toString()));
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 3, new ModelResourceLocation(SlashBlade.modid + ":" + "tinyps"));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 4, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.NETHER_STAR)).toString()));
         for(Map.Entry<String, Integer> entry : AchievementList.achievementIcons.entrySet()) {
             ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, entry.getValue(), new ModelResourceLocation(SlashBlade.modid + ":" + entry.getKey()));
         }
@@ -198,6 +200,24 @@ public class CoreProxyClient extends CoreProxy {
                 return new RenderSummonedBlade(manager);
             }
         });
+
+
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityGrimGrip.class, new IRenderFactory<EntityGrimGrip>() {
+            @Override
+            public Render<? super EntityGrimGrip> createRenderFor(RenderManager manager) {
+                return new GrimGripRender(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityGrimGripKey.class, new IRenderFactory<EntityGrimGripKey>() {
+            @Override
+            public Render<? super EntityGrimGripKey> createRenderFor(RenderManager manager) {
+                return new GrimGripKeyRender(manager);
+            }
+        });
+
+
+
 
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override
@@ -392,6 +412,15 @@ public class CoreProxyClient extends CoreProxy {
                 e.printStackTrace();
             }
         }
+
+
+
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
+            @Override
+            public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+                return stack.getItemDamage() != 4 ? -1 : 0xCCC0FF;
+            }
+        }, SlashBlade.proudSoul);
     }
 
     /**

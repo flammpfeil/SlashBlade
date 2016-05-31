@@ -2,6 +2,8 @@ package mods.flammpfeil.slashblade.item;
 
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
+import mods.flammpfeil.slashblade.entity.EntityGrimGripKey;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
@@ -9,16 +11,19 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
@@ -32,7 +37,7 @@ public class ItemProudSoul extends Item {
         setHasSubtypes(true);
 	}
 
-	@Override
+    @Override
 	public boolean hasEffect(ItemStack par1ItemStack) {
 
         if(0x10000 <= par1ItemStack.getItemDamage()){
@@ -58,6 +63,9 @@ public class ItemProudSoul extends Item {
         case 3:
             s += ".tiny";
             break;
+        case 4:
+            s += ".crystal";
+            break;
 		}
 		return s;
 	}
@@ -69,6 +77,7 @@ public class ItemProudSoul extends Item {
 		par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1));
         par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1));
         par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr, 1));
+        par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.CrystalBladeSoulStr, 1));
 
         ItemStack sphere = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1);
         for(int saType : ItemSlashBlade.specialAttacks.keySet()){
@@ -101,6 +110,46 @@ public class ItemProudSoul extends Item {
             AchievementList.triggerAchievement(player,"bladeStand");
 
             return EnumActionResult.SUCCESS;
+        }else if(stack.getItemDamage() == 4 //crystal
+                && stack.hasTagCompound() && stack.getTagCompound().hasKey("GPX")
+                && !world.isRemote
+                && Blocks.QUARTZ_BLOCK == block
+                && player.isSneaking()) {
+            //world.setBlockToAir(pos);
+            EntityGrimGripKey e = new EntityGrimGripKey(world);
+            e.setPositionAndRotation(
+                    pos.getX() + 0.5 + side.getFrontOffsetX(),
+                    pos.getY() + 0.5 + side.getFrontOffsetY(),
+                    pos.getZ() + 0.5 + side.getFrontOffsetZ(), e.rotationYaw, e.rotationPitch);
+            //e.setLifeTime(1000);
+
+            NBTTagCompound tag = stack.getTagCompound();
+            int x = tag.getInteger("GPX");
+            int y = tag.getInteger("GPY");
+            int z = tag.getInteger("GPZ");
+
+            BlockPos gripPos = new BlockPos(x,y,z);
+
+            if(30 > gripPos.distanceSq(pos))
+                return EnumActionResult.FAIL;
+
+            e.setGrimGripPos(gripPos);
+            //e.ticksExisted = 0;
+            //e.setGlowing(true);
+            if(world.spawnEntityInWorld(e)){
+                stack.stackSize--;
+            }
+
+            return EnumActionResult.SUCCESS;
+        }else if(stack.getItemDamage() == 4 //crystal
+                && !world.isRemote
+                && player.isSneaking()){
+
+            stack.setTagInfo("GPX", new NBTTagInt(pos.getX() + side.getFrontOffsetX()));
+            stack.setTagInfo("GPY", new NBTTagInt(pos.getY() + side.getFrontOffsetY()));
+            stack.setTagInfo("GPZ", new NBTTagInt(pos.getZ() + side.getFrontOffsetZ()));
+
+            return EnumActionResult.SUCCESS;
         }else{
             return super.onItemUse(stack, player, world, pos, hand, side, hitX, hitY, hitZ);
         }
@@ -119,6 +168,13 @@ public class ItemProudSoul extends Item {
             par3List.add(String.format("SA:%s",  I18n.translateToLocal(key)));
         }
 
+        if(tag.hasKey("GPX")){
+            par3List.add(String.format("GrimGrip pos x:%d y:%d z:%d",
+                    tag.getInteger("GPX"),
+                    tag.getInteger("GPY"),
+                    tag.getInteger("GPZ")));
+        }
+
     }
 
     @Override
@@ -129,6 +185,32 @@ public class ItemProudSoul extends Item {
         boolean using = false;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+        if(stack.getItemDamage() == 0 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
+            EntityBladeStand stand = (EntityBladeStand)entity;
+
+            if(stand.hasBlade() && stand.isBurning()){
+
+                ItemStack blade = stand.getBlade();
+
+                NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+
+                if(ItemSlashBlade.ProudSoul.tryAdd(bladeTag, -400, false)){
+                    player.onEnchantmentCritical(stand);
+
+                    using = true;
+
+                    ItemStack bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
+
+                    bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
+
+                    EntityItem entityitem = new EntityItem(stand.worldObj, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
+                    entityitem.setDefaultPickupDelay();
+                    entityitem.setGlowing(true);
+                    stand.worldObj.spawnEntityInWorld(entityitem);
+                }
+
+            }
+        }
 
         if(stack.getItemDamage() == 2){
             if(ItemSlashBlade.SpecialAttackType.exists(tag))
@@ -187,7 +269,7 @@ public class ItemProudSoul extends Item {
                     rate = 0.5f;
                 }else if(damage == 1){
                     rate = 0.75f;
-                }else if(damage == 2){
+                }else if(damage == 2 || damage == 4){
                     rate = 1.0f;
                 }else{
                     rate = 0.25f;
@@ -237,10 +319,9 @@ public class ItemProudSoul extends Item {
         if(using){
             stack.stackSize--;
 
-            if (stack.stackSize <= 0)
-            {
-                player.renderBrokenItemStack(stack);
-            }
+            player.renderBrokenItemStack(stack);
+
+            return true;
         }
         return super.onLeftClickEntity(stack, player, entity);
     }
@@ -250,5 +331,71 @@ public class ItemProudSoul extends Item {
         super.onCreated(p_77622_1_, p_77622_2_, p_77622_3_);
 
         AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
+    }
+
+    @Override
+    public boolean onEntityItemUpdate(EntityItem entityItem) {
+
+        ItemStack stack = entityItem.getEntityItem();
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+        if(stack.getItemDamage() == 4){
+            long current = entityItem.getEntityWorld().getTotalWorldTime();
+
+            if(entityItem.getEntityData().hasKey("FloatingTimeout")){
+                long timeout = entityItem.getEntityData().getLong("FloatingTimeout");
+
+                if(5 < entityItem.ticksExisted && tag.hasKey("BIRTH"))
+                    tag.removeTag("BIRTH");
+
+                if(current < timeout){
+
+                    if(entityItem.worldObj.isRemote) {
+
+                        int j = Item.itemRand.nextInt(2) * 2 - 1;
+                        int k = Item.itemRand.nextInt(2) * 2 - 1;
+                        double d0 = entityItem.posX + 0.25D * (double)j;
+                        double d1 = (double)((float)entityItem.posY + Item.itemRand.nextFloat());
+                        double d2 = entityItem.posZ + 0.5D + 0.25D * (double)k;
+                        double d3 = (double)(Item.itemRand.nextFloat() * (float)j);
+                        double d4 = ((double)Item.itemRand.nextFloat() - 0.5D) * 0.125D;
+                        double d5 = (double)(Item.itemRand.nextFloat() * (float)k);
+                        entityItem.worldObj.spawnParticle(EnumParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5, new int[0]);
+                    }
+
+                    if(entityItem.getEntityData().hasKey("LPX")) {
+                        double x = entityItem.getEntityData().getDouble("LPX");
+                        double y = entityItem.getEntityData().getDouble("LPY");
+                        double z = entityItem.getEntityData().getDouble("LPZ");
+                        entityItem.setPosition(x, y, z);
+                    }
+
+                    entityItem.motionX = 0;
+                    entityItem.motionY = 0.03999999910593033D;
+                    entityItem.motionZ = 0;
+
+                    return false;
+                }
+            }
+
+            if(tag.hasKey("BIRTH")){
+                long birth = tag.getLong("BIRTH");
+
+                if(1000 > Math.abs(current - birth)){
+
+                    entityItem.worldObj.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                    entityItem.worldObj.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.25F, 1.25F);
+
+                    entityItem.getEntityData().setLong("FloatingTimeout", current + 1000);
+
+                    entityItem.getEntityData().setDouble("LPX",entityItem.posX);
+                    entityItem.getEntityData().setDouble("LPY",entityItem.posY);
+                    entityItem.getEntityData().setDouble("LPZ",entityItem.posZ);
+                    return true;
+                }
+            }
+
+        }
+
+        return super.onEntityItemUpdate(entityItem);
     }
 }
