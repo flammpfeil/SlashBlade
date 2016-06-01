@@ -188,22 +188,29 @@ public class ItemProudSoul extends Item {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
 
-        if(stack.getItemDamage() == 3 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
-            EntityBladeStand stand = (EntityBladeStand)entity;
-
-            if(stand.isBurning()) {
-                stand.extinguish();
-            }else {
-                stand.setFire(10);
-                player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
-            }
-        }
-
         if(player.worldObj.isRemote) return false;
 
         boolean using = false;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+
+        if(stack.getItemDamage() == 3 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
+            EntityBladeStand stand = (EntityBladeStand)entity;
+
+            if(stand.hasBlade()){
+                if(stand.isBurning()) {
+                    stand.extinguish();
+                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.PLAYERS, 0.5F, 0.5F);
+                }else {
+                    using = true;
+                    stand.setFire(20);
+
+                    NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(stand.getBlade());
+                    ItemSlashBlade.ProudSoul.add(bladeTag,50);
+                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                }
+            }
+        }
 
         if(stack.getItemDamage() == 0 && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;

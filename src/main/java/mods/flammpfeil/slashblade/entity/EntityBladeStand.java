@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -193,17 +194,20 @@ public class EntityBladeStand extends Entity {
     @Override
     public void onUpdate() {
 
-        if(SlashBladeHooks.onEntityBladeStandUpdateHooks(this)){
-            return;
-        }
+        /*
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
+        */
 
-        //super.onUpdate();
+        super.onUpdate();
 
         this.motionX = 0;
         this.motionZ = 0;
+
+        if(SlashBladeHooks.onEntityBladeStandUpdateHooks(this)){
+            return;
+        }
 
         if(getType(this) == StandType.Wall) {
             this.motionY = 0.0;
@@ -336,5 +340,18 @@ public class EntityBladeStand extends Entity {
     @Override
     public boolean canRenderOnFire() {
         return false;
+    }
+
+    @Override
+    public boolean isPushedByWater() {
+        return false;
+    }
+
+    @Override
+    protected void kill() {
+        if(hasBlade() && this.posY < 0 ){
+            this.posY = 0;
+        }else
+            super.kill();
     }
 }
