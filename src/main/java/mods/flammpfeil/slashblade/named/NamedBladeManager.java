@@ -15,10 +15,10 @@ public class NamedBladeManager {
     static public List<ItemStack> namedbladeSouls = Lists.newArrayList();
 
     public static ItemStack getNamedSoul(Random rand){
-        return namedbladeSouls.get(rand.nextInt(namedbladeSouls.size()));
+        return namedbladeSouls.get(rand.nextInt(namedbladeSouls.size())).copy();
     }
     public static ItemStack getNamedSoulSequential(int num){
-        return namedbladeSouls.get(Math.abs(num) % namedbladeSouls.size());
+        return namedbladeSouls.get(Math.abs(num) % namedbladeSouls.size()).copy();
     }
 
     public static void registerBladeSoul(NBTTagCompound tag, String name){

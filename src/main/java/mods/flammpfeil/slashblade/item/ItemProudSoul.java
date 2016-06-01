@@ -188,11 +188,23 @@ public class ItemProudSoul extends Item {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
 
+        if(stack.getItemDamage() == 3 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
+            EntityBladeStand stand = (EntityBladeStand)entity;
+
+            if(stand.isBurning()) {
+                stand.extinguish();
+            }else {
+                stand.setFire(10);
+                player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            }
+        }
+
         if(player.worldObj.isRemote) return false;
 
         boolean using = false;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+
         if(stack.getItemDamage() == 0 && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
@@ -209,7 +221,6 @@ public class ItemProudSoul extends Item {
 
                     boolean isLottery = false;
                     if(stack.isItemEnchanted()){
-                        stack.getTagCompound().removeTag("ench");
                         isLottery = true;
                     }
 
@@ -241,7 +252,7 @@ public class ItemProudSoul extends Item {
             }
         }
 
-        if(stack.getItemDamage() == 2){
+        if(!using && stack.getItemDamage() == 2){
             if(ItemSlashBlade.SpecialAttackType.exists(tag))
             {
                 int saType = ItemSlashBlade.SpecialAttackType.get(tag);
@@ -285,7 +296,7 @@ public class ItemProudSoul extends Item {
             }
         }
 
-        if (stack.isItemEnchanted() && entity instanceof EntityBladeStand)
+        if (!using && stack.isItemEnchanted() && entity instanceof EntityBladeStand && !entity.isBurning())
         {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
@@ -349,6 +360,12 @@ public class ItemProudSoul extends Item {
             stack.stackSize--;
 
             player.renderBrokenItemStack(stack);
+
+            if (stack.stackSize <= 0)
+            {
+                player.setHeldItem(EnumHand.MAIN_HAND, (ItemStack)null);
+            }
+
 
             return true;
         }
@@ -419,6 +436,7 @@ public class ItemProudSoul extends Item {
                     entityItem.getEntityData().setDouble("LPX",entityItem.posX);
                     entityItem.getEntityData().setDouble("LPY",entityItem.posY);
                     entityItem.getEntityData().setDouble("LPZ",entityItem.posZ);
+
                     return true;
                 }
             }
