@@ -9,6 +9,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -77,6 +78,11 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
     protected void drawGuiContainerForegroundLayer()
     {
+        this.fontRendererObj.drawString(this.title,
+                this.guiLeft + this.xSize / 2 - this.fontRendererObj.getStringWidth(this.title) / 2,
+                this.guiTop + 6,
+                0x000000);//4210752);
+
         this.fontRendererObj.drawString(this.title,
                 this.guiLeft + this.xSize / 2 - this.fontRendererObj.getStringWidth(this.title) / 2,
                 this.guiTop + 6,
@@ -306,7 +312,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
         if (!this.checkMouseOver(0, 0, xSize, ySize, mouseX, mouseY))
         {
-            if(Mouse.isButtonDown(0))
+            if(Mouse.isButtonDown(0) || Keyboard.isKeyDown(Keyboard.KEY_BACK))
                 AchievementsExtendedGuiHandler.doClose = true;
         }
 

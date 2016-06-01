@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.gui;
 
+import com.google.common.collect.Sets;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -15,6 +16,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Furia on 15/02/12.
@@ -32,14 +34,15 @@ public class AchievementsExtendedGuiHandler {
     static public boolean doClose = false;
     static public boolean doOpen = false;
 
+    private Set<String> targetGui = Sets.newHashSet("GuiBetterAchievements");
+
     @SubscribeEvent
     public void guiRenderHandler(GuiScreenEvent.DrawScreenEvent.Post event){
-        if(!(event.getGui() instanceof GuiAchievements)){
+        if(!(event.getGui() instanceof GuiAchievements) && !targetGui.contains(event.getGui().getClass().getSimpleName()) ){
             visible = false;
+            AchievementList.currentMouseOver = null;
             return;
         }
-
-        GuiAchievements guiAchievements = (GuiAchievements)event.getGui();
 
         /*
         int currentPage = (Integer)ReflectionHelper.getPrivateValue(GuiAchievements.class,guiAchievements,"currentPage");
@@ -56,13 +59,15 @@ public class AchievementsExtendedGuiHandler {
                 }
             }
 
-            if(doClose || Keyboard.isKeyDown(Keyboard.KEY_BACK)){
+            if(doClose && !Mouse.isButtonDown(0)){
                 visible = false;
                 doClose = false;
+                AchievementList.currentMouseOver = null;
             }
 
             if(doOpen && !Mouse.isButtonDown(0)){
-                visible = true;
+                if(!doClose && AchievementList.currentMouseOver != null)
+                    visible = true;
                 doOpen = false;
             }
 
