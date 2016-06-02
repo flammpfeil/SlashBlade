@@ -922,6 +922,7 @@ public class ItemSlashBlade extends ItemSword {
                 double d1 = (double)MathHelper.cos(player.rotationYaw * 0.017453292F);
 
                 player.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
+                /*
                 if (player.worldObj instanceof WorldServer)
                 {
                     ((WorldServer)player.worldObj).spawnParticle(EnumParticleTypes.SWEEP_ATTACK
@@ -930,6 +931,7 @@ public class ItemSlashBlade extends ItemSword {
                             , d0, 0.0D, d1
                             , 0.5D, new int[0]);
                 }
+                */
             }
         }
 	}
@@ -1143,7 +1145,7 @@ public class ItemSlashBlade extends ItemSword {
             boolean disableMultiHit = rank <= 5;
             EntityDrive entityDrive = new EntityDrive(world, player, magicDamage, disableMultiHit, 90.0f - Math.abs(setCombo.swingDirection));
             if (entityDrive != null) {
-                entityDrive.setInitialSpeed(0.05f);
+                entityDrive.setInitialSpeed(0.1f);
                 entityDrive.setLifeTime(20);
 
                 EnumSet<SwordType> type = getSwordType(stack);

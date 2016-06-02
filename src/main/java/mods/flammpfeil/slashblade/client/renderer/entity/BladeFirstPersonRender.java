@@ -114,6 +114,12 @@ public class BladeFirstPersonRender {
                 GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 
                 Face.resetColor();
+
+                GL11.glTranslatef(0.0f, 0.25f, 0);
+                GL11.glRotatef(-25.0F, 0.9F, 0.1F, 0.0F);
+                GL11.glScalef(1.2F, 1.0F, 1.0F);
+                //GL11.glRotatef(8.0F, 0.0F, 1.0F, 0.0F);
+                /**/
                 render(player, partialTicks);
             }
 
