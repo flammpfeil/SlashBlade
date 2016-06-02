@@ -80,7 +80,17 @@ public class SlashBlade implements IFuelHandler{
     public static final String TinyBladeSoulStr = "tiny_bladesoul";
     public static final String CrystalBladeSoulStr = "crystal_bladesoul";
 
-    public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade");
+    public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade"){
+        private ItemStack stack = null;
+        @Override
+        public ItemStack getIconItemStack() {
+            if(stack == null)
+                stack = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato");
+
+            return stack;
+            //return super.getIconItemStack();
+        }
+    };
 
     public static final EventBus InitEventBus = new EventBus();
 

@@ -21,7 +21,7 @@ public class AchievementEx extends Achievement {
     @Override
     public String getDescription() {
 
-        if(content != null && Mouse.isButtonDown(0) && !AchievementsExtendedGuiHandler.visible){
+        if(content != null && Mouse.isButtonDown(0) && !AchievementsExtendedGuiHandler.visible) {
             AchievementList.currentMouseOver = this;
         }
 

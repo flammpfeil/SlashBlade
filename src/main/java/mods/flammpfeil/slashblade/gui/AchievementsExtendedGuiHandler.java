@@ -73,7 +73,7 @@ public class AchievementsExtendedGuiHandler {
 
             if(visible==false && AchievementList.currentMouseOver != null){
 
-                if(Mouse.isButtonDown(0)){
+                if(!Mouse.isButtonDown(0)){
                     Object content = AchievementList.currentMouseOver.content;
 
                     if(content == null)

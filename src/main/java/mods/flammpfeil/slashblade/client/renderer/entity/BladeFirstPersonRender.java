@@ -21,6 +21,7 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.glu.Project;
 
 import java.util.EnumSet;
@@ -31,6 +32,11 @@ import java.util.EnumSet;
 public class BladeFirstPersonRender {
     private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+
+    static public WavefrontObject trailModel = null;
+
+    static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.obj");
+    static public ResourceLocation textureLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.png");
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onRenderFirstPersonHand(RenderHandEvent event) {
@@ -210,6 +216,11 @@ public class BladeFirstPersonRender {
     }
 
     void render(EntityLivingBase entity, float partialTicks) {
+
+        if(trailModel == null){
+            trailModel = new WavefrontObject(modelLocation);
+        }
+
         boolean adjust = false;
 
         if (entity == null)
@@ -253,6 +264,8 @@ public class BladeFirstPersonRender {
 
         boolean isBroken = swordType.contains(ItemSlashBlade.SwordType.Broken);
         ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
+        int color = 0x3333FF;
+
         if (stack.hasTagCompound()) {
             NBTTagCompound tag = stack.getTagCompound();
 
@@ -262,6 +275,12 @@ public class BladeFirstPersonRender {
                 ax = tag.getFloat(ItemSlashBlade.adjustXStr) / 10.0f;
                 ay = -tag.getFloat(ItemSlashBlade.adjustYStr) / 10.0f;
                 az = -tag.getFloat(ItemSlashBlade.adjustZStr) / 10.0f;
+            }
+
+            if (ItemSlashBlade.SummonedSwordColor.exists(tag)) {
+                color = ItemSlashBlade.SummonedSwordColor.get(tag);
+                if(color < 0)
+                    color = -color;
             }
         }
 
@@ -487,6 +506,38 @@ public class BladeFirstPersonRender {
                 if (!combo.useScabbard) {
                     model.renderPart(renderTarget + "_unsheathe_luminous");
                 }
+
+                /**/
+                if(!combo.useScabbard
+                        && (combo != ItemSlashBlade.ComboSequence.Noutou)
+                        && (combo != ItemSlashBlade.ComboSequence.HiraTuki)) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.depthMask(false);
+                    Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
+                    double alpha = Math.sin(progress * Math.PI);
+                    GlStateManager.scale(1, alpha * 2.0, 1);
+                    GlStateManager.rotate((float)(10.0 * (1.0 - alpha)),0,0,1);
+
+                    OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+
+                    GlStateManager.glBlendEquation(GL14.GL_FUNC_REVERSE_SUBTRACT);
+
+                    Face.setColor((0xFFFFFF - color) | (0xFF000000 & (int)(0x66000000 * alpha)));
+                    trailModel.renderAll();
+
+                    GlStateManager.glBlendEquation(GL14.GL_FUNC_ADD);
+
+                    Face.setColor((color) | (0xFF000000 & (int)(0xFF000000 * alpha)));
+                    trailModel.renderAll();
+
+                    Face.resetColor();
+
+                    GlStateManager.depthMask(true);
+
+                    Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
+                    GlStateManager.popMatrix();
+                }
+                /**/
 
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
 

@@ -255,7 +255,7 @@ public class AchievementList {
         {
             parent.push(registerCraftingAchievement("brokenYamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato.broken"), net.minecraft.stats.AchievementList.THE_END));
             {
-                parent.push(registerCraftingAchievement("yamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato"), parent.peek()).setSpecial());
+                parent.push(registerCraftingAchievement("yamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato"), null/*parent.peek()*/).setSpecial());
                 setContent(parent.peek(), "flammpfeil.slashblade.named.yamato");
                 parent.pop();
             }
@@ -448,7 +448,7 @@ public class AchievementList {
             @Override
             public String getName() {
                 return I18n.translateToLocal("flammpfeil.slashblade");//super.getName());
-            }
+    }
         });
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.util.EnumSet;
 
@@ -28,6 +29,12 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
     private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+
+
+    static public WavefrontObject trailModel = null;
+
+    static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.obj");
+    static public ResourceLocation textureLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.png");
 
     private final RenderLivingBase<?> render;
 
@@ -54,6 +61,10 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
     @Override
     public void doRenderLayer(EntityLivingBase entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ticksExisted, float yawDiff, float rotationPitch, float scale) {
+        if(trailModel == null){
+            trailModel = new WavefrontObject(modelLocation);
+        }
+
         GlStateManager.pushMatrix();
 
         GL11.glScalef(1.0F, 1.0F, 1.0F);
@@ -149,17 +160,17 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             GL11.glShadeModel(GL11.GL_SMOOTH);
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
-            //‘ÌŠi•â³ config‚æ‚è
+            //ï¿½ÌŠiï¿½â³ configï¿½ï¿½ï¿½
             GL11.glTranslatef(ax, ay, az);
 
             switch (renderType) {
                 case 2: //pso2
-                    //˜ˆÊ’u‚Ö
+                    //ï¿½ï¿½ï¿½Ê’uï¿½ï¿½
                     GL11.glTranslatef(0, 0.5f, 0.25f);
 
 
                 {
-                    //‘S‘ÌƒXƒP[ƒ‹•â³
+                    //ï¿½Sï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½â³
                     float scale = (float) (0.075f);
                     GL11.glScalef(scale, scale, scale);
                 }
@@ -170,19 +181,19 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 break;
 
                 case 3: //ninja
-                    //˜ˆÊ’u‚Ö
+                    //ï¿½ï¿½ï¿½Ê’uï¿½ï¿½
                     GL11.glTranslatef(0, 0.4f, 0.25f);
 
 
                 {
-                    //‘S‘ÌƒXƒP[ƒ‹•â³
+                    //ï¿½Sï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½â³
                     float scale = (float) (0.075f);
                     GL11.glScalef(scale, scale, scale);
                 }
     /*
-                        //æ‚ğŒã‚ë‚Ö
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                         GL11.glRotatef(90.0f, 1, 0, 0);
-                        //æ‚ğ‰¡‚Ö
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     */
                 GL11.glRotatef(-30.0f, 0, 0, 1);
 
@@ -194,23 +205,23 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
 
                 default:
-                    //˜ˆÊ’u‚Ö
+                    //ï¿½ï¿½ï¿½Ê’uï¿½ï¿½
                     GL11.glTranslatef(0.25f, 0.4f, -0.5f);
 
 
                 {
-                    //‘S‘ÌƒXƒP[ƒ‹•â³
+                    //ï¿½Sï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½â³
                     float scale = (float) (0.075f);
                     GL11.glScalef(scale, scale, scale);
                 }
 
-                //æ‚ğŒã‚ë‚Ö
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 GL11.glRotatef(60.0f, 1, 0, 0);
 
-                //æ‚ğŠO‚Ö
+                //ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½
                 GL11.glRotatef(-20.0f, 0, 0, 1);
 
-                //n‚ğ‰º‚ÉŒü‚¯‚éi‘¾“·‚µ
+                //ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½ÉŒï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 GL11.glRotatef(90.0f, 0, 1.0f, 0);
                 break;
             }
@@ -398,7 +409,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack);
 
         if(swordType.contains(ItemSlashBlade.SwordType.NoScabbard)){
-            //todo :LayerHeldItem“I‚Érendering‚·‚é
+            //todo :LayerHeldItemï¿½Iï¿½ï¿½renderingï¿½ï¿½ï¿½ï¿½
             doHeldItemRenderLayer(entity,swordType,model);
             return;
         }
@@ -425,6 +436,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         boolean isBroken = swordType.contains(ItemSlashBlade.SwordType.Broken);
         ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
+        int color = 0x3333FF;
         if(stack.hasTagCompound()){
             NBTTagCompound tag = stack.getTagCompound();
 
@@ -434,6 +446,12 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
                 ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
                 az = -tag.getFloat(ItemSlashBlade.adjustZStr)/10.0f;
+            }
+
+            if (ItemSlashBlade.SummonedSwordColor.exists(tag)) {
+                color = ItemSlashBlade.SummonedSwordColor.get(tag);
+                if(color < 0)
+                    color = -color;
             }
         }
 
@@ -490,26 +508,26 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
-            //‘ÌŠi•â³ config‚æ‚è
+            //ï¿½ÌŠiï¿½â³ configï¿½ï¿½ï¿½
             GL11.glTranslatef(ax,ay,az);
 
-            //˜ˆÊ’u‚Ö
+            //ï¿½ï¿½ï¿½Ê’uï¿½ï¿½
             GL11.glTranslatef(0.25f,0.4f,-0.5f);
 
 
             {
-                //‘S‘ÌƒXƒP[ƒ‹•â³
+                //ï¿½Sï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½â³
                 float scale = (float)(0.075f);
                 GL11.glScalef(scale, scale, scale);
             }
 
-            //æ‚ğŒã‚ë‚Ö
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             GL11.glRotatef(60.0f, 1, 0, 0);
 
-            //æ‚ğŠO‚Ö
+            //ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½
             GL11.glRotatef(-20.0f, 0, 0, 1);
 
-            //n‚ğ‰º‚ÉŒü‚¯‚éi‘¾“·‚µ
+            //ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½ÉŒï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             GL11.glRotatef(90.0f, 0, 1.0f, 0);
 
 
@@ -659,6 +677,38 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             if(!combo.useScabbard){
                 model.renderPart(renderTarget + "_unsheathe_luminous");
             }
+
+            /**/
+            if(!combo.useScabbard
+                    && (combo != ItemSlashBlade.ComboSequence.Noutou)
+                    && (combo != ItemSlashBlade.ComboSequence.HiraTuki)) {
+                GlStateManager.pushMatrix();
+                GlStateManager.depthMask(false);
+                this.render.bindTexture(textureLocation);
+                double alpha = Math.sin(progress * Math.PI);
+                GlStateManager.scale(1, alpha * 2.0, 1);
+                GlStateManager.rotate((float)(10.0 * (1.0 - alpha)),0,0,1);
+
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+
+                GlStateManager.glBlendEquation(GL14.GL_FUNC_REVERSE_SUBTRACT);
+
+                Face.setColor((0xFFFFFF - color) | (0xFF000000 & (int)(0x44000000 * alpha)));
+                trailModel.renderAll();
+
+                GlStateManager.glBlendEquation(GL14.GL_FUNC_ADD);
+
+                Face.setColor((color) | (0xFF000000 & (int)(0x66000000 * alpha)));
+                trailModel.renderAll();
+
+                Face.resetColor();
+
+                GlStateManager.depthMask(true);
+
+                this.render.bindTexture(resourceTexture);
+                GlStateManager.popMatrix();
+            }
+            /**/
 
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
 
