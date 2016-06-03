@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.stats;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.translation.I18n;
@@ -255,7 +256,7 @@ public class AchievementList {
         {
             parent.push(registerCraftingAchievement("brokenYamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato.broken"), net.minecraft.stats.AchievementList.THE_END));
             {
-                parent.push(registerCraftingAchievement("yamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato"), null/*parent.peek()*/).setSpecial());
+                parent.push(registerCraftingAchievement("yamato", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato"), parent.peek()).setSpecial());
                 setContent(parent.peek(), "flammpfeil.slashblade.named.yamato");
                 parent.pop();
             }
@@ -447,7 +448,10 @@ public class AchievementList {
         AchievementPage.registerAchievementPage(new AchievementPage(SlashBlade.modname, achievements.values().toArray(new Achievement[]{})) {
             @Override
             public String getName() {
-                return I18n.translateToLocal("flammpfeil.slashblade");//super.getName());
+                if(AchievementsExtendedGuiHandler.nowTargetGui)
+                    return super.getName();
+                else
+                    return I18n.translateToLocal("flammpfeil.slashblade");//super.getName());
     }
         });
     }

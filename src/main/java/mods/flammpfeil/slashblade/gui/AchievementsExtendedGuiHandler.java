@@ -36,6 +36,14 @@ public class AchievementsExtendedGuiHandler {
 
     private Set<String> targetGui = Sets.newHashSet("GuiBetterAchievements");
 
+
+    static public boolean nowTargetGui = false;
+
+    @SubscribeEvent
+    public void guiRenderPreHandler(GuiScreenEvent.DrawScreenEvent.Pre event){
+        nowTargetGui = targetGui.contains(event.getGui().getClass().getSimpleName());
+    }
+
     @SubscribeEvent
     public void guiRenderHandler(GuiScreenEvent.DrawScreenEvent.Post event){
         if(!(event.getGui() instanceof GuiAchievements) && !targetGui.contains(event.getGui().getClass().getSimpleName()) ){

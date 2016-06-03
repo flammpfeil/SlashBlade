@@ -10,11 +10,13 @@ import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -381,6 +383,8 @@ public class SlashBlade implements IFuelHandler{
 */
 
         InitEventBus.post(new LoadEvent.InitEvent(evt));
+
+        FMLInterModComms.sendMessage("BetterAchievements", SlashBlade.modname, SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato"));
     }
 
     @EventHandler
