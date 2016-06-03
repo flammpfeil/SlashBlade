@@ -326,7 +326,7 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
         MinecraftForge.EVENT_BUS.register(new AnvilEventHandler());
 
-        MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
+        //MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
         MinecraftForge.EVENT_BUS.register(new TossEventHandler());
 
         //ability
