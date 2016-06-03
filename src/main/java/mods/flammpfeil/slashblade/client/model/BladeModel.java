@@ -27,7 +27,11 @@ import net.minecraftforge.client.model.ModelLoader;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Color3b;
+import javax.vecmath.Color4b;
+import javax.vecmath.Color4f;
 import javax.vecmath.Matrix4f;
+import java.awt.*;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -171,6 +175,40 @@ public class BladeModel implements IPerspectiveAwareModel {
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
 
         OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+        if(renderPath == 1 && type == ItemCameraTransforms.TransformType.GUI){
+            model = BladeModelManager.getInstance().getModel(BladeModelManager.resourceDurabilityModel);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(BladeModelManager.resourceDurabilityTexture);
+
+            double par = itemBlade.getDurabilityForDisplay(targetStack);
+
+            GlStateManager.translate(0.0F, 0.0F, 0.1f);
+
+            Color4f aCol = new Color4f(0.25f,0.25f,0.25f,1.0f);
+            Color4f bCol = new Color4f(new Color(0xA52C63));
+            aCol.interpolate(bCol,(float)par);
+
+            Face.setColor(aCol.get().getRGB());
+            model.renderPart("base");
+            Face.resetColor();
+
+            boolean isBroken = types.contains(ItemSlashBlade.SwordType.Broken);
+
+            if(isBroken){
+                GL11.glMatrixMode(GL11.GL_TEXTURE);
+                GlStateManager.translate(0.0F, 0.5F, 0.0f);
+                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            }
+
+            GlStateManager.translate(0.0F, 0.0F, -2.0f * itemBlade.getDurabilityForDisplay(targetStack));
+            model.renderPart("color");
+
+            if(isBroken){
+                GL11.glMatrixMode(GL11.GL_TEXTURE);
+                GlStateManager.loadIdentity();
+                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            }
+        }
 
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_LIGHTING);

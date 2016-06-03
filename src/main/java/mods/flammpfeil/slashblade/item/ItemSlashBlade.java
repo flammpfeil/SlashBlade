@@ -3105,4 +3105,9 @@ public class ItemSlashBlade extends ItemSword {
     public int getMaxItemUseDuration(ItemStack stack) {
         return 72000;
     }
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return false;//super.showDurabilityBar(stack);
+    }
 }
