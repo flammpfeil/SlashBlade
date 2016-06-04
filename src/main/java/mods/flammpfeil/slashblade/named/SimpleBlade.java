@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.init.Enchantments;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -110,6 +111,9 @@ public class SimpleBlade {
                 '#', "ingotSteel",
                 'G', Items.GOLD_INGOT,
                 'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+
+        ItemStack white = new ItemStack(SlashBlade.bladeWhiteSheath, 1);
+        white.addEnchantment(Enchantments.UNBREAKING,4);
         SlashBlade.addRecipe("slashbladeWhite",
                 new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1),
                 "  #",
