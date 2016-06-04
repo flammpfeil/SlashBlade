@@ -1,7 +1,9 @@
 package mods.flammpfeil.slashblade.named;
 
 import com.google.common.collect.Lists;
+import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -33,5 +35,17 @@ public class NamedBladeManager {
         crystal.setStackDisplayName(name + " soul");
 
         namedbladeSouls.add(crystal);
+    }
+
+    public static void registerBladeSoul(NBTTagCompound tag, String name, boolean addCreativeTab){
+        registerBladeSoul(tag,name);
+
+        if(addCreativeTab){
+            ItemStack blade = new ItemStack(SlashBlade.bladeNamed, 1, 0);
+            blade.setTagCompound((NBTTagCompound)tag.copy());
+
+            SlashBlade.registerCustomItemStack(blade.getUnlocalizedName(), blade);
+            ItemSlashBladeNamed.NamedBlades.add(blade.getUnlocalizedName());
+        }
     }
 }
