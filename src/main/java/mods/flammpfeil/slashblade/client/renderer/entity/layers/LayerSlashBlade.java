@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.client.renderer.entity.layers;
 
+import mods.flammpfeil.slashblade.ability.ProjectileBarrier;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
@@ -430,6 +431,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         else
             charge = 0;
 
+        boolean doProjectileBarrier = ProjectileBarrier.isAvailable(entity, stack, entity.getItemInUseCount());
+
         float ax = 0;
         float ay = 0;
         float az = 0;
@@ -642,6 +645,27 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
 
                 progress = tmp;
+            }else{
+                if(doProjectileBarrier) {
+
+                    GL11.glRotatef(90.0f, 0, -1, 0);
+                    GL11.glRotatef(-20.0f, 0, 0, -1);
+                    GL11.glRotatef(60.0f, -1, 0, 0);
+
+                    if(entity.isSneaking())
+                        GL11.glRotatef(30.0f, -1, 0, 0);
+
+                    GL11.glTranslatef(-7.0f, 0.0f, -4.0f);
+
+                    final int span = 7;
+                    float rotParTicks = 360.0f / (float)span;
+                    rotParTicks *= (entity.ticksExisted % span) + partialTicks;
+                    GL11.glRotatef(rotParTicks, 0, 0, -1);
+
+                    GL11.glTranslatef(0.0f, -3.0f, 0.0f);
+
+                    progress = 0.5f;
+                }
             }
 
             if(isBroken)
@@ -681,12 +705,19 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             /**/
             if(!combo.useScabbard
                     && (combo != ItemSlashBlade.ComboSequence.Noutou)
-                    && (combo != ItemSlashBlade.ComboSequence.HiraTuki)) {
+                    && (combo != ItemSlashBlade.ComboSequence.HiraTuki)
+                    || doProjectileBarrier) {
                 GlStateManager.pushMatrix();
                 GlStateManager.depthMask(false);
                 this.render.bindTexture(textureLocation);
                 double alpha = Math.sin(progress * Math.PI);
-                GlStateManager.scale(1, alpha * 2.0, 1);
+                if(doProjectileBarrier)
+                    GlStateManager.scale(1, 0.8, 1);
+                else if(isBroken)
+                    GlStateManager.scale(0.4, 0.5, 1);
+                else
+                    GlStateManager.scale(1, alpha * 2.0, 1);
+
                 GlStateManager.rotate((float)(10.0 * (1.0 - alpha)),0,0,1);
 
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);

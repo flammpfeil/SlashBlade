@@ -1,9 +1,12 @@
 package mods.flammpfeil.slashblade.ability;
 
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.server.SPacketAnimation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -21,27 +24,46 @@ import java.util.List;
  * Created by Furia on 15/06/20.
  */
 public class ProjectileBarrier {
-    @SubscribeEvent
-    public void onUpdate(LivingEntityUseItemEvent.Tick event){
-        EntityLivingBase player = event.getEntityLiving();
-        if(player == null) return;
-        if(player.getActiveItemStack() == null) return;
-        ItemStack stack = event.getItem();
-        if(stack == null) return;
-        if(!(stack.getItem() instanceof ItemSlashBlade)) return;
-        if(!stack.isItemEnchanted()) return;
+    static public boolean isAvailable(EntityLivingBase owner ,ItemStack stack ,int duration){
 
+        if(owner == null) return false;
+        if(owner.getActiveItemStack() == null) return false;
+        if(stack == null) return false;
+        if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
+        if(!stack.isItemEnchanted()) return false;
 
-        int ticks = stack.getMaxItemUseDuration() - event.getDuration();
-        if(ticks < ItemSlashBlade.RequiredChargeTick) return;
+        if(!owner.onGround)
+            return false;
+
+        if(!owner.isSneaking())
+            return false;
+
+        int ticks = stack.getMaxItemUseDuration() - duration;
+        if(ticks < ItemSlashBlade.RequiredChargeTick) return false;
+
+        if(((ItemSlashBlade)stack.getItem()).getSwordType(stack).contains(ItemSlashBlade.SwordType.Broken))
+            return false;
 
         int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, stack);
-        if(level <= 0) return;
+        if(level <= 0) return false;
 
-        expandBarrier(player);
+        return true;
+    }
+
+    @SubscribeEvent
+    public void onUpdate(LivingEntityUseItemEvent.Tick event){
+        if(isAvailable(event.getEntityLiving(), event.getItem(), event.getDuration()))
+
+        expandBarrier(event.getEntityLiving());
     }
 
     private void expandBarrier(EntityLivingBase player){
+
+        if(player.ticksExisted % 7 == 0)
+            player.worldObj.playSound(null, player.posX, player.posY, player.posZ
+                    , SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS,0.45f,0.5f);
+
+
         AxisAlignedBB bb = player.getEntityBoundingBox().expand(2,2,2);
         List<Entity> list = player.worldObj.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
         for(Entity target : list){
@@ -60,13 +82,18 @@ public class ProjectileBarrier {
 
     private void destructEntity(EntityLivingBase player, Entity target){
         //EnumParticleTypes.CRIT_MAGIC
-        if(player.worldObj instanceof WorldServer)
-            ((WorldServer)player.worldObj).getEntityTracker().sendToAllTrackingEntity(player, new SPacketAnimation(target, 5));
-
+        if(player.worldObj instanceof WorldServer) {
+            ((WorldServer) player.worldObj).getEntityTracker().sendToTrackingAndSelf(player, new SPacketAnimation(target, 5));
+            player.worldObj.playSound(null, player.posX, player.posY, player.posZ
+                    , SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS,0.8f,1.5f + player.getRNG().nextFloat() * 0.5f);
+        }
         /*
         if(player instanceof EntityPlayer)
             ((EntityPlayer)player).onEnchantmentCritical(target);
         */
+
+        ItemSlashBlade.damageItem(player.getHeldItemMainhand(), 1, player);
+
         target.motionX = 0;
         target.motionY = 0;
         target.motionZ = 0;

@@ -1539,8 +1539,11 @@ public class ItemSlashBlade extends ItemSword {
 					if(swordType.contains(SwordType.Broken)){
 						repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
                         ItemStack tinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
+                        ItemStack tinySoulHasEmptyTag = tinySoul.copy();
+                        tinySoulHasEmptyTag.setTagCompound(new NBTTagCompound());
+
                         addProudSoul = 20;
-                        if(!InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false))
+                        if(!(InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false) || InventoryUtility.consumeInventoryItem(el.inventory,tinySoulHasEmptyTag,false)))
                             descLv = 1;
 					}else{
 						repair = 1;
