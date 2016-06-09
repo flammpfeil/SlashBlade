@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.stats;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import org.lwjgl.input.Mouse;
@@ -20,10 +21,8 @@ public class AchievementEx extends Achievement {
     @Override
     public String getDescription() {
 
-        if(content != null && Mouse.isButtonDown(0)){
+        if(content != null && Mouse.isButtonDown(0) && !AchievementsExtendedGuiHandler.visible) {
             AchievementList.currentMouseOver = this;
-        }else{
-            AchievementList.currentMouseOver = null;
         }
 
         return super.getDescription();

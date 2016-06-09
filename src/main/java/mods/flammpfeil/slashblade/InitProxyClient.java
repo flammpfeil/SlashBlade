@@ -10,6 +10,8 @@ import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.BladeStandRender;
 import mods.flammpfeil.slashblade.client.renderer.ItemRendererSpecialMaterial;
 import mods.flammpfeil.slashblade.client.renderer.RenderPhantomSwordBase;
+import mods.flammpfeil.slashblade.client.renderer.entity.GrimGripKeyRender;
+import mods.flammpfeil.slashblade.client.renderer.entity.GrimGripRender;
 import mods.flammpfeil.slashblade.client.renderer.entity.RenderSummonedBlade;
 import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
@@ -81,6 +83,11 @@ public class InitProxyClient extends InitProxy{
         RenderingRegistry.registerEntityRenderingHandler(EntitySummonedBlade.class, new RenderSummonedBlade());
 
         RenderingRegistry.registerEntityRenderingHandler(EntityBladeStand.class, new BladeStandRender());
+
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityGrimGrip.class, new GrimGripRender());
+        RenderingRegistry.registerEntityRenderingHandler(EntityGrimGripKey.class, new GrimGripKeyRender());
+
 
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){
             @Override

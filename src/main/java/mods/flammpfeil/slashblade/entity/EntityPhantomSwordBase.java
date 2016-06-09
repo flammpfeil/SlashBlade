@@ -679,9 +679,10 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
 
     protected void attackEntity(Entity target){
 
-
         if(this.thrower != null)
             this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
+
+        mountEntity(target);
 
         if(!this.worldObj.isRemote){
             float magicDamage = Math.max(1.0f, AttackLevel);
@@ -703,8 +704,6 @@ public class EntityPhantomSwordBase extends Entity implements IProjectile,IThrow
                 ((ItemSlashBlade)blade.getItem()).setDaunting(((EntityLivingBase) target));
             }
         }
-
-        mountEntity(target);
     }
 
     protected void blastAttackEntity(Entity target){

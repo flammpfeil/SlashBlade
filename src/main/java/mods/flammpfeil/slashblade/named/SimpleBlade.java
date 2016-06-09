@@ -8,6 +8,7 @@ import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeUpgradeBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -99,8 +100,11 @@ public class SimpleBlade {
                 '#', "ingotSteel",
                 'G', Items.gold_ingot,
                 'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+
+        ItemStack white = new ItemStack(SlashBlade.bladeWhiteSheath, 1);
+        white.addEnchantment(Enchantment.unbreaking,4);
         SlashBlade.addRecipe("slashbladeWhite",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1),
+                new RecipeUpgradeBlade(white,
                 "  #",
                 " # ",
                 "XG ",

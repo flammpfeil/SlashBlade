@@ -4,6 +4,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -16,6 +18,8 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
+import java.util.Random;
 
 /**
  * Created by Furia on 14/11/08.
@@ -171,7 +175,16 @@ public class Doutanuki {
     @SubscribeEvent
     public void specialSpawn(LivingSpawnEvent.SpecialSpawn event){
         if(event.entityLiving instanceof EntityZombie){
-            if (spawnRate > event.entityLiving.getRNG().nextFloat())
+            EntityLivingBase entity = event.entityLiving;
+
+            if(entity.getHeldItem() != null)
+                return;
+
+            float difficulty = entity.worldObj.func_147462_b(entity.posX,entity.posY,entity.posZ);
+
+            Random rand = entity.getRNG();
+
+            if (rand.nextFloat() < Math.min(1.0f, (spawnRate * (1.0 + difficulty))))
             {
 
                 ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid , name);
@@ -179,18 +192,20 @@ public class Doutanuki {
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
 
-                if (noSheathRate > event.entityLiving.getRNG().nextFloat())
+                if (rand.nextFloat() < Math.min(1.0f, (noSheathRate * (1.0 - (difficulty * 0.5f)))))
                     ItemSlashBlade.IsNoScabbard.set(tag,true);
 
-                if(isBrokenRate > event.entityLiving.getRNG().nextFloat())
+                if(rand.nextFloat() < Math.min(1.0f, (isBrokenRate * (1.0 - (difficulty * 0.5f)))))
                     ItemSlashBlade.IsBroken.set(tag,true);
 
 
+                ItemSlashBlade.KillCount.set(tag,rand.nextInt(200));
 
-                ItemSlashBlade.KillCount.set(tag,event.entityLiving.getRNG().nextInt(200));
-
-                if (0.1 > event.entityLiving.getRNG().nextFloat())
-                    ItemSlashBlade.KillCount.add(tag,1000);
+                if (0.1 + (0.2 * difficulty) > rand.nextFloat()) {
+                    ItemSlashBlade.KillCount.add(tag, 1000);
+                    ItemSlashBlade.IsSealed.set(tag,false);
+                    blade.addEnchantment(Enchantment.unbreaking, 5);
+                }
 
 
                 event.entityLiving.setCurrentItemOrArmor(0, blade);

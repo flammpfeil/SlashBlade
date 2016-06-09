@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.gui;
 
+import com.google.common.collect.Sets;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -16,6 +17,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Furia on 15/02/12.
@@ -33,14 +35,15 @@ public class AchievementsExtendedGuiHandler {
     static public boolean doClose = false;
     static public boolean doOpen = false;
 
+    private Set<String> targetGui = Sets.newHashSet("GuiBetterAchievements");
+
     @SubscribeEvent
     public void guiRenderHandler(GuiScreenEvent.DrawScreenEvent.Post event){
-        if(!(event.gui instanceof GuiAchievements)){
+        if(!(event.gui instanceof GuiAchievements) && !targetGui.contains(event.gui.getClass().getSimpleName()) ){
             visible = false;
+            AchievementList.currentMouseOver = null;
             return;
         }
-
-        GuiAchievements guiAchievements = (GuiAchievements)event.gui;
 
         /*
         int currentPage = (Integer)ReflectionHelper.getPrivateValue(GuiAchievements.class,guiAchievements,"currentPage");
@@ -57,19 +60,21 @@ public class AchievementsExtendedGuiHandler {
                 }
             }
 
-            if(doClose || Keyboard.isKeyDown(Keyboard.KEY_BACK)){
+            if(doClose && !Mouse.isButtonDown(0)){
                 visible = false;
                 doClose = false;
+                AchievementList.currentMouseOver = null;
             }
 
             if(doOpen && !Mouse.isButtonDown(0)){
-                visible = true;
+                if(!doClose && AchievementList.currentMouseOver != null)
+                    visible = true;
                 doOpen = false;
             }
 
             if(visible==false && AchievementList.currentMouseOver != null){
 
-                if(Mouse.isButtonDown(0)){
+                if(!Mouse.isButtonDown(0)){
                     Object content = AchievementList.currentMouseOver.content;
 
                     if(content == null)

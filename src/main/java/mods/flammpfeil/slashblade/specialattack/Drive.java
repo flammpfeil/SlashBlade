@@ -41,7 +41,7 @@ public class Drive extends SpecialAttackBase {
 
             final int cost = -10;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
-                stack.damageItem(5, player);
+                ItemSlashBlade.damageItem(stack, 5, player);
             }
 
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();

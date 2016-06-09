@@ -6,16 +6,15 @@ import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import mods.flammpfeil.slashblade.ability.ProjectileBarrier;
 import mods.flammpfeil.slashblade.ItemSlashBlade.ComboSequence;
 import mods.flammpfeil.slashblade.ItemSlashBlade.SwordType;
 import mods.flammpfeil.slashblade.client.model.obj.Util;
+import mods.flammpfeil.slashblade.client.renderer.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -37,11 +36,12 @@ import net.minecraftforge.common.ForgeModContainer;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.mapped.CacheUtil;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import javax.vecmath.Color4f;
+import java.awt.*;
 import java.nio.DoubleBuffer;
 import java.util.EnumSet;
 import java.util.Map;
@@ -55,6 +55,17 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
     private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
+
+    static public IModelCustom trailModel = null;
+
+    static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.obj");
+    static public ResourceLocation textureLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.png");
+
+    static public IModelCustom damageModel = null;
+
+    public static final ResourceLocation resourceDurabilityModel = new ResourceLocation("flammpfeil.slashblade","model/util/durability.obj");
+    public static final ResourceLocation resourceDurabilityTexture = new ResourceLocation("flammpfeil.slashblade","model/util/durability.png");
+
     static IModelCustom modelBlade = null;
 
     static ResourceLocation resourceModel = new ResourceLocation("flammpfeil.slashblade","model/blade.obj");
@@ -64,6 +75,18 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             modelBlade = AdvancedModelLoader.loadModel(resourceModel);
             if(modelBlade instanceof WavefrontObject){
                 Util.replaceFace((WavefrontObject)modelBlade);
+            }
+        }
+        if(trailModel == null){
+            trailModel = AdvancedModelLoader.loadModel(modelLocation);
+            if(trailModel instanceof WavefrontObject){
+                Util.replaceFace((WavefrontObject)trailModel);
+            }
+        }
+        if(damageModel == null){
+            damageModel = AdvancedModelLoader.loadModel(resourceDurabilityModel);
+            if(damageModel instanceof WavefrontObject){
+                Util.replaceFace((WavefrontObject)damageModel);
             }
         }
     }
@@ -152,6 +175,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         EnumSet<SwordType> types = ((ItemSlashBlade)item.getItem()).getSwordType(item);
         isBroken = types.contains(SwordType.Broken);
 
+        ItemSlashBlade itemBlade = (ItemSlashBlade)item.getItem();
+
         IModelCustom model = getModel(ItemSlashBlade.getModelLocation(item));
         ResourceLocation resourceTexture = ((ItemSlashBlade)item.getItem()).getModelTexture(item);
 
@@ -225,6 +250,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                     GL11.glRotatef(-3.0F, 1.0F, 0.0F, 0.0f);
                     GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 
+                    //blur good looking angle
+                    GL11.glTranslatef(0.0f, 0.25f, 0);
+                    GL11.glRotatef(-25.0F, 0.9F, 0.1F, 0.0F);
+                    GL11.glScalef(1.2F, 1.0F, 1.0F);
+
+
                     float partialRenderTick = ticks;
                     EntityPlayer player = (EntityPlayer)data[1];
                     render(player, partialRenderTick,false);
@@ -279,6 +310,38 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
 
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+            if(type == ItemRenderType.INVENTORY){
+                engine().bindTexture(resourceDurabilityTexture);
+
+                double par = itemBlade.getDurabilityForDisplay(item);
+
+                GlStateManager.translate(0.0F, 0.0F, 0.1f);
+
+                Color4f aCol = new Color4f(0.25f,0.25f,0.25f,1.0f);
+                Color4f bCol = new Color4f(new Color(0xA52C63));
+                aCol.interpolate(bCol,(float)par);
+
+                GlStateManager.color(aCol.x,aCol.y,aCol.z,aCol.w);
+
+                damageModel.renderPart("base");
+                GlStateManager.color(1,1,1,1);
+
+                if(isBroken){
+                    GL11.glMatrixMode(GL11.GL_TEXTURE);
+                    GlStateManager.translate(0.0F, 0.5F, 0.0f);
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                }
+
+                GlStateManager.translate(0.0F, 0.0F, (float)(-2.0 * itemBlade.getDurabilityForDisplay(item)));
+                damageModel.renderPart("color");
+
+                if(isBroken){
+                    GL11.glMatrixMode(GL11.GL_TEXTURE);
+                    GlStateManager.loadIdentity();
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                }
+            }
 
             GL11.glDisable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_LIGHTING);
@@ -792,9 +855,15 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
         else
             charge = 0;
 
+        boolean doProjectileBarrier = false;
+        if(player instanceof EntityPlayer)
+            doProjectileBarrier = ProjectileBarrier.isAvailable(player, item, ((EntityPlayer) player).getItemInUseCount());
+
         float ax = 0;
         float ay = 0;
         float az = 0;
+
+        int color = 0x3333FF;
 
 		boolean isBroken = swordType.contains(SwordType.Broken);
 		ItemSlashBlade.ComboSequence combo = ComboSequence.None;
@@ -807,6 +876,12 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
                 ay = -tag.getFloat(ItemSlashBlade.adjustYStr)/10.0f;
                 az = -tag.getFloat(ItemSlashBlade.adjustZStr)/10.0f;
+            }
+
+            if (ItemSlashBlade.SummonedSwordColor.exists(tag)) {
+                color = ItemSlashBlade.SummonedSwordColor.get(tag);
+                if(color < 0)
+                    color = -color;
             }
 		}
 
@@ -996,6 +1071,24 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
 
 					progress = tmp;
+                }else{
+                    if(doProjectileBarrier) {
+
+                        GL11.glRotatef(90.0f, 0, -1, 0);
+                        GL11.glRotatef(-20.0f, 0, 0, -1);
+                        GL11.glRotatef(60.0f, -1, 0, 0);
+
+                        GL11.glTranslatef(-14.0f, 0.0f, 0.0f);
+
+                        final int span = 7;
+                        float rotParTicks = 360.0f / (float)span;
+                        rotParTicks *= (player.ticksExisted % span) + partialRenderTick;
+                        GL11.glRotatef(rotParTicks, 0, 0, -1);
+
+                        GL11.glTranslatef(0.0f, -3.0f, 0.0f);
+
+                        progress = 0.5f;
+                    }
 				}
 
             if(isBroken)
@@ -1031,6 +1124,57 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             if(!combo.useScabbard){
                 model.renderPart(renderTarget + "_unsheathe_luminous");
             }
+
+                /**/
+            if(!combo.useScabbard
+                    && (combo != ItemSlashBlade.ComboSequence.Noutou)
+                    && (combo != ItemSlashBlade.ComboSequence.HiraTuki)
+                    || doProjectileBarrier) {
+                GlStateManager.pushMatrix();
+                GlStateManager.depthMask(false);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
+                double alpha = Math.sin(progress * Math.PI);
+                if(doProjectileBarrier)
+                    GlStateManager.scale(1, 0.8f, 1);
+                else if(isBroken)
+                    GlStateManager.scale(0.4f, 0.5f, 1);
+                else
+                    GlStateManager.scale(1, (float)(alpha * 2.0), 1);
+                GlStateManager.rotate((float)(10.0 * (1.0 - alpha)),0,0,1);
+
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+
+                GlStateManager.glBlendEquation(GL14.GL_FUNC_REVERSE_SUBTRACT);
+
+                {
+                    int setColor = (0xFFFFFF - color) | (0xFF000000 & (int)(0x66000000 * alpha));
+                    int a = setColor >> 24 & 255;
+                    int r = setColor >> 16 & 255;
+                    int g = setColor >> 8 & 255;
+                    int b = setColor & 255;
+                    GL11.glColor4d(r/255.0,g/255.0,b/255.0,a/255.0);
+                }
+                trailModel.renderAll();
+
+                GlStateManager.glBlendEquation(GL14.GL_FUNC_ADD);
+
+                {
+                    int setColor = (color) | (0xFF000000 & (int)(0xFF000000 * alpha));
+                    int a = setColor >> 24 & 255;
+                    int r = setColor >> 16 & 255;
+                    int g = setColor >> 8 & 255;
+                    int b = setColor & 255;
+                    GL11.glColor4d(r/255.0,g/255.0,b/255.0,a/255.0);
+                }
+                trailModel.renderAll();
+                GL11.glColor4d(1.0,1.0,1.0,1.0);
+
+                GlStateManager.depthMask(true);
+
+                Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
+                GlStateManager.popMatrix();
+            }
+                /**/
 
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
 

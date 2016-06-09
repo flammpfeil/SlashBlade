@@ -58,7 +58,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
-                stack.damageItem(10, player);
+                ItemSlashBlade.damageItem(stack, 10, player);
             }
 
             AxisAlignedBB bb = target.boundingBox.copy();
@@ -167,7 +167,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
             final int cost = -20;
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
-                stack.damageItem(10, player);
+                ItemSlashBlade.damageItem(stack, 10, player);
             }
 
             AxisAlignedBB bb = target.boundingBox.copy();

@@ -622,7 +622,7 @@ public class ItemSlashBlade extends ItemSword {
         setImpactEffect(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase, comboSec);
 
         if(!comboSec.useScabbard || IsNoScabbard.get(tag)) {
-            par1ItemStack.damageItem(1, par3EntityLivingBase);
+            ItemSlashBlade.damageItem(par1ItemStack, 1, par3EntityLivingBase);
 
             if(par1ItemStack.stackSize <= 0) {
                 ItemSlashBlade blade = (ItemSlashBlade)par1ItemStack.getItem();
@@ -657,7 +657,7 @@ public class ItemSlashBlade extends ItemSword {
     {
         if ((double)par3.getBlockHardness(par2World, par4, par5, par6) != 0.0D)
         {
-            par1ItemStack.damageItem(1, par7EntityLivingBase);
+            ItemSlashBlade.damageItem(par1ItemStack, 1, par7EntityLivingBase);
         }
 
         return true;
@@ -959,6 +959,9 @@ public class ItemSlashBlade extends ItemSword {
             if(current == ComboSequence.SSlashBlade){
                 doSlashBladeAttack(itemStack,player,current);
             }
+
+            //player.playSound("mob.irongolem.throw", 1.8F, 1.0F);
+            player.playSound("flammpfeil.slashblade:swingblade", 1.0F, 0.75F + player.getRNG().nextFloat() * 0.05f);
         }
 	}
 
@@ -1113,7 +1116,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
         if (swordType.containsAll(SwordType.BewitchedPerfect) && comboSeq.equals(ComboSequence.Battou)) {
-            stack.damageItem(10, player);
+            ItemSlashBlade.damageItem(stack, 10, player);
             //todo 超短距離Drive周囲にばら撒くことで居合い再現はどーか
         }
     }
@@ -1126,7 +1129,7 @@ public class ItemSlashBlade extends ItemSword {
 
             final int cost = -10;
             if(!ProudSoul.tryAdd(tag, cost, false)){
-                stack.damageItem(5, player);
+                ItemSlashBlade.damageItem(stack, 5, player);
             }
 
             float baseModif = getBaseAttackModifiers(tag);
@@ -1549,8 +1552,11 @@ public class ItemSlashBlade extends ItemSword {
 					if(swordType.contains(SwordType.Broken)){
 						repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
                         ItemStack tinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
+                        ItemStack tinySoulHasEmptyTag = tinySoul.copy();
+                        tinySoulHasEmptyTag.setTagCompound(new NBTTagCompound());
+
                         addProudSoul = 20;
-                        if(!InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false))
+                        if(!(InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false) || InventoryUtility.consumeInventoryItem(el.inventory,tinySoulHasEmptyTag,false)))
                             descLv = 1;
 					}else{
 						repair = 1;
@@ -1789,19 +1795,18 @@ public class ItemSlashBlade extends ItemSword {
                 if(0 < (el.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)){
                     if(eId == 0){
 
-
-
-                        Entity rayEntity = getRayTrace(el,10.0f);
+                        Entity rayEntity = getRayTrace(el,20.0f);
 
                         if(rayEntity == null)
                             rayEntity = getRayTrace(el,10.0f,5.0f);
 
+                        /*
                         if(rayEntity !=null){
                             if(!AttackableSelector.isEntityApplicable(rayEntity)){
 
                             }
                         }
-
+                        */
 
                         if(rayEntity != null){
                             eId = rayEntity.getEntityId();
@@ -1825,7 +1830,12 @@ public class ItemSlashBlade extends ItemSword {
                         }
                         TargetEntityId.set(tag,eId);
                     }else{
-
+                        {
+                            Entity target = par2World.getEntityByID(eId);
+                            if (target != null)
+                                if(!target.isEntityAlive())
+                                    TargetEntityId.set(tag,0);
+                        }
                         if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, sitem)){
                             Entity target = par2World.getEntityByID(eId);
                             if(target != null && target instanceof EntityWither
@@ -2478,7 +2488,7 @@ public class ItemSlashBlade extends ItemSword {
             }
 
             if(0 < destructedCount){
-                stack.damageItem(1,entityLiving);
+                ItemSlashBlade.damageItem(stack, 1,entityLiving);
             }
         }
     }
@@ -2629,6 +2639,7 @@ public class ItemSlashBlade extends ItemSword {
         NBTTagCompound tag = getItemTagCompound(stack);
         return IsDestructable.get(tag);
     }
+    static final String IsManagedDamage = "IsManagedDamage";
 
     @Override
     public void setDamage(ItemStack stack, int damage) {
@@ -2643,12 +2654,43 @@ public class ItemSlashBlade extends ItemSword {
                 IsBroken.set(tag, false);
 
             }else if(maxDamage < damage){
-                if(IsBroken.get(tag)){
-                    damage = Math.min(damage,maxDamage);
+                if(IsBroken.get(tag) || !tag.getBoolean(IsManagedDamage)) {
+                    damage = Math.min(damage, maxDamage);
                 }
             }
         }
         super.setDamage(stack,damage);
+    }
+
+
+    static public void damageItem(ItemStack stack, int damage, EntityLivingBase user) {
+
+        NBTTagCompound tag = getItemTagCompound(stack);
+        tag.setBoolean(IsManagedDamage, true);
+        stack.damageItem(damage, user);
+        tag.setBoolean(IsManagedDamage, false);
+
+        if(stack.stackSize <= 0) {
+            ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
+
+            if(!blade.isDestructable(stack)){
+                stack.stackSize = 1;
+                stack.setItemDamage(stack.getMaxDamage());
+                IsBroken.set(tag,true);
+
+                if(blade instanceof ItemSlashBladeWrapper){
+                    if(!ItemSlashBladeWrapper.TrueItemName.exists(tag)){
+                        ((ItemSlashBladeWrapper)blade).removeWrapItem(stack);
+                    }
+                }
+
+                if(blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer){
+                    AchievementList.triggerAchievement((EntityPlayer) user, "brokenWhiteSheath");
+                }
+
+                blade.dropItemDestructed(user, stack);
+            }
+        }
     }
 
     public void attackTargetEntity(ItemStack stack, Entity target, EntityPlayer player, Boolean isRightClick){
@@ -2982,18 +3024,24 @@ public class ItemSlashBlade extends ItemSword {
         if(entityItem.getEntityData().getBoolean("noBladeStand"))
             return false;
 
+        boolean forceDrop = entityItem.getEntityData().getBoolean("SB.DeathDrop");
+
         ItemStack stack = entityItem.getEntityItem();
 
-        if(stack.getItem() instanceof ItemSlashBladeWrapper){
+        if(!forceDrop && stack.getItem() instanceof ItemSlashBladeWrapper){
             if(!ItemSlashBladeWrapper.hasWrapedItem(stack))
                 return false;
         }
 
-        if(stack.getRarity() !=EnumRarity.common || stack.hasDisplayName() || stack.hasTagCompound() && ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())){
+
+        if(forceDrop || stack.getRarity() != EnumRarity.common || stack.hasDisplayName() || stack.hasTagCompound() && ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())){
 
             EntityBladeStand e = new EntityBladeStand(entityItem.worldObj, entityItem.posX, entityItem.posY, entityItem.posZ, stack);
 
             e.setFlip(e.getRand().nextInt(2));
+
+            if(forceDrop)
+                e.setGlowing(true);
 
             e.moveEntity(entityItem.motionX * 2, entityItem.motionY * 2, entityItem.motionZ * 2);
 
@@ -3036,5 +3084,15 @@ public class ItemSlashBlade extends ItemSword {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return 72000;
+    }
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return false;//super.showDurabilityBar(stack);
     }
 }

@@ -22,7 +22,7 @@ public class AttackLimitter {
         try{
             config.load();
 
-            Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "enabledAttackAttenuation" , false);
+            Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "enabledAttackAttenuation" , true);
             enabled = prop.getBoolean();
         }finally {
             config.save();

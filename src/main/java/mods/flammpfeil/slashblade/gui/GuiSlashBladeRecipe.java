@@ -9,6 +9,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -80,7 +81,19 @@ public class GuiSlashBladeRecipe extends GuiScreen {
         this.fontRendererObj.drawString(this.title,
                 this.guiLeft + this.xSize / 2 - this.fontRendererObj.getStringWidth(this.title) / 2,
                 this.guiTop + 6,
-                4210752);
+                0x000000);//4210752);
+
+        this.fontRendererObj.drawString(this.title,
+                this.guiLeft + this.xSize / 2 - this.fontRendererObj.getStringWidth(this.title) / 2,
+                this.guiTop + 6,
+                0x000000);//4210752);
+
+
+
+        this.fontRendererObj.drawString("x",
+                this.guiLeft + this.xSize - 10,
+                this.guiTop + 5,
+                0x000000);//4210752);
     }
 
     ItemStack getWildCardStack(ItemStack stack){
@@ -298,9 +311,10 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
         }
 
-        if (!this.checkMouseOver(0, 0, xSize, ySize, mouseX, mouseY))
+        if (!this.checkMouseOver(0, 0, xSize, ySize, mouseX, mouseY)
+                || this.checkMouseOver(xSize - 10, 5, 5, 5, mouseX, mouseY))
         {
-            if(Mouse.isButtonDown(0))
+            if(Mouse.isButtonDown(0) || Keyboard.isKeyDown(Keyboard.KEY_BACK))
                 AchievementsExtendedGuiHandler.doClose = true;
         }
 

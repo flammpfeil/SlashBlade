@@ -42,6 +42,8 @@ public class BambooMod {
             ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
             ItemSlashBlade.TextureName.set(tag,"BambooKatana");
 
+            NamedBladeManager.registerBladeSoul(tag , reqiredBlade.getDisplayName());
+
             NBTTagCompound displayTag = new NBTTagCompound();
             reqiredBlade.setTagInfo("display",displayTag);
             NBTTagList loreList = new NBTTagList();

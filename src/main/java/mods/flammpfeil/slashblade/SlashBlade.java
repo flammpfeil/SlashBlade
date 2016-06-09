@@ -15,8 +15,9 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.entity.*;
+import mods.flammpfeil.slashblade.event.AnvilEventHandler;
 import mods.flammpfeil.slashblade.event.MoveImputHandler;
-import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
+import mods.flammpfeil.slashblade.event.PlayerDropsEventHandler;
 import mods.flammpfeil.slashblade.item.TossEventHandler;
 import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.BladeMaterials;
@@ -26,7 +27,6 @@ import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import mods.flammpfeil.slashblade.util.PotionManager;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -75,8 +75,19 @@ public class SlashBlade implements IFuelHandler{
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
     public static final String SphereBladeSoulStr = "sphere_bladesoul";
     public static final String TinyBladeSoulStr = "tiny_bladesoul";
+    public static final String CrystalBladeSoulStr = "crystal_bladesoul";
 
-    public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade");
+    public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade"){
+        private ItemStack stack = null;
+        @Override
+        public ItemStack getIconItemStack() {
+            if(stack == null)
+                stack = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato");
+
+            return stack;
+            //return super.getIconItemStack();
+        }
+    };
 
     public static final EventBus InitEventBus = new EventBus();
 
@@ -138,6 +149,10 @@ public class SlashBlade implements IFuelHandler{
         GameRegistry.registerCustomItemStack(SphereBladeSoulStr , itemSphereBladeSoul);
         ItemStack itemTinyBladeSoul = new ItemStack(proudSoul,1,3);
         GameRegistry.registerCustomItemStack(TinyBladeSoulStr , itemTinyBladeSoul);
+
+        ItemStack itemCrystalBladeSoul = new ItemStack(proudSoul,1,4);
+        itemCrystalBladeSoul.setRepairCost(-10);
+        GameRegistry.registerCustomItemStack(CrystalBladeSoulStr , itemCrystalBladeSoul);
 
         //==================================================================================================================================
 
@@ -293,8 +308,12 @@ public class SlashBlade implements IFuelHandler{
 
         EntityRegistry.registerModEntity(EntityRapidSlashManager.class, "RapidSlashManager", entityId++, this, 250, 10, true);
 
+        EntityRegistry.registerModEntity(EntityGrimGrip.class, "GrimGrip", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntityGrimGripKey.class, "GrimGripKey", entityId++, this, 250, 200, false);
+
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
+        MinecraftForge.EVENT_BUS.register(new AnvilEventHandler());
 
         MinecraftForge.EVENT_BUS.register(new SlashBladeItemDestroyEventHandler());
         MinecraftForge.EVENT_BUS.register(new TossEventHandler());
@@ -335,7 +354,12 @@ public class SlashBlade implements IFuelHandler{
         abilityProjectileBarrier = new ProjectileBarrier();
         MinecraftForge.EVENT_BUS.register(abilityProjectileBarrier);
 
+        MinecraftForge.EVENT_BUS.register(new PlayerDropsEventHandler());
+
         new PotionManager();
+
+        //statManager = new StatManager();
+        //MinecraftForge.EVENT_BUS.register(statManager);
 
         FMLCommonHandler.instance().bus().register(new MoveImputHandler());
 

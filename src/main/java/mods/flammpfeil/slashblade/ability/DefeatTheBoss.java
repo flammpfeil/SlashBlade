@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.ability;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -32,6 +33,11 @@ public class DefeatTheBoss {
         tinySoul.addEnchantment(EnchantHelper.getEnchantmentRare(player.getRNG()),1);
 
         player.entityDropItem(tinySoul, 0.0F);
+
+        if(target instanceof IBossDisplayData){
+            ItemStack soul = NamedBladeManager.getNamedSoul(player.getRNG());
+            player.entityDropItem(soul, 0.0F);
+        }
     }
 
     static boolean isAveilable(ItemStack stack){

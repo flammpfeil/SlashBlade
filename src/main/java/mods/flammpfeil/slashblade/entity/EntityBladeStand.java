@@ -23,7 +23,7 @@ import java.util.Random;
 /**
  * Created by Furia on 14/08/15.
  */
-public class EntityBladeStand extends Entity {
+public class EntityBladeStand extends EntityEx {
     public EntityBladeStand(World p_i1582_1_) {
         super(p_i1582_1_);
         this.preventEntitySpawning = true;
@@ -123,6 +123,7 @@ public class EntityBladeStand extends Entity {
     static final String SaveKeyFlip = "Flip";
     @Override
     protected void readEntityFromNBT(NBTTagCompound p_70037_1_) {
+        super.readEntityFromNBT(p_70037_1_);
 
         if(p_70037_1_.hasKey(SaveKeyStandType)){
             int type = p_70037_1_.getInteger(SaveKeyStandType);
@@ -144,6 +145,7 @@ public class EntityBladeStand extends Entity {
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound p_70014_1_) {
+        super.writeEntityToNBT(p_70014_1_);
 
         ItemStack blade = getBlade();
         if(blade != null){
@@ -162,6 +164,7 @@ public class EntityBladeStand extends Entity {
             int flip = this.getFlip();
             p_70014_1_.setInteger(SaveKeyFlip,flip);
         }
+
     }
 
     @Override
@@ -175,15 +178,20 @@ public class EntityBladeStand extends Entity {
     @Override
     public void onUpdate() {
 
-        if(SlashBladeHooks.onEntityBladeStandUpdateHooks(this)){
-            return;
-        }
+        /*
+        this.prevPosX = this.posX;
+        this.prevPosY = this.posY;
+        this.prevPosZ = this.posZ;
+        */
 
         super.onUpdate();
 
-
         this.motionX = 0;
         this.motionZ = 0;
+
+        if(SlashBladeHooks.onEntityBladeStandUpdateHooks(this)){
+            return;
+        }
 
         if(getType(this) == StandType.Wall) {
             this.motionY = 0.0;
@@ -207,6 +215,9 @@ public class EntityBladeStand extends Entity {
         if(!block.isAir(this.worldObj,(int)this.posX,(int)this.posY,(int)this.posZ)
                 && block.getBlockHardness(this.worldObj,(int)this.posX,(int)this.posY,(int)this.posZ) < 0){
 
+            this.motionX = 0;
+            this.motionZ = 0;
+            this.motionY = 0;
             this.setPosition(this.posX,this.posY+1.5,this.posZ);
         }
 
@@ -232,7 +243,7 @@ public class EntityBladeStand extends Entity {
 
                 AchievementList.triggerCraftingAchievement(this.getBlade(), p);
 
-                p.setCurrentItemOrArmor(0, this.getBlade()); 
+                p.setCurrentItemOrArmor(0, this.getBlade());
                 this.setBlade(null);
 
                 if(getType(this) == StandType.Naked)
@@ -303,5 +314,24 @@ public class EntityBladeStand extends Entity {
 
     public Random getRand(){
         return this.rand;
+    }
+
+
+    @Override
+    public boolean canRenderOnFire() {
+        return false;
+    }
+
+    @Override
+    public boolean isPushedByWater() {
+        return false;
+    }
+
+    @Override
+    protected void kill() {
+        if(hasBlade() && this.posY < 0 ){
+            this.posY = 0;
+        }else
+            super.kill();
     }
 }

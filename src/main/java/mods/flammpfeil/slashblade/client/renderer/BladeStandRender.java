@@ -5,13 +5,21 @@ import mods.flammpfeil.slashblade.ItemRendererBaseWeapon;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.client.renderer.entity.RenderEx;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
+import mods.flammpfeil.slashblade.entity.EntityEx;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
@@ -20,13 +28,14 @@ import net.minecraftforge.client.model.obj.WavefrontObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import java.awt.*;
 import java.util.EnumSet;
 import java.util.Map;
 
 /**
  * Created by Furia on 14/08/15.
  */
-public class BladeStandRender extends Render{
+public class BladeStandRender extends RenderEx{
 
     static public IModelCustom standModel = null;
     static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/stand/stand.obj");
@@ -57,39 +66,60 @@ public class BladeStandRender extends Render{
     }
 
     /*
-    * Š|‘ä—pƒ‚ƒfƒ‹–½–¼‹K‘¥
+    * ï¿½|ï¿½ï¿½pï¿½ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½ï¿½
 
     stand_[dual|single|upright|wall][_damaged][_ns][_r|_l][_u|_d]
 
 
     dual
-        âE“‚Ì2’i
+        ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½2ï¿½i
     single
-        â“ü‚è“‚Ì1’i
+        ï¿½ï¿½ï¿½ï¿½è“ï¿½ï¿½1ï¿½i
     upright
-        cŠ|‚¯
+        ï¿½cï¿½|ï¿½ï¿½
     wall
-        â“ü‚è“‚Ì1’i•Ç—p
+        ï¿½ï¿½ï¿½ï¿½è“ï¿½ï¿½1ï¿½iï¿½Ç—p
 
 
     _damaged
-        Ü‚ê‚½ó‘Ô
+        ï¿½Ü‚ê‚½ï¿½ï¿½ï¿½
 
     _ns
-        â–³‚µ—p
+        ï¿½â–³ï¿½ï¿½ï¿½p
 
-    ¦ˆÈ‰º‚Í–³‚­‚Ä‚à‚æ‚¢
+    ï¿½ï¿½ï¿½È‰ï¿½ï¿½Í–ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½æ‚¢
 
     _r or _l
-        ‰¡”½“]@¦c‚Æ•K‚¸ƒZƒbƒg‚Åw’è
+        ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½@ï¿½ï¿½ï¿½cï¿½Æ•Kï¿½ï¿½ï¿½Zï¿½bï¿½gï¿½Åwï¿½ï¿½
     _u or _d
-        c”½“]@¦‰¡‚Æ•K‚¸ƒZƒbƒg‚Åw’è
+        ï¿½cï¿½ï¿½ï¿½]ï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½Æ•Kï¿½ï¿½ï¿½Zï¿½bï¿½gï¿½Åwï¿½ï¿½
 
     * */
-
     @Override
-    public void doRender(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
+    public void doRenderEx(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
 
+        if(renderOutlines){
+            GlStateManager.enableColorMaterial();
+            float h = (entity.ticksExisted % 80) / 80.0f;
+            GlStateManager.enableOutlineMode(Color.getHSBColor(h,0.5f,1.0f).getRGB());
+        }
+
+        renderModel(entity, x, y, z, yaw, partialRenderTick);
+
+        if(renderOutlines){
+            GlStateManager.disableOutlineMode();
+            GlStateManager.disableColorMaterial();
+
+            GlStateManager.enableLighting();
+            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.enableTexture2D();
+            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        }
+
+        if(entity.isBurning())
+            renderEntityOnFire(entity, x, y, z, partialRenderTick);
+    }
+    public void renderModel(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
         if(standModel == null){
             standModel = AdvancedModelLoader.loadModel(modelLocation);
         }
@@ -435,5 +465,86 @@ public class BladeStandRender extends Render{
     @Override
     protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
         return textureLocation;
+    }
+
+
+    private void renderEntityOnFire(Entity entity, double x, double y, double z, float partialTicks) {
+        GlStateManager.pushAttrib();
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+
+        GlStateManager.depthMask(false);
+
+        TextureMap texturemap = Minecraft.getMinecraft().getTextureMapBlocks();
+/*        TextureAtlasSprite textureatlassprite = texturemap.getAtlasSprite("minecraft:blocks/fire_layer_0");
+        TextureAtlasSprite textureatlassprite1 = texturemap.getAtlasSprite("minecraft:blocks/fire_layer_1");
+*/
+        IIcon textureatlassprite = Blocks.fire.getFireIcon(0);
+        IIcon textureatlassprite1 = Blocks.fire.getFireIcon(1);
+
+        int i = 0;
+        for(int re = 0; re < 3; re++){
+            GlStateManager.pushMatrix();
+            GlStateManager.translate((float) x, (float) y, (float) z);
+            float f = entity.width * 1.4F;
+            GlStateManager.scale(f, f, f);
+
+            Tessellator tessellator = Tessellator.instance;
+            float f1 = 0.5F;
+            float f2 = 0.0F;
+            float f3 = entity.height / f;
+            float f4 = (float) (entity.posY - entity.boundingBox.minY);
+            GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+            GlStateManager.translate(0.0F, 0.0f, -0.3F + (float) ((int) f3) * 0.02F - re * 0.2f);
+
+            if(0 < re) {
+                float reScale = 1.0f / (re + 0.25f);
+                GlStateManager.scale(reScale, 0.75f, reScale);
+            }
+
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+            //GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ZERO);
+
+            GlStateManager.color(0.1F, 0.0F, 1.0F, 1.0F);
+
+            float f5 = 0.0F;
+            tessellator.startDrawingQuads();
+
+            while (f3 > 0.0F) {
+                IIcon textureatlassprite2 = i % 2 == 0 ? textureatlassprite : textureatlassprite1;
+                this.bindTexture(TextureMap.locationBlocksTexture);
+                float f6 = textureatlassprite2.getMinU();
+                float f7 = textureatlassprite2.getMinV();
+                float f8 = textureatlassprite2.getMaxU();
+                float f9 = textureatlassprite2.getMaxV();
+
+                if (i / 2 % 2 == 0) {
+                    float f10 = f8;
+                    f8 = f6;
+                    f6 = f10;
+                }
+
+                tessellator.addVertexWithUV((double) (f1 - f2),  (double) (0.0F - f4), (double) f5, (double) f8, (double) f9);
+                tessellator.addVertexWithUV((double) (-f1 - f2), (double) (0.0F - f4), (double) f5, (double) f6, (double) f9);
+                tessellator.addVertexWithUV((double) (-f1 - f2), (double) (1.4F - f4), (double) f5, (double) f6, (double) f7);
+                tessellator.addVertexWithUV((double) (f1 - f2),  (double) (1.4F - f4), (double) f5, (double) f8, (double) f7);
+                f3 -= 0.45F;
+                f4 -= 0.45F;
+                f1 *= 0.9F;
+                f5 += 0.03F;
+                ++i;
+            }
+
+            tessellator.draw();
+            GlStateManager.popMatrix();
+        }
+
+
+        GlStateManager.depthMask(true);
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+
+        GlStateManager.popAttrib();
     }
 }

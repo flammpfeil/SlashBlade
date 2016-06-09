@@ -87,6 +87,7 @@ public class DropEventHandler {
                                     ,event.entityLiving.posY
                                     ,event.entityLiving.posZ
                                     ,dropitem);
+                            e.setGlowing(true);
                             event.entityLiving.worldObj.spawnEntityInWorld(e);
 
                             return;

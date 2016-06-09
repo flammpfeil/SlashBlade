@@ -60,6 +60,7 @@ public class Agito {
 
                 ItemSlashBladeNamed.TrueItemName.set(tag, nameAgito);
 
+                NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
                 GameRegistry.registerCustomItemStack(nameAgitoRust, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameAgitoRust);
 
@@ -187,6 +188,7 @@ public class Agito {
 
                 ItemSlashBladeNamed.TrueItemName.set(tag, nameOrotiagitoSeald);
 
+                NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
                 GameRegistry.registerCustomItemStack(nameOrotiagitoRust, customblade);
                 ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoRust);
 
