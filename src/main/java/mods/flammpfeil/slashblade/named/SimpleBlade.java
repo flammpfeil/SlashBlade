@@ -115,7 +115,7 @@ public class SimpleBlade {
         ItemStack white = new ItemStack(SlashBlade.bladeWhiteSheath, 1);
         white.addEnchantment(Enchantments.UNBREAKING,4);
         SlashBlade.addRecipe("slashbladeWhite",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1),
+                new RecipeUpgradeBlade(white,
                 "  #",
                 " # ",
                 "XG ",
