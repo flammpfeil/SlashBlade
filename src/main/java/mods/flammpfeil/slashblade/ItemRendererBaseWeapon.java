@@ -312,6 +312,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             if(type == ItemRenderType.INVENTORY){
+
+                GL11.glPushMatrix();
+
                 engine().bindTexture(resourceDurabilityTexture);
 
                 double par = itemBlade.getDurabilityForDisplay(item);
@@ -341,6 +344,8 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                     GlStateManager.loadIdentity();
                     GL11.glMatrixMode(GL11.GL_MODELVIEW);
                 }
+
+                GL11.glPopMatrix();
             }
 
             GL11.glDisable(GL11.GL_ALPHA_TEST);
