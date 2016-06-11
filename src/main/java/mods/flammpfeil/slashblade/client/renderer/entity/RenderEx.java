@@ -17,8 +17,6 @@ public abstract class RenderEx extends Render{
     public void doRender(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
         renderOutlines = false;
 
-        doRenderEx(entity, x, y, z, yaw, partialRenderTick);
-
         if(entity instanceof EntityEx){
             boolean isGlowing = ((EntityEx) entity).isGlowing();
 
@@ -26,13 +24,25 @@ public abstract class RenderEx extends Render{
                 GlStateManager.depthFunc(GL11.GL_ALWAYS);
                 GlStateManager.disableFog();
                 RenderHelper.disableStandardItemLighting();
+                GlStateManager.depthMask(false);
 
                 renderOutlines = true;
+
+                GL11.glMatrixMode(GL11.GL_PROJECTION);
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0.02f,0.0f,-0.05f);
+                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
                 doRenderEx(entity, x, y, z, yaw, partialRenderTick);
+
+                GL11.glMatrixMode(GL11.GL_PROJECTION);
+                GL11.glPopMatrix();
+                GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+
                 renderOutlines = false;
 
                 RenderHelper.enableStandardItemLighting();
-                GlStateManager.depthMask(false);
 
                 GlStateManager.enableLighting();
 
@@ -46,6 +56,8 @@ public abstract class RenderEx extends Render{
                 /**/
             }
         }
+
+        doRenderEx(entity, x, y, z, yaw, partialRenderTick);
     }
 
     public abstract void doRenderEx(Entity entity, double x, double y, double z, float yaw, float partialRenderTick);
