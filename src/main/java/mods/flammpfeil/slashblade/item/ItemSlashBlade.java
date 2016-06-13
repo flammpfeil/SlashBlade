@@ -1668,21 +1668,31 @@ public class ItemSlashBlade extends ItemSword {
 
 				int idx = Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
 
-				if(0<= idx && idx < 9 && 0 < el.experienceLevel){
+                boolean doMaterialRepair = false;
+
+                if(0<= idx && idx < 9 && swordType.contains(SwordType.Broken)){
+                    ItemStack tinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
+                    ItemStack tinySoulHasEmptyTag = tinySoul.copy();
+                    tinySoulHasEmptyTag.setTagCompound(new NBTTagCompound());
+
+                    doMaterialRepair = InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false)
+                                    || InventoryUtility.consumeInventoryItem(el.inventory,tinySoulHasEmptyTag,false);
+                }
+
+				if(0<= idx && idx < 9 && 0 < el.experienceLevel || doMaterialRepair){
 					int repair;
 					int descExp = 0;
                     int descLv = 0;
                     int addProudSoul = 0;
 
-					if(swordType.contains(SwordType.Broken)){
+                    if(doMaterialRepair){
+                        repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
+
+                    }else if(swordType.contains(SwordType.Broken)){
 						repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
-                        ItemStack tinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
-                        ItemStack tinySoulHasEmptyTag = tinySoul.copy();
-                        tinySoulHasEmptyTag.setTagCompound(new NBTTagCompound());
 
                         addProudSoul = 20;
-                        if(!(InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false) || InventoryUtility.consumeInventoryItem(el.inventory,tinySoulHasEmptyTag,false)))
-                            descLv = 1;
+                        descLv = 1;
 					}else{
 						repair = 1;
 						descExp = 10;
