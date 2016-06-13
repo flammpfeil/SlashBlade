@@ -155,6 +155,12 @@ public class CoreProxyClient extends CoreProxy {
                 return new InvisibleRender(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityCaliburManager.class, new IRenderFactory<EntityCaliburManager>() {
+            @Override
+            public Render<? super EntityCaliburManager> createRenderFor(RenderManager manager) {
+                return new InvisibleRender(manager);
+            }
+        });
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySummonedSwordBase.class, new IRenderFactory<EntitySummonedSwordBase>() {

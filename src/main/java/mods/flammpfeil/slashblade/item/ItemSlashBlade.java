@@ -194,6 +194,8 @@ public class ItemSlashBlade extends ItemSword {
 
 
         HelmBraker(false, 200.0f,-360.0f+90f,false,25),
+
+        Calibur(false, 360.0f + 240.0f,-360.0f - 20.0f,false,25),
         ;
 
 	    /**
@@ -471,6 +473,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
+            case Calibur:
             case RapidSlash:
             case SlashEdge:
             case SIai:
@@ -706,8 +709,19 @@ public class ItemSlashBlade extends ItemSword {
 
             int rank = StylishRankManager.getStylishRank(player);
 
-            int rapidSlashState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
-            if(rapidSlashState == (player.getEntityData().getByte("SB.MCS") & rapidSlashState)
+            int helmBrakerState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
+
+            long currentTime = player.getEntityWorld().getTotalWorldTime();
+            int caliburState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
+            long backKeyLastActiveTime = player.getEntityData().getLong("SB.MCS.B");
+            final int TypeAheadBuffer = 7;
+
+            if((currentTime - backKeyLastActiveTime) <= (TypeAheadBuffer)
+                    && caliburState == (player.getEntityData().getByte("SB.MCS") & caliburState)
+                    && current != ComboSequence.Calibur ) {
+                result = ComboSequence.Calibur;
+
+            }else if(helmBrakerState == (player.getEntityData().getByte("SB.MCS") & helmBrakerState)
                     && current != ComboSequence.HelmBraker ){
                 result = ComboSequence.HelmBraker;
 
@@ -836,11 +850,13 @@ public class ItemSlashBlade extends ItemSword {
 
                 UntouchableTime.setUntouchableTime(player, 6, false);
 
-                EntityRapidSlashManager mgr = new EntityRapidSlashManager(player.worldObj,player,false);
-                if(mgr != null){
-                    mgr.setLifeTime(6);
+                if(!player.worldObj.isRemote){
+                    EntityRapidSlashManager mgr = new EntityRapidSlashManager(player.worldObj,player,false);
+                    if(mgr != null){
+                        mgr.setLifeTime(6);
 
-                    player.worldObj.spawnEntityInWorld(mgr);
+                        player.worldObj.spawnEntityInWorld(mgr);
+                    }
                 }
                 break;
             }
@@ -849,11 +865,32 @@ public class ItemSlashBlade extends ItemSword {
 
                 UntouchableTime.setUntouchableTime(player, 6, false);
 
-                EntityHelmBrakerManager mgr = new EntityHelmBrakerManager(player.worldObj,player,false);
-                if(mgr != null){
-                    mgr.setLifeTime(20);
+                if(!player.worldObj.isRemote) {
+                    EntityHelmBrakerManager mgr = new EntityHelmBrakerManager(player.worldObj, player, false);
+                    if (mgr != null) {
+                        mgr.setLifeTime(20);
 
-                    player.worldObj.spawnEntityInWorld(mgr);
+                        player.worldObj.spawnEntityInWorld(mgr);
+                    }
+                }
+                break;
+            }
+            case Calibur: {
+                player.fallDistance = 0;
+
+                double playerDist = 2.5;
+
+                /*
+                if(!player.onGround)
+                    playerDist *= 0.35f;
+                */
+                player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
+                player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
+
+                UntouchableTime.setUntouchableTime(player, 6, false);
+
+                if(player.worldObj.isRemote) {
+                    NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 5));
                 }
                 break;
             }
@@ -1346,13 +1383,12 @@ public class ItemSlashBlade extends ItemSword {
             LastActionTime.set(tag, entityLiving.worldObj.getTotalWorldTime());
 
 		}
-        /*else{
 
-            if(!JustGuard.atJustGuard(par3EntityPlayer)){
-                OnClick.set(tag, true);
-                //par3EntityPlayer.motionY = 0.0;
+        if(getComboSequence(tag) == ComboSequence.Kiriage && entityLiving.worldObj.isRemote){
+            if(entityLiving.getEntityData().hasKey("SB.MCS.B")){
+                entityLiving.getEntityData().removeTag("SB.MCS.B");
             }
-		}*/
+        }
 
 	}
 
@@ -1380,6 +1416,7 @@ public class ItemSlashBlade extends ItemSword {
     	vec = vec.normalize();
 
     	switch (combo) {
+        case Calibur:
         case RapidSlash:
         case RisingStar:
         case SlashEdge:
@@ -1427,6 +1464,14 @@ public class ItemSlashBlade extends ItemSword {
 			break;
 
         case HelmBraker:
+            if(swordType.contains(SwordType.Broken)){
+                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+            }else{
+                bb = bb.expand(2.0f, 2.5f, 2.0f);
+                bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+            }
+            break;
         case Kiriorosi:
 		default:
             if(swordType.contains(SwordType.Broken)){
@@ -2076,6 +2121,9 @@ public class ItemSlashBlade extends ItemSword {
 
             case HelmBraker:
                 StylishRankManager.setNextAttackType(e, AttackTypes.HelmBraker);
+
+            case Calibur:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Calibur);
 
             case RapidSlash:
                 StylishRankManager.setNextAttackType(e, AttackTypes.RapidSlash);

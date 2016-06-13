@@ -76,7 +76,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         this(par1World);
 
         //■撃った人
-        thrower = entityLiving;
+        setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
@@ -150,34 +150,37 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
     {
         super.onUpdate();
 
+
+        this.fallDistance = 30;
         this.moveEntity(motionX,motionY,motionZ);
 
         AxisAlignedBB bb = null;
         ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
         //super.onUpdate();
-        if(blade != null && this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
+        if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
             EntityLivingBase owner = (EntityLivingBase)this.getThrower();
+
+            if(blade == null){
+                blade = owner.getHeldItemMainhand();
+                if(blade == null || !(blade.getItem() instanceof ItemSlashBlade))
+                {
+                    setDead();
+                    return;
+                }
+            }
+
             ItemSlashBlade itemBlade = (ItemSlashBlade) blade.getItem();
             bb = itemBlade.getBBofCombo(blade, ItemSlashBlade.ComboSequence.HelmBraker,(EntityLivingBase) getThrower());
 
             NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
             combo = ItemSlashBlade.getComboSequence(tag);
-
-            owner.setPosition(owner.posX,this.posY,this.posZ);
-
-            owner.fallDistance = 0;
-
-            this.fallDistance = 30;
         }
 
 
         //■死亡チェック
         if(ticksExisted >= getLifeTime()
                 || combo != ItemSlashBlade.ComboSequence.HelmBraker
-                || this.isInWater()
-                || this.isInLava()
-                || this.onGround
                 || this.getThrower() == null
                 || (this.getThrower() != null && (this.getThrower().onGround
                 || this.getThrower().isInWater()
@@ -187,6 +190,12 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
             alreadyHitEntity = null;
             setDead();
             return;
+        }
+
+        if(1 < ticksExisted && getThrower() != null){
+            getThrower().setPosition(getThrower().posX,this.posY,getThrower().posZ);
+
+            getThrower().fallDistance = 0;
         }
 
         if(!worldObj.isRemote)
@@ -465,5 +474,16 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         if(entity != null)
             setThrowerEntityId(entity.getEntityId());
         this.thrower = entity;
+    }
+
+    @Override
+    protected boolean canTriggerWalking() {
+        return false;
+    }
+
+    @Override
+    public boolean canBeCollidedWith()
+    {
+        return false;
     }
 }
