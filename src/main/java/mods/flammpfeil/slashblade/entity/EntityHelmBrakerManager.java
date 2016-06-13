@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
-import mods.flammpfeil.slashblade.ability.UpthrustBlast;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,7 +26,7 @@ import java.util.Random;
 /**
  * Created by Furia on 14/05/08.
  */
-public class EntityRapidSlashManager extends Entity implements IThrowableEntity {
+public class EntityHelmBrakerManager extends Entity implements IThrowableEntity {
     /**
      * ★撃った人
      */
@@ -40,23 +39,26 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
      */
     protected List<Entity> alreadyHitEntity = new ArrayList<Entity>();
 
-    protected List<Entity> alreadyStuckEntity = new ArrayList<Entity>();
-
     /**
      * ■コンストラクタ
      * @param par1World
      */
-    public EntityRapidSlashManager(World par1World)
+    public EntityHelmBrakerManager(World par1World)
     {
         super(par1World);
+
+        this.isImmuneToFire = true;
+
+        this.motionY = -1.0f;
+        this.stepHeight = 1.0f;
     }
 
-    public EntityRapidSlashManager(World par1World, EntityLivingBase entityLiving, boolean isSingleHit){
+    public EntityHelmBrakerManager(World par1World, EntityLivingBase entityLiving, boolean isSingleHit){
         this(par1World, entityLiving);
         this.setIsSingleHit(isSingleHit);
     }
 
-    public EntityRapidSlashManager(World par1World, EntityLivingBase entityLiving)
+    public EntityHelmBrakerManager(World par1World, EntityLivingBase entityLiving)
     {
         this(par1World);
 
@@ -72,6 +74,7 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
         alreadyHitEntity.clear();
         alreadyHitEntity.add(thrower);
         alreadyHitEntity.add(thrower.ridingEntity);
+        alreadyHitEntity.add(thrower.riddenByEntity);
 
         //■生存タイマーリセット
         ticksExisted = 0;
@@ -86,6 +89,7 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
                 thrower.rotationYaw,
                 thrower.rotationPitch);
     }
+
 
     private static final int SINGLE_HIT = 12;
     private static final int LIFETIME = 13;
@@ -133,17 +137,59 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
+
+        this.fallDistance = 30;
+        this.moveEntity(motionX,motionY,motionZ);
+
+        AxisAlignedBB bb = null;
+        ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
         //super.onUpdate();
+        if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
+            EntityLivingBase owner = (EntityLivingBase)this.getThrower();
+
+            if(blade == null){
+                blade = owner.getHeldItem();
+                if(blade == null || !(blade.getItem() instanceof ItemSlashBlade))
+                {
+                    setDead();
+                    return;
+                }
+            }
+
+            ItemSlashBlade itemBlade = (ItemSlashBlade) blade.getItem();
+            bb = itemBlade.getBBofCombo(blade, ItemSlashBlade.ComboSequence.HelmBraker,(EntityLivingBase) getThrower());
+
+            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+
+            combo = ItemSlashBlade.getComboSequence(tag);
+        }
+
+
+        //■死亡チェック
+        if(ticksExisted >= getLifeTime()
+                || combo != ItemSlashBlade.ComboSequence.HelmBraker
+                || this.getThrower() == null
+                || (this.getThrower() != null && (this.getThrower().onGround
+                        || this.getThrower().isInWater()))) {
+
+            alreadyHitEntity.clear();
+            alreadyHitEntity = null;
+            setDead();
+            return;
+        }
+
+        if(1 < ticksExisted && getThrower() != null){
+            getThrower().moveEntity(0,-1.0,0);
+
+            getThrower().fallDistance = 0;
+        }
 
         if(!worldObj.isRemote)
         {
 
-            if(thrower != null){
-                double dAmbit = 1.5D;
-                AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(
-                        thrower.posX - dAmbit, thrower.posY - dAmbit, thrower.posZ - dAmbit,
-                        thrower.posX + dAmbit, thrower.posY + dAmbit, thrower.posZ + dAmbit);
-
+            {
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.DestructableSelector);
@@ -208,19 +254,12 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
                     if(isSingleHit())
                         alreadyHitEntity.addAll(list);
 
-                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.RapidSlash);
+                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.HelmBraker);
 
                     if(blade != null){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
                             curEntity.hurtResistantTime = 0;
-
-                            if(!alreadyStuckEntity.contains(curEntity)){
-                                //UpthrustBlast
-                                alreadyStuckEntity.add(curEntity);
-                                if(getThrower() instanceof EntityLivingBase && curEntity instanceof EntityLivingBase)
-                                    UpthrustBlast.setUpthrustBlastSword(blade, (EntityLivingBase)getThrower(), (EntityLivingBase)curEntity);
-                            }
 
                             if(thrower instanceof EntityPlayer){
                                 ItemSlashBlade itemBlade = (ItemSlashBlade)blade.getItem();
@@ -237,27 +276,11 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
                 }
             }
         }
-
-        if(this.getThrower() != null)
-            spawnParticle(this.worldObj, this.getThrower());
-
-
-        //■死亡チェック
-        if(ticksExisted >= getLifeTime()) {
-            alreadyHitEntity.clear();
-            alreadyHitEntity = null;
-            setDead();
-        }
     }
 
-    private void spawnParticle(World world, Entity target) {
-        //target.spawnExplosionParticle();
-        if (this.ticksExisted % 2 == 0)
-            world.spawnParticle("largeexplode",
-                    target.posX + (this.getRand().nextFloat() - 0.5f) * 3,
-                    target.posY + target.getEyeHeight(),
-                    target.posZ + (this.getRand().nextFloat() - 0.5f) * 3,
-                    3.0, 3.0, 3.0);
+    @Override
+    protected void updateFallState(double p_70064_1_, boolean p_70064_3_) {
+        super.updateFallState(p_70064_1_, p_70064_3_);
     }
 
     /**
@@ -281,12 +304,6 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
         //return !list.isEmpty() ? false : !this.worldObj.isAnyLiquid(axisalignedbb);
         return false;
     }
-
-    /**
-     * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
-     */
-    @Override
-    public void moveEntity(double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

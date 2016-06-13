@@ -83,9 +83,9 @@ public class RenderPhantomSwordBase extends Render {
 
         GL11.glPushMatrix();
 
-        GL11.glTranslatef((float)dX, (float)dY, (float)dZ);
-        GL11.glRotatef(entityPhantomSword.rotationYaw, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-entityPhantomSword.rotationPitch, 1.0F, 0.0F, 0.0F);
+        GL11.glTranslatef((float)dX, (float)dY /*+0.5f */, (float)dZ);
+        GL11.glRotatef(lerpDegrees(entityPhantomSword.prevRotationYaw, entityPhantomSword.rotationYaw, f1), 0.0F, 1.0F, 0.0F); //yaw
+        GL11.glRotatef(-lerpDegrees(entityPhantomSword.prevRotationPitch, entityPhantomSword.rotationPitch, f1), 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(entityPhantomSword.getRoll(),0,0,1);
         //GL11.glRotatef(fRot, 0.0F, 1.0F, 0.0F);
 
@@ -119,4 +119,19 @@ public class RenderPhantomSwordBase extends Render {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
+    float lerp(float start, float end, float percent){
+        return (start + percent*(end - start));
+    }
+
+    float lerpDegrees(float start, float end, float percent){
+        float diff = end - start;
+
+        while (diff < -180.0F)
+            diff += 360.0F;
+
+        while (diff >= 180.0F)
+            diff -= 360.0F;
+
+        return start + percent * diff;
+    }
 }

@@ -72,6 +72,8 @@ public class InitProxyClient extends InitProxy{
         RenderingRegistry.registerEntityRenderingHandler(EntitySakuraEndManager.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityJustGuardManager.class, rd);
         RenderingRegistry.registerEntityRenderingHandler(EntityRapidSlashManager.class, rd);
+        RenderingRegistry.registerEntityRenderingHandler(EntityHelmBrakerManager.class, rd);
+        RenderingRegistry.registerEntityRenderingHandler(EntityCaliburManager.class, rd);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSwordBase.class, new RenderPhantomSwordBase());
         RenderingRegistry.registerEntityRenderingHandler(EntitySummonedSwordAirTrickMarker.class, new RenderPhantomSwordBase());

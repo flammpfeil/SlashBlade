@@ -21,7 +21,8 @@ public class EnchantHelper {
             ,Enchantment.fireProtection
             ,Enchantment.featherFalling
             ,Enchantment.fortune
-            ,Enchantment.respiration);
+            ,Enchantment.respiration
+            ,Enchantment.unbreaking);
 
     public static void initEnchantmentList(){
         for(Enchantment ench : Enchantment.enchantmentsList){

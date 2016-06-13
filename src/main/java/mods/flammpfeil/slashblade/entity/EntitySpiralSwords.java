@@ -8,6 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Vector3d;
+
 /**
  * Created by Furia on 2016/05/09.
  */
@@ -38,6 +41,9 @@ public class EntitySpiralSwords extends EntityPhantomSwordBase {
     private static final int HAS_FIRED  = 12;
     private static final int ROT_OFFSET = 13;
     private static final int HOLDID     = 14;
+    private static final int ROT_PITCH = 15;
+    private static final int ROT_YAW = 16;
+    private static final int ROT_TICKS = 17;
 
     @Override
     protected void entityInit() {
@@ -48,6 +54,12 @@ public class EntitySpiralSwords extends EntityPhantomSwordBase {
         this.getDataWatcher().addObject(ROT_OFFSET, 0.0f);
 
         this.getDataWatcher().addObject(HOLDID, 0);
+
+        this.getDataWatcher().addObject(ROT_PITCH, 0.0f);
+        this.getDataWatcher().addObject(ROT_YAW, 0.0f);
+
+        this.getDataWatcher().addObject(ROT_TICKS, 30);
+
     }
 
     public boolean hasFired(){
@@ -71,10 +83,36 @@ public class EntitySpiralSwords extends EntityPhantomSwordBase {
         this.getDataWatcher().updateObject(HOLDID,id);
     }
 
+    public int getRotTicks(){
+        return this.getDataWatcher().getWatchableObjectInt(ROT_TICKS);
+    }
+    public void setRotTicks(int ticks){
+        this.getDataWatcher().updateObject(ROT_TICKS,ticks);
+    }
+
+    public float getRotPitch(){
+        return this.getDataWatcher().getWatchableObjectFloat(ROT_PITCH);
+    }
+    public void setRotPitch(float rotPitch){
+        this.getDataWatcher().updateObject(ROT_PITCH,rotPitch);
+    }
+
+    public float getRotYaw(){
+        return this.getDataWatcher().getWatchableObjectFloat(ROT_YAW);
+    }
+    public void setRotYaw(float rotYaw){
+        this.getDataWatcher().updateObject(ROT_YAW,rotYaw);
+    }
+
     static final int waitTime = 7;
 
     @Override
     public void updateRidden() {
+
+        if(getLifeTime() < this.ticksExisted){
+            setInvisible(true);
+            isDead = true;
+        }
 
         if(hasFired()) {
             if (ridingEntity2 == thrower) {
@@ -244,20 +282,61 @@ public class EntitySpiralSwords extends EntityPhantomSwordBase {
             ticks = getInterval() - waitTime;
         }
 
-        double rotParTick = 360.0 / 40;
+        double rotParTick = 360.0 / (double)getRotTicks();
         double offset = getRotOffset();
         double degYaw = ticks * rotParTick + offset;
         double yaw = Math.toRadians(degYaw);
 
+        /*
         Vec3 pos = Vec3.createVectorHelper(
                 Math.sin(yaw),
                 Math.sin(yaw + ticks / 10.0) * 0.1f,
                 Math.cos(yaw));
+        */
 
-        double scale = 1.5;
-        pos.xCoord *= scale;
-        pos.yCoord *= scale;
-        pos.zCoord *= scale;
+        Matrix4d rotMat = new Matrix4d();
+        rotMat.setIdentity();
+
+
+        {//yaw
+            double thRot = 0;
+            if (getThrower() != null)
+                thRot = getThrower().rotationYaw;
+
+            Matrix4d rotA = new Matrix4d();
+            rotA.rotY(Math.toRadians(getRotYaw() - thRot));
+            rotMat.mul(rotA);
+        }
+        {//ptich
+            Matrix4d rotA = new Matrix4d();
+            rotA.rotX(Math.toRadians(-getRotPitch()));
+            rotMat.mul(rotA);
+        }
+
+        final double pitch = 7.5;
+        {
+            Matrix4d rotA = new Matrix4d();
+            rotA.rotY(-Math.toRadians((ticks * 5.0) % 360.0));
+            rotMat.mul(rotA);
+        }
+        {
+            Matrix4d rot = new Matrix4d();
+            rot.rotZ(Math.toRadians(pitch));
+            rotMat.mul(rot);
+        }
+        {
+            Matrix4d rot = new Matrix4d();
+            rot.rotY(yaw);
+            rotMat.mul(rot);
+        }
+
+        Vector3d vector3d = new Vector3d(0,0,1);
+        rotMat.transform(vector3d);
+
+        vector3d.normalize();
+        vector3d.scale(1.5);
+
+        Vec3 pos = Vec3.createVectorHelper(vector3d.x, vector3d.y, vector3d.z);
 
         if (getThrower() != null) {
             pos = pos.addVector(getThrower().posX, getThrower().posY, getThrower().posZ);
@@ -267,9 +346,81 @@ public class EntitySpiralSwords extends EntityPhantomSwordBase {
                 pos = pos.addVector(0, -getThrower().height / 3.0, 0);
         }
 
+        Vector3d rot = new Vector3d();
+        rotate(rotMat, rot);
+
+        prevRotationYaw = this.rotationYaw;
+        prevRotationPitch = this.rotationPitch;
+
+
         //■初期位置・初期角度等の設定
         setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-        setRotation((float) -degYaw, 0);
+
+        setRotation((float)Math.toDegrees(rot.y), (float)Math.toDegrees(rot.x));
+//        setRotation((float) (-degYaw + (ticks * 5.0)), (float)(-(pitch) * Math.sin(yaw))/**/);
+    }
+
+    public final void rotate(Matrix4d m , Vector3d rot) {
+        Vector3d unit = new Vector3d(0,0,1);
+
+        Vector3d vector3d = new Vector3d(0,0,1);
+        m.transform(vector3d);
+        vector3d.normalize();
+
+        Vector3d yawBase = new Vector3d(vector3d);
+        yawBase.y = 0;
+
+        double yaw = 0.0;
+        if(0.0 != yawBase.length()){
+            yawBase.normalize();
+            yaw = unit.dot(yawBase);
+            yaw = Math.acos(yaw);
+
+            Vector3d cx = new Vector3d();
+            cx.cross(unit, yawBase);
+            yaw = Math.signum(cx.y) * yaw;
+
+            if(Math.abs(yaw) < 0.3){
+                Vector3d xUnit = new Vector3d(1,0,0);
+
+                yaw = xUnit.dot(yawBase);
+                yaw = Math.acos(yaw);
+
+                cx.cross(xUnit, yawBase);
+                yaw = Math.signum(cx.y) * yaw + (Math.PI / 2.0);
+            }
+
+
+
+            Matrix4d invYaw = new Matrix4d();
+            invYaw.rotY(-yaw);
+            invYaw.transform(vector3d);
+
+            vector3d.x = 0;
+            vector3d.normalize();
+        }
+
+        double pitch = unit.dot(vector3d);
+        pitch = Math.acos(pitch);
+        {
+            Vector3d cx = new Vector3d();
+            cx.cross(unit, vector3d);
+            pitch = Math.signum(cx.x) * pitch;
+
+            if(Math.abs(pitch) < 0.3){
+                Vector3d yUnit = new Vector3d(0,1,0);
+
+                pitch = yUnit.dot(vector3d);
+                pitch = Math.acos(pitch);
+
+                cx.cross(yUnit, vector3d);
+                pitch = Math.signum(cx.x) * pitch - (Math.PI / 2.0);
+            }
+
+        }
+
+        rot.y = -yaw;
+        rot.x = pitch;
     }
 
     public void setMotionVector(float fYVecOfst,boolean init)

@@ -7,6 +7,7 @@ import mods.flammpfeil.slashblade.EntityDirectAttackDummy;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.AirTrick;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.entity.EntityCaliburManager;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
 import mods.flammpfeil.slashblade.entity.EntityPhantomSwordBase;
@@ -45,6 +46,37 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
         if(!(stack.getItem() instanceof ItemSlashBlade)) return null;
 
         switch(message.mode){
+            case 5:{
+                //calibur
+
+                NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
+
+                ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Calibur);
+
+                entityPlayer.fallDistance = 0;
+
+                double playerDist = 2.5;
+                entityPlayer.motionX = -Math.sin(Math.toRadians(entityPlayer.rotationYaw)) * playerDist;
+                entityPlayer.motionZ =  Math.cos(Math.toRadians(entityPlayer.rotationYaw)) * playerDist;
+
+                UntouchableTime.setUntouchableTime(entityPlayer, 6, false);
+
+                entityPlayer.playSound("mob.enderdragon.wings", 1.0F, 0.2F);
+
+                ItemSlashBlade blade = (ItemSlashBlade) stack.getItem();
+                blade.doSwingItem(stack, entityPlayer);
+
+                if (!entityPlayer.worldObj.isRemote) {
+                    EntityCaliburManager mgr = new EntityCaliburManager(entityPlayer.worldObj, entityPlayer, false);
+                    if (mgr != null) {
+                        mgr.setLifeTime(14);
+
+                        entityPlayer.worldObj.spawnEntityInWorld(mgr);
+                    }
+                }
+
+                break;
+            }
             case 4:{
                 //rising star
 

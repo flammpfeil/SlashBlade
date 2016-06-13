@@ -969,7 +969,19 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 			float yoffset = 8.0f;
 
 			//-----------------------------------------------------------------------------------------------------------------------
-			GL11.glPushMatrix();{
+			GL11.glPushMatrix();
+
+            float progressTmp = progress;
+            for(int blurLoop = 0; blurLoop < 3; blurLoop++){
+                GL11.glPushMatrix();
+                if((progressTmp == 1.0f || combo.useScabbard)&& blurLoop != 0) {
+                    GL11.glPopMatrix();
+                    break;
+                }
+
+                if(0 < blurLoop) {
+                    progress *= 0.8f;
+                }
 
 
 				if(!combo.equals(ComboSequence.None)){
@@ -1039,13 +1051,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                         GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
                         GL11.glTranslatef(0.0f, -yoffset, 0.0f);
 
-                        progress = 1.0f;
 
-                        if(0 < combo.swingAmplitude){
-                            GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
-                        }else{
-                            GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
-                        }
+                        float rotate = progress * Math.abs(combo.swingAmplitude);
+                        GL11.glRotatef(rotate, 0.0f, 0.0f, -1.0f);
 
                         GL11.glTranslatef(0.0f, yoffset, 0.0f);
                         GL11.glTranslatef(xoffset, 0.0f, 0.0f);
@@ -1109,12 +1117,20 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.005f);
+
+            if(0 < blurLoop){
+                GL11.glColor4d(1,1,1, (float)Math.pow(0.5,blurLoop));
+            }
 
             model.renderPart(renderTarget);
 
             if(!combo.useScabbard){
                 model.renderPart(renderTarget + "_unsheathe");
+            }
+
+            if(0 < blurLoop){
+                GL11.glColor4d(1,1,1,1);
             }
 
             GL11.glDisable(GL11.GL_LIGHTING);
@@ -1151,8 +1167,11 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
 
                 GlStateManager.glBlendEquation(GL14.GL_FUNC_REVERSE_SUBTRACT);
 
+                float transparent = 1.0f;
+                if(0 < blurLoop)
+                    transparent = (float)Math.pow(0.5,blurLoop);
                 {
-                    int setColor = (0xFFFFFF - color) | (0xFF000000 & (int)(0x66000000 * alpha));
+                    int setColor = (0xFFFFFF - color) | (0xFF000000 & (int)(0x66 * alpha * transparent) << 24);
                     int a = setColor >> 24 & 255;
                     int r = setColor >> 16 & 255;
                     int g = setColor >> 8 & 255;
@@ -1164,7 +1183,7 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GlStateManager.glBlendEquation(GL14.GL_FUNC_ADD);
 
                 {
-                    int setColor = (color) | (0xFF000000 & (int)(0xFF000000 * alpha));
+                    int setColor = (color) | (0xFF000000 & (int)(0xFF * alpha * transparent) << 24);
                     int a = setColor >> 24 & 255;
                     int r = setColor >> 16 & 255;
                     int g = setColor >> 8 & 255;
@@ -1218,7 +1237,9 @@ public class ItemRendererBaseWeapon implements IItemRenderer {
                 GL11.glDepthFunc(GL11.GL_LEQUAL);
             }
 
+                GL11.glPopMatrix();
 			}GL11.glPopMatrix();
+            progress = progressTmp;
 
 			//-----------------------------------------------------------------------------------------------------------------------
 

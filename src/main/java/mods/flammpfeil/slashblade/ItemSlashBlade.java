@@ -216,12 +216,17 @@ public class ItemSlashBlade extends ItemSword {
         AKiriorosi(false, 200.0f, -360.0f+120f,false,25),
 
         AKiriorosiB(false, 200.0f,-360.0f+80f,false,25), //changeflag
-        AKiriage(false, 360.0f+180f+60f, -360.0f+180f+80f,false,12),
+        AKiriage(false, 180f+60f, -360.0f+180f+110f,false,12),
         AKiriorosiFinish(false, 200.0f,-360.0f+90f,false,25),
 
-        RapidSlash(false, 240.0f,20.0f,false,12),
+        RapidSlash(false, 360.0f + 240.0f,-360.0f - 20.0f,false,12),
         RapidSlashEnd(false, 240.0f,20.0f,false,12),
         RisingStar(false, 250.0f,-160.0f,false,12), //rize
+
+
+        HelmBraker(false, 200.0f,-360.0f+90f,false,25),
+
+        Calibur(false, 360.0f + 240.0f,-360.0f - 20.0f,false,25),
         ;
 
 	    /**
@@ -500,6 +505,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
+            case Calibur:
             case RapidSlash:
             case SlashEdge:
             case SIai:
@@ -573,6 +579,22 @@ public class ItemSlashBlade extends ItemSword {
                 break;
 
                 //==================================
+
+            case HelmBraker:
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+
+                target.fallDistance += 5;
+
+                target.addVelocity(0.0, -1.0D, 0.0);
+
+                target.hurtResistantTime = 0;
+
+
+                StunManager.removeStun(target);
+
+                break;
 
             case Saya1:
             case Saya2:
@@ -727,7 +749,23 @@ public class ItemSlashBlade extends ItemSword {
 
             int rank = StylishRankManager.getStylishRank(player);
 
-            switch (current) {
+            int helmBrakerState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
+
+            long currentTime = player.getEntityWorld().getTotalWorldTime();
+            int caliburState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
+            long backKeyLastActiveTime = player.getEntityData().getLong("SB.MCS.B");
+            final int TypeAheadBuffer = 7;
+
+            if((currentTime - backKeyLastActiveTime) <= (TypeAheadBuffer)
+                    && caliburState == (player.getEntityData().getByte("SB.MCS") & caliburState)
+                    && current != ComboSequence.Calibur ) {
+                result = ComboSequence.Calibur;
+
+            }else if(helmBrakerState == (player.getEntityData().getByte("SB.MCS") & helmBrakerState)
+                    && current != ComboSequence.HelmBraker ){
+                result = ComboSequence.HelmBraker;
+
+            }else switch (current) {
                 case AKiriorosi:
                 {
                     long last = LastActionTime.get(getItemTagCompound(itemStack));
@@ -856,11 +894,47 @@ public class ItemSlashBlade extends ItemSword {
 
                 player.playSound("mob.enderdragon.wings", 0.5F, 0.5F);
 
-                EntityRapidSlashManager mgr = new EntityRapidSlashManager(player.worldObj,player,false);
-                if(mgr != null){
-                    mgr.setLifeTime(6);
+                if(!player.worldObj.isRemote){
+                    EntityRapidSlashManager mgr = new EntityRapidSlashManager(player.worldObj,player,false);
+                    if(mgr != null){
+                        mgr.setLifeTime(6);
 
-                    player.worldObj.spawnEntityInWorld(mgr);
+                        player.worldObj.spawnEntityInWorld(mgr);
+                    }
+                }
+                break;
+            }
+            case HelmBraker: {
+                player.fallDistance = 0;
+
+                UntouchableTime.setUntouchableTime(player, 6, false);
+
+                if(!player.worldObj.isRemote) {
+                    EntityHelmBrakerManager mgr = new EntityHelmBrakerManager(player.worldObj, player, false);
+                    if (mgr != null) {
+                        mgr.setLifeTime(20);
+
+                        player.worldObj.spawnEntityInWorld(mgr);
+                    }
+                }
+                break;
+            }
+            case Calibur: {
+                player.fallDistance = 0;
+
+                double playerDist = 2.5;
+
+                /*
+                if(!player.onGround)
+                    playerDist *= 0.35f;
+                */
+                player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
+                player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
+
+                UntouchableTime.setUntouchableTime(player, 6, false);
+
+                if(player.worldObj.isRemote) {
+                    PacketHandler.INSTANCE.sendToServer(new MessageSpecialAction((byte) 5));
                 }
                 break;
             }
@@ -878,12 +952,67 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
 
-            case AKiriage:
+            case AKiriage: {
                 player.fallDistance = 0;
                 player.motionY = 0;
-                player.addVelocity(0.0, 0.7D,0.0);
+                player.addVelocity(0.0, 0.7D, 0.0);
+
+                /*
+                if(!player.worldObj.isRemote){
+                    int currentTime = (int)player.getEntityWorld().getWorldTime();
+                    final int holdLimit = 8;
+
+                    if(player.getEntityData().hasKey("SB.SPHOLDID")){
+                        if(currentTime < (player.getEntityData().getInteger("SB.SPHOLDID") + holdLimit)){
+                            player.getEntityData().removeTag("SB.SPHOLDID");
+                            return;
+                        }
+                    }
+
+
+                    //if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                    //player.worldObj.playSound((EntityPlayer) null, player.prevPosX, player.prevPosY, player.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+
+                    int count = 6;
+
+                    //if (rank < 3)
+                    //    level = Math.min(1, level);
+
+
+                    float magicDamage = 1;
+
+                    float arc = 360.0f / count;
+
+                    player.getEntityData().setInteger("SB.SPHOLDID", currentTime);
+
+                    for (int i = 0; i < count; i++) {
+
+                        float offset = i * arc;
+
+                        EntitySpiralSwords summonedSword = new EntitySpiralSwords(player.worldObj, player, magicDamage, 0, offset);
+                        if (summonedSword != null) {
+                            summonedSword.setHoldId(currentTime);
+                            summonedSword.setInterval(holdLimit+5);
+                            summonedSword.setLifeTime(holdLimit);
+                            summonedSword.setRotTicks(12);
+
+                            summonedSword.setRotPitch(110.0f);
+                            summonedSword.setRotYaw(80.0f);
+
+                            if (SummonedSwordColor.exists(tag))
+                                summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                            ScheduleEntitySpawner.getInstance().offer(summonedSword);
+                            //w.spawnEntityInWorld(entityDrive);
+
+                        }
+                    }
+                }
+                */
 
                 break;
+            }
             case AKiriorosiFinish:
                 player.fallDistance = 0;
 
@@ -1282,6 +1411,11 @@ public class ItemSlashBlade extends ItemSword {
                 //par3EntityPlayer.motionY = 0.0;
             }
 		}*/
+        if(getComboSequence(tag) == ComboSequence.Kiriage && par3EntityPlayer.worldObj.isRemote){
+            if(par3EntityPlayer.getEntityData().hasKey("SB.MCS.B")){
+                par3EntityPlayer.getEntityData().removeTag("SB.MCS.B");
+            }
+        }
 
 	}
 
@@ -1309,6 +1443,7 @@ public class ItemSlashBlade extends ItemSword {
     	vec = vec.normalize();
 
     	switch (combo) {
+        case Calibur:
         case RapidSlash:
         case RisingStar:
         case SlashEdge:
@@ -1355,7 +1490,16 @@ public class ItemSlashBlade extends ItemSword {
 			bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
 			break;
 
-		case Kiriorosi:
+        case HelmBraker:
+            if(swordType.contains(SwordType.Broken)){
+                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+            }else{
+                bb = bb.expand(2.0f, 2.5f, 2.0f);
+                bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+            }
+            break;
+        case Kiriorosi:
 		default:
             if(swordType.contains(SwordType.Broken)){
                 bb = bb.expand(1.0f, 0.0f, 1.0f);
@@ -1543,21 +1687,31 @@ public class ItemSlashBlade extends ItemSword {
 
 				int idx = Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
 
-				if(0<= idx && idx < 9 && 0 < el.experienceLevel){
+                boolean doMaterialRepair = false;
+
+                if(0<= idx && idx < 9 && swordType.contains(SwordType.Broken)){
+                    ItemStack tinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
+                    ItemStack tinySoulHasEmptyTag = tinySoul.copy();
+                    tinySoulHasEmptyTag.setTagCompound(new NBTTagCompound());
+
+                    doMaterialRepair = InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false)
+                                    || InventoryUtility.consumeInventoryItem(el.inventory,tinySoulHasEmptyTag,false);
+                }
+
+				if(0<= idx && idx < 9 && 0 < el.experienceLevel || doMaterialRepair){
 					int repair;
 					int descExp = 0;
                     int descLv = 0;
                     int addProudSoul = 0;
 
-					if(swordType.contains(SwordType.Broken)){
+                    if(doMaterialRepair){
+                        repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
+
+                    }else if(swordType.contains(SwordType.Broken)){
 						repair = Math.max(1,(int)(sitem.getMaxDamage() / 10.0));
-                        ItemStack tinySoul = GameRegistry.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
-                        ItemStack tinySoulHasEmptyTag = tinySoul.copy();
-                        tinySoulHasEmptyTag.setTagCompound(new NBTTagCompound());
 
                         addProudSoul = 20;
-                        if(!(InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false) || InventoryUtility.consumeInventoryItem(el.inventory,tinySoulHasEmptyTag,false)))
-                            descLv = 1;
+                        descLv = 1;
 					}else{
 						repair = 1;
 						descExp = 10;
@@ -1993,6 +2147,12 @@ public class ItemSlashBlade extends ItemSword {
                 break;
             case AKiriorosiFinish:
                 StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosiFinish);
+
+            case HelmBraker:
+                StylishRankManager.setNextAttackType(e, AttackTypes.HelmBraker);
+
+            case Calibur:
+                StylishRankManager.setNextAttackType(e, AttackTypes.Calibur);
 
             case RapidSlash:
                 StylishRankManager.setNextAttackType(e, AttackTypes.RapidSlash);

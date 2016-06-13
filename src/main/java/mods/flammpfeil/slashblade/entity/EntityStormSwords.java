@@ -91,6 +91,9 @@ public class EntityStormSwords extends EntityPhantomSwordBase {
 
         Entity ridingEntity = this.ridingEntity2;
 
+        this.prevRotationYaw = this.rotationYaw;
+        this.prevRotationPitch = this.rotationPitch;
+
         faceEntityStandby();
 
         if(ridingEntity.isDead){

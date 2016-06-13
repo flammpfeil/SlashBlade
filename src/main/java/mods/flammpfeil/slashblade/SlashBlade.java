@@ -307,6 +307,8 @@ public class SlashBlade implements IFuelHandler{
         EntityRegistry.registerModEntity(EntityStormSwords.class, "StormSwords", entityId++, this, 250, 200, true);
 
         EntityRegistry.registerModEntity(EntityRapidSlashManager.class, "RapidSlashManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntityHelmBrakerManager.class, "HelmbrakerManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntityCaliburManager.class, "CaliburManager", entityId++, this, 250, 10, true);
 
         EntityRegistry.registerModEntity(EntityGrimGrip.class, "GrimGrip", entityId++, this, 250, 10, true);
         EntityRegistry.registerModEntity(EntityGrimGripKey.class, "GrimGripKey", entityId++, this, 250, 200, false);

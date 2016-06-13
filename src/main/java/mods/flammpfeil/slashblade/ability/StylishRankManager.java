@@ -110,6 +110,10 @@ public class StylishRankManager {
         public static String AKiriage = registerAttackType("AKiriage", 0.4f);
         public static String AKiriorosiFinish = registerAttackType("AKiriorosiFinish", 0.5f);
 
+        public static String Calibur = registerAttackType("Calibur", 0.5f);
+
+        public static String HelmBraker = registerAttackType("HelmBraker", 0.5f);
+
         public static String RapidSlash = registerAttackType("RapidSlash", 0.3f);
         public static String RisingStar = registerAttackType("RisingStar", 0.3f);
 
