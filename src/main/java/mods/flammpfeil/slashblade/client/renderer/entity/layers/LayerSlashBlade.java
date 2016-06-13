@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
+import java.awt.*;
 import java.util.EnumSet;
 
 /**
@@ -538,11 +539,21 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             float yoffset = 8.0f;
 
             //-----------------------------------------------------------------------------------------------------------------------
-            GL11.glPushMatrix();{
+            GL11.glPushMatrix();
 
+            float progressTmp = progress;
+            for(int blurLoop = 0; blurLoop < 3; blurLoop++){
+                GL11.glPushMatrix();
+                if((progressTmp == 1.0f || combo.useScabbard)&& blurLoop != 0) {
+                    GL11.glPopMatrix();
+                    break;
+                }
+
+                if(0 < blurLoop) {
+                    progress *= 0.8f;
+                }
 
             if(!combo.equals(ItemSlashBlade.ComboSequence.None)){
-
                 float tmp = progress;
 
                 if(combo.swingAmplitude < 0){
@@ -608,13 +619,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                     GL11.glTranslatef(-xoffset , 0.0f, 0.0f );
                     GL11.glTranslatef(0.0f, -yoffset, 0.0f);
 
-                    progress = 1.0f;
-
-                    if(0 < combo.swingAmplitude){
-                        GL11.glRotatef(progress * (combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
-                    }else{
-                        GL11.glRotatef(progress * (-combo.swingAmplitude), 0.0f, 0.0f, -1.0f);
-                    }
+                    float rotate = progress * Math.abs(combo.swingAmplitude);
+                    GL11.glRotatef(rotate, 0.0f, 0.0f, -1.0f);
 
                     GL11.glTranslatef(0.0f, yoffset, 0.0f);
                     GL11.glTranslatef(xoffset, 0.0f, 0.0f);
@@ -681,13 +687,21 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.005f);
+
+                if(0 < blurLoop){
+                    Face.setColor(new Color(1.0f,1.0f,1.0f, (float)Math.pow(0.5,blurLoop)).getRGB());
+                }
 
             model.renderPart(renderTarget);
 
             if(!combo.useScabbard){
                 model.renderPart(renderTarget + "_unsheathe");
             }
+
+                if(0 < blurLoop){
+                    Face.resetColor();
+                }
 
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
@@ -724,12 +738,16 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
                 GlStateManager.glBlendEquation(GL14.GL_FUNC_REVERSE_SUBTRACT);
 
-                Face.setColor((0xFFFFFF - color) | (0xFF000000 & (int)(0x44000000 * alpha)));
+                float transparent = 1.0f;
+                if(0 < blurLoop)
+                    transparent = (float)Math.pow(0.5,blurLoop);
+
+                Face.setColor((0xFFFFFF - color) | (0xFF000000 & ((int)(0x44 * alpha * transparent) << 24)));
                 trailModel.renderAll();
 
                 GlStateManager.glBlendEquation(GL14.GL_FUNC_ADD);
 
-                Face.setColor((color) | (0xFF000000 & (int)(0x66000000 * alpha)));
+                Face.setColor((color) | (0xFF000000 & ((int)(0x66 * alpha * transparent) << 24)));
                 trailModel.renderAll();
 
                 Face.resetColor();
@@ -781,8 +799,9 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 GL11.glEnable(GL11.GL_LIGHTING);
                 GL11.glDepthFunc(GL11.GL_LEQUAL);
             }
-
+                GL11.glPopMatrix();
         }GL11.glPopMatrix();
+            progress = progressTmp;
 
             //-----------------------------------------------------------------------------------------------------------------------
 

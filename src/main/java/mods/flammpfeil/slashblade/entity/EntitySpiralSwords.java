@@ -52,6 +52,9 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
     private static final DataParameter<Boolean> HAS_FIRED = EntityDataManager.<Boolean>createKey(EntitySpiralSwords.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Float> ROT_OFFSET = EntityDataManager.<Float>createKey(EntitySpiralSwords.class, DataSerializers.FLOAT);
     private static final DataParameter<Integer> HOLDID = EntityDataManager.<Integer>createKey(EntitySpiralSwords.class, DataSerializers.VARINT);
+    private static final DataParameter<Float> ROT_PITCH = EntityDataManager.<Float>createKey(EntitySpiralSwords.class, DataSerializers.FLOAT);
+    private static final DataParameter<Float> ROT_YAW = EntityDataManager.<Float>createKey(EntitySpiralSwords.class, DataSerializers.FLOAT);
+    private static final DataParameter<Integer> ROT_TICKS = EntityDataManager.<Integer>createKey(EntitySpiralSwords.class, DataSerializers.VARINT);
 
     @Override
     protected void entityInit() {
@@ -62,6 +65,12 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
         this.getDataManager().register(ROT_OFFSET, 0.0f);
 
         this.getDataManager().register(HOLDID, 0);
+
+        this.getDataManager().register(ROT_PITCH, 0.0f);
+        this.getDataManager().register(ROT_YAW, 0.0f);
+
+        this.getDataManager().register(ROT_TICKS, 30);
+
     }
 
     public boolean hasFired(){
@@ -85,10 +94,36 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
         this.getDataManager().set(HOLDID,id);
     }
 
+    public int getRotTicks(){
+        return this.getDataManager().get(ROT_TICKS);
+    }
+    public void setRotTicks(int ticks){
+        this.getDataManager().set(ROT_TICKS,ticks);
+    }
+
+    public float getRotPitch(){
+        return this.getDataManager().get(ROT_PITCH);
+    }
+    public void setRotPitch(float rotPitch){
+        this.getDataManager().set(ROT_PITCH,rotPitch);
+    }
+
+    public float getRotYaw(){
+        return this.getDataManager().get(ROT_YAW);
+    }
+    public void setRotYaw(float rotYaw){
+        this.getDataManager().set(ROT_YAW,rotYaw);
+    }
+
     static final int waitTime = 7;
 
     @Override
     public void updateRidden() {
+
+        if(getLifeTime() < this.ticksExisted){
+            setInvisible(true);
+            isDead = true;
+        }
 
         if(hasFired()) {
             if (ridingEntity2 == thrower) {
@@ -258,7 +293,7 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
             ticks = getInterval() - waitTime;
         }
 
-        double rotParTick = 360.0 / 30.0;
+        double rotParTick = 360.0 / (double)getRotTicks();
         double offset = getRotOffset();
         double degYaw = ticks * rotParTick + offset;
         double yaw = Math.toRadians(degYaw);
@@ -266,6 +301,22 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
 
         Matrix4d rotMat = new Matrix4d();
         rotMat.setIdentity();
+
+
+        {//yaw
+            double thRot = 0;
+            if (getThrower() != null)
+                thRot = getThrower().rotationYaw;
+
+            Matrix4d rotA = new Matrix4d();
+            rotA.rotY(Math.toRadians(getRotYaw() - thRot));
+            rotMat.mul(rotA);
+        }
+        {//ptich
+            Matrix4d rotA = new Matrix4d();
+            rotA.rotX(Math.toRadians(-getRotPitch()));
+            rotMat.mul(rotA);
+        }
 
         final double pitch = 7.5;
         {
@@ -297,9 +348,81 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
             pos = pos.addVector(0, getThrower().getEyeHeight() / 3.0, 0);
         }
 
+        Vector3d rot = new Vector3d();
+        rotate(rotMat, rot);
+
+        prevRotationYaw = this.rotationYaw;
+        prevRotationPitch = this.rotationPitch;
+
+
         //■初期位置・初期角度等の設定
         setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-        setRotation((float) (-degYaw + (ticks * 5.0) ), (float)(-pitch * Math.sin(yaw))/**/);
+
+        setRotation((float)Math.toDegrees(rot.y), (float)Math.toDegrees(rot.x));
+//        setRotation((float) (-degYaw + (ticks * 5.0)), (float)(-(pitch) * Math.sin(yaw))/**/);
+    }
+
+    public final void rotate(Matrix4d m , Vector3d rot) {
+        Vector3d unit = new Vector3d(0,0,1);
+
+        Vector3d vector3d = new Vector3d(0,0,1);
+        m.transform(vector3d);
+        vector3d.normalize();
+
+        Vector3d yawBase = new Vector3d(vector3d);
+        yawBase.y = 0;
+
+        double yaw = 0.0;
+        if(0.0 != yawBase.length()){
+            yawBase.normalize();
+            yaw = unit.dot(yawBase);
+            yaw = Math.acos(yaw);
+
+            Vector3d cx = new Vector3d();
+            cx.cross(unit, yawBase);
+            yaw = Math.signum(cx.y) * yaw;
+
+            if(Math.abs(yaw) < 0.3){
+                Vector3d xUnit = new Vector3d(1,0,0);
+
+                yaw = xUnit.dot(yawBase);
+                yaw = Math.acos(yaw);
+
+                cx.cross(xUnit, yawBase);
+                yaw = Math.signum(cx.y) * yaw + (Math.PI / 2.0);
+            }
+
+
+
+            Matrix4d invYaw = new Matrix4d();
+            invYaw.rotY(-yaw);
+            invYaw.transform(vector3d);
+
+            vector3d.x = 0;
+            vector3d.normalize();
+        }
+
+        double pitch = unit.dot(vector3d);
+        pitch = Math.acos(pitch);
+        {
+            Vector3d cx = new Vector3d();
+            cx.cross(unit, vector3d);
+            pitch = Math.signum(cx.x) * pitch;
+
+            if(Math.abs(pitch) < 0.3){
+                Vector3d yUnit = new Vector3d(0,1,0);
+
+                pitch = yUnit.dot(vector3d);
+                pitch = Math.acos(pitch);
+
+                cx.cross(yUnit, vector3d);
+                pitch = Math.signum(cx.x) * pitch - (Math.PI / 2.0);
+            }
+
+        }
+
+        rot.y = -yaw;
+        rot.x = pitch;
     }
 
     public void setMotionVector(float fYVecOfst,boolean init)

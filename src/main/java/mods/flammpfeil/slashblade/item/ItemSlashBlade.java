@@ -185,12 +185,15 @@ public class ItemSlashBlade extends ItemSword {
         AKiriorosi(false, 200.0f, -360.0f+120f,false,25),
 
         AKiriorosiB(false, 200.0f,-360.0f+80f,false,25), //changeflag
-        AKiriage(false, 360.0f+180f+60f, -360.0f+180f+80f,false,12),
+        AKiriage(false, 180f+60f, -360.0f+180f+110f,false,12),
         AKiriorosiFinish(false, 200.0f,-360.0f+90f,false,25),
 
-        RapidSlash(false, 240.0f,20.0f,false,12),
+        RapidSlash(false, 360.0f + 240.0f,-360.0f - 20.0f,false,12),
         RapidSlashEnd(false, 240.0f,20.0f,false,12),
         RisingStar(false, 250.0f,-160.0f,false,12), //rize
+
+
+        HelmBraker(false, 200.0f,-360.0f+90f,false,25),
         ;
 
 	    /**
@@ -542,6 +545,22 @@ public class ItemSlashBlade extends ItemSword {
 
                 //==================================
 
+            case HelmBraker:
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+
+                target.fallDistance += 5;
+
+                target.addVelocity(0.0, -1.0D, 0.0);
+
+                target.hurtResistantTime = 0;
+
+
+                StunManager.removeStun(target);
+
+                break;
+
             case Saya1:
             case Saya2:
 
@@ -687,7 +706,12 @@ public class ItemSlashBlade extends ItemSword {
 
             int rank = StylishRankManager.getStylishRank(player);
 
-            switch (current) {
+            int rapidSlashState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
+            if(rapidSlashState == (player.getEntityData().getByte("SB.MCS") & rapidSlashState)
+                    && current != ComboSequence.HelmBraker ){
+                result = ComboSequence.HelmBraker;
+
+            }else switch (current) {
                 case AKiriorosi:
                 {
                     long last = LastActionTime.get(getItemTagCompound(itemStack));
@@ -820,6 +844,19 @@ public class ItemSlashBlade extends ItemSword {
                 }
                 break;
             }
+            case HelmBraker: {
+                player.fallDistance = 0;
+
+                UntouchableTime.setUntouchableTime(player, 6, false);
+
+                EntityHelmBrakerManager mgr = new EntityHelmBrakerManager(player.worldObj,player,false);
+                if(mgr != null){
+                    mgr.setLifeTime(20);
+
+                    player.worldObj.spawnEntityInWorld(mgr);
+                }
+                break;
+            }
             case ASlashEdge:
             case AKiriorosi:
                 player.fallDistance = 0;
@@ -834,12 +871,67 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
 
-            case AKiriage:
+            case AKiriage: {
                 player.fallDistance = 0;
                 player.motionY = 0;
-                player.addVelocity(0.0, 0.7D,0.0);
+                player.addVelocity(0.0, 0.7D, 0.0);
+
+                /*
+                if(!player.worldObj.isRemote){
+                    int currentTime = (int)player.getEntityWorld().getWorldTime();
+                    final int holdLimit = 8;
+
+                    if(player.getEntityData().hasKey("SB.SPHOLDID")){
+                        if(currentTime < (player.getEntityData().getInteger("SB.SPHOLDID") + holdLimit)){
+                            player.getEntityData().removeTag("SB.SPHOLDID");
+                            return;
+                        }
+                    }
+
+
+                    //if (!ProudSoul.tryAdd(tag, -10, false)) return;
+
+                    //player.worldObj.playSound((EntityPlayer) null, player.prevPosX, player.prevPosY, player.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.7F, 1.0F);
+
+                    int count = 6;
+
+                    //if (rank < 3)
+                    //    level = Math.min(1, level);
+
+
+                    float magicDamage = 1;
+
+                    float arc = 360.0f / count;
+
+                    player.getEntityData().setInteger("SB.SPHOLDID", currentTime);
+
+                    for (int i = 0; i < count; i++) {
+
+                        float offset = i * arc;
+
+                        EntitySpiralSwords summonedSword = new EntitySpiralSwords(player.worldObj, player, magicDamage, 0, offset);
+                        if (summonedSword != null) {
+                            summonedSword.setHoldId(currentTime);
+                            summonedSword.setInterval(holdLimit+5);
+                            summonedSword.setLifeTime(holdLimit);
+                            summonedSword.setRotTicks(12);
+
+                            summonedSword.setRotPitch(110.0f);
+                            summonedSword.setRotYaw(80.0f);
+
+                            if (SummonedSwordColor.exists(tag))
+                                summonedSword.setColor(SummonedSwordColor.get(tag));
+
+                            ScheduleEntitySpawner.getInstance().offer(summonedSword);
+                            //w.spawnEntityInWorld(entityDrive);
+
+                        }
+                    }
+                }
+                */
 
                 break;
+            }
             case AKiriorosiFinish:
                 player.fallDistance = 0;
 
@@ -1334,7 +1426,8 @@ public class ItemSlashBlade extends ItemSword {
 			bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
 			break;
 
-		case Kiriorosi:
+        case HelmBraker:
+        case Kiriorosi:
 		default:
             if(swordType.contains(SwordType.Broken)){
                 bb = bb.expand(1.0f, 0.0f, 1.0f);
@@ -1980,6 +2073,9 @@ public class ItemSlashBlade extends ItemSword {
                 break;
             case AKiriorosiFinish:
                 StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosiFinish);
+
+            case HelmBraker:
+                StylishRankManager.setNextAttackType(e, AttackTypes.HelmBraker);
 
             case RapidSlash:
                 StylishRankManager.setNextAttackType(e, AttackTypes.RapidSlash);
