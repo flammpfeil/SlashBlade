@@ -259,7 +259,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
                         StylishRankManager.doAttack(this.thrower);
                     }
                 }
-                if(isSingleHit() || this.ticksExisted % 2 == 0){
+                if(isSingleHit() || this.ticksExisted % 3 == 0){
                     List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                     list.removeAll(alreadyHitEntity);
 

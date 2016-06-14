@@ -23,7 +23,8 @@ public class EnchantHelper {
             ,Enchantments.FIRE_PROTECTION
             ,Enchantments.FEATHER_FALLING
             ,Enchantments.FORTUNE
-            , Enchantments.RESPIRATION);
+            ,Enchantments.RESPIRATION
+            ,Enchantments.UNBREAKING);
 
     public static void initEnchantmentList(){
         //func_181077_c : get locationEnchantments.keySet()

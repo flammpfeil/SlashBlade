@@ -334,6 +334,11 @@ public class ItemProudSoul extends Item {
                         if(bladeEnchMap.containsKey(entry.getKey())){
                             int currentLevel = bladeEnchMap.get(entry.getKey());
                             int maxLevel = ench.getMaxLevel();
+
+                            if(ench.equals(Enchantments.UNBREAKING)){
+                                maxLevel = 5;
+                            }
+
                             if(currentLevel < maxLevel)
                                 level = currentLevel+1;
                             else{
