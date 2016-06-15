@@ -41,7 +41,7 @@ public class AnvilEventHandler {
                     ? Enchantment.enchantmentsList[enchIdx] : null;
             if (enchantment1 == null) continue;
 
-            int level = map.get(enchantment1);
+            int level = map.get(enchantment1.effectId);
 
             int baseCost = 0;
 
