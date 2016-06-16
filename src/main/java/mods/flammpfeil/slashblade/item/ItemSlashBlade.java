@@ -718,8 +718,10 @@ public class ItemSlashBlade extends ItemSword {
 
             if((currentTime - backKeyLastActiveTime) <= (TypeAheadBuffer)
                     && caliburState == (player.getEntityData().getByte("SB.MCS") & caliburState)
-                    && current != ComboSequence.Calibur ) {
+                    && current != ComboSequence.Calibur
+                    && !OnJumpAttacked.get(getItemTagCompound(itemStack))) {
                 result = ComboSequence.Calibur;
+                OnJumpAttacked.set(getItemTagCompound(itemStack),true);
 
             }else if(helmBrakerState == (player.getEntityData().getByte("SB.MCS") & helmBrakerState)
                     && current != ComboSequence.HelmBraker ){

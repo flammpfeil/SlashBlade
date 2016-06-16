@@ -197,8 +197,10 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
             }
 
             combo = ItemSlashBlade.getComboSequence(tag);
-            if(combo == ItemSlashBlade.ComboSequence.HelmBraker)
+            if(combo == ItemSlashBlade.ComboSequence.HelmBraker) {
                 ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Calibur);
+                ItemSlashBlade.OnJumpAttacked.set(tag,true);
+            }
 
             if(worldObj.isRemote)
                 owner.motionY = 0;
