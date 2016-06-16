@@ -5,10 +5,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.TeleportCanceller;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -17,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -26,7 +30,7 @@ import java.util.Random;
 /**
  * Created by Furia on 14/05/08.
  */
-public class EntityCaliburManager extends Entity implements IThrowableEntity {
+public class EntitySlashDimension extends Entity implements IThrowableEntity {
     /**
      * ★撃った人
      */
@@ -39,27 +43,33 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
      */
     protected List<Entity> alreadyHitEntity = new ArrayList<Entity>();
 
+    protected float AttackLevel = 0.0f;
+
     /**
      * ■コンストラクタ
      * @param par1World
      */
-    public EntityCaliburManager(World par1World)
+    public EntitySlashDimension(World par1World)
     {
         super(par1World);
         ticksExisted = 0;
+
+        getEntityData().setInteger("seed", rand.nextInt(50));
     }
 
-    public EntityCaliburManager(World par1World, EntityLivingBase entityLiving, boolean isSingleHit){
-        this(par1World, entityLiving);
-        this.setIsSingleHit(isSingleHit);
+    public EntitySlashDimension(World par1World, EntityLivingBase entityLiving, float AttackLevel, boolean multiHit){
+        this(par1World, entityLiving, AttackLevel);
+        this.setIsSingleHit(multiHit);
     }
 
-    public EntityCaliburManager(World par1World, EntityLivingBase entityLiving)
+    public EntitySlashDimension(World par1World, EntityLivingBase entityLiving, float AttackLevel)
     {
         this(par1World);
 
+        this.AttackLevel = AttackLevel;
+
         //■撃った人
-        setThrower(entityLiving);
+        thrower = entityLiving;
 
         blade = entityLiving.getHeldItem();
         if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
@@ -76,49 +86,79 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
         ticksExisted = 0;
 
         //■サイズ変更
-        setSize(2.0F, 2.0F);
+        setSize(4.0F, 4.0F);
 
-        //■初期位置・初期角度等の設定
-        setLocationAndAngles(thrower.posX,
-                thrower.posY,
-                thrower.posZ,
-                thrower.rotationYaw,
-                thrower.rotationPitch);
     }
 
-    private static final int SINGLE_HIT = 12;
-    private static final int LIFETIME = 13;
-    private static final int THROWER_ENTITY_ID = 14;
+
+
+
+    private static final int LIFETIME = 3;
+    private static final int SINGLE_HIT = 4;
+    private static final int IS_SLASH_DIMENSION = 5;
+
+    private static final int THROWER_ENTITY_ID = 6;
+    private static final int INTERVAL = 7;
+    private static final int COLOR = 8;
+
     /**
      * ■イニシャライズ
      */
     @Override
     protected void entityInit() {
+        //lifetime
+        this.getDataWatcher().addObject(LIFETIME, 20);
 
         //isMultiHit
         this.getDataWatcher().addObject(SINGLE_HIT, (byte)0);
 
         //lifetime
-        this.getDataWatcher().addObject(LIFETIME, 20);
+        this.getDataWatcher().addObject(IS_SLASH_DIMENSION,  (byte)0);
 
-        //lifetime
+        //EntityId
         this.getDataWatcher().addObject(THROWER_ENTITY_ID, 0);
+
+        //interval
+        this.getDataWatcher().addObject(INTERVAL, 7);
+
+        //color
+        this.getDataWatcher().addObject(COLOR, 0x3333FF);
 
     }
 
-
-    public boolean isSingleHit(){
+    public boolean getIsSingleHit(){
         return this.getDataWatcher().getWatchableObjectByte(SINGLE_HIT) != 0;
     }
     public void setIsSingleHit(boolean isSingleHit){
-        this.getDataWatcher().updateObject(SINGLE_HIT,(byte)(isSingleHit ? 1 : 0));
+        this.getDataWatcher().updateObject(SINGLE_HIT, isSingleHit ? (byte)1 : (byte)0);
     }
 
     public int getLifeTime(){
         return this.getDataWatcher().getWatchableObjectInt(LIFETIME);
     }
     public void setLifeTime(int lifetime){
-        this.getDataWatcher().updateObject(LIFETIME, lifetime);
+        this.getDataWatcher().updateObject(LIFETIME,lifetime);
+    }
+
+    public boolean getIsSlashDimension(){
+        return this.getDataWatcher().getWatchableObjectByte(IS_SLASH_DIMENSION) != 0;
+    }
+    public void setIsSlashDimension(boolean isSlashDimension){
+        this.getDataWatcher().updateObject(IS_SLASH_DIMENSION, isSlashDimension ? (byte)1 : (byte)0);
+    }
+
+    public int getInterval(){
+        return this.getDataWatcher().getWatchableObjectInt(INTERVAL);
+    }
+    public void setInterval(int value){
+        this.getDataWatcher().updateObject(INTERVAL,value);
+    }
+
+    public int getColor(){
+        return this.getDataWatcher().getWatchableObjectInt(COLOR);
+    }
+    public void setColor(int value){
+        this.getDataWatcher().updateObject(COLOR,value);
     }
 
     public int getThrowerEntityId(){
@@ -132,96 +172,26 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
     @Override
     public void onUpdate()
     {
-        final int moveTicks = 5;
+        super.onUpdate();
 
-        AxisAlignedBB bb = null;
-        ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
-        //super.onUpdate();
-        if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
-            EntityLivingBase owner = (EntityLivingBase)this.getThrower();
-
-            if(blade == null){
-                blade = owner.getHeldItem();
-                if(blade == null || !(blade.getItem() instanceof ItemSlashBlade))
-                {
-                    setDead();
-                    return;
-                }
-            }
-
-            //bb = itemBlade.getBBofCombo(blade, ItemSlashBlade.ComboSequence.Calibur,(EntityLivingBase) getThrower());
-
-            double dAmbit = 2.5D;
-            bb = AxisAlignedBB.getBoundingBox(
-                    thrower.posX - dAmbit, thrower.posY - dAmbit, thrower.posZ - dAmbit,
-                    thrower.posX + dAmbit, thrower.posY + dAmbit, thrower.posZ + dAmbit);
-
-            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
-
-            int targetId = ItemSlashBlade.TargetEntityId.get(tag);
-            if(targetId != 0){
-                Entity target = this.worldObj.getEntityByID(targetId);
-                if(target != null){
-                    double distance = target.getDistanceSqToEntity(this.getThrower());
-                    if(distance < 2.0){
-                        if(moveTicks > this.ticksExisted){
-                            this.ticksExisted = moveTicks;
-                        }
-                        owner.motionZ = 0;
-                        owner.motionX = 0;
-                    }
-                }
-            }
-
-            if(moveTicks == this.ticksExisted){
-                owner.setPositionAndUpdate(owner.posX, owner.posY, owner.posZ);
-
-                if(worldObj.isRemote && blade != null && blade.getItem() instanceof ItemSlashBlade && owner instanceof EntityPlayer){
-                    ItemSlashBlade itemBlade = (ItemSlashBlade) blade.getItem();
-                    itemBlade.doSwingItem(blade, (EntityPlayer)owner);
-                }
-
-                owner.playSound("flammpfeil.slashblade:swingblade", 0.5F, 0.65F + owner.getRNG().nextFloat() * 0.05f);
-                owner.playSound("flammpfeil.slashblade:swingblade", 0.5F, 0.35F + owner.getRNG().nextFloat() * 0.05f);
-            }
-
-            if(moveTicks < this.ticksExisted){
-                owner.motionZ = 0.0;
-                owner.motionX = 0.0;
-            }
-
-            combo = ItemSlashBlade.getComboSequence(tag);
-            if(combo == ItemSlashBlade.ComboSequence.HelmBraker) {
-                ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Calibur);
-                ItemSlashBlade.OnJumpAttacked.set(tag,true);
-            }
-
-            if(worldObj.isRemote)
-                owner.motionY = 0;
-        }
-
-
-        //■死亡チェック
-        if(ticksExisted >= getLifeTime()
-                || this.getThrower() == null
-                || (this.getThrower() != null && (this.getThrower().onGround
-                || this.getThrower().isInWater()))) {
-
-            alreadyHitEntity.clear();
-            alreadyHitEntity = null;
-            setDead();
-            return;
-        }
+        lastTickPosX = posX;
+        lastTickPosY = posY;
+        lastTickPosZ = posZ;
 
         if(!worldObj.isRemote)
         {
+            if(ticksExisted < 8 && ticksExisted % 2 == 0) {
+                this.playSound("mob.wither.hurt", 0.2F, 0.5F + 0.25f * this.rand.nextFloat());
+            }
 
             {
+                AxisAlignedBB bb = this.boundingBox;
+
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.DestructableSelector);
 
-                    StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
+                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.DestructObject);
 
                     list.removeAll(alreadyHitEntity);
                     alreadyHitEntity.addAll(list);
@@ -232,7 +202,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                             if((((EntityFireball)curEntity).shootingEntity != null && ((EntityFireball)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
                                 isDestruction = false;
                             }else{
-                                isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving), 1.0f);
+                                isDestruction = !curEntity.attackEntityFrom(DamageSource.causeMobDamage(entityLiving), this.AttackLevel);
                             }
                         }else if(curEntity instanceof EntityArrow){
                             if((((EntityArrow)curEntity).shootingEntity != null && ((EntityArrow)curEntity).shootingEntity.getEntityId() == entityLiving.getEntityId())){
@@ -274,49 +244,96 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                         StylishRankManager.doAttack(this.thrower);
                     }
                 }
-                if(isSingleHit() || this.ticksExisted % 3 == 0){
+
+                if(getIsSingleHit() || this.ticksExisted % 2 == 0){
                     List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.getThrower(), bb, ItemSlashBlade.AttackableSelector);
                     list.removeAll(alreadyHitEntity);
 
-                    if(isSingleHit())
+                    if(getIsSingleHit())
                         alreadyHitEntity.addAll(list);
 
-                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.Calibur);
+                    float magicDamage = Math.max(1.0f, AttackLevel);
 
-                    if(blade != null){
-                        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
-                        for(Entity curEntity : list){
-                            curEntity.hurtResistantTime = 0;
+                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.SlashDimMagic);
 
-                            if(thrower instanceof EntityPlayer){
-                                ItemSlashBlade itemBlade = (ItemSlashBlade)blade.getItem();
-                                itemBlade.attackTargetEntity(blade, curEntity, (EntityPlayer)thrower, true);
-                            }
-                            else{
-                                DamageSource ds = new EntityDamageSource("mob", this.getThrower());
-                                curEntity.attackEntityFrom(ds, 10);
-                                if(blade != null && curEntity instanceof EntityLivingBase)
-                                    ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
+                    for(Entity curEntity : list){
+
+                        if(getIsSlashDimension()){
+                            if(curEntity instanceof EntityLivingBase){
+                                float health = ((EntityLivingBase) curEntity).getHealth();
+                                if(0 < health){
+                                    health = Math.max(1,health - magicDamage);
+                                    ((EntityLivingBase) curEntity).setHealth(health);
+                                }
                             }
                         }
+
+                        Vec3 pos = Vec3.createVectorHelper(curEntity.posX, curEntity.posY, curEntity.posZ);//.getPositionVector();
+
+                        TeleportCanceller.setCancel(curEntity);
+
+                        curEntity.hurtResistantTime = 0;
+                        DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage().setProjectile();
+
+
+                        if(blade != null && curEntity instanceof EntityLivingBase)
+                            ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
+
+                        /*
+                        if(!(curEntity.getPositionVector().equals(pos)))
+                            curEntity.setPositionAndUpdate(pos.xCoord,pos.yCoord,pos.zCoord);
+                        */
+
+                        curEntity.motionX = 0;
+                        curEntity.motionY = 0;
+                        curEntity.motionZ = 0;
+
+                        if(3 < this.ticksExisted){
+                            if(blade != null && curEntity instanceof EntityLivingBase) {
+                                if(getIsSlashDimension()){
+                                    curEntity.addVelocity(
+                                            0,
+                                            0.5D,
+                                            0);
+
+                                }else{
+                                    int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, blade);
+                                    if(0 < level){
+                                        curEntity.addVelocity(
+                                                (double) (Math.sin(getThrower().rotationYaw * (float) Math.PI / 180.0F) * (float) level * 0.5F),
+                                                0.2D,
+                                                (double) (-Math.cos(getThrower().rotationYaw * (float) Math.PI / 180.0F) * (float) level * 0.5F));
+                                    }else{
+                                        curEntity.addVelocity(
+                                                (double) (-Math.sin(getThrower().rotationYaw * (float) Math.PI / 180.0F) * 0.5),
+                                                0.2D,
+                                                (double) (Math.cos(getThrower().rotationYaw * (float) Math.PI / 180.0F)) * 0.5);
+
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
             }
+
+
+            //地形衝突で消失
+            /*
+            if(!worldObj.getCollisionBoxes(this, this.getEntityBoundingBox()).isEmpty()) {
+                this.setDead();
+            }
+            */
+
         }
 
-        if(moveTicks < this.ticksExisted && this.getThrower() != null)
-            spawnParticle(this.worldObj, this.getThrower());
-
-    }
-
-    private void spawnParticle(World world, Entity target) {
-        //target.spawnExplosionParticle();
-        if (this.ticksExisted % 2 == 0)
-            world.spawnParticle("largeexplode",
-                    target.posX + (this.getRand().nextFloat() - 0.5f) * 3,
-                    target.posY + target.getEyeHeight(),
-                    target.posZ + (this.getRand().nextFloat() - 0.5f) * 3,
-                    3.0, 3.0, 3.0);
+        //■死亡チェック
+        if(ticksExisted >= getLifeTime()) {
+            alreadyHitEntity.clear();
+            alreadyHitEntity = null;
+            setDead();
+        }
     }
 
     /**
@@ -374,7 +391,6 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
 
     /**
      * ■環境光による暗さの描画（？）
-     *    EntityXPOrbのぱくり
      */
     @SideOnly(Side.CLIENT)
     @Override
@@ -443,6 +459,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
      */
     @Override
     public void setInPortal() {
+
     }
 
     /**
@@ -485,16 +502,5 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
         if(entity != null)
             setThrowerEntityId(entity.getEntityId());
         this.thrower = entity;
-    }
-
-    @Override
-    protected boolean canTriggerWalking() {
-        return false;
-    }
-
-    @Override
-    public boolean canBeCollidedWith()
-    {
-        return false;
     }
 }

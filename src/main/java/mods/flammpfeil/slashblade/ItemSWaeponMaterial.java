@@ -64,6 +64,9 @@ public class ItemSWaeponMaterial extends Item {
         case 4:
             s += ".crystal";
             break;
+        case 5:
+            s += ".trapezohedron";
+            break;
 		}
 		return s;
 	}
@@ -107,6 +110,7 @@ public class ItemSWaeponMaterial extends Item {
         par3List.add(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1));
         par3List.add(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr, 1));
         par3List.add(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.CrystalBladeSoulStr, 1));
+        par3List.add(GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.TrapezohedronBladeSoulStr, 1));
 
         ItemStack sphere = GameRegistry.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1);
         for(int saType : ItemSlashBlade.specialAttacks.keySet()){

@@ -609,7 +609,12 @@ public class ItemSlashBlade extends ItemSword {
 
             case SlashDim:
 
-                int level = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, stack);
+
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
+                /*
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
                 if(0 < level){
                     target.motionX = 0;
                     target.motionY = 0;
@@ -618,7 +623,7 @@ public class ItemSlashBlade extends ItemSword {
                             (double) (MathHelper.sin(user.rotationYaw * (float) Math.PI / 180.0F) * (float) level * 0.5F),
                             0.2D,
                             (double) (-MathHelper.cos(user.rotationYaw * (float) Math.PI / 180.0F) * (float) level * 0.5F));
-                }
+                }*/
 
                 setDaunting(target);
                 break;
@@ -758,8 +763,10 @@ public class ItemSlashBlade extends ItemSword {
 
             if((currentTime - backKeyLastActiveTime) <= (TypeAheadBuffer)
                     && caliburState == (player.getEntityData().getByte("SB.MCS") & caliburState)
-                    && current != ComboSequence.Calibur ) {
+                    && current != ComboSequence.Calibur
+                    && !OnJumpAttacked.get(getItemTagCompound(itemStack))) {
                 result = ComboSequence.Calibur;
+                OnJumpAttacked.set(getItemTagCompound(itemStack),true);
 
             }else if(helmBrakerState == (player.getEntityData().getByte("SB.MCS") & helmBrakerState)
                     && current != ComboSequence.HelmBraker ){

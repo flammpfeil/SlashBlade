@@ -254,6 +254,18 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                             }
                         }
 
+                        if(!curEntity.worldObj.isRemote){
+                            for(int i = 0; i< 2; i++) {
+                                EntitySlashDimension dim = new EntitySlashDimension(curEntity.worldObj, (EntityLivingBase) getThrower(), 1);
+                                if (dim != null) {
+                                    dim.setPosition(curEntity.posX + (this.rand.nextFloat() - 0.5) * 5.0, curEntity.posY + curEntity.height * this.rand.nextFloat(), curEntity.posZ + (this.rand.nextFloat() - 0.5) * 5.0);
+                                    dim.setLifeTime(10 + i * 3);
+                                    dim.setIsSlashDimension(true);
+                                    curEntity.worldObj.spawnEntityInWorld(dim);
+                                }
+                            }
+                        }
+
                     }
                 }
             }

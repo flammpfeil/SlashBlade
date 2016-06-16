@@ -76,6 +76,7 @@ public class SlashBlade implements IFuelHandler{
     public static final String SphereBladeSoulStr = "sphere_bladesoul";
     public static final String TinyBladeSoulStr = "tiny_bladesoul";
     public static final String CrystalBladeSoulStr = "crystal_bladesoul";
+    public static final String TrapezohedronBladeSoulStr = "trapezohedron_bladesoul";
 
     public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade"){
         private ItemStack stack = null;
@@ -151,8 +152,12 @@ public class SlashBlade implements IFuelHandler{
         GameRegistry.registerCustomItemStack(TinyBladeSoulStr , itemTinyBladeSoul);
 
         ItemStack itemCrystalBladeSoul = new ItemStack(proudSoul,1,4);
-        itemCrystalBladeSoul.setRepairCost(-10);
+        itemCrystalBladeSoul.setRepairCost(-65);
         GameRegistry.registerCustomItemStack(CrystalBladeSoulStr , itemCrystalBladeSoul);
+
+        ItemStack itemTrapezohedronBladeSoul = new ItemStack(proudSoul,1,5);
+        itemCrystalBladeSoul.setRepairCost(-80);
+        GameRegistry.registerCustomItemStack(TrapezohedronBladeSoulStr , itemTrapezohedronBladeSoul);
 
         //==================================================================================================================================
 
@@ -313,6 +318,7 @@ public class SlashBlade implements IFuelHandler{
         EntityRegistry.registerModEntity(EntityGrimGrip.class, "GrimGrip", entityId++, this, 250, 10, true);
         EntityRegistry.registerModEntity(EntityGrimGripKey.class, "GrimGripKey", entityId++, this, 250, 200, false);
 
+        EntityRegistry.registerModEntity(EntitySlashDimension.class, "SlashDimension", entityId++, this, 250, 200, true);
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());
         MinecraftForge.EVENT_BUS.register(new AnvilEventHandler());
@@ -344,6 +350,8 @@ public class SlashBlade implements IFuelHandler{
 
         abilityAerialRave = new AerialRave();
         MinecraftForge.EVENT_BUS.register(abilityAerialRave);
+
+        MinecraftForge.EVENT_BUS.register(new TeleportCanceller());
 
 
         stylishRankManager = new StylishRankManager();
