@@ -27,6 +27,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import mods.flammpfeil.slashblade.ability.AvoidAction;
@@ -97,6 +98,10 @@ public class CoreProxyClient extends CoreProxy {
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 2, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.SNOWBALL)).toString()));
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 3, new ModelResourceLocation(SlashBlade.modid + ":" + "tinyps"));
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 4, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.NETHER_STAR)).toString()));
+
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 5, new ModelResourceLocation(SlashBlade.modid + ":" + "trapezohedron.obj"));
+        OBJLoader.INSTANCE.addDomain(SlashBlade.modid);
+
         for(Map.Entry<String, Integer> entry : AchievementList.achievementIcons.entrySet()) {
             ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, entry.getValue(), new ModelResourceLocation(SlashBlade.modid + ":" + entry.getKey()));
         }
@@ -229,6 +234,12 @@ public class CoreProxyClient extends CoreProxy {
         });
 
 
+        RenderingRegistry.registerEntityRenderingHandler(EntitySlashDimension.class, new IRenderFactory<EntitySlashDimension>() {
+            @Override
+            public Render<? super EntitySlashDimension> createRenderFor(RenderManager manager) {
+                return new RenderSlashDimension(manager);
+            }
+        });
 
 
         KeyBinding keybind = new KeyBindingEx("Key.SlashBlade.PS",-98,"flammpfeil.slashblade"){

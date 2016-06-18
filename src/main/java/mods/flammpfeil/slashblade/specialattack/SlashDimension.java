@@ -1,12 +1,14 @@
 package mods.flammpfeil.slashblade.specialattack;
 
 import mods.flammpfeil.slashblade.entity.EntityDrive;
+import mods.flammpfeil.slashblade.entity.EntitySlashDimension;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntityJudgmentCutManager;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -17,9 +19,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import java.util.EnumSet;
@@ -56,7 +56,54 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
             target = getEntityToWatch(player);
         }
 
-        if(target != null){
+        if(target == null) {
+            ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.SlashDim);
+
+            //spawnParticle(world, target);
+
+            player.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.5F, 1.0F);
+
+            final int cost = -20;
+            if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
+                ItemSlashBlade.damageItem(stack, 10, player);
+            }
+
+            if(!player.worldObj.isRemote) {
+                EntitySlashDimension dim = new EntitySlashDimension(world, player, 1);
+                if (dim != null) {
+                    Vec3d pos = player.getLookVec();
+                    pos = pos.scale(5);
+                    pos = pos.add(player.getPositionVector());
+                    pos = pos.addVector(0, player.getEyeHeight(), 0);
+
+                    Vec3d offset = player.getPositionVector().addVector(0,player.getEyeHeight(),0);
+                    Vec3d offsettedLook = offset.add(player.getLookVec().scale(5));
+                    RayTraceResult movingobjectposition = world.rayTraceBlocks(offset, offsettedLook);
+                    if (movingobjectposition != null)
+                    {
+                        IBlockState state = null;
+                        BlockPos blockPos = movingobjectposition.getBlockPos();
+                        if(blockPos != null)
+                            state = world.getBlockState(blockPos);
+                        if(state != null && state.getCollisionBoundingBox(world, blockPos) == null)
+                            movingobjectposition = null;
+                        else {
+                            Vec3d tmppos = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+                            if(1 < tmppos.distanceTo(player.getPositionVector())){
+                                pos = tmppos;
+                            }
+                        }
+                    }
+
+
+                    dim.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
+                    dim.setLifeTime(10);
+                    dim.setIsSlashDimension(true);
+                    world.spawnEntityInWorld(dim);
+                }
+            }
+
+        }else{
             ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.SlashDim);
 
             spawnParticle(world, target);
@@ -93,6 +140,16 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                         StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDimMagic);
                         stack.hitEntity((EntityLivingBase)curEntity, player);
                     }
+                }
+            }
+
+            if(!target.worldObj.isRemote){
+                EntitySlashDimension dim = new EntitySlashDimension(world, player, 1);
+                if(dim != null){
+                    dim.setPosition(target.posX,target.posY + target.height / 2.0,target.posZ);
+                    dim.setLifeTime(10);
+                    dim.setGlowing(true);
+                    world.spawnEntityInWorld(dim);
                 }
             }
         }
@@ -165,7 +222,96 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
             target = getEntityToWatch(player);
         }
 
-        if(target != null){
+        if(target == null) {
+            ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.SlashDim);
+
+            //spawnParticle(world, target);
+
+            player.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.5F, 1.0F);
+
+            final int cost = -20;
+            if(!ItemSlashBlade.ProudSoul.tryAdd(tag, cost, false)){
+                ItemSlashBlade.damageItem(stack, 10, player);
+            }
+
+            if(!player.worldObj.isRemote) {
+                Vec3d pos = player.getLookVec();
+                pos = pos.scale(5);
+                pos = pos.add(player.getPositionVector());
+                pos = pos.addVector(0, player.getEyeHeight(), 0);
+
+                ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
+
+                Vec3d offset = player.getPositionVector().addVector(0,player.getEyeHeight(),0);
+                Vec3d offsettedLook = offset.add(player.getLookVec().scale(5));
+                RayTraceResult movingobjectposition = world.rayTraceBlocks(offset, offsettedLook);
+                if (movingobjectposition != null)
+                {
+                    IBlockState state = null;
+                    BlockPos blockPos = movingobjectposition.getBlockPos();
+                    if(blockPos != null)
+                        state = world.getBlockState(blockPos);
+                    if(state != null && state.getCollisionBoundingBox(world, blockPos) == null)
+                        movingobjectposition = null;
+                    else {
+                        Vec3d tmppos = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+                        if(1 < tmppos.distanceTo(player.getPositionVector())){
+                            pos = tmppos;
+                        }
+                    }
+                }
+
+                EntitySlashDimension dim = new EntitySlashDimension(world, player, 1);
+                if (dim != null) {
+                    dim.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
+                    dim.setLifeTime(10);
+                    dim.setIsSlashDimension(true);
+                    world.spawnEntityInWorld(dim);
+                }
+
+                int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
+                float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
+
+                for(int i = 0; i < 5;i++){
+
+                    EntityDrive entityDrive = new EntityDrive(world, player, Math.min(1.0f,magicDamage/3.0f),false,0);
+
+
+                    float rotationYaw = 60 * i + (entityDrive.getRand().nextFloat() - 0.5f) * 60;
+                    float rotationPitch = (entityDrive.getRand().nextFloat() - 0.5f) * 60;
+
+                    float fYawDtoR = (  rotationYaw / 180F) * (float)Math.PI;
+                    float fPitDtoR = (rotationPitch / 180F) * (float)Math.PI;
+                    float fYVecOfst = 0.5f;
+
+                    float motionX = -MathHelper.sin(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst * 2;
+                    float motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
+                    float motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst * 2;
+
+                    entityDrive.setLocationAndAngles(pos.xCoord - motionX,
+                            pos.yCoord - motionY,
+                            pos.zCoord - motionZ,
+                            rotationYaw,
+                            rotationPitch);
+                    entityDrive.setDriveVector(fYVecOfst);
+                    entityDrive.setLifeTime(8);
+                    entityDrive.setIsMultiHit(false);
+
+
+                    int rank = StylishRankManager.getStylishRank(player);
+                    if(5 <= rank) {
+                        EnumSet<ItemSlashBlade.SwordType> type = blade.getSwordType(stack);
+                        entityDrive.setIsSlashDimension(type.contains(ItemSlashBlade.SwordType.FiercerEdge));
+                    }
+
+                    entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
+                    if (entityDrive != null) {
+                        world.spawnEntityInWorld(entityDrive);
+                    }
+                }
+            }
+
+        }else{
             ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.SlashDim);
 
             //spawnParticle(world, target);
@@ -239,6 +385,17 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                         if (entityDrive != null) {
                             world.spawnEntityInWorld(entityDrive);
                         }
+                    }
+                }
+
+
+                if(!target.worldObj.isRemote){
+                    EntitySlashDimension dim = new EntitySlashDimension(world, player, 1);
+                    if(dim != null){
+                        dim.setPosition(target.posX,target.posY + target.height / 2.0,target.posZ);
+                        dim.setLifeTime(10);
+                        dim.setIsSlashDimension(true);
+                        world.spawnEntityInWorld(dim);
                     }
                 }
             }
