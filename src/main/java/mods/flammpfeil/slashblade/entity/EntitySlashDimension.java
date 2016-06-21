@@ -262,7 +262,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
 
                     float magicDamage = Math.max(1.0f, AttackLevel);
 
-                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.SlashDim);
+                    StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.SlashDimMagic);
 
                     for(Entity curEntity : list){
 
