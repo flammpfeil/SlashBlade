@@ -181,12 +181,17 @@ public class ItemSlashBlade extends ItemSword {
         AKiriorosi(false, 200.0f, -360.0f+120f,false,25),
 
         AKiriorosiB(false, 200.0f,-360.0f+80f,false,25), //changeflag
-        AKiriage(false, 360.0f+180f+60f, -360.0f+180f+80f,false,12),
+        AKiriage(false, 180f+60f, -360.0f+180f+110f,false,12),
         AKiriorosiFinish(false, 200.0f,-360.0f+90f,false,25),
 
-        RapidSlash(false, 240.0f,20.0f,false,12),
+        RapidSlash(false, 360.0f + 240.0f,-360.0f - 20.0f,false,12),
         RapidSlashEnd(false, 240.0f,20.0f,false,12),
         RisingStar(false, 250.0f,-160.0f,false,12), //rize
+
+
+        HelmBraker(false, 200.0f,-360.0f+90f,false,25),
+
+        Calibur(false, 360.0f + 240.0f,-360.0f - 20.0f,false,25),
         ;
 
 	    /**
@@ -2980,6 +2985,27 @@ public class ItemSlashBlade extends ItemSword {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return 72000;
+    }
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return false;//super.showDurabilityBar(stack);
+    }
+
+    @Override
+    public int getMetadata(ItemStack stack) {
+        NBTTagCompound tag = getItemTagCompound(stack);
+        if(tag.getBoolean("IsRender")){
+            tag.removeTag("IsRender");
+            return 0;
+        }else {
+            return super.getMetadata(stack);
         }
     }
 }

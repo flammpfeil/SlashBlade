@@ -1,0 +1,9 @@
+# Created by Metasequoia
+
+newmtl mat1
+Ka 0.00000 0.00000 0.00000
+Kd 1.00000 1.00000 1.00000
+Ks 0.10000 0.10000 0.10000
+Ns 5.00000
+map_Kd flammpfeil.slashblade:soul
+

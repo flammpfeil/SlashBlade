@@ -19,10 +19,12 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.util.*;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import mods.flammpfeil.slashblade.ability.AvoidAction;
@@ -40,6 +42,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 
@@ -88,10 +91,25 @@ public class CoreProxyClient extends CoreProxy {
             ModelBakery.registerItemVariants(SlashBlade.proudSoul, variants.toArray(new ResourceLocation[]{}));
         }
         */
-        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 0, new ModelResourceLocation(SlashBlade.modid + ":" + "proudsoul"));
-        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 1, new ModelResourceLocation(((ResourceLocation)Item.itemRegistry.getNameForObject(Items.iron_ingot)).toString()));
-        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 2, new ModelResourceLocation(((ResourceLocation)Item.itemRegistry.getNameForObject(Items.snowball)).toString()));
-        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 3, new ModelResourceLocation(SlashBlade.modid + ":" + "tinyps"));
+        //ModelBakery.registerItemVariants(SlashBlade.proudSoul,  new ModelResourceLocation(SlashBlade.modid + ":" + "soul.obj"));
+        //ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 0, new ModelResourceLocation(SlashBlade.modid + ":" + "proudsoul","inventory"));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 0, new ModelResourceLocation(SlashBlade.modid + ":" + "soul.obj"));
+
+        //ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 1, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.IRON_INGOT)).toString()));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 1, new ModelResourceLocation(SlashBlade.modid + ":" + "ingot.obj"));
+
+        //ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 2, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.SNOWBALL)).toString()));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 2, new ModelResourceLocation(SlashBlade.modid + ":" + "sphere.obj"));
+
+        //ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 3, new ModelResourceLocation(SlashBlade.modid + ":" + "tinyps"));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 3, new ModelResourceLocation(SlashBlade.modid + ":" + "tiny.obj"));
+
+        //ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 4, new ModelResourceLocation(((ResourceLocation)Item.REGISTRY.getNameForObject(Items.NETHER_STAR)).toString()));
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 4, new ModelResourceLocation(SlashBlade.modid + ":" + "crystal.obj"));
+
+        ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 5, new ModelResourceLocation(SlashBlade.modid + ":" + "trapezohedron.obj"));
+        OBJLoader.instance.addDomain(SlashBlade.modid);
+
         for(Map.Entry<String, Integer> entry : AchievementList.achievementIcons.entrySet()) {
             ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, entry.getValue(), new ModelResourceLocation(SlashBlade.modid + ":" + entry.getKey()));
         }
@@ -383,6 +401,8 @@ public class CoreProxyClient extends CoreProxy {
 
             rle.addLayer(new LayerSlashBlade(rle));
         }
+
+
     }
 
     /**

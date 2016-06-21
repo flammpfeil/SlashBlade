@@ -264,4 +264,9 @@ public class ItemProudSoul extends Item {
                 return "+4";
         }
     }
+
+    @Override
+    public int getColorFromItemStack(ItemStack stack, int renderPass) {
+        return  stack.getItemDamage() != 4 ? -1 : 0xCCC0FF;//super.getColorFromItemStack(stack, renderPass);
+    }
 }

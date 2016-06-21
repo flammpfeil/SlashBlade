@@ -85,7 +85,7 @@ public class BladeFirstPersonRender {
             float partialTicks = event.partialTicks;
 
             if (swordType.contains(ItemSlashBlade.SwordType.NoScabbard)) {
-                //todo :LayerHeldItem“I‚Érendering‚·‚é
+                //todo :LayerHeldItemï¿½Iï¿½ï¿½renderingï¿½ï¿½ï¿½ï¿½
 
                 func_178110_a(player, partialTicks);
 
@@ -314,26 +314,26 @@ public class BladeFirstPersonRender {
 
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
-            //‘ÌŠi•â³ config‚æ‚è
+            //ï¿½ÌŠiï¿½â³ configï¿½ï¿½ï¿½
             GL11.glTranslatef(ax, ay, az);
 
-            //˜ˆÊ’u‚Ö
+            //ï¿½ï¿½ï¿½Ê’uï¿½ï¿½
             GL11.glTranslatef(0.25f, 0.4f, -0.5f);
 
 
             {
-                //‘S‘ÌƒXƒP[ƒ‹•â³
+                //ï¿½Sï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½â³
                 float scale = (float) (0.075f);
                 GL11.glScalef(scale, scale, scale);
             }
 
-            //æ‚ğŒã‚ë‚Ö
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             GL11.glRotatef(60.0f, 1, 0, 0);
 
-            //æ‚ğŠO‚Ö
+            //ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½
             GL11.glRotatef(-20.0f, 0, 0, 1);
 
-            //n‚ğ‰º‚ÉŒü‚¯‚éi‘¾“·‚µ
+            //ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½ÉŒï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             GL11.glRotatef(90.0f, 0, 1.0f, 0);
 
 
