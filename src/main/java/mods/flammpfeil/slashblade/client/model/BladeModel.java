@@ -57,17 +57,17 @@ public class BladeModel implements IPerspectiveAwareModel {
         return modelMesher.getItemModel(proudsoul).getQuads(null,null,0);
     }
 
-    ItemStack targetStack = null;
-    ItemSlashBlade itemBlade = null;
+    static ItemStack targetStack = null;
+    static ItemSlashBlade itemBlade = null;
 
     /**
      * 0 : type set
      * 1 : texture set
      */
-    int renderPath = 0;
-    int drawStep = -1;
+    static int renderPath = 0;
+    static int drawStep = -1;
 
-    ItemCameraTransforms.TransformType type = ItemCameraTransforms.TransformType.NONE;
+    static ItemCameraTransforms.TransformType type = ItemCameraTransforms.TransformType.NONE;
 
 
     @Override
@@ -78,6 +78,7 @@ public class BladeModel implements IPerspectiveAwareModel {
 
                 if(stack != null && stack.getItem() instanceof ItemSlashBlade) {
                     targetStack = stack;
+                    ItemSlashBlade.getItemTagCompound(targetStack).setBoolean("IsRender",true);
                     itemBlade = (ItemSlashBlade) stack.getItem();
                 }else{
                     targetStack = null;
@@ -99,6 +100,7 @@ public class BladeModel implements IPerspectiveAwareModel {
         //no texture;
         if(drawStep == 0) return getDefaultQuards();
 
+        /*
         if(type == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
                 || type == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND
                 || type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND
@@ -144,12 +146,6 @@ public class BladeModel implements IPerspectiveAwareModel {
 
         EnumSet<ItemSlashBlade.SwordType> types = itemBlade.getSwordType(targetStack);
         WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(targetStack));
-
-/*
-        //texture param update
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-*/
 
         String renderTarget;
         if(types.contains(ItemSlashBlade.SwordType.Broken))
@@ -223,6 +219,7 @@ public class BladeModel implements IPerspectiveAwareModel {
         Face.resetColor();
         //reset drawstate
         Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+        */
         return getEmptyList();
     }
 
@@ -241,11 +238,13 @@ public class BladeModel implements IPerspectiveAwareModel {
         drawStep = 1;
         renderPath = 0;
 
+        /*
         //textuer bind
         ResourceLocation resourceTexture = itemBlade.getModelTexture(targetStack);
         Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
+        */
 
-        return false;
+        return true;
     }
 
     @Override

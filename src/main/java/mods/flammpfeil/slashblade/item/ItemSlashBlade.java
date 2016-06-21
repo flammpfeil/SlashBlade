@@ -3274,4 +3274,15 @@ public class ItemSlashBlade extends ItemSword {
     public boolean showDurabilityBar(ItemStack stack) {
         return false;//super.showDurabilityBar(stack);
     }
+
+    @Override
+    public int getMetadata(ItemStack stack) {
+        NBTTagCompound tag = getItemTagCompound(stack);
+        if(tag.getBoolean("IsRender")){
+            tag.removeTag("IsRender");
+            return 0;
+        }else {
+            return super.getMetadata(stack);
+        }
+    }
 }
