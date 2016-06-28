@@ -9,6 +9,8 @@ import mods.flammpfeil.slashblade.event.*;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
+import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
+import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -259,6 +261,8 @@ public class SlashBlade implements IFuelHandler{
         RecipeSorter.register("flammpfeil.slashblade:adjust", RecipeAdjustPos.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
         RecipeSorter.register("flammpfeil.slashblade:awake", RecipeAwakeBlade.class, SHAPED, "after:forge:shaped");
+        RecipeSorter.register("flammpfeil.slashblade:soulupgrade", RecipeBladeSoulUpgrade.class, SHAPED, "after:forge:shaped");
+        RecipeSorter.register("flammpfeil.slashblade:customblade", RecipeCustomBlade.class, SHAPED, "after:forge:shaped");
 
 
         InitEventBus.register(new BladeMaterials());
