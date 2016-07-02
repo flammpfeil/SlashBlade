@@ -20,7 +20,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.*;
@@ -51,7 +50,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -196,6 +194,14 @@ public class ItemSlashBlade extends ItemSword {
         HelmBraker(false, 200.0f,-360.0f+90f,false,25),
 
         Calibur(false, 360.0f + 240.0f,-360.0f - 20.0f,false,25),
+
+        Force1(false, 300.0f, -360.0f+130f,false,25, None),
+        Force2(false, 250.0f, -360.0f + 330.0f,false,25, None),
+        Force3(true,200.0f,5.0f,false,20),
+        Force4(true,-200.0f,5.0f,false,20),
+        Force5(false,240.0f,0.0f,false,12),
+        Force6(false, 200.0f,-360.0f+90f,false,25, Force5),
+
         ;
 
 	    /**
@@ -224,6 +230,8 @@ public class ItemSlashBlade extends ItemSword {
 
 	    public int comboResetTicks;
 
+        public ComboSequence mainHandCombo;
+
 	    /**
 	     *
 	     * @param useScabbard true:鞘も動く
@@ -233,6 +241,11 @@ public class ItemSlashBlade extends ItemSword {
 	     */
         private ComboSequence(boolean useScabbard, float swingAmplitude, float swingDirection, boolean isCharged,int comboResetTicks)
         {
+            this(useScabbard, swingAmplitude, swingDirection, isCharged, comboResetTicks, null);
+        }
+
+        private ComboSequence(boolean useScabbard, float swingAmplitude, float swingDirection, boolean isCharged,int comboResetTicks, ComboSequence mainHandCombo)
+        {
             Seqs.add(this.ordinal(), this);
 
             this.useScabbard = useScabbard;
@@ -240,6 +253,8 @@ public class ItemSlashBlade extends ItemSword {
             this.swingDirection = swingDirection;
             this.isCharged = isCharged;
             this.comboResetTicks = comboResetTicks;
+
+            this.mainHandCombo = mainHandCombo;
         }
 
 	    public static ComboSequence get(int ordinal){
@@ -473,6 +488,10 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             }
+            case Force1:
+            case Force2:
+            case Force5:
+            case Force6:
             case Calibur:
             case RapidSlash:
             case SlashEdge:
@@ -485,7 +504,7 @@ public class ItemSlashBlade extends ItemSword {
                 target.motionY = 0;
                 target.motionZ = 0;
 
-                {
+                if(!target.onGround){
 
                     int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING, stack);
                     if(0 < level){
@@ -564,6 +583,8 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
 
+            case Force3:
+            case Force4:
             case Saya1:
             case Saya2:
 
@@ -616,7 +637,7 @@ public class ItemSlashBlade extends ItemSword {
 
         setImpactEffect(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase, comboSec);
 
-        if(!comboSec.useScabbard || IsNoScabbard.get(tag)) {
+        if((!comboSec.useScabbard && comboSec.mainHandCombo == null) || IsNoScabbard.get(tag)) {
             ItemSlashBlade.damageItem(par1ItemStack, 1, par3EntityLivingBase);
 
             if(par1ItemStack.stackSize <= 0) {
@@ -700,6 +721,20 @@ public class ItemSlashBlade extends ItemSword {
 
         result.put(ComboSequence.AKiriorosiB,ComboSequence.AKiriage);
         result.put(ComboSequence.AKiriage,ComboSequence.AKiriorosiFinish);
+
+        return result;
+    }
+
+    Map<ComboSequence, ComboSequence> ForceEdgeCombo = createForceEdgeComboMap();
+    static Map<ComboSequence, ComboSequence> createForceEdgeComboMap(){
+        Map<ComboSequence, ComboSequence> result = Maps.newHashMap();
+
+        //result.put(ComboSequence.None, ComboSequence.Iai);
+        result.put(ComboSequence.Force1, ComboSequence.Force2);
+        result.put(ComboSequence.Force2, ComboSequence.Force3);
+        result.put(ComboSequence.Force3, ComboSequence.Force4);
+        result.put(ComboSequence.Force4, ComboSequence.Force5);
+        result.put(ComboSequence.Force5,ComboSequence.Force6);
 
         return result;
     }
@@ -819,10 +854,21 @@ public class ItemSlashBlade extends ItemSword {
                     result = ComboSequence.SSlashBlade;
                     break;
 
-                default:
-                    result = ComboSequence.Saya1;
+                default: {
+                    ItemStack offHand = player.getHeldItemOffhand();
+                    boolean hasOffhandSword = offHand != null && offHand.getItem() instanceof ItemSlashBlade;
+                    if(ForceEdgeCombo.containsKey(current) && hasOffhandSword) {
+                        result = ForceEdgeCombo.get(current);
+                    }else {
+                        if (hasOffhandSword) {
+                            result = ComboSequence.Force1;
+                        } else {
+                            result = ComboSequence.Saya1;
+                        }
+                    }
 
                     break;
+                }
             }
         } else {
             switch (current) {
@@ -1049,8 +1095,14 @@ public class ItemSlashBlade extends ItemSword {
                 }
             }
 
-            if(current == ComboSequence.SSlashBlade){
-                doSlashBladeAttack(itemStack,player,current);
+            switch(current) {
+                case Force6:
+                case SSlashBlade:
+                    doSlashBladeAttack(itemStack, player, current);
+                    break;
+
+                default:
+                    break;
             }
 
             {
@@ -1116,7 +1168,7 @@ public class ItemSlashBlade extends ItemSword {
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 
         if(hand == EnumHand.OFF_HAND){
-            return new ActionResult(EnumActionResult.PASS, itemStackIn);
+            return new ActionResult(EnumActionResult.FAIL, itemStackIn);
         }
 
         SlashBlade.abilityJustGuard.setJustGuardState(playerIn);
@@ -1182,6 +1234,8 @@ public class ItemSlashBlade extends ItemSword {
             switch (comboSeq) {
                 case Saya1:
                 case Saya2:
+                case Force3:
+                case Force4:
                     float attack = 4.0f;
                     if(rank < 3 || swordType.contains(SwordType.Broken)){
                         attack = 2.0f;
@@ -1220,7 +1274,8 @@ public class ItemSlashBlade extends ItemSword {
                     break;
 
                 default:
-                    player.attackTargetEntityWithCurrentItem(curEntity);
+                    attackTargetEntity(stack, curEntity, player, true);
+                    //player.attackTargetEntityWithCurrentItem(curEntity);
                     player.onCriticalHit(curEntity);
                     break;
             }
@@ -1265,10 +1320,14 @@ public class ItemSlashBlade extends ItemSword {
         }
     }
 
-    public void doSlashBladeAttack(ItemStack stack, EntityPlayer player, ComboSequence setCombo){
+    public void doSlashBladeAttack(ItemStack stack, EntityLivingBase player, ComboSequence setCombo){
 
         NBTTagCompound tag = getItemTagCompound(stack);
         World world = player.worldObj;
+
+        player.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+                0.8F, 0.01F);
+
         if(!world.isRemote){
 
             float baseModif = getBaseAttackModifiers(tag);
@@ -1899,7 +1958,7 @@ public class ItemSlashBlade extends ItemSword {
 							setComboSequence(tag, ComboSequence.None);
 							break;
 					default:
-						if(comboSeq.useScabbard){
+						if(comboSeq.useScabbard || (comboSeq.mainHandCombo != null && comboSeq.mainHandCombo.useScabbard)){
                             StylishRankManager.setNextAttackType(el, AttackTypes.None);
 							setComboSequence(tag, ComboSequence.None);
 						}else{
@@ -2061,94 +2120,81 @@ public class ItemSlashBlade extends ItemSword {
 		}
 	}
 
+    Map<ComboSequence, String> attackTypeMap = crateAttackTypeMap();
+    public Map crateAttackTypeMap(){
+        attackTypeMap = Maps.newHashMap();
+
+        attackTypeMap.put(ComboSequence.Kiriage,AttackTypes.Kiriage);
+        attackTypeMap.put(ComboSequence.Kiriorosi,AttackTypes.Kiriorosi);
+
+        attackTypeMap.put(ComboSequence.Iai,AttackTypes.Iai);
+
+        attackTypeMap.put(ComboSequence.Saya1,AttackTypes.Saya1);
+        attackTypeMap.put(ComboSequence.Saya2,AttackTypes.Saya2);
+
+
+        attackTypeMap.put(ComboSequence.HiraTuki,AttackTypes.Kiriage);
+
+
+        attackTypeMap.put(ComboSequence.SlashEdge,AttackTypes.SlashEdge);
+        attackTypeMap.put(ComboSequence.ReturnEdge,AttackTypes.ReturnEdge);
+
+        attackTypeMap.put(ComboSequence.SIai,AttackTypes.SIai);
+        attackTypeMap.put(ComboSequence.SSlashEdge,AttackTypes.SSlashEdge);
+        attackTypeMap.put(ComboSequence.SReturnEdge,AttackTypes.SReturnEdge);
+        attackTypeMap.put(ComboSequence.SSlashBlade,AttackTypes.SSlashBlade);
+
+
+        attackTypeMap.put(ComboSequence.ASlashEdge,AttackTypes.ASlashEdge);
+        attackTypeMap.put(ComboSequence.AKiriorosi,AttackTypes.AKiriorosi);
+
+
+        attackTypeMap.put(ComboSequence.AKiriage,AttackTypes.AKiriage);
+        attackTypeMap.put(ComboSequence.AKiriorosiFinish,AttackTypes.AKiriorosiFinish);
+
+        attackTypeMap.put(ComboSequence.HelmBraker,AttackTypes.HelmBraker);
+
+        attackTypeMap.put(ComboSequence.Calibur,AttackTypes.Calibur);
+
+        attackTypeMap.put(ComboSequence.RapidSlash,AttackTypes.RapidSlash);
+        attackTypeMap.put(ComboSequence.RisingStar,AttackTypes.RisingStar);
+
+        attackTypeMap.put(ComboSequence.Force1,AttackTypes.Force1);
+        attackTypeMap.put(ComboSequence.Force2,AttackTypes.Force2);
+        attackTypeMap.put(ComboSequence.Force3,AttackTypes.Force3);
+        attackTypeMap.put(ComboSequence.Force4,AttackTypes.Force4);
+        attackTypeMap.put(ComboSequence.Force5,AttackTypes.Force5);
+        attackTypeMap.put(ComboSequence.Force6,AttackTypes.Force6);
+
+        return attackTypeMap;
+    }
+
     private void updateStyleAttackType(ItemStack stack, EntityLivingBase e) {
         NBTTagCompound tag = getItemTagCompound(stack);
 
         ComboSequence combo = getComboSequence(tag);
 
-        switch (combo){
-            case Kiriage:
-                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriage);
-                break;
+        String key = attackTypeMap.get(combo);
 
-            case Kiriorosi:
-                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriorosi);
-                break;
+        if(key == null){
+            switch (combo) {
+                case Battou:
+                    EnumSet<SwordType> swordType = getSwordType(stack);
+                    if (swordType.containsAll(SwordType.BewitchedPerfect)) {
+                        if (e instanceof EntityPlayer)
+                            AchievementList.triggerAchievement((EntityPlayer) e, "bewitched");
+                        key = AttackTypes.IaiBattou;
+                    } else if (e.onGround)
+                        key = AttackTypes.Battou;
+                    else
+                        key = AttackTypes.JumpBattou;
+                    break;
 
-            case Iai:
-                StylishRankManager.setNextAttackType(e, AttackTypes.Iai);
-                break;
-
-            case Battou:
-
-                EnumSet<SwordType> swordType = getSwordType(stack);
-                if(swordType.containsAll(SwordType.BewitchedPerfect)){
-                    if(e instanceof EntityPlayer)
-                        AchievementList.triggerAchievement((EntityPlayer)e,"bewitched");
-                    StylishRankManager.setNextAttackType(e, AttackTypes.IaiBattou);
-                }else if(e.onGround)
-                    StylishRankManager.setNextAttackType(e, AttackTypes.Battou);
-                else
-                    StylishRankManager.setNextAttackType(e, AttackTypes.JumpBattou);
-                break;
-
-            case Saya1:
-                StylishRankManager.setNextAttackType(e, AttackTypes.Saya1);
-                break;
-
-            case Saya2:
-                StylishRankManager.setNextAttackType(e, AttackTypes.Saya2);
-                break;
-
-            case HiraTuki:
-                StylishRankManager.setNextAttackType(e, AttackTypes.Kiriage);
-                break;
-
-            case SlashEdge:
-                StylishRankManager.setNextAttackType(e, AttackTypes.SlashEdge);
-                break;
-            case ReturnEdge:
-                StylishRankManager.setNextAttackType(e, AttackTypes.ReturnEdge);
-                break;
-            case SIai:
-                StylishRankManager.setNextAttackType(e, AttackTypes.SIai);
-                break;
-            case SSlashEdge:
-                StylishRankManager.setNextAttackType(e, AttackTypes.SSlashEdge);
-                break;
-            case SReturnEdge:
-                StylishRankManager.setNextAttackType(e, AttackTypes.SReturnEdge);
-                break;
-            case SSlashBlade:
-                StylishRankManager.setNextAttackType(e, AttackTypes.SSlashBlade);
-                break;
-
-            case ASlashEdge:
-                StylishRankManager.setNextAttackType(e, AttackTypes.ASlashEdge);
-                break;
-            case AKiriorosi:
-                StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosi);
-                break;
-
-            case AKiriage:
-                StylishRankManager.setNextAttackType(e, AttackTypes.AKiriage);
-                break;
-            case AKiriorosiFinish:
-                StylishRankManager.setNextAttackType(e, AttackTypes.AKiriorosiFinish);
-
-            case HelmBraker:
-                StylishRankManager.setNextAttackType(e, AttackTypes.HelmBraker);
-
-            case Calibur:
-                StylishRankManager.setNextAttackType(e, AttackTypes.Calibur);
-
-            case RapidSlash:
-                StylishRankManager.setNextAttackType(e, AttackTypes.RapidSlash);
-            case RisingStar:
-                StylishRankManager.setNextAttackType(e, AttackTypes.RisingStar);
-                break;
-
+                default:
+                    key = AttackTypes.SimpleAttack;
+            }
         }
+        StylishRankManager.setNextAttackType(e, key);
     }
 
 
@@ -2848,16 +2894,42 @@ public class ItemSlashBlade extends ItemSword {
                 if(blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer){
                     AchievementList.triggerAchievement((EntityPlayer) user, "brokenWhiteSheath");
                 }
-
-                blade.dropItemDestructed(user, stack);
             }
+
+            blade.dropItemDestructed(user, stack);
         }
     }
 
     public void attackTargetEntity(ItemStack stack, Entity target, EntityPlayer player, Boolean isRightClick){
         NBTTagCompound tag = getItemTagCompound(stack);
         OnClick.set(tag, isRightClick);
+        ComboSequence combo = getComboSequence(tag);
+
+        ItemStack mainHand = player.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack offhand = player.getHeldItem(EnumHand.OFF_HAND);
+        NBTTagCompound offTag = null;
+        if(offhand != null)
+            offTag = getItemTagCompound(offhand);
+
+        if(combo.mainHandCombo != null && offTag != null) {
+            OnClick.set(offTag,true);
+            player.setHeldItem(EnumHand.MAIN_HAND, offhand);
+        }
+
         player.attackTargetEntityWithCurrentItem(target);
+
+        if(combo.mainHandCombo != null && offTag != null) {
+            damageItem(offhand, 1, player);
+            if(target instanceof EntityLivingBase)
+                stack.hitEntity((EntityLivingBase) target, player);
+            OnClick.set(offTag,false);
+
+            if(offhand.stackSize <= 0)
+                player.setHeldItem(EnumHand.OFF_HAND, null);
+        }
+
+        player.setHeldItem(EnumHand.MAIN_HAND, mainHand);
+
         OnClick.set(tag, false);
     }
 

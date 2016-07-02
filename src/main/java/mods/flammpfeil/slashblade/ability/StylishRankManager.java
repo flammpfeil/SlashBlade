@@ -68,6 +68,8 @@ public class StylishRankManager {
         public static Map<String,Float> types = Maps.newHashMap();
         public static String None = registerAttackType("None", 0);
 
+        public static String SimpleAttack = registerAttackType("SimpleAttack", 0.3f);
+
         public static String Saya1 = registerAttackType("Saya1", 0.3f);
         public static String Saya2 = registerAttackType("Saya2", 0.3f);
         public static String Battou = registerAttackType("Battou", 0.5f);
@@ -121,6 +123,13 @@ public class StylishRankManager {
 
         public static String RapidSlash = registerAttackType("RapidSlash", 0.3f);
         public static String RisingStar = registerAttackType("RisingStar", 0.3f);
+
+        public static String Force1 = registerAttackType("Force1", 0.3f);
+        public static String Force2 = registerAttackType("Force2", 0.3f);
+        public static String Force3 = registerAttackType("Force3", 0.3f);
+        public static String Force4 = registerAttackType("Force4", 0.3f);
+        public static String Force5 = registerAttackType("Force5", 0.3f);
+        public static String Force6 = registerAttackType("Force6", 0.3f);
 
         public static String registerAttackType(String key,float factor){
             types.put(key,factor);

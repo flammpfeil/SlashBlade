@@ -433,6 +433,9 @@ public class CoreProxyClient extends CoreProxy {
                 layers.add(new LayerSlashBlade(rle));
             }
 
+            rle.addLayer(new LayerSlashBlade(rle));
+
+            /*
             Method addLayer = ReflectionHelper.findMethod(RenderLivingBase.class, (RenderLivingBase)rle, new String[]{"addLayer","func_177094_a"}, LayerRenderer.class);
 
             try {
@@ -443,6 +446,7 @@ public class CoreProxyClient extends CoreProxy {
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
+            */
         }
 
 
