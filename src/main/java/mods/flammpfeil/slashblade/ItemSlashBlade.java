@@ -2847,9 +2847,9 @@ public class ItemSlashBlade extends ItemSword {
                 if(blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer){
                     AchievementList.triggerAchievement((EntityPlayer) user, "brokenWhiteSheath");
                 }
-
-                blade.dropItemDestructed(user, stack);
             }
+
+            blade.dropItemDestructed(user, stack);
         }
     }
 
