@@ -266,6 +266,8 @@ public class BladeFirstPersonRender {
         */
 
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack offhand = entity.getHeldItem(EnumHand.OFF_HAND);
+
         if (stack == null) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
@@ -309,6 +311,29 @@ public class BladeFirstPersonRender {
                 color = ItemSlashBlade.SummonedSwordColor.get(tag);
                 if(color < 0)
                     color = -color;
+            }
+        }
+
+        WavefrontObject offhandModel = null;
+        ResourceLocation offHandResourceTexture = null;
+        boolean offhandIsBroken = false;
+        int offhandColor = 0x3333FF;
+        if(offhand != null && (offhand.getItem() instanceof ItemSlashBlade)){
+
+            ItemSlashBlade offhandItemBlade = ((ItemSlashBlade) offhand.getItem());
+            offhandModel = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(offhand));
+            offHandResourceTexture = ItemSlashBlade.getModelTexture(offhand);
+
+            EnumSet<ItemSlashBlade.SwordType> offHandSwordType = offhandItemBlade.getSwordType(offhand);
+            offhandIsBroken = offHandSwordType.contains(ItemSlashBlade.SwordType.Broken);
+
+            if (offhand.hasTagCompound()) {
+                NBTTagCompound tag = offhand.getTagCompound();
+                if (ItemSlashBlade.SummonedSwordColor.exists(tag)) {
+                    offhandColor = ItemSlashBlade.SummonedSwordColor.get(tag);
+                    if (offhandColor < 0)
+                        offhandColor = -offhandColor;
+                }
             }
         }
 
@@ -391,7 +416,47 @@ public class BladeFirstPersonRender {
 
             //-----------------------------------------------------------------------------------------------------------------------
             GL11.glPushMatrix();
-            {
+
+            boolean doOffhandRender = false;
+            int handsLoop = 1;
+            if(combo.mainHandCombo != null){
+                handsLoop = 2;
+                if(offhand != null && offhand.getItem() instanceof ItemSlashBlade)
+                    doOffhandRender = true;
+            }
+
+            float handsLoopProgressTmp = progress;
+            ItemSlashBlade.ComboSequence comboSequenceTmp = combo;
+
+            boolean tmpIsBroken = isBroken;
+            ResourceLocation tmpResourceTexture = resourceTexture;
+            WavefrontObject tmpModel = model;
+            int tmpColor = color;
+            ItemStack tmpStack = stack;
+
+
+
+            for(int handsLoopIdx = 0; handsLoopIdx < handsLoop; handsLoopIdx++) {
+                GL11.glPushMatrix();
+
+
+                if (doOffhandRender && handsLoopIdx == 0) {
+                    isBroken = offhandIsBroken;
+                    resourceTexture = offHandResourceTexture != null ? offHandResourceTexture : tmpResourceTexture;
+                    model = offhandModel != null ? offhandModel : tmpModel;
+                    color = offhandColor;
+                    stack = offhand;
+
+                }else if (handsLoopIdx == 1) {
+                    combo = comboSequenceTmp.mainHandCombo;
+                    progress = 1.0f;
+
+                    isBroken = tmpIsBroken;
+                    resourceTexture = tmpResourceTexture;
+                    model = tmpModel;
+                    color = tmpColor;
+                    stack = tmpStack;
+                }
 
                 if (!combo.equals(ItemSlashBlade.ComboSequence.None)) {
 
@@ -632,8 +697,18 @@ public class BladeFirstPersonRender {
                 }
 
                 GL11.glPopAttrib(); //-------------
+                GL11.glPopMatrix();
             }
             GL11.glPopMatrix();
+            {
+                progress = handsLoopProgressTmp;
+                combo = comboSequenceTmp;
+                isBroken = tmpIsBroken;
+                resourceTexture = tmpResourceTexture;
+                model = tmpModel;
+                color = tmpColor;
+                stack = tmpStack;
+            }
 
             //-----------------------------------------------------------------------------------------------------------------------
 
