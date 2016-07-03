@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import net.minecraft.init.Enchantments;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -114,14 +115,15 @@ public class SimpleBlade {
 
         ItemStack white = new ItemStack(SlashBlade.bladeWhiteSheath, 1);
         white.addEnchantment(Enchantments.UNBREAKING,4);
+        ItemStack requiredBlade =new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE);
         SlashBlade.addRecipe("slashbladeWhite",
-                new RecipeUpgradeBlade(white,
+                new RecipeAwakeBlade(white, requiredBlade,
                 "  #",
                 " # ",
                 "XG ",
                 '#', itemIngotBladeSoul,
                 'G', Items.GOLD_INGOT,
-                'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+                'X', requiredBlade));
 
 
         ItemStack brokenBladeWhite = new ItemStack(SlashBlade.bladeWhiteSheath,1,0);

@@ -132,23 +132,6 @@ public class BladeFirstPersonRender {
         GlStateManager.popMatrix();
     }
 
-    @SubscribeEvent
-    void renderHand(RenderHandEvent event){
-        event.setCanceled(canRender(Minecraft.getMinecraft().thePlayer));
-    }
-
-    boolean canRender(EntityLivingBase entitylivingbaseIn) {
-        ItemStack offhand = entitylivingbaseIn.getHeldItemOffhand();
-        if (offhand == null) return true;
-        ItemStack main = entitylivingbaseIn.getHeldItemMainhand();
-        if (main == null) return true;
-        if (main.getItem() == null) return true;
-        if (!(main.getItem() instanceof ItemSlashBlade)) return true;
-        if(offhand.getItem() == null) return true;
-        if(!(offhand.getItem() instanceof ItemSword)) return true;
-        return false;
-    }
-
     void renderNakedBlade(EntityLivingBase entity, float partialTicks){
 
 
