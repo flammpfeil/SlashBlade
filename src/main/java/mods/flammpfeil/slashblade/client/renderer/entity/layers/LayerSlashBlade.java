@@ -438,7 +438,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
 
         int charge;
-        if(entity instanceof EntityPlayer)
+        if(entity instanceof EntityPlayer && entity.getActiveItemStack() != null )
             charge = entity.getItemInUseMaxCount();
         else
             charge = 0;
