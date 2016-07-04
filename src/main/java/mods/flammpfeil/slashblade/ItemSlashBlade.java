@@ -1092,8 +1092,13 @@ public class ItemSlashBlade extends ItemSword {
                 }
             }
 
-            if(current == ComboSequence.SSlashBlade){
-                doSlashBladeAttack(itemStack,player,current);
+            switch(current) {
+                case SSlashBlade:
+                    doSlashBladeAttack(itemStack, player, current);
+                    break;
+
+                default:
+                    break;
             }
 
             //player.playSound("mob.irongolem.throw", 1.8F, 1.0F);
@@ -2879,6 +2884,7 @@ public class ItemSlashBlade extends ItemSword {
         saMap.put(5, new CircleSlash());
         saMap.put(6, new BlisteringWitherSwords());
         saMap.put(7, new SakuraEnd());
+        saMap.put(8, new MaximumBet());
         return saMap;
     }
 
