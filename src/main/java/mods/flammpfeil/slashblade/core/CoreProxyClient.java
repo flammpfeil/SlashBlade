@@ -151,6 +151,12 @@ public class CoreProxyClient extends CoreProxy {
                 return new InvisibleRender(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityMaximumBetManager.class, new IRenderFactory<EntityMaximumBetManager>() {
+            @Override
+            public Render<? super EntityMaximumBetManager> createRenderFor(RenderManager manager) {
+                return new InvisibleRender(manager);
+            }
+        });
         RenderingRegistry.registerEntityRenderingHandler(EntityJustGuardManager.class, new IRenderFactory<EntityJustGuardManager>() {
             @Override
             public Render<? super EntityJustGuardManager> createRenderFor(RenderManager manager) {

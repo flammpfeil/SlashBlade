@@ -1096,6 +1096,11 @@ public class ItemSlashBlade extends ItemSword {
             }
 
             switch(current) {
+                case Force5: {
+                    int rank = StylishRankManager.getStylishRank(player);
+                    if(rank <= 4)
+                        break;
+                }
                 case Force6:
                 case SSlashBlade:
                     doSlashBladeAttack(itemStack, player, current);
@@ -2945,6 +2950,7 @@ public class ItemSlashBlade extends ItemSword {
         saMap.put(5, new CircleSlash());
         saMap.put(6, new BlisteringWitherSwords());
         saMap.put(7, new SakuraEnd());
+        saMap.put(8, new MaximumBet());
         return saMap;
     }
 

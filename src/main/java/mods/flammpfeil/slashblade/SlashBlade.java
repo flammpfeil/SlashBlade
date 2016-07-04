@@ -313,6 +313,7 @@ public class SlashBlade implements IFuelHandler{
 
         EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 10, true);
         EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(EntityMaximumBetManager.class, "MaximumBetManager", entityId++, this, 250, 10, true);
         EntityRegistry.registerModEntity(EntitySpearManager.class, "SpearManager", entityId++, this, 250, 10, true);
 
         EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 10, true);

@@ -7,6 +7,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -63,6 +64,8 @@ public class Drive extends SpecialAttackBase {
             }
         }
 
+        player.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+                0.8F, 0.01F);
         ItemSlashBlade.setComboSequence(tag, setCombo);
     }
 }
