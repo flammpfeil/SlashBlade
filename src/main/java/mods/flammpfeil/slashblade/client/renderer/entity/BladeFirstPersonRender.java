@@ -68,6 +68,7 @@ public class BladeFirstPersonRender {
         int xOffset = net.minecraftforge.client.MinecraftForgeClient.getRenderPass();
 
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         float f = 0.07F;
 
@@ -77,13 +78,13 @@ public class BladeFirstPersonRender {
 
         Project.gluPerspective(70.0F, (float) mc.displayWidth / (float) mc.displayHeight, 0.05F, (float) (16) * 2.0F);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
 
         if (mc.gameSettings.anaglyph) {
             GlStateManager.translate((float) (xOffset * 2 - 1) * 0.1F, 0.0F, 0.0F);
         }
 
-        GlStateManager.pushMatrix();
 
 
         //if (mc.gameSettings.thirdPersonView == 0 && !flag && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator())
@@ -130,6 +131,10 @@ public class BladeFirstPersonRender {
         }
 
         GlStateManager.popMatrix();
+
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManager.popMatrix();
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
     }
 
     void renderNakedBlade(EntityLivingBase entity, float partialTicks){
