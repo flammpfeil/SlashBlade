@@ -385,6 +385,8 @@ public class SlashBlade implements IFuelHandler{
 
         MinecraftForge.EVENT_BUS.register(new MoveImputHandler());
 
+        InitEventBus.register(new NamedBladeManager());
+
         //statManager = new StatManager();
         //MinecraftForge.EVENT_BUS.register(statManager);
 

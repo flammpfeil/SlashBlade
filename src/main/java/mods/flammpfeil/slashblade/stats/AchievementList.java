@@ -101,6 +101,7 @@ public class AchievementList {
 
                             parent.push(registerAchievement("saya", SlashBlade.getCustomBlade("slashbladeWrapper"), parent.peek()));
                             {
+                                /*
                                 parent.push(registerCraftingAchievement("bamboo", SlashBlade.getCustomBlade("wrap.BambooMod.katana.sample"), parent.peek()));
                                 {
                                     setContent(parent.peek(),"wrap.BambooMod.katana.sample");
@@ -121,6 +122,7 @@ public class AchievementList {
                                         AchievementList.registerCraftingAchievement("wrap." + entry.getValue(), RecipeWrapBlade.getWrapSampleBlade(entry.getKey(), entry.getValue()), parent.peek());
                                     }
                                 }
+                                */
                             }
                             parent.pop();
                         }
@@ -193,6 +195,12 @@ public class AchievementList {
                 parent.push(registerAchievement("proudSoul", SlashBlade.getCustomBlade("proudsoul"), parent.peek()));
                 {
                     setContent(parent.peek(), "proudsoul");
+
+
+
+                    parent.push(registerCraftingAchievement("soulCrystal", SlashBlade.getCustomBlade("crystal_bladesoul"), parent.peek()));
+                    setContent(parent.peek(), "crystal_bladesoul");
+                    parent.pop();
 
                     parent.push(registerCraftingAchievement("tinySoul", SlashBlade.getCustomBlade("tiny_bladesoul"), parent.peek()));
                     setContent(parent.peek(), "tiny_bladesoul");
@@ -278,13 +286,13 @@ public class AchievementList {
 
         {
             Achievement startParent = net.minecraft.stats.AchievementList.KILL_ENEMY;
-            if(Loader.isModLoaded("TwilightForest")){
+            /*if(Loader.isModLoaded("TwilightForest"))*/{
                 StatBase stat = StatList.getOneShotStat("TwilightForest6"); //twilightKillNaga
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
 
-                parent.push(registerCraftingAchievement("agitoRust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito.rust"), startParent));
+                parent.push(registerCraftingAchievement("agito.rust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito.rust"), startParent));
                 {
                     parent.push(registerCraftingAchievement("agito", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.agito"), parent.peek()));
                     setContent(parent.peek(), "flammpfeil.slashblade.named.agito");
@@ -297,15 +305,15 @@ public class AchievementList {
 
         {
             Achievement startParent = net.minecraft.stats.AchievementList.KILL_ENEMY;
-            if(Loader.isModLoaded("TwilightForest")){
+            /*if(Loader.isModLoaded("TwilightForest"))*/{
                 StatBase stat = StatList.getOneShotStat("TwilightForest30"); //twilightKillHydra
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
                 }
 
-                parent.push(registerCraftingAchievement("orotiagitoRust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.rust"), startParent));
+                parent.push(registerCraftingAchievement("orotiagito.rust", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.rust"), startParent));
                 {
-                    parent.push(registerCraftingAchievement("orotiagitoSealed", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.seald"), parent.peek()));
+                    parent.push(registerCraftingAchievement("orotiagito.sealed", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.orotiagito.seald"), parent.peek()));
                     {
                         setContent(parent.peek(), "flammpfeil.slashblade.named.orotiagito.seald");
 
@@ -321,7 +329,7 @@ public class AchievementList {
 
         {
             Achievement startParent = net.minecraft.stats.AchievementList.KILL_ENEMY;
-            if(Loader.isModLoaded("TwilightForest")){
+            /*if(Loader.isModLoaded("TwilightForest"))*/{
                 StatBase stat = StatList.getOneShotStat("TwilightForest6"); //twilightKillNaga
                 if(stat != null && stat instanceof  Achievement){
                     startParent = (Achievement) stat;
@@ -330,7 +338,7 @@ public class AchievementList {
                 parent.push(registerCraftingAchievement("yasha", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yasha"), startParent));
                 parent.pop();
 
-                parent.push(registerCraftingAchievement("yashaTrue", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yashatrue"), startParent));
+                parent.push(registerCraftingAchievement("yashatrue", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yashatrue"), startParent));
                 parent.pop();
             }
         }
@@ -339,108 +347,6 @@ public class AchievementList {
             Achievement startParent = net.minecraft.stats.AchievementList.KILL_WITHER;
             parent.push(registerCraftingAchievement("sange", SlashBlade.getCustomBlade("flammpfeil.slashblade.named.sange"), startParent));
             parent.pop();
-        }
-
-        {
-            Achievement startParent = net.minecraft.stats.AchievementList.KILL_ENEMY;
-            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.darkraven");
-            if(blade != null){
-                parent.push(registerCraftingAchievement("darkraven", blade, startParent));
-                parent.pop();
-            }
-        }
-
-        {
-            Achievement startParent = null;//net.minecraft.stats.AchievementList.KILL_ENEMY;
-            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.fluorescentbar");
-            if(blade != null){
-                parent.push(registerCraftingAchievement("fluorescentbar", blade, startParent));
-                setContent(parent.peek(), "flammpfeil.slashblade.named.fluorescentbar");
-                parent.pop();
-            }
-        }
-
-        {
-            Achievement startParent = net.minecraft.stats.AchievementList.KILL_ENEMY;
-            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.nihil");
-            if(blade != null){
-                parent.push(registerCraftingAchievement("nihil", blade, startParent));
-                {
-                    setContent(parent.peek(), "flammpfeil.slashblade.named.nihil");
-
-                    blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.nihilex");
-                    if(blade != null){
-                        parent.push(registerCraftingAchievement("nihilex", blade, parent.peek()));
-                        {
-                            setContent(parent.peek(), "flammpfeil.slashblade.named.nihilex");
-
-                            blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.nihilul");
-                            if(blade != null){
-                                parent.push(registerCraftingAchievement("nihilul", blade, parent.peek()));
-                                setContent(parent.peek(), "flammpfeil.slashblade.named.nihilul");
-                                parent.pop();
-                            }
-
-                            blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.crimsoncherry");
-                            if(blade != null){
-                                parent.push(registerCraftingAchievement("crimsoncherry", blade, parent.peek()));
-                                setContent(parent.peek(), "flammpfeil.slashblade.named.crimsoncherry");
-                                parent.pop();
-                            }
-                        }
-                        parent.pop();
-                    }
-                }
-                parent.pop();
-            }
-        }
-
-        {
-            Achievement startParent = net.minecraft.stats.AchievementList.KILL_WITHER;
-            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.murasamablade");
-            if(blade != null){
-                parent.push(registerCraftingAchievement("murasama", blade, startParent));
-                setContent(parent.peek(), "flammpfeil.slashblade.named.murasamablade");
-                parent.pop();
-            }
-        }
-
-        {
-            Achievement startParent = net.minecraft.stats.AchievementList.KILL_ENEMY;
-            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.wanderer");
-            if(blade != null){
-                parent.push(registerCraftingAchievement("wanderer", blade, startParent));
-                {
-                    setContent(parent.peek(), "flammpfeil.slashblade.named.wanderer");
-
-                    blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.wanderer.rfblade");
-                    if(blade != null){
-                        parent.push(registerCraftingAchievement("wanderer.rfblade", blade, parent.peek()));
-                        setContent(parent.peek(), "flammpfeil.slashblade.named.wanderer.rfblade");
-                        parent.pop();
-                    }
-                }
-                parent.pop();
-            }
-        }
-
-        {
-            Achievement startParent = net.minecraft.stats.AchievementList.ENCHANTMENTS;
-            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.frostwolfa");
-            if(blade != null){
-                parent.push(registerCraftingAchievement("frostwolfa", blade, startParent));
-                setContent(parent.peek(), "flammpfeil.slashblade.named.frostwolfa");
-                parent.pop();
-            }
-        }
-        {
-            Achievement startParent = net.minecraft.stats.AchievementList.ENCHANTMENTS;
-            ItemStack blade = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.frostwolfb");
-            if(blade != null){
-                parent.push(registerCraftingAchievement("frostwolfb", blade, startParent));
-                setContent(parent.peek(), "flammpfeil.slashblade.named.frostwolfb");
-                parent.pop();
-            }
         }
 
         SlashBlade.InitEventBus.post(new SlashBladeAchievementCreateEvent());
@@ -456,14 +362,15 @@ public class AchievementList {
         });
     }
 
-    static int defaultX = 20;
+    static int defaultCounter = 0;
+    static int defaultX = -10;
     //static int minX = 0;
-    static int defaultY = 5;
+    static int defaultY = 10;
     static int minY = -6;
     static public Pattern PosPattern = Pattern.compile("(-?\\d+)\\s*,\\s*(-?\\d+)");
     static public Achievement registerAchievement(String key, ItemStack icon, Achievement parent){
         String translateKey = getTranslateKey(key);
-        int x = defaultX++;
+        int x = defaultX;
         int y = defaultY;
 
         String posStr = I18n.translateToLocal("achievement." + translateKey + ".pos");
@@ -474,18 +381,27 @@ public class AchievementList {
             x = Integer.parseInt(mat.group(1));
             //x = Math.max(minX,x);
             y = Integer.parseInt(mat.group(2));
-            y = Math.max(minY,y);
+            //y = Math.max(minY,y);
+        }else{
+            x = defaultX + (int)(defaultCounter / 5);
+            y = defaultY + defaultCounter % 5;
+            defaultCounter++;
         }
 
         Achievement achievement = registerAchievement(key, x, y, icon, parent);
         return achievement;
     }
     static public Achievement registerAchievement(String key, int x, int y, ItemStack icon, Achievement parent){
-        Achievement achievement = new AchievementEx(getAchievementKey(key), getTranslateKey(key), x, y, icon, parent);
+        Achievement achievement = getAchievement(key);
+        if(achievement == null) {
+            achievement = new AchievementEx(getAchievementKey(key), getTranslateKey(key), x, y, icon, parent);
 
-        achievements.put(achievement.statId ,achievement);
+            achievements.put(achievement.statId, achievement);
 
-        return achievement.registerStat();
+            achievement.registerStat();
+        }
+
+        return achievement;
     } 
     static public Achievement registerCraftingAchievement(Achievement achievement){
         craftingTrigger.put(achievement.theItemStack.getUnlocalizedName(), achievement.statId);

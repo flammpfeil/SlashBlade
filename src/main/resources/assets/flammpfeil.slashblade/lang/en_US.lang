@@ -96,12 +96,12 @@ achievement.flammpfeil.slashblade.bewitched.pos=11,2
 
 achievement.flammpfeil.slashblade.tukumo=yuzuki-tukumo-
 achievement.flammpfeil.slashblade.tukumo.desc=Pride of the clan
-achievement.flammpfeil.slashblade.tukumo.pos=12,-3
+achievement.flammpfeil.slashblade.tukumo.pos=11,-3
 
 
 achievement.flammpfeil.slashblade.muramasa=Chizuru - Thousand Crane
 achievement.flammpfeil.slashblade.muramasa.desc=Fragments of the Demon Blade of legend
-achievement.flammpfeil.slashblade.muramasa.pos=13,0
+achievement.flammpfeil.slashblade.muramasa.pos=12,0
 
 achievement.flammpfeil.slashblade.buildWhiteSheath=Sharpness-White-
 achievement.flammpfeil.slashblade.buildWhiteSheath.desc=steel edge
@@ -175,6 +175,10 @@ achievement.flammpfeil.slashblade.soulSphere=pure sphere
 achievement.flammpfeil.slashblade.soulSphere.desc=spiritual crystal
 achievement.flammpfeil.slashblade.soulSphere.pos=-5,-1
 
+achievement.flammpfeil.slashblade.soulCrystal=pure crystal
+achievement.flammpfeil.slashblade.soulCrystal.desc=blade soul crystal<br>burning BladeStand < Click ProudSoul
+achievement.flammpfeil.slashblade.soulCrystal.pos=-7,-3
+
 achievement.flammpfeil.slashblade.enchantmentSoul=force fragment
 achievement.flammpfeil.slashblade.enchantmentSoul.desc=click! blade stand
 achievement.flammpfeil.slashblade.enchantmentSoul.pos=-2,-1
@@ -183,18 +187,18 @@ achievement.flammpfeil.slashblade.bladeStand=BladeStand
 achievement.flammpfeil.slashblade.bladeStand.desc=get:empty slot
 achievement.flammpfeil.slashblade.bladeStand.pos=-3,0
 
-achievement.flammpfeil.slashblade.bamboo.pos=9, 6
-achievement.flammpfeil.slashblade.foxwhite.pos=11, 5
-achievement.flammpfeil.slashblade.foxblack.pos=11, 7
+achievement.flammpfeil.slashblade.wrap.BambooMod.katana.pos=9, 6
+achievement.flammpfeil.slashblade.fox.white.pos=11, 5
+achievement.flammpfeil.slashblade.fox.black.pos=11, 7
 
-achievement.flammpfeil.slashblade.wrap.BalkonWood.pos=7, 7
-achievement.flammpfeil.slashblade.wrap.BalkonStone.pos=8, 8
-achievement.flammpfeil.slashblade.wrap.BalkonIron.pos=9, 9
-achievement.flammpfeil.slashblade.wrap.BalkonDiamond.pos=10, 10
-achievement.flammpfeil.slashblade.wrap.BalkonGold.pos=11, 11
+achievement.flammpfeil.slashblade.wrap.weaponmod.katana.wood.pos=7, 7
+achievement.flammpfeil.slashblade.wrap.weaponmod.katana.stone.pos=8, 8
+achievement.flammpfeil.slashblade.wrap.weaponmod.katana.iron.pos=9, 9
+achievement.flammpfeil.slashblade.wrap.weaponmod.katana.diamond.pos=10, 10
+achievement.flammpfeil.slashblade.wrap.weaponmod.katana.gold.pos=11, 11
 
-achievement.flammpfeil.slashblade.wrap.waA.pos=8, 12
-achievement.flammpfeil.slashblade.wrap.waB.pos=9, 13
+achievement.flammpfeil.slashblade.wrap.Wa.katana.pos=8, 12
+achievement.flammpfeil.slashblade.wrap.Wa.tachi.pos=9, 13
 
 achievement.flammpfeil.slashblade.brokenYamato=broken YAMATO
 achievement.flammpfeil.slashblade.brokenYamato.desc=Phantom of mirrored
@@ -212,34 +216,53 @@ achievement.flammpfeil.slashblade.doutanuki=mighty edge
 achievement.flammpfeil.slashblade.doutanuki.desc=strong powerful
 achievement.flammpfeil.slashblade.doutanuki.pos=0, 9
 
-achievement.flammpfeil.slashblade.agitoRust.pos=15, -5
-achievement.flammpfeil.slashblade.agito.pos=17, -4
+achievement.flammpfeil.slashblade.agito.rust.pos=15, -3
+achievement.flammpfeil.slashblade.agito.pos=17, -3
 
-achievement.flammpfeil.slashblade.orotiagitoRust.pos=15, -3
-achievement.flammpfeil.slashblade.orotiagitoSealed.pos=17, -2
-achievement.flammpfeil.slashblade.orotiagito.pos=19, -1
+achievement.flammpfeil.slashblade.orotiagito.rust.pos=15, -4
+achievement.flammpfeil.slashblade.orotiagito.sealed.pos=17, -4
+achievement.flammpfeil.slashblade.orotiagito.pos=19, -4
 
-achievement.flammpfeil.slashblade.yasha.pos=15, 1
-achievement.flammpfeil.slashblade.yashaTrue.pos=16, 2
-achievement.flammpfeil.slashblade.sange.pos=18, 1
+achievement.flammpfeil.slashblade.yashatrue.pos=15, -2
+achievement.flammpfeil.slashblade.sange.pos=17, -2
+achievement.flammpfeil.slashblade.darkraven.pos=19, -2
 
 
-achievement.flammpfeil.slashblade.darkraven.pos=18, -5
-achievement.flammpfeil.slashblade.fluorescentbar.pos=20, -4
+achievement.flammpfeil.slashblade.yasha.pos=16, -0
+achievement.flammpfeil.slashblade.fluorescentbar.pos=15, -0
+achievement.flammpfeil.slashblade.snowcrow.pos=17, -0
 
 achievement.flammpfeil.slashblade.phantomSword=Summoned Swords
 achievement.flammpfeil.slashblade.phantomSword.desc=power of sparda
 achievement.flammpfeil.slashblade.phantomSword.pos=-6,-5
 
-achievement.flammpfeil.slashblade.murasama.pos=15, 4
 
-achievement.flammpfeil.slashblade.nihil.pos=24, -4
-achievement.flammpfeil.slashblade.nihilex.pos=26, -3
-achievement.flammpfeil.slashblade.nihilul.pos=28, -2
-achievement.flammpfeil.slashblade.crimsoncherry.pos=28,0
+achievement.flammpfeil.slashblade.nihil.pos=22, -4
+achievement.flammpfeil.slashblade.nihilex.pos=23, -4
+achievement.flammpfeil.slashblade.nihilul.pos=24, -4
+achievement.flammpfeil.slashblade.nihilbx.pos=25, -4
+achievement.flammpfeil.slashblade.crimsoncherry.pos=24,-3
+achievement.flammpfeil.slashblade.toyako.pos=22,-3
 
 achievement.flammpfeil.slashblade.frostwolfa.pos=15, 8
-achievement.flammpfeil.slashblade.frostwolfb.pos=17, 8
+achievement.flammpfeil.slashblade.frostwolfb.pos=16, 8
 
-achievement.flammpfeil.slashblade.wanderer.pos=15, 6
-achievement.flammpfeil.slashblade.wanderer.rfblade.pos=16, 7
+achievement.flammpfeil.slashblade.wanderer.pos=22, -1
+achievement.flammpfeil.slashblade.wanderer.rfblade.pos=23, -1
+
+
+achievement.flammpfeil.slashblade.kamuy.base.pos=15, 9
+achievement.flammpfeil.slashblade.kamuy.fire.pos=16, 9
+achievement.flammpfeil.slashblade.kamuy.water.pos=17, 9
+achievement.flammpfeil.slashblade.kamuy.lightning.pos=18, 9
+
+achievement.flammpfeil.slashblade.terra.pos=22, 0
+achievement.flammpfeil.slashblade.zephyr.pos=24, 0
+achievement.flammpfeil.slashblade.murasamablade.pos=26, 0
+achievement.flammpfeil.slashblade.laemmle.pos=28, 0
+
+achievement.flammpfeil.slashblade.blademaster.moonlightcherry.pos=15, 10
+achievement.flammpfeil.slashblade.blademaster.aquablaze.pos=16, 10
+achievement.flammpfeil.slashblade.blademaster.greenmist.pos=17, 10
+
+achievement.flammpfeil.slashblade.yukari.pos=15, 11

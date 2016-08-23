@@ -99,7 +99,7 @@ public class ItemProudSoul extends Item {
             par3List.add(stack);
         }
 
-        for(ItemStack stack : NamedBladeManager.namedbladeSouls){
+        for(ItemStack stack : NamedBladeManager.namedbladeSouls.values()){
             par3List.add(stack);
         }
 	}

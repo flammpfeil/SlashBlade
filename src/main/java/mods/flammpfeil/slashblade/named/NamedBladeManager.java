@@ -1,20 +1,27 @@
 package mods.flammpfeil.slashblade.named;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
+import mods.flammpfeil.slashblade.RecipeWrapBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.stats.AchievementList;
+import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
  * Created by Furia on 2016/06/01.
  */
 public class NamedBladeManager {
-    static public List<ItemStack> namedbladeSouls = Lists.newArrayList();
+    static public Map<String,ItemStack> namedbladeSouls = Maps.newHashMap();
 
     public static ItemStack getNamedSoul(Random rand){
         return namedbladeSouls.get(rand.nextInt(namedbladeSouls.size())).copy();
@@ -34,7 +41,8 @@ public class NamedBladeManager {
 
         crystal.setStackDisplayName(name + " soul");
 
-        namedbladeSouls.add(crystal);
+        String keyName = ItemSlashBladeNamed.CurrentItemName.get(tag);
+        namedbladeSouls.put(keyName, crystal);
     }
 
     public static void registerBladeSoul(NBTTagCompound tag, String name, boolean addCreativeTab){
@@ -47,5 +55,56 @@ public class NamedBladeManager {
             SlashBlade.registerCustomItemStack(blade.getUnlocalizedName(), blade);
             ItemSlashBladeNamed.NamedBlades.add(blade.getUnlocalizedName());
         }
+    }
+
+    @SubscribeEvent
+    public void onRegisterSBAchievement(SlashBladeAchievementCreateEvent event){
+        for(Map.Entry<String,ItemStack> entry : namedbladeSouls.entrySet()){
+            ItemStack icon = SlashBlade.getCustomBlade(entry.getKey());
+
+            if(icon == null) {
+                ItemStack soul = entry.getValue();
+                NBTTagCompound matTag = soul.getTagCompound();
+
+                ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid, "slashbladeNamed", 1);
+
+                NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(targetBlade);
+
+
+                ItemSlashBladeNamed.CurrentItemName.set(tag, ItemSlashBladeNamed.CurrentItemName.get(matTag));
+
+                if (ItemSlashBlade.BaseAttackModifier.exists(matTag))
+                    ItemSlashBlade.setBaseAttackModifier(tag, ItemSlashBlade.BaseAttackModifier.get(matTag));
+
+                TagPropertyAccessor[] accessors = {
+                        ItemSlashBladeNamed.CustomMaxDamage,
+                        ItemSlashBlade.TextureName,
+                        ItemSlashBlade.ModelName,
+                        ItemSlashBlade.SpecialAttackType,
+                        ItemSlashBlade.StandbyRenderType,
+                        ItemSlashBladeNamed.IsDefaultBewitched,
+                        ItemSlashBladeNamed.TrueItemName,
+                        ItemSlashBlade.SummonedSwordColor,
+                        ItemSlashBlade.IsDestructable,
+                        ItemSlashBlade.IsBroken
+                };
+
+                for (TagPropertyAccessor acc : accessors)
+                    copyTag(acc, tag, matTag);
+
+                icon = targetBlade;
+            }
+
+            if(icon != null){
+                String achievementKey = entry.getKey().replaceFirst("flammpfeil.slashblade.named.","");
+                achievementKey = achievementKey.replaceFirst("flammpfeil.slashblade.","");
+                AchievementList.registerCraftingAchievement(achievementKey, icon, net.minecraft.stats.AchievementList.BUILD_SWORD);
+            }
+
+        }
+    }
+    public void copyTag(TagPropertyAccessor acc, NBTTagCompound dest , NBTTagCompound src){
+        if(acc.exists(src))
+            acc.set(dest, acc.get(src));
     }
 }
