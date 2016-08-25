@@ -13,6 +13,7 @@ import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
@@ -1686,6 +1687,17 @@ public class ItemSlashBlade extends ItemSword {
 
 		updateAttackAmplifier(swordType, tag ,el, sitem);
 
+        if(tag.hasUniqueId("Owner")){
+            UUID ownerid = tag.getUniqueId("Owner");
+            boolean isOwner = ownerid.equals(el.getUniqueID());
+
+            if(isOwner && IsSealed.get(tag) == true){
+                IsSealed.set(tag,false);
+            }else if(!isOwner){
+                IsSealed.set(tag,true);
+            }
+        }
+
 
 		{
 			int cost = sitem.getRepairCost();
@@ -2259,14 +2271,34 @@ public class ItemSlashBlade extends ItemSword {
 
         return par1 + f3;
     }
+
+    public void addInformationOwner(ItemStack par1ItemStack,
+                                         EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+        if(tag.hasUniqueId("Owner") && par2EntityPlayer != null){
+            UUID ownerid = tag.getUniqueId("Owner");
+            if(!ownerid.equals(par2EntityPlayer.getUniqueID())) {
+                par3List.add(I18n.translateToLocal("flammpfeil.swaepon.info.notowner.msg"));
+
+                EntityPlayer owner = par2EntityPlayer.worldObj.getPlayerEntityByUUID(ownerid);
+                if(owner != null)
+                    par3List.add("owner:" + owner.getName());
+            }
+        }
+    }
     
     public void addInformationSwordClass(ItemStack par1ItemStack,
 			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
 		EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
+        NBTTagCompound tag = getItemTagCompound(par1ItemStack);
+
 		if(swordType.contains(SwordType.Enchanted)){
 			if(swordType.contains(SwordType.Bewitched)){
-				par3List.add(String.format("§5%s", I18n.translateToLocal("flammpfeil.swaepon.info.bewitched")));
+                if(tag.hasUniqueId("Owner"))
+    				par3List.add(String.format("§6%s", I18n.translateToLocal("flammpfeil.swaepon.info.bewitched")));
+                else
+                    par3List.add(String.format("§5%s", I18n.translateToLocal("flammpfeil.swaepon.info.bewitched")));
 			}else{
 				par3List.add(String.format("§3%s", I18n.translateToLocal("flammpfeil.swaepon.info.magic")));
 			}
@@ -2390,6 +2422,8 @@ public class ItemSlashBlade extends ItemSword {
 
 
 		super.addInformation(par1ItemStack, par2EntityPlayer, par3List, par4);
+
+        addInformationOwner(par1ItemStack, par2EntityPlayer, par3List, par4);
 
 		addInformationSwordClass(par1ItemStack, par2EntityPlayer, par3List, par4);
 

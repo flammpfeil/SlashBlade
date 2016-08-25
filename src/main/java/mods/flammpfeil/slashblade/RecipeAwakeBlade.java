@@ -104,6 +104,9 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                 ItemSlashBlade.ProudSoul.set(newTag, ItemSlashBlade.ProudSoul.get(oldTag));
                 ItemSlashBlade.RepairCount.set(newTag, ItemSlashBlade.RepairCount.get(oldTag));
 
+                if(oldTag.hasUniqueId("Owner"))
+                    newTag.setUniqueId("Owner",oldTag.getUniqueId("Owner"));
+
                 if(oldTag.hasKey(ItemSlashBlade.adjustXStr))
                     newTag.setFloat(ItemSlashBlade.adjustXStr,oldTag.getFloat(ItemSlashBlade.adjustXStr));
 

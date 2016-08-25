@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.event.DropEventHandler;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -64,6 +65,8 @@ public class Yamato {
                 ItemSlashBlade.ModelName.set(tag, "named/yamato");
                 ItemSlashBlade.SpecialAttackType.set(tag, 0);
                 ItemSlashBlade.StandbyRenderType.set(tag, 1);
+
+                SpecialEffects.addEffect(customblade,SpecialEffects.Limitter);
 
                 ItemSlashBlade.IsBroken.set(tag, true);
                 ItemSlashBlade.IsNoScabbard.set(tag, true);

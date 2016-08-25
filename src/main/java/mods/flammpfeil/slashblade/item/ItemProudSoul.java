@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.server.management.UserListOpsEntry;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
@@ -216,7 +217,44 @@ public class ItemProudSoul extends Item {
             }
         }
 
-        if(stack.getItemDamage() == 0 && entity instanceof EntityBladeStand) {
+        if(stack.getItemDamage() == 5 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
+            EntityBladeStand stand = (EntityBladeStand)entity;
+
+            if(stand.hasBlade()){
+                NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(stand.getBlade());
+
+                if(!bladeTag.hasUniqueId("Owner")) {
+                    using = true;
+
+                    bladeTag.setUniqueId("Owner", player.getUniqueID());
+                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5F, 1.0F);using = true;
+
+                    stand.setFire(20);
+                    ItemSlashBlade.ProudSoul.add(bladeTag,500);
+                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.5F, 0.5F);
+
+                }else if(player.getServer() != null){
+                    boolean hasPerm = bladeTag.getUniqueId("Owner").equals(player.getUniqueID());
+
+                    if(!hasPerm) {
+                        UserListOpsEntry userlistopsentry = (UserListOpsEntry) player.getServer().getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
+                        if (userlistopsentry != null ? userlistopsentry.getPermissionLevel() >= 2 : player.getServer().isSinglePlayer()) {
+                            hasPerm = true;
+                        }
+                    }
+
+                    if(hasPerm){
+                        bladeTag.removeTag("OwnerMost");
+                        bladeTag.removeTag("OwnerLeast");
+                        stand.extinguish();
+                        player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.PLAYERS, 0.5F, 0.5F);
+                    }
+                }
+            }
+        }
+
+
+        if((stack.getItemDamage() == 0 || stack.getItemDamage() == 4) && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
             if(stand.hasBlade() && stand.isBurning()){
@@ -228,14 +266,14 @@ public class ItemProudSoul extends Item {
                 if(ItemSlashBlade.ProudSoul.tryAdd(bladeTag, -400, false)){
                     player.onEnchantmentCritical(stand);
 
+                    ItemStack bladeSoulCrystal = null;
+
                     using = true;
 
                     boolean isLottery = false;
-                    if(stack.isItemEnchanted()){
+                    if(stack.isItemEnchanted() && stack.getItemDamage() == 0){
                         isLottery = true;
                     }
-
-                    ItemStack bladeSoulCrystal = null;
 
                     if(isLottery) {
                         if(stand.getType(stand) == EntityBladeStand.StandType.Dual){
@@ -248,8 +286,10 @@ public class ItemProudSoul extends Item {
                         }else{
                             bladeSoulCrystal = NamedBladeManager.getNamedSoul(Item.itemRand);
                         }
-                    }else
+                    }else if(stack.getItemDamage() == 0)
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
+                    else
+                        bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TrapezohedronBladeSoulStr,1);
 
 
                     bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
@@ -400,7 +440,7 @@ public class ItemProudSoul extends Item {
 
         ItemStack stack = entityItem.getEntityItem();
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
-        if(stack.getItemDamage() == 4){
+        if(stack.getItemDamage() == 4 || stack.getItemDamage() == 5){
             long current = entityItem.getEntityWorld().getTotalWorldTime();
 
             if(entityItem.getEntityData().hasKey("FloatingTimeout")){

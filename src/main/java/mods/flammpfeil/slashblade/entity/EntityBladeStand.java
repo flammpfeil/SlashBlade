@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
+import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.material.Material;
@@ -15,9 +16,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.server.management.UserListOpsEntry;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import java.util.Map;
@@ -251,12 +255,40 @@ public class EntityBladeStand extends Entity {
 
     public boolean setStandBlade(Entity e){
 
-        if(e instanceof EntityPlayer){
+        if(e instanceof EntityPlayer && !e.worldObj.isRemote){
 
             EntityPlayer p = (EntityPlayer)e;
 
             ItemStack stack = p.getHeldItem(EnumHand.MAIN_HAND);
             if(stack == null && this.hasBlade()){
+
+                ItemStack blade = this.getBlade();
+
+                NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+                if(bladeTag.hasUniqueId("Owner")){
+                    boolean hasPerm = bladeTag.getUniqueId("Owner").equals(p.getUniqueID());
+
+                    if(!hasPerm) {
+                        if(p.getServer() != null) {
+                            UserListOpsEntry userlistopsentry = (UserListOpsEntry) p.getServer().getPlayerList().getOppedPlayers().getEntry(p.getGameProfile());
+                            if (userlistopsentry != null ? userlistopsentry.getPermissionLevel() >= 2 : p.getServer().isSinglePlayer()) {
+                               hasPerm = true;
+                            }
+                        }
+                    }
+
+                    if(!hasPerm) {
+                        p.addChatMessage(new TextComponentTranslation("flammpfeil.swaepon.info.notowner.msg"));
+                        return false;
+                    }
+                }
+
+                if(SpecialEffects.isEffective(p,blade, SpecialEffects.Limitter) == SpecialEffects.State.NonEffective
+                        && !p.isCreative()){
+                    int level = ItemSlashBlade.getSpecialEffect(blade).getInteger(SpecialEffects.Limitter.getEffectKey());
+                    p.addChatMessage(new TextComponentTranslation("flammpfeil.swaepon.info.needlevel.msg",Integer.toString(level)));
+                    return false;
+                }
 
                 AchievementList.triggerCraftingAchievement(this.getBlade(), p);
 

@@ -14,6 +14,10 @@ item.flammpfeil.slashblade.proudsoul.trapezohedron.name=BladeSoulTrapezohedron
 flammpfeil.swaepon.info.bewitched=bewitched
 flammpfeil.swaepon.info.magic=enchanted
 flammpfeil.swaepon.info.noname=sealed
+
+flammpfeil.swaepon.info.notowner.msg=§8You are not worthy as my master.
+flammpfeil.swaepon.info.needlevel.msg=§8You need more experience. Requirements level:%1$s
+
 item.flammpfeil.slashblade.wood.name=Anonymity-Wood-
 item.flammpfeil.slashblade.bamboo.name=Anonymity-BambooLight-
 item.flammpfeil.slashblade.silverbamboo.name=Noted-SilverBambooLight-
@@ -62,6 +66,7 @@ entity.flammpfeil.slashblade.BladeStand.name=BladeStand
 death.attack.directMagic=%1$s was hacked by %2$s using magic blade
 
 slashblade.seffect.name.WitherEdge=WitherEdge
+slashblade.seffect.name.Limitter=Limitter
 
 slashblade.rangeattack.false=SummonedSword
 slashblade.rangeattack.true=SummonedBlade
