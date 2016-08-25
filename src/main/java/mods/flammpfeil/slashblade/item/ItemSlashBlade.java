@@ -2571,6 +2571,7 @@ public class ItemSlashBlade extends ItemSword {
     @Override
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
 
+        /*
         EnumSet<SwordType> type = getSwordType(stack);
 
         double swordLen = 5.5D;
@@ -2578,6 +2579,7 @@ public class ItemSlashBlade extends ItemSword {
             swordLen = 2.8D;
 
         CoreProxy.proxy.getMouseOver(swordLen);
+        */
 
         /*if(!entityLiving.worldObj.isRemote)
         {

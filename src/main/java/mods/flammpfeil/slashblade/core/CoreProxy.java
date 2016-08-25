@@ -11,5 +11,5 @@ public class CoreProxy {
 
 	public void postInit(){}
 
-    public void getMouseOver(double len){}
+    //public void getMouseOver(double len){}
 }

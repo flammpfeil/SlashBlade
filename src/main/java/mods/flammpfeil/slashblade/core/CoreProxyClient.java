@@ -469,7 +469,7 @@ public class CoreProxyClient extends CoreProxy {
 
     /**
      * @param len max 6.0
-     */
+     *//*
     @Override
     public void getMouseOver(double len)
     {
@@ -562,5 +562,5 @@ public class CoreProxyClient extends CoreProxy {
                 }
             }
         }
-    }
+    }*/
 }
