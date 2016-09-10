@@ -55,8 +55,8 @@ public class EntityBladeStand extends Entity {
     protected void entityInit() {
         //this.getDataManager().register(WatchIndexBlade, SlashBlade.getCustomBlade(SlashBlade.modid,"flammpfeil.slashblade.named.muramasa"));
         this.getDataManager().register(WatchIndexBlade, Optional.<ItemStack>absent()); //ItemStack
-        this.getDataManager().register(WatchIndexStandType, 0);
         this.getDataManager().register(WatchIndexFlipState, 0);
+        this.getDataManager().register(WatchIndexStandType, 0);
     }
 
 

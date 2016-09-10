@@ -28,9 +28,10 @@ public class DefeatTheBoss {
 
         player.entityDropItem(tinySoul, 0.0F);
 
-        if(!target.isNonBoss()){
+        if(!target.isNonBoss() && !target.worldObj.isRemote){
             ItemStack soul = NamedBladeManager.getNamedSoul(player.getRNG());
-            player.entityDropItem(soul, 0.0F);
+            if(soul != null)
+                player.entityDropItem(soul, 0.0F);
         }
     }
 

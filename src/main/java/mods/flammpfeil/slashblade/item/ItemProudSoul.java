@@ -286,6 +286,9 @@ public class ItemProudSoul extends Item {
                         }else{
                             bladeSoulCrystal = NamedBladeManager.getNamedSoul(Item.itemRand);
                         }
+
+                        if(bladeSoulCrystal == null)
+                            bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
                     }else if(stack.getItemDamage() == 0)
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
                     else
