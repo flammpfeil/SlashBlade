@@ -2843,17 +2843,29 @@ public class ItemSlashBlade extends ItemSword {
         tag.setBoolean(IsManagedDamage, false);
 
         if(stack.stackSize <= 0) {
+            boolean setBroken = true;
+            boolean doDrop = true;
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             if(!blade.isDestructable(stack)){
                 stack.stackSize = 1;
                 stack.setItemDamage(stack.getMaxDamage());
-                IsBroken.set(tag,true);
 
                 if(blade instanceof ItemSlashBladeWrapper){
+
+                    doDrop = ((ItemSlashBladeWrapper) blade).hasWrapedItem(stack);
                     if(!ItemSlashBladeWrapper.TrueItemName.exists(tag)){
                         ((ItemSlashBladeWrapper)blade).removeWrapItem(stack);
+                        setBroken = false;
                     }
+                }
+
+                if(blade == SlashBlade.bladeSilverBambooLight){
+                    AchievementList.triggerAchievement((EntityPlayer) user, "saya");
+
+                    stack.func_150996_a(SlashBlade.wrapBlade);
+                    setBroken = false;
+                    stack.setItemDamage(0);
                 }
 
                 if(blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer){
@@ -2861,7 +2873,10 @@ public class ItemSlashBlade extends ItemSword {
                 }
             }
 
-            blade.dropItemDestructed(user, stack);
+            if(doDrop && !IsBroken.get(tag))
+                blade.dropItemDestructed(user, stack);
+
+            IsBroken.set(tag,setBroken);
         }
     }
 
