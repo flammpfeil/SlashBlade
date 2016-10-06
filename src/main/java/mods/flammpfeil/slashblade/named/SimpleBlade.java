@@ -95,6 +95,19 @@ public class SimpleBlade {
                 'P', Items.PAPER
         ));
 
+        {
+            ItemStack blade = new ItemStack(SlashBlade.bladeSilverBambooLight);
+            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
+
+            blade.setItemDamage(blade.getMaxDamage()-1);
+            ItemSlashBlade.KillCount.set(tag, 100);
+
+            String key = "testsilver";
+            SlashBlade.registerCustomItemStack(key, blade);
+            ItemSlashBladeNamed.NamedBlades.add(key);
+
+        }
+
 
         SlashBlade.addRecipe("slashbladeWhite",
                 new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1, SlashBlade.bladeWhiteSheath.getMaxDamage() / 3),
