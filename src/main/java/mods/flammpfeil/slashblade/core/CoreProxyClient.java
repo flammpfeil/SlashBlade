@@ -66,7 +66,7 @@ public class CoreProxyClient extends CoreProxy {
 
         new ModelRegister();
 
-        MinecraftForge.EVENT_BUS.register(new BladeFirstPersonRender());
+        //MinecraftForge.EVENT_BUS.register(BladeFirstPersonRender.getInstance());
 
         MinecraftForge.EVENT_BUS.register(new LockonCircleRender());
 

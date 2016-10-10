@@ -1,15 +1,18 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
+import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.ability.ProjectileBarrier;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,6 +36,18 @@ import java.util.EnumSet;
  * Created by Furia on 2016/02/07.
  */
 public class BladeFirstPersonRender {
+
+    private BladeFirstPersonRender(){}
+
+    private static final class SingletonHolder {
+        private static final BladeFirstPersonRender instance = new BladeFirstPersonRender();
+    }
+
+    public static BladeFirstPersonRender getInstance(){
+        return BladeFirstPersonRender.SingletonHolder.instance;
+    }
+
+
     private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
@@ -44,6 +59,11 @@ public class BladeFirstPersonRender {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onRenderWorldLastEvent(RenderWorldLastEvent event){
         if(event.isCanceled()) return;
+
+        render();
+    }
+
+    public void render(){
 
 
         Minecraft mc = Minecraft.getMinecraft();
@@ -63,7 +83,10 @@ public class BladeFirstPersonRender {
 
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack);
 
-        GlStateManager.clear(256);
+        GlStateManager.pushAttrib();
+        //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+        //GlStateManager.clear(256);
 
         int xOffset = net.minecraftforge.client.MinecraftForgeClient.getRenderPass();
 
@@ -91,7 +114,7 @@ public class BladeFirstPersonRender {
         {
             mc.entityRenderer.enableLightmap();
 
-            float partialTicks = event.getPartialTicks();
+            float partialTicks = mc.getRenderPartialTicks();
 
             if (swordType.contains(ItemSlashBlade.SwordType.NoScabbard)) {
                 //todo :LayerHeldItem�I��rendering����
@@ -135,6 +158,9 @@ public class BladeFirstPersonRender {
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.popMatrix();
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+
+        GlStateManager.popAttrib();
     }
 
     void renderNakedBlade(EntityLivingBase entity, float partialTicks){

@@ -1936,6 +1936,8 @@ public class ItemSlashBlade extends ItemSword {
 
                             SoulEater.fire(sitem, el);
 
+                            Taunt.fire(sitem, el);
+
 							AxisAlignedBB bb = el.getEntityBoundingBox();
 							bb = bb.expand(10, 5, 10);
 							List<Entity> list = par2World.getEntitiesInAABBexcluding(el, bb, EntitySelectorAttackable.getInstance());
@@ -3342,7 +3344,7 @@ public class ItemSlashBlade extends ItemSword {
 
         if(forceDrop || stack.getRarity() != EnumRarity.COMMON || stack.hasDisplayName() || stack.hasTagCompound() && ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())){
 
-            EntityBladeStand e = new EntityBladeStand(entityItem.worldObj, entityItem.posX, entityItem.posY, entityItem.posZ, stack);
+            EntityBladeStand e = new EntityBladeStand(entityItem.worldObj, entityItem.posX, entityItem.posY, entityItem.posZ, stack.copy());
 
             e.setFlip(e.getRand().nextInt(2));
 

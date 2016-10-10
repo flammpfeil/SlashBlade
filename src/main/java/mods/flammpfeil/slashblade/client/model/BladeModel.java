@@ -59,6 +59,7 @@ public class BladeModel implements IPerspectiveAwareModel {
 
     static ItemStack targetStack = null;
     static ItemSlashBlade itemBlade = null;
+    static EntityLivingBase user = null;
 
     /**
      * 0 : type set
@@ -80,9 +81,11 @@ public class BladeModel implements IPerspectiveAwareModel {
                     targetStack = stack;
                     ItemSlashBlade.getItemTagCompound(targetStack).setBoolean("IsRender",true);
                     itemBlade = (ItemSlashBlade) stack.getItem();
+                    user = entity;
                 }else{
                     targetStack = null;
                     itemBlade = null;
+                    user = null;
                 }
 
                 return super.handleItemState(originalModel, stack, world, entity);

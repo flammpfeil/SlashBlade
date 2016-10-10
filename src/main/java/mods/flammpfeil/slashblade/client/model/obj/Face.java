@@ -89,7 +89,7 @@ public class Face
 
             if(isSmoothShade && vertexNormals != null) {
                 Vertex normal = vertexNormals[i];
-                float scale = 1.05f;
+                float scale = -1.05f;
                 wr.normal(normal.x*scale, normal.y*scale, normal.z*scale);
             }else{
 

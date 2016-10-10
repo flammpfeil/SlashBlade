@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.client.model;
 
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
+import mods.flammpfeil.slashblade.client.renderer.entity.BladeFirstPersonRender;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.tileentity.DummyTileEntity;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -34,12 +36,14 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         ResourceLocation resourceTexture = BladeModel.itemBlade.getModelTexture(BladeModel.targetStack);
         bindTexture(resourceTexture);
 
-        render();
+        //GlStateManager.pushAttrib();
+        //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
-        if(BladeModel.targetStack.hasEffect()){
+        if(render() && BladeModel.targetStack.hasEffect()){
             renderEffect();
         }
 
+        //GlStateManager.popAttrib();
     }
 
     private void renderEffect()
@@ -71,13 +75,23 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         GlStateManager.depthMask(true);
     }
 
-    private void render(){
+    private boolean render(){
 
         if(BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND
-                || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) return;
+                || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
 
+            ItemCameraTransforms.TransformType target;
+            boolean handle = BladeModel.user.getPrimaryHand() == EnumHandSide.RIGHT ?
+                    BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
+                    BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
+
+            if(handle)
+                BladeFirstPersonRender.getInstance().render();
+
+            return false;
+        }
 
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         //GL11.glPushClientAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -183,5 +197,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         GL11.glPopAttrib();
 
         Face.resetColor();
+
+        return true;
     }
 }

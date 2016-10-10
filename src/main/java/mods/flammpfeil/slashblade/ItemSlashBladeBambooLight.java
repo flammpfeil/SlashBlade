@@ -1,9 +1,6 @@
 package mods.flammpfeil.slashblade;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import mods.flammpfeil.slashblade.stats.AchievementList;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
