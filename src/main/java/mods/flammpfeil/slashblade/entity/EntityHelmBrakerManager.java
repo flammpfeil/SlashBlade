@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -179,21 +180,32 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
 
 
         //■死亡チェック
-        if(ticksExisted >= getLifeTime()
+        if((!worldObj.isRemote) && (
+                ticksExisted >= getLifeTime()
                 || combo != ItemSlashBlade.ComboSequence.HelmBraker
                 || this.getThrower() == null
                 || (this.getThrower() != null && (this.getThrower().onGround
                 || this.getThrower().isInWater()
-                || this.getThrower().isInLava()))) {
+                || this.getThrower().isInLava())))){
 
             alreadyHitEntity.clear();
             alreadyHitEntity = null;
             setDead();
+
+            if(this.getThrower() instanceof EntityPlayerMP){
+                EntityPlayerMP entityPlayer = (EntityPlayerMP) this.getThrower();
+                entityPlayer.connection.setPlayerLocation(entityPlayer.posX,entityPlayer.posY,entityPlayer.posZ
+                        ,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
+            }
+
             return;
         }
 
         if(1 < ticksExisted && getThrower() != null){
-            getThrower().setPosition(getThrower().posX,this.posY,getThrower().posZ);
+            getThrower().motionX = 0;
+            getThrower().motionZ = 0;
+            getThrower().moveEntity(0,-1.5,0);
+            //getThrower().setPosition(getThrower().posX,this.posY,getThrower().posZ);
 
             getThrower().fallDistance = 0;
         }

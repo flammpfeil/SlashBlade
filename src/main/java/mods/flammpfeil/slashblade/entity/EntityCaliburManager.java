@@ -173,27 +173,35 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                 Entity target = this.worldObj.getEntityByID(targetId);
                 if(target != null){
                     double distance = target.getDistanceSqToEntity(this.getThrower());
-                    if(distance < 2.0){
+                    if(distance < 3.0){
                         if(moveTicks > this.ticksExisted){
                             this.ticksExisted = moveTicks;
                         }
                         owner.motionZ = 0;
                         owner.motionX = 0;
+                        owner.setPositionAndUpdate(owner.posX, this.posY, owner.posZ);
                     }
                 }
             }
 
+
+            if(moveTicks > this.ticksExisted){
+                owner.motionZ *= 0.95;
+                owner.motionX *= 0.95;
+                owner.moveEntity(owner.motionX, 0, owner.motionZ);
+            }
+
             if(moveTicks == this.ticksExisted){
-                owner.setPositionAndUpdate(owner.posX, owner.posY, owner.posZ);
+                owner.motionZ = 0;
+                owner.motionX = 0;
+                owner.motionY = 0;
+
+                if(owner.worldObj.isRemote)
+                    owner.setPositionAndUpdate(owner.posX, this.posY, owner.posZ);
 
                 owner.swingArm(EnumHand.MAIN_HAND);
                 owner.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.5F, 0.75F);
                 owner.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.5F, 0.25F);
-            }
-
-            if(moveTicks < this.ticksExisted){
-                owner.motionZ = 0.0;
-                owner.motionX = 0.0;
             }
 
             combo = ItemSlashBlade.getComboSequence(tag);
@@ -201,9 +209,8 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                 ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Calibur);
                 ItemSlashBlade.OnJumpAttacked.set(tag,true);
             }
-
-            if(worldObj.isRemote)
-                owner.motionY = 0;
+            owner.motionY = 0;
+            owner.setPosition(owner.posX, this.posY, owner.posZ);
         }
 
 

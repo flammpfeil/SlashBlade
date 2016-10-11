@@ -109,10 +109,9 @@ public class BladeFirstPersonRender {
         }
 
 
-
         //if (mc.gameSettings.thirdPersonView == 0 && !flag && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator())
         {
-            mc.entityRenderer.enableLightmap();
+            //mc.entityRenderer.enableLightmap();
 
             float partialTicks = mc.getRenderPartialTicks();
 
@@ -150,7 +149,7 @@ public class BladeFirstPersonRender {
                 render(player, partialTicks);
             }
 
-            mc.entityRenderer.disableLightmap();
+            //mc.entityRenderer.disableLightmap();
         }
 
         GlStateManager.popMatrix();

@@ -19,5 +19,6 @@ public class NetworkManager {
         INSTANCE.registerMessage(MessageRangeAttackHandler.class, MessageRangeAttack.class, 0, Side.SERVER);
         INSTANCE.registerMessage(MessageSpecialActionHandler.class, MessageSpecialAction.class, 1, Side.SERVER);
         INSTANCE.registerMessage(MessageMoveCommandStateHandler.class, MessageMoveCommandState.class, 2, Side.SERVER);
+        INSTANCE.registerMessage(MessageRankpointSynchronizeHandler.class, MessageRankpointSynchronize.class, 3, Side.CLIENT);
     }
 }

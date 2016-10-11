@@ -932,7 +932,7 @@ public class ItemSlashBlade extends ItemSword {
             case Calibur: {
                 player.fallDistance = 0;
 
-                double playerDist = 2.5;
+                double playerDist = 1.5;
 
                 /*
                 if(!player.onGround)
@@ -940,6 +940,7 @@ public class ItemSlashBlade extends ItemSword {
                 */
                 player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
                 player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
+                player.motionY =  0;
 
                 UntouchableTime.setUntouchableTime(player, 6, false);
 

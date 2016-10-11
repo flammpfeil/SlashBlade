@@ -13,6 +13,7 @@ import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -131,8 +132,24 @@ public class SlashBlade implements IFuelHandler{
 	public void preInit(FMLPreInitializationEvent evt){
 		mainConfiguration = new Configuration(evt.getSuggestedConfigurationFile());
 
-		try{
-			mainConfiguration.load();
+		try {
+            mainConfiguration.load();
+
+            {
+                Property propCustomBlade = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange" , 100, "decrement speed factor up 50<def:100<500 down");
+                int range = Math.max(50, Math.min(500, propCustomBlade.getInt()));
+                StylishRankManager.setRankRange(range);
+            }
+            {
+                Property propCustomBlade = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRateTaunt" , 150, "percentage 1%<def:150%<200%");
+                float range = Math.max(1, Math.min(200, propCustomBlade.getInt()));
+                StylishRankManager.AttackTypes.registerAttackType(StylishRankManager.AttackTypes.Noutou, range / 100.0f);
+            }
+            {
+                Property propCustomBlade = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRate" , 100, "percentage 1%<def:100%<200%");
+                float range = Math.max(1, Math.min(200, propCustomBlade.getInt()));
+                StylishRankManager.setRankRate(range / 100.0f);
+            }
 		}
 		finally
 		{
