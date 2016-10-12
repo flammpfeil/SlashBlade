@@ -83,9 +83,13 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
 
             ItemCameraTransforms.TransformType target;
-            boolean handle = BladeModel.user.getPrimaryHand() == EnumHandSide.RIGHT ?
-                    BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
-                    BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
+            boolean handle = false;
+
+            if(BladeModel.user != null) {
+                handle = BladeModel.user.getPrimaryHand() == EnumHandSide.RIGHT ?
+                        BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
+                        BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
+            }
 
             if(handle)
                 BladeFirstPersonRender.getInstance().render();
