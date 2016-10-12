@@ -4,14 +4,13 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import mods.flammpfeil.slashblade.*;
+import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
-import mods.flammpfeil.slashblade.network.MessageRangeAttack;
-import mods.flammpfeil.slashblade.network.NetworkManager;
+import mods.flammpfeil.slashblade.network.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.KeyBindingEx;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
@@ -21,6 +20,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -34,7 +34,6 @@ import mods.flammpfeil.slashblade.ability.AvoidAction;
 import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
-import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.GameSettings;
@@ -45,6 +44,8 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 
@@ -563,4 +564,17 @@ public class CoreProxyClient extends CoreProxy {
             }
         }
     }*/
+
+    @Override
+    public IMessage onMessage(MessageRankpointSynchronize message, MessageContext ctx) {
+
+        if(ctx.getClientHandler() == null) return null;
+
+        EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
+        if(entityPlayer == null) return null;
+
+        StylishRankManager.setRankPoint(entityPlayer, message.rankpoint);
+
+        return null;
+    }
 }

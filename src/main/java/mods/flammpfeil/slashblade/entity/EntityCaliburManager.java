@@ -94,6 +94,9 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                 thrower.posZ,
                 thrower.rotationYaw,
                 thrower.rotationPitch);
+
+        motionX = thrower.motionX;
+        motionZ = thrower.motionZ;
     }
 
     private static final DataParameter<Boolean> SINGLE_HIT = EntityDataManager.<Boolean>createKey(EntityCaliburManager.class, DataSerializers.BOOLEAN);
@@ -141,7 +144,8 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
     @Override
     public void onUpdate()
     {
-        final int moveTicks = 5;
+        final int attackTicks = 5;
+        final int moveTicks = 7;
 
         AxisAlignedBB bb = null;
         ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
@@ -177,27 +181,31 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                         if(moveTicks > this.ticksExisted){
                             this.ticksExisted = moveTicks;
                         }
-                        owner.motionZ = 0;
-                        owner.motionX = 0;
-                        owner.setPositionAndUpdate(owner.posX, this.posY, owner.posZ);
+                        this.motionZ = 0;
+                        this.motionX = 0;
+                        owner.setPositionAndUpdate(owner.prevPosX, this.prevPosY, owner.prevPosZ);
                     }
                 }
             }
 
-
+/*
             if(moveTicks > this.ticksExisted){
-                owner.motionZ *= 0.95;
-                owner.motionX *= 0.95;
-                owner.moveEntity(owner.motionX, 0, owner.motionZ);
-            }
+                owner.motionZ *= 0.9;
+                owner.motionX *= 0.9;
+            }else{
+                this.motionX *= 0.9;
+                this.motionZ *= 0.9;
+            }*/
+            owner.motionX = this.motionX = this.motionX * 0.6;
+            owner.motionZ = this.motionZ = this.motionZ * 0.6;
+            owner.moveEntity(owner.motionX, 0, owner.motionZ);
 
-            if(moveTicks == this.ticksExisted){
-                owner.motionZ = 0;
-                owner.motionX = 0;
-                owner.motionY = 0;
+            if(attackTicks == this.ticksExisted){
 
+                /*
                 if(owner.worldObj.isRemote)
                     owner.setPositionAndUpdate(owner.posX, this.posY, owner.posZ);
+*/
 
                 owner.swingArm(EnumHand.MAIN_HAND);
                 owner.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.5F, 0.75F);
@@ -215,11 +223,12 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
 
 
         //■死亡チェック
-        if(ticksExisted >= getLifeTime()
+        if((!worldObj.isRemote) && (
+                ticksExisted >= getLifeTime()
                 || this.getThrower() == null
                 || (this.getThrower() != null && (this.getThrower().onGround
                 || this.getThrower().isInWater()
-                || this.getThrower().isInLava()))) {
+                || this.getThrower().isInLava())))) {
 
             alreadyHitEntity.clear();
             alreadyHitEntity = null;
@@ -288,7 +297,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                         StylishRankManager.doAttack(this.thrower);
                     }
                 }
-                if(isSingleHit() || this.ticksExisted % 3 == 0){
+                if(attackTicks > this.ticksExisted && (isSingleHit() || this.ticksExisted % 3 == 0)){
                     List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                     list.removeAll(alreadyHitEntity);
 

@@ -932,7 +932,7 @@ public class ItemSlashBlade extends ItemSword {
             case Calibur: {
                 player.fallDistance = 0;
 
-                double playerDist = 1.5;
+                double playerDist = 2.5;
 
                 /*
                 if(!player.onGround)

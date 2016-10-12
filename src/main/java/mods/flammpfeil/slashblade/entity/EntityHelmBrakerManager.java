@@ -27,6 +27,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
@@ -178,15 +179,15 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
             combo = ItemSlashBlade.getComboSequence(tag);
         }
 
-
         //■死亡チェック
         if((!worldObj.isRemote) && (
                 ticksExisted >= getLifeTime()
                 || combo != ItemSlashBlade.ComboSequence.HelmBraker
                 || this.getThrower() == null
-                || (this.getThrower() != null && (this.getThrower().onGround
-                || this.getThrower().isInWater()
-                || this.getThrower().isInLava())))){
+                || (this.getThrower() != null && (
+                        this.getThrower().onGround || isLanding()
+                                || this.getThrower().isInWater()
+                                || this.getThrower().isInLava())))){
 
             alreadyHitEntity.clear();
             alreadyHitEntity = null;
@@ -283,7 +284,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
                     if(blade != null){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
-                            curEntity.hurtResistantTime = 0;
+                            //curEntity.hurtResistantTime = 0;
 
                             if(thrower instanceof EntityPlayer){
                                 ItemSlashBlade itemBlade = (ItemSlashBlade)blade.getItem();
@@ -301,6 +302,16 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
             }
         }
     }
+
+    boolean isLanding(){
+        int j4 = MathHelper.floor_double(this.getThrower().posX);
+        int l4 = MathHelper.floor_double(this.getThrower().posY - 0.20000000298023224D);
+        int i5 = MathHelper.floor_double(this.getThrower().posZ);
+        BlockPos blockpos = new BlockPos(j4, l4, i5);
+        IBlockState iblockstate = this.worldObj.getBlockState(blockpos);
+        return !iblockstate.getBlock().isAir(iblockstate, worldObj, blockpos);
+    }
+
 
     @Override
     protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)

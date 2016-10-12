@@ -1,13 +1,6 @@
 package mods.flammpfeil.slashblade.network;
 
-import mods.flammpfeil.slashblade.ability.StylishRankManager;
-import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import mods.flammpfeil.slashblade.core.CoreProxy;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -19,13 +12,6 @@ public class MessageRankpointSynchronizeHandler implements IMessageHandler<Messa
 
     @Override
     public IMessage onMessage(MessageRankpointSynchronize message, MessageContext ctx) {
-        if(ctx.getClientHandler() == null) return null;
-
-        EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
-        if(entityPlayer == null) return null;
-
-        StylishRankManager.setRankPoint(entityPlayer, message.rankpoint);
-
-        return null;
+        return CoreProxy.proxy.onMessage(message, ctx);
     }
 }
