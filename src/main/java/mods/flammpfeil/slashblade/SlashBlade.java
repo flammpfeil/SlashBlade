@@ -78,6 +78,7 @@ public class SlashBlade implements IFuelHandler{
 
 	public static ConfigEntityListManager manager;
 
+	public static boolean SafeDrop = true;
 
 	public static final String ProudSoulStr = "proudsoul";
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
@@ -136,18 +137,23 @@ public class SlashBlade implements IFuelHandler{
             mainConfiguration.load();
 
             {
-                Property propCustomBlade = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange" , 100, "decrement speed factor up 50<def:100<500 down");
-                int range = Math.max(50, Math.min(500, propCustomBlade.getInt()));
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop" , true, "true:bladestand / false:all ways EntityItem drop");
+                SafeDrop = prop.getBoolean(true);
+            }
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange" , 100, "decrement speed factor up 50<def:100<500 down");
+                int range = Math.max(50, Math.min(500, prop.getInt()));
                 StylishRankManager.setRankRange(range);
             }
             {
-                Property propCustomBlade = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRateTaunt" , 150, "percentage 1%<def:150%<200%");
-                float range = Math.max(1, Math.min(200, propCustomBlade.getInt()));
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRateTaunt" , 150, "percentage 1%<def:150%<200%");
+                float range = Math.max(1, Math.min(200, prop.getInt()));
                 StylishRankManager.AttackTypes.registerAttackType(StylishRankManager.AttackTypes.Noutou, range / 100.0f);
             }
             {
-                Property propCustomBlade = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRate" , 100, "percentage 1%<def:100%<200%");
-                float range = Math.max(1, Math.min(200, propCustomBlade.getInt()));
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRate" , 100, "percentage 1%<def:100%<200%");
+                float range = Math.max(1, Math.min(200, prop.getInt()));
                 StylishRankManager.setRankRate(range / 100.0f);
             }
 		}

@@ -96,10 +96,6 @@ public class AnvilEventHandler {
                     ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
                     if(out.getUnlocalizedName().equals(targetBlade.getUnlocalizedName())){
 
-                        if(1000 > ItemSlashBlade.ProudSoul.get(tag)){
-                            return;
-                        }
-
                         ItemSlashBladeNamed.CurrentItemName.set(tag, ItemSlashBladeNamed.CurrentItemName.get(matTag));
 
                         if(ItemSlashBlade.BaseAttackModifier.exists(matTag))
@@ -122,7 +118,7 @@ public class AnvilEventHandler {
                             copyTag(acc, tag, matTag);
                     }
                     repairFactor = 1.0f;
-                    ItemSlashBlade.ProudSoul.add(tag, -1000);
+                    ItemSlashBlade.ProudSoul.add(tag, 0);
                 }else{
                     repairFactor = 1.0f;
                     ItemSlashBlade.ProudSoul.add(tag, 500);

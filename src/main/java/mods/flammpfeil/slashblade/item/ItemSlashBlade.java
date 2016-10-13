@@ -3330,7 +3330,7 @@ public class ItemSlashBlade extends ItemSword {
         }
 
 
-        if(entityItem.getEntityData().getBoolean("noBladeStand"))
+        if(!SlashBlade.SafeDrop && entityItem.getEntityData().getBoolean("noBladeStand"))
             return false;
 
         boolean forceDrop = entityItem.getTags().contains("SB.DeathDrop");

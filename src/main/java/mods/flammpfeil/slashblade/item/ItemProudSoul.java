@@ -208,7 +208,7 @@ public class ItemProudSoul extends Item {
                     player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.PLAYERS, 0.5F, 0.5F);
                 }else {
                     using = true;
-                    stand.setFire(20);
+                    stand.setFire(200);
 
                     NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(stand.getBlade());
                     ItemSlashBlade.ProudSoul.add(bladeTag,50);
@@ -229,7 +229,7 @@ public class ItemProudSoul extends Item {
                     bladeTag.setUniqueId("Owner", player.getUniqueID());
                     player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5F, 1.0F);using = true;
 
-                    stand.setFire(20);
+                    stand.setFire(200);
                     ItemSlashBlade.ProudSoul.add(bladeTag,500);
                     player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.5F, 0.5F);
 
@@ -263,7 +263,7 @@ public class ItemProudSoul extends Item {
 
                 NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
 
-                if(ItemSlashBlade.ProudSoul.tryAdd(bladeTag, -400, false)){
+                if(ItemSlashBlade.ProudSoul.tryAdd(bladeTag, -50, false)){
                     player.onEnchantmentCritical(stand);
 
                     ItemStack bladeSoulCrystal = null;
@@ -294,6 +294,7 @@ public class ItemProudSoul extends Item {
                     else
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TrapezohedronBladeSoulStr,1);
 
+                    stand.extinguish();
 
                     bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
 

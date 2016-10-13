@@ -21,26 +21,30 @@ import java.util.Random;
  * Created by Furia on 2016/06/01.
  */
 public class NamedBladeManager {
+    static public final List<String> keyList = Lists.newArrayList();
     static public final Map<String,ItemStack> namedbladeSouls = Maps.newHashMap();
+
+    private static ItemStack getSoulOf(int index){
+        String key = keyList.get(index);
+        if(key == null)
+            return null;
+        ItemStack stack = namedbladeSouls.get(key);
+        if(stack != null)
+            stack = stack.copy();
+        return stack;
+    }
 
     public static ItemStack getNamedSoul(Random rand){
         if(rand == null)
             rand = new Random();
-        int max = namedbladeSouls.size();
-        int index = rand.nextInt();
-        ItemStack stack = namedbladeSouls.get(index);
-        if(stack != null)
-            stack = stack.copy();
-
-        return stack;
+        int max = keyList.size();
+        int index = rand.nextInt(max);
+        return getSoulOf(index);
     }
     public static ItemStack getNamedSoulSequential(int num){
-        int max = namedbladeSouls.size();
+        int max = keyList.size();
         int index = Math.abs(num) % max;
-        ItemStack stack = namedbladeSouls.get(index);
-        if(stack != null)
-            stack = stack.copy();
-        return stack;
+        return getSoulOf(index);
     }
 
     public static void registerBladeSoul(NBTTagCompound tag, String name){
@@ -55,6 +59,7 @@ public class NamedBladeManager {
         crystal.setStackDisplayName(name + " soul");
 
         String keyName = ItemSlashBladeNamed.CurrentItemName.get(tag);
+        keyList.add(keyName);
         namedbladeSouls.put(keyName, crystal);
     }
 
