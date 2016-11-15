@@ -22,16 +22,22 @@ public class Drive extends SpecialAttackBase {
     private final boolean multihit;
     private final ItemSlashBlade.ComboSequence setCombo;
 
-    public Drive(float speed,int lifetime,boolean multihit, ItemSlashBlade.ComboSequence setCombo){
+    private final String name;
+    public Drive(String name, float speed,int lifetime,boolean multihit, ItemSlashBlade.ComboSequence setCombo){
+        this.name = name;
         this.speed = speed;
         this.lifetime = lifetime;
         this.multihit = multihit;
         this.setCombo = setCombo;
     }
 
+    public Drive(float speed,int lifetime,boolean multihit, ItemSlashBlade.ComboSequence setCombo){
+        this("drive", speed, lifetime, multihit, setCombo);
+    }
+
     @Override
     public String toString() {
-        return "drive";
+        return name;
     }
 
     @Override

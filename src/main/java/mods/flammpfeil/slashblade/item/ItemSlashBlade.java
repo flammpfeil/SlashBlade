@@ -3021,7 +3021,7 @@ public class ItemSlashBlade extends ItemSword {
     static Map<Integer,SpecialAttackBase> createSpacialAttaksMap(){
         Map<Integer,SpecialAttackBase> saMap = Maps.newHashMap();
         saMap.put(0,defaultSA = new SlashDimension());
-        saMap.put(1,new Drive(0.75f,20,false,ComboSequence.Kiriage));
+        saMap.put(1,new Drive("vdrive", 0.75f,20,false,ComboSequence.Kiriage));
         saMap.put(2,new WaveEdge());
         saMap.put(3, new Drive(1.5f, 10, true, ComboSequence.Iai));
         saMap.put(4, new Spear());
