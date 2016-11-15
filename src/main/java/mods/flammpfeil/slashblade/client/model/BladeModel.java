@@ -257,7 +257,13 @@ public class BladeModel implements IPerspectiveAwareModel {
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
-        return ItemCameraTransforms.DEFAULT;
+        return new ItemCameraTransforms(ItemCameraTransforms.DEFAULT){
+            @Override
+            public ItemTransformVec3f getTransform(TransformType srctype) {
+                type = srctype;
+                return super.getTransform(srctype);
+            }
+        } ;
     }
 
     @Override

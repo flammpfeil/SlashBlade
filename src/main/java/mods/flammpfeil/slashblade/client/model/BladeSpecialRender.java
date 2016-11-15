@@ -82,7 +82,6 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
 
-            ItemCameraTransforms.TransformType target;
             boolean handle = false;
 
             if(BladeModel.user != null) {
