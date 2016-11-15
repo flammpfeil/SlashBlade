@@ -184,6 +184,12 @@ public class CoreProxyClient extends CoreProxy {
                 return new InvisibleRender(manager);
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityLumberManager.class, new IRenderFactory<EntityLumberManager>() {
+            @Override
+            public Render<? super EntityLumberManager> createRenderFor(RenderManager manager) {
+                return new InvisibleRender(manager);
+            }
+        });
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySummonedSwordBase.class, new IRenderFactory<EntitySummonedSwordBase>() {
@@ -468,9 +474,7 @@ public class CoreProxyClient extends CoreProxy {
         }, SlashBlade.proudSoul);
     }
 
-    /**
-     * @param len max 6.0
-     *//*
+    /*
     @Override
     public void getMouseOver(double len)
     {

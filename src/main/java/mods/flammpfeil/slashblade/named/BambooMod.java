@@ -30,6 +30,10 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 public class BambooMod {
     @SubscribeEvent
     public void init(LoadEvent.InitEvent event){
+    }
+
+    @SubscribeEvent
+    public void postinit(LoadEvent.PostInitEvent event){
 
         ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
@@ -58,18 +62,12 @@ public class BambooMod {
         String reqiredStr = "wrap.BambooMod.katana.sample";
         SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
-    }
-
-    @SubscribeEvent
-    public void postinit(LoadEvent.PostInitEvent event){
 
         ItemStack katana = SlashBlade.findItemStack("BambooMod","katana",1);
 
         if(Loader.isModLoaded("BambooMod") && katana != null){
             RecipeBambooMod recipe = new BambooMod.RecipeBambooMod();
             SlashBlade.addRecipe("wrap.BambooMod.katana.sample", recipe);
-
-            MinecraftForge.EVENT_BUS.register(recipe);
 
             RecipeSorter.register("flammpfeil.slashblade:bamboomod", RecipeBambooMod.class, RecipeSorter.Category.SHAPED, "after:forge:shaped");
         }
@@ -157,27 +155,19 @@ public class BambooMod {
             return scabbard;
         }
 
-        @SubscribeEvent
-        public void itemCraftedEvent(PlayerEvent.ItemCraftedEvent event){
+        @Override
+        public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+            ItemStack[] stacks = super.getRemainingItems(inv);
 
-            try{
-                if(!(event.craftMatrix instanceof InventoryCrafting))
-                    return;
 
-                if(!this.matches((InventoryCrafting)event.craftMatrix,null))
-                    return;
-
-                ItemStack target = event.craftMatrix.getStackInSlot(0+2*3);
-                if(target == null)
-                    return;
-
-                if(!target.getItem().equals(katana.getItem()))
-                    return;
-
-                event.craftMatrix.setInventorySlotContents(0 + 2*3,null);
-
-            }catch(Exception e){
+            for(int i = 0; i < stacks.length; i++){
+                if(stacks[i].getItem().equals(katana.getItem())) {
+                    stacks[i] = null;
+                    break;
+                }
             }
+
+            return stacks;
         }
     }
 }

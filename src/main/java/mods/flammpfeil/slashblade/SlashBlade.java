@@ -12,9 +12,7 @@ import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -135,6 +133,11 @@ public class SlashBlade implements IFuelHandler{
 
 		try {
             mainConfiguration.load();
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "FastLeavesDecay" , false);
+                EntityLumberManager.BlockHarvestDropsEventHandler.fastLeavesDecay = prop.getBoolean(false);
+            }
 
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop" , true, "true:bladestand / false:all ways EntityItem drop");
@@ -358,6 +361,9 @@ public class SlashBlade implements IFuelHandler{
         EntityRegistry.registerModEntity(EntityGrimGripKey.class, "GrimGripKey", entityId++, this, 250, 200, false);
 
         EntityRegistry.registerModEntity(EntitySlashDimension.class, "SlashDimension", entityId++, this, 250, 200, true);
+
+        EntityRegistry.registerModEntity(EntityLumberManager.class, "LumberManager", entityId++, this, 250, 200, true);
+        MinecraftForge.EVENT_BUS.register(new EntityLumberManager.BlockHarvestDropsEventHandler());
 
 
         MinecraftForge.EVENT_BUS.register(new DropEventHandler());

@@ -673,6 +673,30 @@ public class ItemSlashBlade extends ItemSword {
         if (blockIn.getBlockHardness(worldIn, pos) != 0.0)
             ItemSlashBlade.damageItem(stack, 1, entityLiving);
 
+        if((entityLiving instanceof EntityPlayer) && blockIn.getBlock().isWood(worldIn, pos)){
+            NBTTagCompound tag = getItemTagCompound(stack);
+            int id = tag.getInteger("lumbmanager");
+            Entity prevEntity = worldIn.getEntityByID(id);
+            if(prevEntity == null || !(prevEntity instanceof EntityLumberManager)){
+                ItemSlashBlade bladeItem = (ItemSlashBlade)stack.getItem();
+
+                ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Battou);
+                bladeItem.doSwingItem(stack,(EntityPlayer)entityLiving);
+
+                if(!worldIn.isRemote) {
+                    EntityLumberManager manager = new EntityLumberManager(worldIn, blockIn.getBlock());
+                    manager.setOwner((EntityPlayer) entityLiving);
+                    manager.setLifeTime(20 * 30);
+
+                    manager.setPosition(pos.getX(), pos.getY(), pos.getZ());
+
+                    worldIn.spawnEntityInWorld(manager);
+
+                    tag.setInteger("lumbmanager", manager.getEntityId());
+                }
+            }
+        }
+
         return true;
     }
 
