@@ -134,6 +134,9 @@ public class ItemSlashBlade extends ItemSword {
     static public TagPropertyAccessor.TagPropertyBoolean IsCharged = new TagPropertyAccessor.TagPropertyBoolean("isCharged");
     static public TagPropertyAccessor.TagPropertyBoolean IsDestructable = new TagPropertyAccessor.TagPropertyBoolean("isDestructable");
 
+    static public TagPropertyAccessor.TagPropertyBoolean IsThrownOffhand = new TagPropertyAccessor.TagPropertyBoolean("isThrownOffhand");
+    static public TagPropertyAccessor.TagPropertyBoolean IsThrownMainhand = new TagPropertyAccessor.TagPropertyBoolean("isThrownMainhand");
+
     static public TagPropertyAccessor.TagPropertyFloat AttackAmplifier = new TagPropertyAccessor.TagPropertyFloat("AttackAmplifier");
     static public TagPropertyAccessor.TagPropertyFloat BaseAttackModifier = new TagPropertyAccessor.TagPropertyFloat("baseAttackModifier");
 
@@ -203,6 +206,7 @@ public class ItemSlashBlade extends ItemSword {
         Force5(false,240.0f,0.0f,false,12),
         Force6(false, 200.0f,-360.0f+90f,false,25, Force5),
 
+        Stinger(false,180.0f,180.0f,false,20, None),
         ;
 
 	    /**
@@ -462,6 +466,14 @@ public class ItemSlashBlade extends ItemSword {
 
                 target.hurtResistantTime = 0;
 
+                break;
+            }
+            case Stinger: {
+                setDaunting(target);
+
+                target.motionX = 0;
+                target.motionY = 0;
+                target.motionZ = 0;
                 break;
             }
             case HiraTuki:
@@ -764,6 +776,15 @@ public class ItemSlashBlade extends ItemSword {
         return result;
     }
 
+    static public boolean hasOffhandSword(ItemStack mainBlade ,EntityLivingBase owner){
+        NBTTagCompound tag = getItemTagCompound(mainBlade);
+
+        ItemStack offHand = owner.getHeldItemOffhand();
+        boolean hasOffhandSword = offHand != null && offHand.getItem() instanceof ItemSlashBlade;
+
+        return hasOffhandSword && !IsThrownOffhand.get(tag);
+    }
+
 	public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player) {
         ComboSequence result = ComboSequence.None;
 
@@ -833,8 +854,13 @@ public class ItemSlashBlade extends ItemSword {
 
             int rapidSlashState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
             if(rapidSlashState == (player.getEntityData().getByte("SB.MCS") & rapidSlashState)
-                    && current != ComboSequence.RapidSlash && current != ComboSequence.RapidSlashEnd){
-                result = ComboSequence.RapidSlash;
+                    && current != ComboSequence.RapidSlash && current != ComboSequence.RapidSlashEnd ){
+
+                if(hasOffhandSword(itemStack, player)) {
+                    result = ComboSequence.Stinger;
+                }else{
+                    result = ComboSequence.RapidSlash;
+                }
 
             }else if(upperSlashState == (player.getEntityData().getByte("SB.MCS") & upperSlashState)
                     && current != ComboSequence.Kiriage){
@@ -880,8 +906,7 @@ public class ItemSlashBlade extends ItemSword {
                     break;
 
                 default: {
-                    ItemStack offHand = player.getHeldItemOffhand();
-                    boolean hasOffhandSword = offHand != null && offHand.getItem() instanceof ItemSlashBlade;
+                    boolean hasOffhandSword = hasOffhandSword(itemStack, player);
                     if(ForceEdgeCombo.containsKey(current) && hasOffhandSword) {
                         result = ForceEdgeCombo.get(current);
                     }else {
@@ -936,6 +961,26 @@ public class ItemSlashBlade extends ItemSword {
                         player.worldObj.spawnEntityInWorld(mgr);
                     }
                 }
+                break;
+            }
+            case Stinger: {
+
+                int id = tag.getInteger("stingerMgr");
+                Entity prevEntity = player.worldObj.getEntityByID(id);
+                if(prevEntity == null || !(prevEntity instanceof EntityStingerManager) || !prevEntity.isEntityAlive()){
+
+                    if(!player.worldObj.isRemote){
+                        EntityStingerManager mgr = new EntityStingerManager(player.worldObj,player,true);
+                        if(mgr != null){
+                            mgr.setLifeTime(4);
+
+                            player.worldObj.spawnEntityInWorld(mgr);
+
+                            tag.setInteger("stingerMgr", mgr.getEntityId());
+                        }
+                    }
+                }
+
                 break;
             }
             case HelmBraker: {
@@ -1520,6 +1565,7 @@ public class ItemSlashBlade extends ItemSword {
         case ReturnEdge:
         case SSlashEdge:
         case SReturnEdge:
+        case Stinger:
 		case Battou:
 			if(swordType.contains(SwordType.Broken)){
 				bb = bb.expand(1.0f, 0.0f, 1.0f);
@@ -2209,6 +2255,8 @@ public class ItemSlashBlade extends ItemSword {
         attackTypeMap.put(ComboSequence.Force4,AttackTypes.Force4);
         attackTypeMap.put(ComboSequence.Force5,AttackTypes.Force5);
         attackTypeMap.put(ComboSequence.Force6,AttackTypes.Force6);
+
+        attackTypeMap.put(ComboSequence.Stinger,AttackTypes.RapidSlash);
 
         return attackTypeMap;
     }

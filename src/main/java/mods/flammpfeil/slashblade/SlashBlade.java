@@ -363,6 +363,9 @@ public class SlashBlade implements IFuelHandler{
         EntityRegistry.registerModEntity(EntitySlashDimension.class, "SlashDimension", entityId++, this, 250, 200, true);
 
         EntityRegistry.registerModEntity(EntityLumberManager.class, "LumberManager", entityId++, this, 250, 200, true);
+
+        EntityRegistry.registerModEntity(EntityStingerManager.class, "StingerManager", entityId++, this, 250, 10, true);
+
         MinecraftForge.EVENT_BUS.register(new EntityLumberManager.BlockHarvestDropsEventHandler());
 
 

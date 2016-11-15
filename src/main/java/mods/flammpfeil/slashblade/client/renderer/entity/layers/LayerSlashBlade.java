@@ -519,6 +519,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 break;
 
             case HiraTuki:
+            case Stinger:
                 progress = 1.0f;
 
                 break;
@@ -641,7 +642,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                         }
                         //GL11.glRotatef(-90, 0.0f, 1.0f, 0.0f);
 
-                        if (combo.equals(ItemSlashBlade.ComboSequence.HiraTuki)) {
+                        if (combo.equals(ItemSlashBlade.ComboSequence.Stinger)
+                                || combo.equals(ItemSlashBlade.ComboSequence.HiraTuki)) {
                             GL11.glTranslatef(0.0f, 0.0f, -26.0f);
                         }
 
@@ -801,6 +803,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                     if (!combo.useScabbard
                             && (combo != ItemSlashBlade.ComboSequence.Noutou)
                             && (combo != ItemSlashBlade.ComboSequence.HiraTuki)
+                            && (combo != ItemSlashBlade.ComboSequence.Stinger)
                             || doProjectileBarrier) {
                         GlStateManager.pushMatrix();
                         GlStateManager.depthMask(false);
