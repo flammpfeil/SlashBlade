@@ -81,7 +81,7 @@ public class BladeModel implements IPerspectiveAwareModel {
                     targetStack = stack;
                     ItemSlashBlade.getItemTagCompound(targetStack).setBoolean("IsRender",true);
                     itemBlade = (ItemSlashBlade) stack.getItem();
-                    user = entity;
+                    user = entity == null ? user : entity;
                 }else{
                     targetStack = ItemStack.EMPTY;
                     itemBlade = null;
