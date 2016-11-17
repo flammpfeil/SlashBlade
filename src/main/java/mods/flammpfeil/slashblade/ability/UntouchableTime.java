@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -138,7 +139,7 @@ public class UntouchableTime {
 
     static private void restorePotionEffect(EntityLivingBase entity){
         if(entity.getEntityData().hasKey(LastNoBurning)){
-            ReflectionHelper.setPrivateValue(Entity.class, entity, 0, "fire", "field_70151_c");
+            ReflectionAccessHelper.setFire(entity,0);
         }
 
         if(!entity.getEntityData().hasKey(LastEffects)) return;

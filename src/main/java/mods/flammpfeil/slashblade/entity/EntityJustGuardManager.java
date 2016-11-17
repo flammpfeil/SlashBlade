@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.entity;
 
+import net.minecraft.entity.MoverType;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -31,7 +32,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
      */
     protected Entity thrower;
 
-    protected ItemStack blade = null;
+    protected ItemStack blade = ItemStack.field_190927_a;
 
     /**
      * ★多段Hit防止用List
@@ -76,8 +77,8 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
         setThrowerEntityID(thrower.getEntityId());
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = null;
+        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.field_190927_a;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -110,10 +111,10 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
             this.thrower = this.worldObj.getEntityByID(this.getThrowerEntityID());
         }
 
-        if(this.blade == null && this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
+        if(this.blade.func_190926_b() && this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
             EntityPlayer player = (EntityPlayer)this.getThrower();
             ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-            if(stack != null && stack.getItem() instanceof ItemSlashBlade)
+            if(!stack.func_190926_b() && stack.getItem() instanceof ItemSlashBlade)
                 this.blade = stack;
         }
 
@@ -126,7 +127,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
                 EntityPlayer player = (EntityPlayer)this.getThrower();
                 player.playSound(SoundEvents.ENTITY_BLAZE_HURT, 1.0F, 1.0F);
 
-                if(this.blade != null){
+                if(!this.blade.func_190926_b()){
                     ItemSlashBlade itemBlade = (ItemSlashBlade)this.blade.getItem();
                     itemBlade.doAttack(this.blade, ItemSlashBlade.ComboSequence.Battou, player);
                 }
@@ -167,7 +168,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(double par1, double par3, double par5) {}
+    public void moveEntity(MoverType moverType, double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

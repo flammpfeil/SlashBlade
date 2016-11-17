@@ -27,9 +27,9 @@ public class NamedBladeManager {
     private static ItemStack getSoulOf(int index){
         String key = keyList.get(index);
         if(key == null)
-            return null;
+            return ItemStack.field_190927_a;
         ItemStack stack = namedbladeSouls.get(key);
-        if(stack != null)
+        if(!stack.func_190926_b())
             stack = stack.copy();
         return stack;
     }
@@ -80,7 +80,7 @@ public class NamedBladeManager {
         for(Map.Entry<String,ItemStack> entry : namedbladeSouls.entrySet()){
             ItemStack icon = SlashBlade.getCustomBlade(entry.getKey());
 
-            if(icon == null) {
+            if(icon.func_190926_b()) {
                 ItemStack soul = entry.getValue();
                 NBTTagCompound matTag = soul.getTagCompound();
 
@@ -113,7 +113,7 @@ public class NamedBladeManager {
                 icon = targetBlade;
             }
 
-            if(icon != null){
+            if(!icon.func_190926_b()){
                 String achievementKey = entry.getKey().replaceFirst("flammpfeil.slashblade.named.","");
                 achievementKey = achievementKey.replaceFirst("flammpfeil.slashblade.","");
                 AchievementList.registerCraftingAchievement(achievementKey, icon, net.minecraft.stats.AchievementList.BUILD_SWORD);

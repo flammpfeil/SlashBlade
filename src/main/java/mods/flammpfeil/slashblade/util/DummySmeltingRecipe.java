@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.util;
 
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -26,7 +27,7 @@ public class DummySmeltingRecipe implements IRecipe {
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting p_77572_1_) {
-        return null;
+        return ItemStack.field_190927_a;
     }
 
     @Override
@@ -40,7 +41,8 @@ public class DummySmeltingRecipe implements IRecipe {
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        return new ItemStack[]{input};
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>func_191197_a(inv.getSizeInventory(), ItemStack.field_190927_a);
+        return nonnulllist;
     }
 }

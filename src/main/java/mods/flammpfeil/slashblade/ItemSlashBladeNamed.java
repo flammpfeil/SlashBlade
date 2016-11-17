@@ -6,7 +6,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.NonNullList;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
@@ -47,19 +48,19 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     public static List<String> NamedBlades = Lists.newArrayList();
 
     @Override
-    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
-                            List par3List) {
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        //super.getSubItems(itemIn, tab, subItems);
 
         ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(targetBlade);
         ItemSlashBlade.ProudSoul.set(tag,1000);
-        par3List.add(targetBlade);
+        subItems.add(targetBlade);
 
         for(String bladename : NamedBlades){
             ItemStack blade = SlashBlade.getCustomBlade(bladename);
             if(blade.getItemDamage() == OreDictionary.WILDCARD_VALUE)
                 blade.setItemDamage(0);
-            if(blade != null) par3List.add(blade);
+            if(!blade.func_190926_b()) subItems.add(blade);
         }
     }
 
@@ -89,7 +90,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
         if(!result && tag.hasKey(RepairMaterialNameStr))
         {
             String matName = tag.getString(RepairMaterialNameStr);
-            Item material = (Item)Item.REGISTRY.getObject(new ResourceLocation(matName));
+            Item material = (Item)Item.REGISTRY.getObject(new ResourceLocationRaw(matName));
             if(material != null)
                 result = par2ItemStack.getItem() == material;
         }

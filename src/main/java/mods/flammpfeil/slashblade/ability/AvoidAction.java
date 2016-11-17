@@ -25,7 +25,7 @@ public class AvoidAction {
         if(target == null) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
 

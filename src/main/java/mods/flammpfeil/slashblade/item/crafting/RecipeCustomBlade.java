@@ -22,14 +22,14 @@ public class RecipeCustomBlade extends ShapedOreRecipe {
         if(!super.matches(inv, world)) return false;
 
         ItemStack stack = inv.getStackInSlot(0);
-        if(stack == null) return false;
+        if(stack.func_190926_b()) return false;
 
         if(this.getInput().length == 0) return false;
 
         Object input = this.getInput()[0];
         if(!(input instanceof ItemStack)) return false;
 
-        if(((ItemStack) input).stackSize != stack.stackSize) return false;
+        if(((ItemStack) input).func_190916_E() != stack.func_190916_E()) return false;
 
         return true;
     }

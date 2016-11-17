@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,7 +44,7 @@ public class WavefrontObject
     private GroupObject currentGroupObject;
     private String fileName;
 
-    public WavefrontObject(ResourceLocation resource) throws ModelFormatException
+    public WavefrontObject(ResourceLocationRaw resource) throws ModelFormatException
     {
         this.fileName = resource.toString();
 

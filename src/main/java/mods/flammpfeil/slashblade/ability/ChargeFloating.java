@@ -20,10 +20,10 @@ public class ChargeFloating {
         EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
         if(!(target instanceof EntityPlayer)) return;
-        if(target.getActiveItemStack() == null) return;
+        if(target.getActiveItemStack().func_190926_b()) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 

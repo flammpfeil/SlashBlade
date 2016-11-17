@@ -56,7 +56,7 @@ public class SpecialEffects {
     }
 
     public static boolean isBlade(ItemStack stack){
-        if(stack == null) return false;
+        if(stack.func_190926_b()) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
         return true;
     }

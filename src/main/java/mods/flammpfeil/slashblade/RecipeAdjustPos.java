@@ -25,53 +25,53 @@ public class RecipeAdjustPos extends ShapedRecipes
     }
 
     public boolean isFactor(ItemStack itemStack){
-        return itemStack != null && itemStack.getItem() == Items.STICK;
+        return !itemStack.func_190926_b() && itemStack.getItem() == Items.STICK;
     }
 
     @Override
     public boolean matches(InventoryCrafting cInv, World par2World)
     {
         {
-            ItemStack itemstack = null;
+            ItemStack itemstack = ItemStack.field_190927_a;
 
             int x = 0;
             int y = 0;
             int z = 0;
 
-            if(cInv.getStackInRowAndColumn(0, 0) != null)
+            if(!cInv.getStackInRowAndColumn(0, 0).func_190926_b())
                 return false;
-            if(cInv.getStackInRowAndColumn(2, 2) != null)
+            if(!cInv.getStackInRowAndColumn(2, 2).func_190926_b())
                 return false;
 
             ItemStack tmp;
             if(isFactor(tmp = cInv.getStackInRowAndColumn(0, 1)))
-                y += tmp.stackSize;
+                y += tmp.func_190916_E();
             if(isFactor(tmp = cInv.getStackInRowAndColumn(0, 2)))
-                z += tmp.stackSize;
+                z += tmp.func_190916_E();
             if(isFactor(tmp = cInv.getStackInRowAndColumn(1, 0)))
-                x += tmp.stackSize;
+                x += tmp.func_190916_E();
 
             if(isFactor(tmp = cInv.getStackInRowAndColumn(1, 2)))
-                x -= tmp.stackSize;
+                x -= tmp.func_190916_E();
             if(isFactor(tmp = cInv.getStackInRowAndColumn(2, 0)))
-                z -= tmp.stackSize;
+                z -= tmp.func_190916_E();
             if(isFactor(tmp = cInv.getStackInRowAndColumn(2, 1)))
-                y -= tmp.stackSize;
+                y -= tmp.func_190916_E();
 
 
             ItemStack target = cInv.getStackInRowAndColumn(1, 1);
-            if(target != null && target.getItem() instanceof ItemSlashBlade)
+            if(!target.func_190926_b() && target.getItem() instanceof ItemSlashBlade)
                 itemstack = target;
 
 
-            return itemstack != null && (x != 0 || y != 0 || z != 0);
+            return !itemstack.func_190926_b() && (x != 0 || y != 0 || z != 0);
         }
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting cInv)
     {
-        ItemStack itemstack = null;
+        ItemStack itemstack = ItemStack.field_190927_a;
 
         int x = 0;
         int y = 0;
@@ -79,22 +79,22 @@ public class RecipeAdjustPos extends ShapedRecipes
 
         ItemStack tmp;
         if(isFactor(tmp = cInv.getStackInRowAndColumn(1, 0)))
-            y += tmp.stackSize;
+            y += tmp.func_190916_E();
         if(isFactor(tmp = cInv.getStackInRowAndColumn(2, 0)))
-            z += tmp.stackSize;
+            z += tmp.func_190916_E();
         if(isFactor(tmp = cInv.getStackInRowAndColumn(0, 1)))
-            x += tmp.stackSize;
+            x += tmp.func_190916_E();
 
         if(isFactor(tmp = cInv.getStackInRowAndColumn(2, 1)))
-            x -= tmp.stackSize;
+            x -= tmp.func_190916_E();
         if(isFactor(tmp = cInv.getStackInRowAndColumn(0, 2)))
-            z -= tmp.stackSize;
+            z -= tmp.func_190916_E();
         if(isFactor(tmp = cInv.getStackInRowAndColumn(1, 2)))
-            y -= tmp.stackSize;
+            y -= tmp.func_190916_E();
 
 
         ItemStack target = cInv.getStackInRowAndColumn(1, 1);
-        if(target != null && target.getItem() instanceof ItemSlashBlade)
+        if(!target.func_190926_b() && target.getItem() instanceof ItemSlashBlade)
             itemstack = target;
 
         itemstack = itemstack.copy();

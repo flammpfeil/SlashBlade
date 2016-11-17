@@ -3,7 +3,7 @@ package mods.flammpfeil.slashblade.client.renderer.entity;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 
 /**
  * Created by Furia on 2016/02/08.
@@ -24,7 +24,7 @@ public class InvisibleRender extends Render {
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
+    protected ResourceLocationRaw getEntityTexture(Entity entity) {
         return null;
     }
 }

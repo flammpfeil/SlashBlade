@@ -40,7 +40,7 @@ import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
@@ -85,17 +85,7 @@ public class SlashBlade implements IFuelHandler{
     public static final String CrystalBladeSoulStr = "crystal_bladesoul";
     public static final String TrapezohedronBladeSoulStr = "trapezohedron_bladesoul";
 
-    public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade"){
-        private ItemStack stack = null;
-        @Override
-        public ItemStack getIconItemStack() {
-            if(stack == null)
-                stack = SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato");
-
-            return stack;
-            //return super.getIconItemStack();
-        }
-    };
+    public static final SlashBladeTab tab = new SlashBladeTab("flammpfeil.slashblade");
 
     public static final EventBus InitEventBus = new EventBus();
 
@@ -211,7 +201,7 @@ public class SlashBlade implements IFuelHandler{
 
         bladeWood = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.WOOD.getDamageVsEntity()))
                 .setDestructable(true)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/wood.png"))
+                .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/wood.png"))
                 .setRepairMaterialOreDic("logWood")
                 .setMaxDamage(60)
                 .setUnlocalizedName("flammpfeil.slashblade.wood")
@@ -221,7 +211,7 @@ public class SlashBlade implements IFuelHandler{
 
         bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
                 .setDestructable(true)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/banboo.png"))
+                .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/banboo.png"))
                 .setRepairMaterialOreDic("bamboo")
                 .setMaxDamage(50)
                 .setUnlocalizedName("flammpfeil.slashblade.bamboo")
@@ -231,7 +221,7 @@ public class SlashBlade implements IFuelHandler{
 
         bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(true)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/silverbanboo.png"))
+                .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/silverbanboo.png"))
                 .setRepairMaterialOreDic("bamboo")
                 .setMaxDamage(40)
                 .setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
@@ -241,7 +231,7 @@ public class SlashBlade implements IFuelHandler{
 
         bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(false)
-                .setModelTexture(new ResourceLocation("flammpfeil.slashblade", "model/white.png"))
+                .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/white.png"))
                 .setRepairMaterial(new ItemStack(Items.IRON_INGOT))
                 .setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
                 .setMaxDamage(70)
@@ -486,28 +476,28 @@ public class SlashBlade implements IFuelHandler{
     }
 */
 
-    static public Map<ResourceLocation, ItemStack> BladeRegistry = Maps.newHashMap();
+    static public Map<ResourceLocationRaw, ItemStack> BladeRegistry = Maps.newHashMap();
 
     static public void registerCustomItemStack(String name, ItemStack stack){
-        BladeRegistry.put(new ResourceLocation(modid, name),stack);
+        BladeRegistry.put(new ResourceLocationRaw(modid, name),stack);
     }
 
     static public ItemStack findItemStack(String modid, String name, int count){
-        ResourceLocation key = new ResourceLocation(modid, name);
-        ItemStack stack = null;
+        ResourceLocationRaw key = new ResourceLocationRaw(modid, name);
+        ItemStack stack = ItemStack.field_190927_a;
 
         if(BladeRegistry.containsKey(key)) {
-            stack = BladeRegistry.get(new ResourceLocation(modid, name)).copy();
+            stack = BladeRegistry.get(new ResourceLocationRaw(modid, name)).copy();
 
         }else {
-            Item item = Item.REGISTRY.getObject(new ResourceLocation(modid, name));
+            Item item = Item.REGISTRY.getObject(new ResourceLocationRaw(modid, name));
             if (item != null)
                 stack = new ItemStack(item);
 
         }
 
-        if(stack != null) {
-            stack.stackSize = count;
+        if(!stack.func_190926_b()) {
+            stack.func_190920_e(count);
         }
 
         return stack;
@@ -518,7 +508,7 @@ public class SlashBlade implements IFuelHandler{
     public static ItemStack getCustomBlade(String modid,String name){
         ItemStack blade = SlashBlade.findItemStack(modid, name, 1);
 
-        if(blade != null){
+        if(!blade.func_190926_b()){
             NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
             if(ItemSlashBladeNamed.IsDefaultBewitched.get(tag)){

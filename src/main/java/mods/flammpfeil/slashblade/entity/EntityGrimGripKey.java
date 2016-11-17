@@ -141,7 +141,7 @@ public class EntityGrimGripKey extends Entity {
     public boolean hitByEntity(Entity entityIn) {
 
         if(entityIn instanceof EntityLivingBase
-                && ((EntityLivingBase) entityIn).getHeldItemMainhand() == null
+                && ((EntityLivingBase) entityIn).getHeldItemMainhand().func_190926_b()
                 && entityIn.isSneaking()
                 && !entityIn.worldObj.isRemote){
 

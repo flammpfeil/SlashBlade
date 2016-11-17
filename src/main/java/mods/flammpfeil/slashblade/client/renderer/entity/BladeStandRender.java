@@ -21,7 +21,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -35,8 +35,8 @@ public class BladeStandRender extends Render{
 
     static public WavefrontObject standModel = null;
 
-    static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/stand/stand.obj");
-    static public ResourceLocation textureLocation = new ResourceLocation("flammpfeil.slashblade","model/stand/stand.png");
+    static public ResourceLocationRaw modelLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/stand/stand.obj");
+    static public ResourceLocationRaw textureLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/stand/stand.png");
 
     public BladeStandRender(RenderManager renderManager) {
         super(renderManager);
@@ -183,7 +183,7 @@ public class BladeStandRender extends Render{
         }
 
         ItemStack blade = e.getBlade();
-        if(blade != null){
+        if(!blade.func_190926_b()){
             GL11.glPushMatrix();
             GL11.glShadeModel(GL11.GL_SMOOTH);
 
@@ -192,7 +192,7 @@ public class BladeStandRender extends Render{
             EnumSet<ItemSlashBlade.SwordType> types = ((ItemSlashBlade)item).getSwordType(blade);
 
             WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(blade));
-            ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(blade);
+            ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(blade);
 
             engine().bindTexture(resourceTexture);
 
@@ -469,7 +469,7 @@ public class BladeStandRender extends Render{
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
+    protected ResourceLocationRaw getEntityTexture(Entity p_110775_1_) {
         return textureLocation;
     }
 

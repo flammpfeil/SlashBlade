@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class RecipeAwakeBlade extends ShapedOreRecipe {
 
-    ItemStack requiredStateBlade = null;
+    ItemStack requiredStateBlade = ItemStack.field_190927_a;
 
     public RecipeAwakeBlade(ItemStack result, ItemStack requiredStateBlade, Object... recipe) {
         super(result, recipe);
@@ -29,10 +29,10 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
 
         boolean result = super.matches(inv, world);
 
-        if(result && requiredStateBlade != null){
+        if(result && !requiredStateBlade.func_190926_b()){
             for(int idx = 0; idx < inv.getSizeInventory(); idx++){
                 ItemStack curIs = inv.getStackInSlot(idx);
-                if(curIs != null
+                if(!curIs.func_190926_b()
                         && curIs.getItem() instanceof ItemSlashBlade
                         && curIs.hasTagCompound()){
 
@@ -76,7 +76,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
 
 		for(int idx = 0; idx < var1.getSizeInventory(); idx++){
 			ItemStack curIs = var1.getStackInSlot(idx);
-			if(curIs != null
+			if(!curIs.func_190926_b()
 					&& curIs.getItem() instanceof ItemSlashBlade
 					&& curIs.hasTagCompound()){
 
@@ -92,7 +92,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                         String key = ItemSlashBladeNamed.CurrentItemName.get(newTag);
                         tmp = SlashBlade.getCustomBlade(key);
 
-                        if(tmp != null)
+                        if(!tmp.func_190926_b())
                             result = tmp;
                     }
                 }

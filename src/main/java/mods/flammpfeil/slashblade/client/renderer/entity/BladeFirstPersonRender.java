@@ -19,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -48,13 +48,13 @@ public class BladeFirstPersonRender {
     }
 
 
-    private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
-    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    private static final ResourceLocationRaw armoredCreeperTextures = new ResourceLocationRaw("textures/entity/creeper/creeper_armor.png");
+    private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
 
     static public WavefrontObject trailModel = null;
 
-    static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.obj");
-    static public ResourceLocation textureLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.png");
+    static public ResourceLocationRaw modelLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.obj");
+    static public ResourceLocationRaw textureLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.png");
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onRenderWorldLastEvent(RenderWorldLastEvent event){
@@ -76,7 +76,7 @@ public class BladeFirstPersonRender {
         EntityPlayerSP player = mc.thePlayer;
 
         ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (stack == null) return;
+        if (stack.func_190926_b()) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
@@ -166,13 +166,13 @@ public class BladeFirstPersonRender {
 
 
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
-        if (stack == null) return;
+        if (stack.func_190926_b()) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
 
         WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
-        ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(stack);
+        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(stack);
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
 
@@ -281,13 +281,13 @@ public class BladeFirstPersonRender {
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
         ItemStack offhand = entity.getHeldItem(EnumHand.OFF_HAND);
 
-        if (stack == null) return;
+        if (stack.func_190926_b()) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
 
         WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
-        ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(stack);
+        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(stack);
 
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack);
 
@@ -328,10 +328,10 @@ public class BladeFirstPersonRender {
         }
 
         WavefrontObject offhandModel = null;
-        ResourceLocation offHandResourceTexture = null;
+        ResourceLocationRaw offHandResourceTexture = null;
         boolean offhandIsBroken = false;
         int offhandColor = 0x3333FF;
-        if(offhand != null && (offhand.getItem() instanceof ItemSlashBlade)){
+        if(!offhand.func_190926_b() && (offhand.getItem() instanceof ItemSlashBlade)){
 
             ItemSlashBlade offhandItemBlade = ((ItemSlashBlade) offhand.getItem());
             offhandModel = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(offhand));
@@ -435,7 +435,7 @@ public class BladeFirstPersonRender {
             int handsLoop = 1;
             if(combo.mainHandCombo != null){
                 handsLoop = 2;
-                if(offhand != null && offhand.getItem() instanceof ItemSlashBlade)
+                if(!offhand.func_190926_b() && offhand.getItem() instanceof ItemSlashBlade)
                     doOffhandRender = true;
             }
 
@@ -443,7 +443,7 @@ public class BladeFirstPersonRender {
             ItemSlashBlade.ComboSequence comboSequenceTmp = combo;
 
             boolean tmpIsBroken = isBroken;
-            ResourceLocation tmpResourceTexture = resourceTexture;
+            ResourceLocationRaw tmpResourceTexture = resourceTexture;
             WavefrontObject tmpModel = model;
             int tmpColor = color;
             ItemStack tmpStack = stack;

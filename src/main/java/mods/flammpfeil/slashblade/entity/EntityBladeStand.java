@@ -9,6 +9,7 @@ import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -44,9 +45,9 @@ public class EntityBladeStand extends Entity {
         this.setBlade(blade);
     }
 
-    private static final DataParameter<Optional<ItemStack>> WatchIndexBlade 
-            = EntityDataManager.<Optional<ItemStack>>createKey(EntityBladeStand.class, DataSerializers.OPTIONAL_ITEM_STACK);
-    private static final DataParameter<Integer> WatchIndexFlipState 
+    private static final DataParameter<ItemStack> WatchIndexBlade
+            = EntityDataManager.<ItemStack>createKey(EntityBladeStand.class, DataSerializers.OPTIONAL_ITEM_STACK);
+    private static final DataParameter<Integer> WatchIndexFlipState
             = EntityDataManager.<Integer>createKey(EntityBladeStand.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> WatchIndexStandType
             = EntityDataManager.<Integer>createKey(EntityBladeStand.class, DataSerializers.VARINT);
@@ -54,7 +55,7 @@ public class EntityBladeStand extends Entity {
     @Override
     protected void entityInit() {
         //this.getDataManager().register(WatchIndexBlade, SlashBlade.getCustomBlade(SlashBlade.modid,"flammpfeil.slashblade.named.muramasa"));
-        this.getDataManager().register(WatchIndexBlade, Optional.<ItemStack>absent()); //ItemStack
+        this.getDataManager().register(WatchIndexBlade, ItemStack.field_190927_a); //ItemStack
         this.getDataManager().register(WatchIndexFlipState, 0);
         this.getDataManager().register(WatchIndexStandType, 0);
     }
@@ -108,24 +109,24 @@ public class EntityBladeStand extends Entity {
     }
 
     public ItemStack getBlade(){
-        return this.getDataManager().get(WatchIndexBlade).orNull();
+        return this.getDataManager().get(WatchIndexBlade);
     }
     public void setBlade(ItemStack blade){
-        if(blade != null && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
+        if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
             if(2 <= getFlip())
                 setFlip(0);
         }
 
-        if(blade != null && blade.getItem() instanceof ItemSlashBlade){
+        if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBlade){
             NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
             //ItemSlashBlade.PrevExp.remove(tag);
         }
 
-        this.getDataManager().set(WatchIndexBlade, Optional.fromNullable(blade));
+        this.getDataManager().set(WatchIndexBlade, !blade.func_190926_b() ? blade : ItemStack.field_190927_a);
         this.getDataManager().setDirty(WatchIndexBlade);
     }
     public boolean hasBlade(){
-        return getBlade() != null;
+        return !getBlade().func_190926_b();
     }
 
 
@@ -142,7 +143,7 @@ public class EntityBladeStand extends Entity {
 
         if(p_70037_1_.hasKey(SaveKeyBlade)){
             NBTTagCompound tag = p_70037_1_.getCompoundTag(SaveKeyBlade);
-            ItemStack blade = ItemStack.loadItemStackFromNBT(tag);
+            ItemStack blade = new ItemStack(tag);
 
             this.setBlade(blade);
         }
@@ -157,7 +158,7 @@ public class EntityBladeStand extends Entity {
     protected void writeEntityToNBT(NBTTagCompound p_70014_1_) {
 
         ItemStack blade = getBlade();
-        if(blade != null){
+        if(!blade.func_190926_b()){
             NBTTagCompound tag = new NBTTagCompound();
             blade.writeToNBT(tag);
 
@@ -242,7 +243,7 @@ public class EntityBladeStand extends Entity {
             this.setPositionAndUpdate(this.posX,this.posY+1.5,this.posZ);
         }
 
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+        this.moveEntity(MoverType.SELF,  this.motionX, this.motionY, this.motionZ);
 
         if(!hasBlade() && posY < -10){
             this.setDead();
@@ -260,7 +261,7 @@ public class EntityBladeStand extends Entity {
             EntityPlayer p = (EntityPlayer)e;
 
             ItemStack stack = p.getHeldItem(EnumHand.MAIN_HAND);
-            if(stack == null && this.hasBlade()){
+            if(stack.func_190926_b() && this.hasBlade()){
 
                 ItemStack blade = this.getBlade();
 
@@ -300,7 +301,7 @@ public class EntityBladeStand extends Entity {
 
                 return true;
 
-            }else if(stack != null
+            }else if(!stack.func_190926_b()
                     && stack.getItem() instanceof ItemSlashBlade
                     && !this.hasBlade()){
 
@@ -336,7 +337,8 @@ public class EntityBladeStand extends Entity {
     }
 
     @Override
-    public boolean processInitialInteract(EntityPlayer player, ItemStack stack, EnumHand hand) {
+    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
 
         if(hand == EnumHand.MAIN_HAND){
 
@@ -349,7 +351,7 @@ public class EntityBladeStand extends Entity {
                 return true;
         }
 
-        return super.processInitialInteract(player, stack, hand);
+        return super.processInitialInteract(player, hand);
     }
 
     @Override

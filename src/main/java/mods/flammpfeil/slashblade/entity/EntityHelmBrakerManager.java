@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -47,7 +48,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
      */
     protected Entity thrower;
 
-    protected ItemStack blade = null;
+    protected ItemStack blade = ItemStack.field_190927_a;
 
     /**
      * ★多段Hit防止用List
@@ -81,8 +82,8 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = null;
+        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.field_190927_a;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -154,7 +155,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
 
 
         this.fallDistance = 30;
-        this.moveEntity(motionX,motionY,motionZ);
+        this.moveEntity(MoverType.SELF, motionX,motionY,motionZ);
 
         AxisAlignedBB bb = null;
         ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
@@ -162,9 +163,9 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
             EntityLivingBase owner = (EntityLivingBase)this.getThrower();
 
-            if(blade == null){
+            if(blade.func_190926_b()){
                 blade = owner.getHeldItemMainhand();
-                if(blade == null || !(blade.getItem() instanceof ItemSlashBlade))
+                if(blade.func_190926_b() || !(blade.getItem() instanceof ItemSlashBlade))
                 {
                     setDead();
                     return;
@@ -205,7 +206,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         if(1 < ticksExisted && getThrower() != null){
             getThrower().motionX = 0;
             getThrower().motionZ = 0;
-            getThrower().moveEntity(0,-1.5,0);
+            getThrower().moveEntity(MoverType.SELF, 0,-1.5,0);
             //getThrower().setPosition(getThrower().posX,this.posY,getThrower().posZ);
 
             getThrower().fallDistance = 0;
@@ -281,7 +282,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
 
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.HelmBraker);
 
-                    if(blade != null){
+                    if(!blade.func_190926_b()){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
                             //curEntity.hurtResistantTime = 0;
@@ -293,7 +294,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
                             else{
                                 DamageSource ds = new EntityDamageSource("mob", this.getThrower());
                                 curEntity.attackEntityFrom(ds, 10);
-                                if(blade != null && curEntity instanceof EntityLivingBase)
+                                if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase)
                                     ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                             }
                         }

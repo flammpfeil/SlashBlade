@@ -40,7 +40,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
         if(entityPlayer == null) return null;
 
         ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack == null) return null;
+        if(stack.func_190926_b()) return null;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return null;
 
         switch(message.mode){
@@ -104,7 +104,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                         } else {
                             DamageSource ds = new EntityDamageSource("mob", entityPlayer);
                             curEntity.attackEntityFrom(ds, 10);
-                            if (stack != null && curEntity instanceof EntityLivingBase)
+                            if (!stack.func_190926_b() && curEntity instanceof EntityLivingBase)
                                 ((ItemSlashBlade) stack.getItem()).hitEntity(stack, (EntityLivingBase) curEntity, (EntityLivingBase) entityPlayer);
                         }
                     }

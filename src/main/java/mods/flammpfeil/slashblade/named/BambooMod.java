@@ -1,6 +1,8 @@
 package mods.flammpfeil.slashblade.named;
 
 import net.minecraft.init.Enchantments;
+import net.minecraft.util.NonNullList;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
@@ -65,7 +67,7 @@ public class BambooMod {
 
         ItemStack katana = SlashBlade.findItemStack("BambooMod","katana",1);
 
-        if(Loader.isModLoaded("BambooMod") && katana != null){
+        if(Loader.isModLoaded("BambooMod") && !katana.func_190926_b()){
             RecipeBambooMod recipe = new BambooMod.RecipeBambooMod();
             SlashBlade.addRecipe("wrap.BambooMod.katana.sample", recipe);
 
@@ -100,16 +102,16 @@ public class BambooMod {
         {
             {
                 ItemStack ps = cInv.getStackInRowAndColumn(2, 0);
-                if(!(ps != null && ps.isItemEqual(proudSoul)))
+                if(!(!ps.func_190926_b() && ps.isItemEqual(proudSoul)))
                     return false;
 
                 ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
-                if(!(sc != null && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
+                if(!(!sc.func_190926_b() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
                     return false;
 
 
                 ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-                if(!(target != null && target.getItem().equals(katana.getItem())))
+                if(!(!target.func_190926_b() && target.getItem().equals(katana.getItem())))
                     return false;
 
                 return true;
@@ -120,11 +122,11 @@ public class BambooMod {
         public ItemStack getCraftingResult(InventoryCrafting cInv)
         {
             ItemStack scabbard = cInv.getStackInRowAndColumn(1, 1);
-            if(scabbard == null) return null;
+            if(scabbard.func_190926_b()) return ItemStack.field_190927_a;
             scabbard = scabbard.copy();
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-            if(target == null) return null;
+            if(target.func_190926_b()) return ItemStack.field_190927_a;
             target = target.copy();
 
 
@@ -156,13 +158,13 @@ public class BambooMod {
         }
 
         @Override
-        public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-            ItemStack[] stacks = super.getRemainingItems(inv);
+        public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+            NonNullList<ItemStack> stacks = super.getRemainingItems(inv);
 
 
-            for(int i = 0; i < stacks.length; i++){
-                if(stacks[i].getItem().equals(katana.getItem())) {
-                    stacks[i] = null;
+            for(ItemStack stack : stacks){
+                if(stack.getItem().equals(katana.getItem())) {
+                    stack = ItemStack.field_190927_a;
                     break;
                 }
             }

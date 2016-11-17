@@ -56,7 +56,7 @@ public class ConfigCustomBladeManager {
             ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
             ItemStack tiny = SlashBlade.getCustomBlade(SlashBlade.TinyBladeSoulStr);
-            tiny.stackSize = x;
+            tiny.func_190920_e(x);
 
             IRecipe recipe = new RecipeCustomBlade(customBlade,
                     "P##",

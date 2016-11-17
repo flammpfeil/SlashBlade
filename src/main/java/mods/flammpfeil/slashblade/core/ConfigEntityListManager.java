@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraft.entity.Entity;
@@ -60,10 +62,10 @@ public class ConfigEntityListManager {
 
 
 
-				for(Object key : EntityList.CLASS_TO_NAME.keySet()){
-					Class cls = (Class)key;
+				for(ResourceLocation key : EntityList.field_191308_b.getKeys()){
+					Class cls = EntityList.field_191308_b.getObject(key);
 
-					String name = (String)EntityList.CLASS_TO_NAME.get(key);
+					String name = (String)EntityList.func_191302_a(key);
 					if(name == null || name.length() == 0)
 						continue;
 

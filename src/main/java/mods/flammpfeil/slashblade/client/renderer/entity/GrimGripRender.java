@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -30,8 +30,8 @@ public class GrimGripRender extends Render{
 
     static public WavefrontObject model = null;
 
-    static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/util/grim_grip.obj");
-    static public ResourceLocation textureLocation = new ResourceLocation("flammpfeil.slashblade","model/util/grim_grip.png");
+    static public ResourceLocationRaw modelLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/grim_grip.obj");
+    static public ResourceLocationRaw textureLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/grim_grip.png");
 
     public GrimGripRender(RenderManager renderManager) {
         super(renderManager);
@@ -129,7 +129,7 @@ public class GrimGripRender extends Render{
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
+    protected ResourceLocationRaw getEntityTexture(Entity p_110775_1_) {
         return textureLocation;
     }
 }

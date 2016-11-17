@@ -36,7 +36,7 @@ public class CrystalHealing implements ISpecialEffect {
                 return;
         }
 
-        if(player.getActiveItemStack() == null) return;
+        if(player.getActiveItemStack().func_190926_b()) return;
         if(player.getItemInUseMaxCount() < ItemSlashBlade.RequiredChargeTick) return;
 
         boolean hasBeaconEffect = false;

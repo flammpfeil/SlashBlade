@@ -57,7 +57,7 @@ public class JustGuard {
         EntityLivingBase el = e.getEntityLiving();
 
         ItemStack stack = e.getEntityLiving().getHeldItem(EnumHand.MAIN_HAND);
-        if(el instanceof  EntityPlayer && el.getActiveItemStack() != null && stack != null && stack.getItem() instanceof ItemSlashBlade){
+        if(el instanceof  EntityPlayer && !el.getActiveItemStack().func_190926_b() && !stack.func_190926_b() && stack.getItem() instanceof ItemSlashBlade){
 
             //mobからの攻撃は常にguard可能
             boolean guardable = e.getSource().getEntity() != null;
@@ -112,7 +112,7 @@ public class JustGuard {
         EntityLivingBase el = e.getEntityLiving();
 
         ItemStack stack = el.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack != null && stack.getItem() instanceof ItemSlashBlade){
+        if(!stack.func_190926_b() && stack.getItem() instanceof ItemSlashBlade){
 
             long cs = ChargeStart.get(el.getEntityData());
             cs = Math.max(interval,cs);

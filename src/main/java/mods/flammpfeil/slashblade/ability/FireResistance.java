@@ -25,10 +25,10 @@ public class FireResistance {
     public void onUpdate(LivingEntityUseItemEvent.Tick event){
         EntityLivingBase player = event.getEntityLiving();
         if(player == null) return;
-        if(player.getActiveItemStack() == null) return;
+        if(player.getActiveItemStack().func_190926_b()) return;
 
         ItemStack stack = event.getItem();
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
         if(!stack.isItemEnchanted()) return;
 

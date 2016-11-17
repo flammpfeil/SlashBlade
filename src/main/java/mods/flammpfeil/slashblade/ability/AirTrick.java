@@ -47,7 +47,7 @@ public class AirTrick {
             target = lastHitSS;
         else{
             ItemStack blade = entityPlayer.getHeldItemMainhand();
-            if(blade != null && blade.getItem() instanceof ItemSlashBlade){
+            if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBlade){
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                 int lockonId = ItemSlashBlade.TargetEntityId.get(tag);
 
@@ -100,7 +100,7 @@ public class AirTrick {
 
             if(!(target instanceof EntitySummonedSwordBase)){
                 ItemStack blade = entityPlayer.getHeldItemMainhand();
-                if(blade != null && blade.getItem() instanceof ItemSlashBlade){
+                if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBlade){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                     ItemSlashBlade.TargetEntityId.set(tag,target.getEntityId());
                 }
@@ -137,7 +137,7 @@ public class AirTrick {
             if(player.worldObj.isRemote) return;
 
             ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-            if(stack == null) return;
+            if(stack.func_190926_b()) return;
             if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
             ItemSlashBlade slashBlade = (ItemSlashBlade)stack.getItem();

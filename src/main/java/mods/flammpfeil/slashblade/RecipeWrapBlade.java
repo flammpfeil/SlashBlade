@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import net.minecraft.init.Enchantments;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -96,14 +97,14 @@ public class RecipeWrapBlade extends ShapedRecipes {
     {
         {
             ItemStack ps = cInv.getStackInRowAndColumn(2, 0);
-            boolean hasProudSuol = (ps != null && ps.isItemEqual(proudSoul));
+            boolean hasProudSuol = (!ps.func_190926_b() && ps.isItemEqual(proudSoul));
             ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
-            boolean hasScabbard = (sc != null && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc));
+            boolean hasScabbard = (!sc.func_190926_b() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc));
 
             boolean hasTarget = false;
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-            if(target != null){
+            if(!target.func_190926_b()){
                 ResourceLocation targetName = Item.REGISTRY.getNameForObject(target.getItem());
 
                 hasTarget = wrapableTextureNames.containsKey(targetName.toString());
@@ -117,11 +118,11 @@ public class RecipeWrapBlade extends ShapedRecipes {
     public ItemStack getCraftingResult(InventoryCrafting cInv)
     {
         ItemStack scabbard = cInv.getStackInRowAndColumn(1, 1);
-        if(scabbard == null) return null;
+        if(scabbard.func_190926_b()) return ItemStack.field_190927_a;
         scabbard = scabbard.copy();
 
         ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-        if(target == null) return null;
+        if(target.func_190926_b()) return ItemStack.field_190927_a;
         target = target.copy();
 
 

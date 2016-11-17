@@ -14,6 +14,7 @@ import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
+import mods.flammpfeil.slashblade.util.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
@@ -27,10 +28,6 @@ import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.specialattack.*;
 import mods.flammpfeil.slashblade.stats.AchievementList;
-import mods.flammpfeil.slashblade.util.EnchantHelper;
-import mods.flammpfeil.slashblade.util.InventoryUtility;
-import mods.flammpfeil.slashblade.util.SilentUpdateItem;
-import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
@@ -58,21 +55,21 @@ import java.util.*;
 public class ItemSlashBlade extends ItemSword {
 
 
-    private static ResourceLocation texture = new ResourceLocation("flammpfeil.slashblade","model/blade.png");
-	public ResourceLocation getModelTexture(){
+    private static ResourceLocationRaw texture = new ResourceLocationRaw("flammpfeil.slashblade","model/blade.png");
+	public ResourceLocationRaw getModelTexture(){
 		return texture;
 	}
-    static public Map<String,ResourceLocation> textureMap = new HashMap<String, ResourceLocation>();
+    static public Map<String,ResourceLocationRaw> textureMap = new HashMap<String, ResourceLocationRaw>();
 
     static public TagPropertyAccessor.TagPropertyString TextureName = new TagPropertyAccessor.TagPropertyString("TextureName");
-    static public ResourceLocation getModelTexture(ItemStack par1ItemStack){
+    static public ResourceLocationRaw getModelTexture(ItemStack par1ItemStack){
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(TextureName.exists(tag)){
             String textureName = TextureName.get(tag);
-            ResourceLocation loc;
+            ResourceLocationRaw loc;
             if(!textureMap.containsKey(textureName))
             {
-                loc = new ResourceLocation("flammpfeil.slashblade","model/" + textureName + ".png");
+                loc = new ResourceLocationRaw("flammpfeil.slashblade","model/" + textureName + ".png");
                 textureMap.put(textureName,loc);
             }else{
                 loc = textureMap.get(textureName);
@@ -83,19 +80,19 @@ public class ItemSlashBlade extends ItemSword {
     }
 
 
-    private ResourceLocation model =  new ResourceLocation("flammpfeil.slashblade","model/blade.obj");
-    public ResourceLocation getModel(){ return model; }
-    static public Map<String,ResourceLocation> modelMap = new HashMap<String, ResourceLocation>();
+    private ResourceLocationRaw model =  new ResourceLocationRaw("flammpfeil.slashblade","model/blade.obj");
+    public ResourceLocationRaw getModel(){ return model; }
+    static public Map<String,ResourceLocationRaw> modelMap = new HashMap<String, ResourceLocationRaw>();
 
     static public TagPropertyAccessor.TagPropertyString ModelName = new TagPropertyAccessor.TagPropertyString("ModelName");
-    static public ResourceLocation getModelLocation(ItemStack par1ItemStack){
+    static public ResourceLocationRaw getModelLocation(ItemStack par1ItemStack){
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(ModelName.exists(tag)){
             String modelName = ModelName.get(tag);
-            ResourceLocation loc;
+            ResourceLocationRaw loc;
             if(!modelMap.containsKey(modelName))
             {
-                loc = new ResourceLocation("flammpfeil.slashblade","model/" + modelName + ".obj");
+                loc = new ResourceLocationRaw("flammpfeil.slashblade","model/" + modelName + ".obj");
                 modelMap.put(modelName,loc);
             }else{
                 loc = modelMap.get(modelName);
@@ -653,11 +650,11 @@ public class ItemSlashBlade extends ItemSword {
         if((!comboSec.useScabbard && comboSec.mainHandCombo == null) || IsNoScabbard.get(tag)) {
             ItemSlashBlade.damageItem(par1ItemStack, 1, par3EntityLivingBase);
 
-            if(par1ItemStack.stackSize <= 0) {
+            if(par1ItemStack.func_190916_E() <= 0) {
                 ItemSlashBlade blade = (ItemSlashBlade)par1ItemStack.getItem();
 
                 if(!this.isDestructable(par1ItemStack)){
-                    par1ItemStack.stackSize = 1;
+                    par1ItemStack.func_190920_e(1);
                     IsBroken.set(tag,true);
 
                     if(blade instanceof ItemSlashBladeWrapper){
@@ -780,7 +777,7 @@ public class ItemSlashBlade extends ItemSword {
         NBTTagCompound tag = getItemTagCompound(mainBlade);
 
         ItemStack offHand = owner.getHeldItemOffhand();
-        boolean hasOffhandSword = offHand != null && offHand.getItem() instanceof ItemSlashBlade;
+        boolean hasOffhandSword = !offHand.func_190926_b() && offHand.getItem() instanceof ItemSlashBlade;
 
         return hasOffhandSword && !IsThrownOffhand.get(tag);
     }
@@ -1241,7 +1238,8 @@ public class ItemSlashBlade extends ItemSword {
 	}
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+        ItemStack itemStackIn = playerIn.getHeldItem(hand);
 
         if(hand == EnumHand.OFF_HAND){
             return new ActionResult(EnumActionResult.FAIL, itemStackIn);
@@ -2896,7 +2894,7 @@ public class ItemSlashBlade extends ItemSword {
     	return this;
     }
 
-    private ItemStack repairMaterial = null;
+    private ItemStack repairMaterial = ItemStack.field_190927_a;
     public ItemSlashBlade setRepairMaterial(ItemStack item){
     	this.repairMaterial = item;
     	return this;
@@ -2993,13 +2991,13 @@ public class ItemSlashBlade extends ItemSword {
         stack.damageItem(damage, user);
         tag.setBoolean(IsManagedDamage, false);
 
-        if(stack.stackSize <= 0) {
+        if(stack.func_190916_E() <= 0) {
             boolean setBroken = true;
             boolean doDrop = true;
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             if(!blade.isDestructable(stack)){
-                stack.stackSize = 1;
+                stack.func_190920_e(1);
                 stack.setItemDamage(stack.getMaxDamage());
 
                 if(blade instanceof ItemSlashBladeWrapper){
@@ -3014,7 +3012,7 @@ public class ItemSlashBlade extends ItemSword {
                 if(blade == SlashBlade.bladeSilverBambooLight){
                     AchievementList.triggerAchievement((EntityPlayer) user, "saya");
 
-                    stack.setItem(SlashBlade.wrapBlade);
+                    ReflectionAccessHelper.setItem(stack ,SlashBlade.wrapBlade);
                     setBroken = false;
                     stack.setItemDamage(0);
                 }
@@ -3039,7 +3037,7 @@ public class ItemSlashBlade extends ItemSword {
         ItemStack mainHand = player.getHeldItem(EnumHand.MAIN_HAND);
         ItemStack offhand = player.getHeldItem(EnumHand.OFF_HAND);
         NBTTagCompound offTag = null;
-        if(offhand != null)
+        if(!offhand.func_190926_b())
             offTag = getItemTagCompound(offhand);
 
         if(combo.mainHandCombo != null && offTag != null) {
@@ -3055,7 +3053,7 @@ public class ItemSlashBlade extends ItemSword {
                 stack.hitEntity((EntityLivingBase) target, player);
             OnClick.set(offTag,false);
 
-            if(offhand.stackSize <= 0)
+            if(offhand.func_190916_E() <= 0)
                 player.setHeldItem(EnumHand.OFF_HAND, null);
         }
 
@@ -3424,7 +3422,7 @@ public class ItemSlashBlade extends ItemSword {
             if(forceDrop)
                 e.setGlowing(true);
 
-            e.moveEntity(entityItem.motionX * 2, entityItem.motionY * 2, entityItem.motionZ * 2);
+            e.moveEntity(MoverType.SELF, entityItem.motionX * 2, entityItem.motionY * 2, entityItem.motionZ * 2);
 
             if(!entityItem.worldObj.isRemote)
                 entityItem.worldObj.spawnEntityInWorld(e);

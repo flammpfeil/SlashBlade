@@ -37,7 +37,7 @@ public class EnemyStep {
         if(!target.worldObj.isRemote) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         EnumSet<ItemSlashBlade.SwordType> swordType = ((ItemSlashBlade)stack.getItem()).getSwordType(stack);
@@ -178,7 +178,7 @@ public class EnemyStep {
         if(target == null) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         target.fallDistance = 0;

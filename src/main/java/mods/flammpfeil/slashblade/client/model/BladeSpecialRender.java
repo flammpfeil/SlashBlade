@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumHandSide;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Color4f;
@@ -24,16 +24,16 @@ import java.util.EnumSet;
  * Created by Furia on 2016/06/21.
  */
 public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntity> {
-    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
 
     @Override
     public void renderTileEntityAt(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
         if(te != null) return;
 
-        if(BladeModel.targetStack == null)
+        if(BladeModel.targetStack.func_190926_b())
             return;
 
-        ResourceLocation resourceTexture = BladeModel.itemBlade.getModelTexture(BladeModel.targetStack);
+        ResourceLocationRaw resourceTexture = BladeModel.itemBlade.getModelTexture(BladeModel.targetStack);
         bindTexture(resourceTexture);
 
         //GlStateManager.pushAttrib();

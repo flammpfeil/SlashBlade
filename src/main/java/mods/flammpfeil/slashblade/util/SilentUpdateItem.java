@@ -20,7 +20,7 @@ public class SilentUpdateItem {
         if(slot == null) return;
 
         ItemStack stack = slot.getStack();
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
 
         stack.getTagCompound().setInteger("markdirty", player.ticksExisted);
 
@@ -35,7 +35,7 @@ public class SilentUpdateItem {
 
         if(!owner.worldObj.isRemote
                 && (!isCurrent
-                || (((EntityPlayer) owner).getActiveItemStack() == null && !((EntityPlayer) owner).isSwingInProgress))
+                || (((EntityPlayer) owner).getActiveItemStack().func_190926_b() && !((EntityPlayer) owner).isSwingInProgress))
                 && stack.hasTagCompound() && stack.getTagCompound().hasKey("markdirty")) {
 
             for(Object objSlot : ((EntityPlayer) owner).inventoryContainer.inventorySlots){

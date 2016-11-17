@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade;
 
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -11,7 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.oredict.OreDictionary;
 import org.omg.CORBA.Current;
 
@@ -27,9 +28,9 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
         super(par2EnumToolMaterial, 4.0f);
     }
 
-    private ResourceLocation texture = new ResourceLocation("flammpfeil.slashblade","model/scabbard.png");
+    private ResourceLocationRaw texture = new ResourceLocationRaw("flammpfeil.slashblade","model/scabbard.png");
     @Override
-    public ResourceLocation getModelTexture(){
+    public ResourceLocationRaw getModelTexture(){
         return texture;
     }
 
@@ -73,17 +74,19 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     }
 
     public ItemStack getWrapedItem(ItemStack par1ItemStack){
-        ItemStack wrapItem = null;
+        ItemStack wrapItem = ItemStack.field_190927_a;
         if(hasWrapedItem(par1ItemStack)){
             try{
                 NBTTagCompound tag = getItemTagCompound(par1ItemStack);
-                wrapItem = ItemStack.loadItemStackFromNBT(tag.getCompoundTag(WrapItemStr));
-                if(wrapItem == null)
+                wrapItem = new ItemStack(tag.getCompoundTag(WrapItemStr));
+                if(wrapItem.func_190926_b()) {
                     removeWrapItem(par1ItemStack);
+                    wrapItem = ItemStack.field_190927_a;
+                }
 
             }catch(Throwable e){
                 removeWrapItem(par1ItemStack);
-                wrapItem = null;
+                wrapItem = ItemStack.field_190927_a;
             }
         }
         return wrapItem;
@@ -108,7 +111,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     {
         if(hasWrapedItem(stack)){
             ItemStack wrapItem = getWrapedItem(stack);
-            if(wrapItem != null)
+            if(!wrapItem.func_190926_b())
                 return wrapItem.getMaxDamage();
         }
         return this.getMaxDamage();
@@ -165,7 +168,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
 
         if(!result){
             ItemStack wrapedItem = getWrapedItem(par1ItemStack);
-            if(wrapedItem != null)
+            if(!wrapedItem.func_190926_b())
                 result = wrapedItem.getItem().getIsRepairable(wrapedItem,par2ItemStack);
         }
 
@@ -173,7 +176,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     }
 
     @Override
-    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
-        par3List.add(new ItemStack(par1, 1, 0));
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        subItems.add(new ItemStack(itemIn, 1, 0));
     }
 }

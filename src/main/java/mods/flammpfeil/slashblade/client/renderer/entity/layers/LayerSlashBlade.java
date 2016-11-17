@@ -19,7 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.client.model.obj.OBJModel;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -32,14 +32,14 @@ import java.util.EnumSet;
  */
 public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
-    private static final ResourceLocation armoredCreeperTextures = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
-    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    private static final ResourceLocationRaw armoredCreeperTextures = new ResourceLocationRaw("textures/entity/creeper/creeper_armor.png");
+    private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
 
 
     static public WavefrontObject trailModel = null;
 
-    static public ResourceLocation modelLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.obj");
-    static public ResourceLocation textureLocation = new ResourceLocation("flammpfeil.slashblade","model/util/trail.png");
+    static public ResourceLocationRaw modelLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.obj");
+    static public ResourceLocationRaw textureLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.png");
 
     private final RenderLivingBase<?> render;
 
@@ -97,7 +97,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(item));
 
-        ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(item);
+        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(item);
 
         EnumSet<ItemSlashBlade.SwordType> swordType = iSlashBlade.getSwordType(item);
 
@@ -401,23 +401,23 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
         ItemStack offhand = entity.getHeldItem(EnumHand.OFF_HAND);
 
-        if(stack == null || !(stack.getItem() instanceof ItemSlashBlade)){
+        if(stack.func_190926_b() || !(stack.getItem() instanceof ItemSlashBlade)){
             if(entity instanceof EntityPlayer){
                 ItemStack firstItem = ((EntityPlayer)entity).inventory.getStackInSlot(0);
-                if(adjust && firstItem != null && (firstItem.getItem() instanceof ItemSlashBlade)){
+                if(adjust && !firstItem.func_190926_b() && (firstItem.getItem() instanceof ItemSlashBlade)){
                     renderBack(firstItem,(EntityPlayer)entity);
                 }
             }
             return;
         }
 
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade)stack.getItem());
 
         WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
-        ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(stack);
+        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(stack);
 
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack);
 
@@ -438,7 +438,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
 
         int charge;
-        if(entity instanceof EntityPlayer && entity.getActiveItemStack() != null )
+        if(entity instanceof EntityPlayer && !entity.getActiveItemStack().func_190926_b() )
             charge = entity.getItemInUseMaxCount();
         else
             charge = 0;
@@ -471,10 +471,10 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         }
 
         WavefrontObject offhandModel = null;
-        ResourceLocation offHandResourceTexture = null;
+        ResourceLocationRaw offHandResourceTexture = null;
         boolean offhandIsBroken = false;
         int offhandColor = 0x3333FF;
-        if(offhand != null && (offhand.getItem() instanceof ItemSlashBlade)){
+        if(!offhand.func_190926_b() && (offhand.getItem() instanceof ItemSlashBlade)){
 
             renderBack(offhand,entity,true, combo.mainHandCombo != null);
 
@@ -587,7 +587,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             int handsLoop = 1;
             if(combo.mainHandCombo != null){
                 handsLoop = 2;
-                if(offhand != null && offhand.getItem() instanceof ItemSlashBlade)
+                if(!offhand.func_190926_b() && offhand.getItem() instanceof ItemSlashBlade)
                     doOffhandRender = true;
             }
 
@@ -595,7 +595,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             ItemSlashBlade.ComboSequence comboSequenceTmp = combo;
 
             boolean tmpIsBroken = isBroken;
-            ResourceLocation tmpResourceTexture = resourceTexture;
+            ResourceLocationRaw tmpResourceTexture = resourceTexture;
             WavefrontObject tmpModel = model;
             int tmpColor = color;
             ItemStack tmpStack = stack;
@@ -1075,7 +1075,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         ItemStack itemstack = entitylivingbaseIn.getHeldItem(EnumHand.MAIN_HAND);
 
-        if (itemstack != null)
+        if (!itemstack.func_190926_b())
         {
             GlStateManager.pushMatrix();
 
@@ -1101,7 +1101,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             }
 
             {
-                ResourceLocation resourceTexture = ItemSlashBlade.getModelTexture(itemstack);
+                ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(itemstack);
                 this.render.bindTexture(resourceTexture);
 
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);

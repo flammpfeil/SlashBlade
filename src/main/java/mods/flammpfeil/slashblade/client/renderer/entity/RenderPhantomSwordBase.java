@@ -11,7 +11,7 @@ import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -63,7 +63,7 @@ public class RenderPhantomSwordBase extends Render {
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity var1) {
+    protected ResourceLocationRaw getEntityTexture(Entity var1) {
         return null;
     }
 

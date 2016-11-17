@@ -8,6 +8,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.MoverType;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -40,7 +41,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
      */
     protected Entity thrower;
 
-    protected ItemStack blade = null;
+    protected ItemStack blade = ItemStack.field_190927_a;
 
     /**
      * ★多段Hit防止用List
@@ -78,8 +79,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         thrower = entityLiving;
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = null;
+        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.field_190927_a;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -309,7 +310,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                         curEntity.attackEntityFrom(ds, magicDamage);
 
 
-                        if(blade != null && curEntity instanceof EntityLivingBase)
+                        if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase)
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                     }
                 }
@@ -392,7 +393,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(double par1, double par3, double par5) {}
+    public void moveEntity(MoverType moverType, double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

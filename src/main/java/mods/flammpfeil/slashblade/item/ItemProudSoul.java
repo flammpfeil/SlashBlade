@@ -76,37 +76,39 @@ public class ItemProudSoul extends Item {
 	}
 
     @Override
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
-		par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1));
-		par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1));
-        par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1));
-        par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr, 1));
-        par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.CrystalBladeSoulStr, 1));
-        par3List.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TrapezohedronBladeSoulStr, 1));
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        super.getSubItems(itemIn, tab, subItems);
+		subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1));
+		subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1));
+        subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1));
+        subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr, 1));
+        subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.CrystalBladeSoulStr, 1));
+        subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TrapezohedronBladeSoulStr, 1));
 
         ItemStack sphere = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1);
         for(int saType : ItemSlashBlade.specialAttacks.keySet()){
             ItemStack stack = sphere.copy();
             NBTTagCompound sphereTag = ItemSlashBlade.getItemTagCompound(stack);
             ItemSlashBlade.SpecialAttackType.set(sphereTag, saType);
-            par3List.add(stack);
+            subItems.add(stack);
         }
 
         ItemStack tiny = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TinyBladeSoulStr, 1);
         for(Enchantment ench : EnchantHelper.rare){
             ItemStack stack = tiny.copy();
             stack.addEnchantment(ench, 1);
-            par3List.add(stack);
+            subItems.add(stack);
         }
 
         for(ItemStack stack : NamedBladeManager.namedbladeSouls.values()){
-            par3List.add(stack);
+            subItems.add(stack);
         }
 	}
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
+
         Block block = world.getBlockState(pos).getBlock();
 
         if(!world.isRemote && Blocks.OAK_FENCE == block && player.isSneaking()){
@@ -151,7 +153,7 @@ public class ItemProudSoul extends Item {
                 world.spawnEntityInWorld(e);
             }
 
-            stack.stackSize--;
+            stack.func_190917_f(-1);
 
             return EnumActionResult.SUCCESS;
         }else if(stack.getItemDamage() == 4 //crystal
@@ -164,7 +166,7 @@ public class ItemProudSoul extends Item {
 
             return EnumActionResult.SUCCESS;
         }else{
-            return super.onItemUse(stack, player, world, pos, hand, side, hitX, hitY, hitZ);
+            return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
         }
 
     }
@@ -266,7 +268,7 @@ public class ItemProudSoul extends Item {
                 if(ItemSlashBlade.ProudSoul.tryAdd(bladeTag, -50, false)){
                     player.onEnchantmentCritical(stand);
 
-                    ItemStack bladeSoulCrystal = null;
+                    ItemStack bladeSoulCrystal = ItemStack.field_190927_a;
 
                     using = true;
 
@@ -287,7 +289,7 @@ public class ItemProudSoul extends Item {
                             bladeSoulCrystal = NamedBladeManager.getNamedSoul(Item.itemRand);
                         }
 
-                        if(bladeSoulCrystal == null)
+                        if(bladeSoulCrystal.func_190926_b())
                             bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
                     }else if(stack.getItemDamage() == 0)
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
@@ -417,11 +419,11 @@ public class ItemProudSoul extends Item {
         }
 
         if(using){
-            stack.stackSize--;
+            stack.func_190917_f(-1);
 
             player.renderBrokenItemStack(stack);
 
-            if (stack.stackSize <= 0)
+            if (stack.func_190916_E() <= 0)
             {
                 player.setHeldItem(EnumHand.MAIN_HAND, (ItemStack)null);
             }

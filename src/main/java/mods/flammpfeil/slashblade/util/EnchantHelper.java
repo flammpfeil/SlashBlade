@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;

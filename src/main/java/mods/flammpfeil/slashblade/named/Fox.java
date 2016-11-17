@@ -125,11 +125,11 @@ public class Fox {
         ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
         ItemStack kitunebi = SlashBlade.findItemStack("BambooMod","kitunebi",1);
-        if(kitunebi == null)
+        if(kitunebi.func_190926_b())
             return;
 
         ItemStack inari = SlashBlade.findItemStack("TofuCraft","foodSet",1);
-        if(inari != null)
+        if(!inari.func_190926_b())
             inari.setItemDamage(14);
         else
             inari = new ItemStack(Items.WHEAT,1);

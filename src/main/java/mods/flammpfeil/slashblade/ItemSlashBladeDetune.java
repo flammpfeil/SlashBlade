@@ -1,9 +1,9 @@
 package mods.flammpfeil.slashblade;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -12,16 +12,16 @@ public class ItemSlashBladeDetune extends ItemSlashBlade {
 
 	public ItemSlashBladeDetune(ToolMaterial par2EnumToolMaterial,float baseAttackModifiers){
 		super(par2EnumToolMaterial, baseAttackModifiers);
-		texture = new ResourceLocation("flammpfeil.slashblade","model/wood.png");
+		texture = new ResourceLocationRaw("flammpfeil.slashblade","model/wood.png");
 	}
 
 
-	public ResourceLocation texture;
+	public ResourceLocationRaw texture;
 	@Override
-	public ResourceLocation getModelTexture(){
+	public ResourceLocationRaw getModelTexture(){
 		return texture;
 	}
-	public ItemSlashBladeDetune setModelTexture(ResourceLocation loc){
+	public ItemSlashBladeDetune setModelTexture(ResourceLocationRaw loc){
 		this.texture = loc;
 		return this;
 	}

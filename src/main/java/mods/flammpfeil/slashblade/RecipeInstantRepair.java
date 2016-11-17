@@ -52,7 +52,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 
         	ItemStack stone = cInv.getStackInRowAndColumn(1, 0);
 
-            if(stone == null)
+            if(stone.func_190926_b())
                 return false;
 
 
@@ -63,7 +63,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
         	if(hasGrindstone){
 
 	            ItemStack target = cInv.getStackInRowAndColumn(0, 1);
-	            if(target != null && target.getItem() instanceof ItemSlashBlade){
+	            if(!target.func_190926_b() && target.getItem() instanceof ItemSlashBlade){
 
 	            	if(0 < target.getItemDamage()){
 	            		if(target.hasTagCompound()){
@@ -94,7 +94,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 
         ItemStack itemstack = target.copy();
 
-        if(target != null && target.getItem() instanceof ItemSlashBlade){
+        if(!target.func_190926_b() && target.getItem() instanceof ItemSlashBlade){
 
         	if(0 < itemstack.getItemDamage()){
         		if(itemstack.hasTagCompound()){
@@ -104,7 +104,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 
         			if(0 < proudSoul){
         				int damage = itemstack.getItemDamage();
-        				int repair = Math.min(stone.stackSize, Math.min(repairPoints,damage));
+        				int repair = Math.min(stone.func_190916_E(), Math.min(repairPoints,damage));
 
         				proudSoul -= repair * RepairProudSoulCount;
 
@@ -127,7 +127,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
         ItemStack item = event.crafting;
 		IInventory craftMatrix = event.craftMatrix;
 
-		if(item != null){
+		if(!item.func_190926_b()){
 	        if(item.getItem() instanceof ItemSlashBlade){
 
 	        	if(item.hasTagCompound()){
@@ -139,18 +139,18 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 
 	            		try{
 		            		ItemStack stone = craftMatrix.getStackInSlot(1);
-		            		if(stone != null){
+		            		if(!stone.func_190926_b()){
 
                                 List<ItemStack> ores = OreDictionary.getOres("cobblestone");
                                 boolean hasGrindstone = containsMatch(false,ores,new ItemStack(Blocks.COBBLESTONE));
 
                                 if(hasGrindstone){
-                                    if(stone.stackSize < repair){
-                                        int overDamage = repair - stone.stackSize;
+                                    if(stone.func_190916_E() < repair){
+                                        int overDamage = repair - stone.func_190916_E();
                                         item.setItemDamage(item.getItemDamage()+overDamage);
-                                        stone.stackSize = 0;
+                                        stone.func_190920_e(0);
                                     }else{
-                                        stone.stackSize -= repair;
+                                        stone.func_190917_f(-repair);
                                     }
                                 }
 		            		}

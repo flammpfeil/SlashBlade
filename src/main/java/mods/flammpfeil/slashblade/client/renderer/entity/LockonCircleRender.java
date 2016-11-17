@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.GroupObject;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -12,7 +13,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -24,8 +24,8 @@ import org.lwjgl.opengl.GL11;
  */
 public class LockonCircleRender {
 
-    static final ResourceLocation modelLoc = new ResourceLocation("flammpfeil.slashblade","model/util/lockon.obj");
-    static final ResourceLocation textureLoc = new ResourceLocation("flammpfeil.slashblade","model/util/lockon.png");
+    static final ResourceLocationRaw modelLoc = new ResourceLocationRaw("flammpfeil.slashblade","model/util/lockon.obj");
+    static final ResourceLocationRaw textureLoc = new ResourceLocationRaw("flammpfeil.slashblade","model/util/lockon.png");
 
     @SubscribeEvent
     public void onRenderLiving(RenderWorldLastEvent event){
@@ -33,7 +33,7 @@ public class LockonCircleRender {
         if(player == null) return;
 
         ItemStack stack = player.getHeldItemMainhand();
-        if(stack == null) return;
+        if(stack.func_190926_b()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
@@ -91,7 +91,7 @@ public class LockonCircleRender {
         boolean useCustom = false;
 
         WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
-        ResourceLocation resourceTexture;
+        ResourceLocationRaw resourceTexture;
 
         for(GroupObject group : model.groupObjects){
             if(group.name.equals("lockonBase")) {

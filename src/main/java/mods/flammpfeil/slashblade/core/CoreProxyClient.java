@@ -280,7 +280,7 @@ public class CoreProxyClient extends CoreProxy {
                 EntityPlayerSP player = mc.thePlayer;
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                     ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                    if(item != null && item.getItem() instanceof ItemSlashBlade){
+                    if(!item.func_190926_b() && item.getItem() instanceof ItemSlashBlade){
 
                         mc.playerController.updateController();
 
@@ -309,7 +309,7 @@ public class CoreProxyClient extends CoreProxy {
                     EntityPlayerSP player = mc.thePlayer;
                     if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                         ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                        if(item != null && item.getItem() instanceof ItemSlashBlade){
+                        if(!item.func_190926_b() && item.getItem() instanceof ItemSlashBlade){
 
                             mc.playerController.updateController();
 
@@ -347,7 +347,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(mc.currentScreen != null) return;
 
                 ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                if(item == null) return;
+                if(item.func_190926_b()) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)
@@ -374,7 +374,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(mc.currentScreen != null) return;
 
                 ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                if(item == null) return;
+                if(item.func_190926_b()) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 ItemSlashBlade bladeItem = (ItemSlashBlade)item.getItem();
@@ -404,7 +404,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(mc.currentScreen != null) return;
 
                 ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                if(item == null) return;
+                if(item.func_190926_b()) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 ItemSlashBlade bladeItem = (ItemSlashBlade)item.getItem();
@@ -445,14 +445,14 @@ public class CoreProxyClient extends CoreProxy {
 
             if(!(rle.getMainModel() instanceof ModelBiped))
                 continue;
-
+/*
             if(rle instanceof RenderZombie){
                 List<LayerRenderer> layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle, "villagerLayers","field_177121_n");
                 layers.add(new LayerSlashBlade(rle));
 
                 layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle,"defaultLayers", "field_177122_o");
                 layers.add(new LayerSlashBlade(rle));
-            }
+            }*/
 
             rle.addLayer(new LayerSlashBlade(rle));
 

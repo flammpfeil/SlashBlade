@@ -4,7 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -25,20 +25,20 @@ public class BladeModelManager {
     }
 
     WavefrontObject defaultModel;
-    static final ResourceLocation resourceDefaultModel = new ResourceLocation("flammpfeil.slashblade","model/blade.obj");
+    static final ResourceLocationRaw resourceDefaultModel = new ResourceLocationRaw("flammpfeil.slashblade","model/blade.obj");
 
-    public static final ResourceLocation resourceDurabilityModel = new ResourceLocation("flammpfeil.slashblade","model/util/durability.obj");
-    public static final ResourceLocation resourceDurabilityTexture = new ResourceLocation("flammpfeil.slashblade","model/util/durability.png");
+    public static final ResourceLocationRaw resourceDurabilityModel = new ResourceLocationRaw("flammpfeil.slashblade","model/util/durability.obj");
+    public static final ResourceLocationRaw resourceDurabilityTexture = new ResourceLocationRaw("flammpfeil.slashblade","model/util/durability.png");
 
-    LoadingCache<ResourceLocation, WavefrontObject> cache;
+    LoadingCache<ResourceLocationRaw, WavefrontObject> cache;
 
     private BladeModelManager() {
         defaultModel = new WavefrontObject(resourceDefaultModel);
 
         cache = CacheBuilder.newBuilder().build(
-                CacheLoader.asyncReloading(new CacheLoader<ResourceLocation, WavefrontObject>() {
+                CacheLoader.asyncReloading(new CacheLoader<ResourceLocationRaw, WavefrontObject>() {
                     @Override
-                    public WavefrontObject load(ResourceLocation key) throws Exception {
+                    public WavefrontObject load(ResourceLocationRaw key) throws Exception {
                         try{
                             return new WavefrontObject(key);
                         }catch(Exception e){
@@ -56,7 +56,7 @@ public class BladeModelManager {
         defaultModel = new WavefrontObject(resourceDefaultModel);
     }
 
-    public WavefrontObject getModel(ResourceLocation loc) {
+    public WavefrontObject getModel(ResourceLocationRaw loc) {
         try {
             return cache.get(loc);
         } catch (ExecutionException e) {

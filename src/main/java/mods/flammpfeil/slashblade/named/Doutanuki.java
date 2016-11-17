@@ -180,7 +180,7 @@ public class Doutanuki {
         if(event.getEntityLiving() instanceof EntityZombie){
             EntityLivingBase entity = event.getEntityLiving();
 
-            if(entity.getHeldItemMainhand() != null)
+            if(!entity.getHeldItemMainhand().func_190926_b())
                 return;
 
             float difficulty = entity.worldObj.getDifficultyForLocation(entity.getPosition())
@@ -253,11 +253,11 @@ public class Doutanuki {
                 return false;
 
             ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
-            if(!(sc != null && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
+            if(!(!sc.func_190926_b() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
                 return false;
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-            if(target == null)
+            if(target.func_190926_b())
                 return false;
 
             if(!(target.getItem() instanceof ItemSlashBlade))
@@ -323,7 +323,7 @@ public class Doutanuki {
 
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-            if(target == null)
+            if(target.func_190926_b())
                 return false;
 
             if(!(target.getItem() instanceof ItemSlashBlade))
@@ -392,7 +392,7 @@ public class Doutanuki {
 
 
             ItemStack target = cInv.getStackInRowAndColumn(1, 1);
-            if(target == null)
+            if(target.func_190926_b())
                 return false;
 
             if(!(target.getItem() instanceof ItemSlashBlade))

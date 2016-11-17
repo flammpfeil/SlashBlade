@@ -70,7 +70,7 @@ public class DropEventHandler {
                     if(target == null) return;
 
                     ItemStack attackItem = target.getHeldItem(EnumHand.MAIN_HAND);
-                    if(attackItem == null) return;
+                    if(attackItem.func_190926_b()) return;
                     if(!(attackItem.getItem() instanceof ItemSlashBlade)) return;
 
                 }
@@ -78,11 +78,11 @@ public class DropEventHandler {
                 if((event.isRecentlyHit() || forceDrop) && isDrop && drop.getValue() != null){
                     ItemStack dropitem = drop.getValue().copy();
 
-                    dropitem.stackSize =
+                    dropitem.func_190920_e(
                             Math.max(
                                 dropitem.getMaxStackSize(),
                                 Math.max(1,
-                                        (int)Math.round((float)dropitem.stackSize * rand.nextFloat())));
+                                        (int)Math.round((float)dropitem.func_190916_E() * rand.nextFloat()))));
 
                     if(dropitem.getItem() instanceof ItemSlashBlade){
 
@@ -100,7 +100,7 @@ public class DropEventHandler {
                         }
                     }
 
-                    if(dropitem.stackSize != 0)
+                    if(dropitem.func_190916_E() != 0)
                         event.getEntityLiving().entityDropItem(dropitem,1);
                 }
             }

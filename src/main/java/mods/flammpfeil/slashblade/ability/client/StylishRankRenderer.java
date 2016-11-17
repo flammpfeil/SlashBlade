@@ -9,7 +9,7 @@ import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class StylishRankRenderer {
 
-    static ResourceLocation RankImg = new ResourceLocation("flammpfeil.slashblade","textures/gui/rank.png");
+    static ResourceLocationRaw RankImg = new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/rank.png");
 
     @SubscribeEvent
     public void renderTick(TickEvent.RenderTickEvent event) {

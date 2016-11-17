@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.lwjgl.input.Keyboard;
@@ -36,7 +36,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
     protected int guiTop;
 
 
-    private static final ResourceLocation BackGroundResource = new ResourceLocation("flammpfeil.slashblade","textures/gui/crafting_recipe.png");
+    private static final ResourceLocationRaw BackGroundResource = new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe.png");
 
     public String title;
     public List<IRecipe> recipe;
@@ -65,7 +65,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
     protected void drawGuiContainerBackgroundLayer()
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(new ResourceLocation("flammpfeil.slashblade","textures/gui/crafting_recipe.png"));//BackGroundResource);
+        this.mc.getTextureManager().bindTexture(new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe.png"));//BackGroundResource);
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
@@ -141,7 +141,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
             {
                 ItemStack output = currentRecipe.getRecipeOutput();
-                if(output != null){
+                if(!output.func_190926_b()){
                     this.title = output.getItem().getItemStackDisplayName(output);
                 }
             }
@@ -157,7 +157,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 DummySmeltingRecipe dummySmeltingRecipe = (DummySmeltingRecipe)currentRecipe;
 
                 ItemStack targetItemStack = dummySmeltingRecipe.input;
-                if(targetItemStack != null){
+                if(!targetItemStack.func_190926_b()){
 
                     targetItemStack = getWildCardStack(targetItemStack);
 
@@ -169,7 +169,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 }
 
                 targetItemStack = dummySmeltingRecipe.getRecipeOutput();
-                if(targetItemStack != null){
+                if(!targetItemStack.func_190926_b()){
                     itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
                     itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop,null);
 
@@ -182,7 +182,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 }
 
                 targetItemStack = dummySmeltingRecipe.input;
-                if(targetItemStack != null){
+                if(!targetItemStack.func_190926_b()){
                     targetItemStack = getWildCardStack(targetItemStack);
                     
                     if (this.checkMouseOver(gridLeft + slotSize * 1, gridTop + slotSize * 1, 16, 16, mouseX, mouseY))
@@ -214,7 +214,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         int idx = gy*gridHeight + gx;
                         Object target = input[gy*gridHeight + gx];
 
-                        ItemStack targetItemStack = null;
+                        ItemStack targetItemStack = ItemStack.field_190927_a;
 
                         boolean isDict = false;
 
@@ -232,7 +232,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         }
 
 
-                        if(targetItemStack != null){
+                        if(!targetItemStack.func_190926_b()){
                             targetItemStack = getWildCardStack(targetItemStack);
 
                             itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + gridLeft + slotSize * gx, this.guiTop + gridTop + slotSize * gy);
@@ -255,7 +255,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 {
                     ItemStack targetItemStack = shapedOreRecipe.getRecipeOutput();
 
-                    if(targetItemStack != null){
+                    if(!targetItemStack.func_190926_b()){
                         itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
                         itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop, null);
 
@@ -275,7 +275,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         int idx = gy*gridHeight + gx;
                         Object target = input[gy*gridHeight + gx];
 
-                        ItemStack targetItemStack = null;
+                        ItemStack targetItemStack = ItemStack.field_190927_a;
                         if (target instanceof ItemStack){
                             targetItemStack = (ItemStack)target;
                         }
@@ -287,7 +287,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                             }
                         }
 
-                        if(targetItemStack != null){
+                        if(!targetItemStack.func_190926_b()){
                         /*
                         itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + 16 * gx, this.guiTop + 16 * gy);
                         itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + 16 * gx, this.guiTop + 16 * gy)

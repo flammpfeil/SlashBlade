@@ -27,8 +27,8 @@ public class ProjectileBarrier {
     static public boolean isAvailable(EntityLivingBase owner ,ItemStack stack ,int duration){
 
         if(owner == null) return false;
-        if(owner.getActiveItemStack() == null) return false;
-        if(stack == null) return false;
+        if(owner.getActiveItemStack().func_190926_b()) return false;
+        if(stack.func_190926_b()) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
         if(!stack.isItemEnchanted()) return false;
 

@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.MoverType;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -43,7 +44,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      */
     protected Entity thrower;
 
-    protected ItemStack blade = null;
+    protected ItemStack blade = ItemStack.field_190927_a;
 
     /**
      * ★多段Hit防止用List
@@ -84,8 +85,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = null;
+        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.field_190927_a;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -461,7 +462,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                     ridingEntity.hurtResistantTime = 0;
                     DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
                     ridingEntity.attackEntityFrom(ds, magicDamage);
-                    if(blade != null && ridingEntity instanceof EntityLivingBase){
+                    if(!blade.func_190926_b() && ridingEntity instanceof EntityLivingBase){
                         if(thrower != null){
                             StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.BreakPhantomSword);
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
@@ -688,7 +689,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(blade != null && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+            if(!blade.func_190926_b() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
@@ -711,7 +712,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(blade != null && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+            if(!blade.func_190926_b() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
@@ -820,7 +821,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             doRotation();
 
             if(getInterval() < this.ticksExisted)
-                moveEntity(this.motionX, this.motionY, this.motionZ);
+                moveEntity(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
 
             normalizeRotation();
 
@@ -877,8 +878,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(double x, double y, double z) {
-        super.moveEntity(x,y,z);
+    public void moveEntity(MoverType moverType, double x, double y, double z) {
+        super.moveEntity(moverType, x,y,z);
     }
 
 

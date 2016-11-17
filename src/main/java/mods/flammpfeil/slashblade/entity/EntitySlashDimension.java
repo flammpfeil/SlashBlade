@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -44,7 +45,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
      */
     protected Entity thrower;
 
-    protected ItemStack blade = null;
+    protected ItemStack blade = ItemStack.field_190927_a;
 
     /**
      * ★多段Hit防止用List
@@ -80,8 +81,8 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
         thrower = entityLiving;
 
         blade = entityLiving.getHeldItemMainhand();
-        if(blade != null && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = null;
+        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.field_190927_a;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -284,7 +285,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                         DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage().setProjectile();
 
 
-                        if(blade != null && curEntity instanceof EntityLivingBase)
+                        if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase)
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
 
                         if(!curEntity.getPositionVector().equals(pos))
@@ -295,7 +296,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                         curEntity.motionZ = 0;
 
                         if(3 < this.ticksExisted){
-                            if(blade != null && curEntity instanceof EntityLivingBase) {
+                            if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase) {
                                 if(getIsSlashDimension()){
                                     curEntity.addVelocity(
                                             0,
@@ -368,7 +369,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(double par1, double par3, double par5) {}
+    public void moveEntity(MoverType moverType, double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

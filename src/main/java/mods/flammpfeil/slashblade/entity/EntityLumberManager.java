@@ -226,7 +226,7 @@ public class EntityLumberManager extends Entity {
 
             EntityPlayerMP playerMp = ((EntityPlayerMP) player.get());
 
-            if(playerMp.getHeldItemMainhand() == null
+            if(playerMp.getHeldItemMainhand().func_190926_b()
                     || !(playerMp.getHeldItemMainhand().getItem() instanceof ItemSlashBlade)){
                 this.kill();
                 return;

@@ -20,7 +20,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -47,7 +47,7 @@ public class BladeModel implements IPerspectiveAwareModel {
         return emptyList;
     }
 
-    ItemStack proudsoul = null;
+    ItemStack proudsoul = ItemStack.field_190927_a;
     ItemModelMesher modelMesher = null;
     List<BakedQuad> getDefaultQuards(){
         if(modelMesher == null) {
@@ -57,7 +57,7 @@ public class BladeModel implements IPerspectiveAwareModel {
         return modelMesher.getItemModel(proudsoul).getQuads(null,null,0);
     }
 
-    static ItemStack targetStack = null;
+    static ItemStack targetStack = ItemStack.field_190927_a;
     static ItemSlashBlade itemBlade = null;
     static EntityLivingBase user = null;
 
@@ -83,7 +83,7 @@ public class BladeModel implements IPerspectiveAwareModel {
                     itemBlade = (ItemSlashBlade) stack.getItem();
                     user = entity;
                 }else{
-                    targetStack = null;
+                    targetStack = ItemStack.field_190927_a;
                     itemBlade = null;
                     user = null;
                 }
@@ -243,7 +243,7 @@ public class BladeModel implements IPerspectiveAwareModel {
 
         /*
         //textuer bind
-        ResourceLocation resourceTexture = itemBlade.getModelTexture(targetStack);
+        ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(targetStack);
         Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
         */
 

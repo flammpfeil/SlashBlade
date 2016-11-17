@@ -18,7 +18,7 @@ public class RecipeUpgradeBlade extends ShapedOreRecipe {
 
 		for(int idx = 0; idx < var1.getSizeInventory(); idx++){
 			ItemStack curIs = var1.getStackInSlot(idx);
-			if(curIs != null
+			if(!curIs.func_190926_b()
 					&& curIs.getItem() instanceof ItemSlashBlade
 					&& curIs.hasTagCompound()){
 
