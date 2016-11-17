@@ -425,7 +425,7 @@ public class ItemProudSoul extends Item {
 
             if (stack.func_190916_E() <= 0)
             {
-                player.setHeldItem(EnumHand.MAIN_HAND, (ItemStack)null);
+                player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
             }
 
 

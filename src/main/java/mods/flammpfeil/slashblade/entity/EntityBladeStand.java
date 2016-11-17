@@ -294,7 +294,7 @@ public class EntityBladeStand extends Entity {
                 AchievementList.triggerCraftingAchievement(this.getBlade(), p);
 
                 p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, this.getBlade());
-                this.setBlade(null);
+                this.setBlade(ItemStack.field_190927_a);
 
                 if(getType(this) == StandType.Naked)
                     this.setDead();
@@ -307,7 +307,7 @@ public class EntityBladeStand extends Entity {
 
                 this.setBlade(stack);
 
-                p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+                p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.field_190927_a);
 
                 return true;
             }

@@ -3054,7 +3054,7 @@ public class ItemSlashBlade extends ItemSword {
             OnClick.set(offTag,false);
 
             if(offhand.func_190916_E() <= 0)
-                player.setHeldItem(EnumHand.OFF_HAND, null);
+                player.setHeldItem(EnumHand.OFF_HAND, ItemStack.field_190927_a);
         }
 
         player.setHeldItem(EnumHand.MAIN_HAND, mainHand);
