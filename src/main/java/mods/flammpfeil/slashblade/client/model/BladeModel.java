@@ -77,7 +77,9 @@ public class BladeModel implements IPerspectiveAwareModel {
             @Override
             public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
 
-                if(stack != null && stack.getItem() instanceof ItemSlashBlade) {
+                if(targetStack != null && ItemSlashBlade.getItemTagCompound(targetStack).getBoolean("IsRender")){
+                    //skip
+                }else if(stack != null && stack.getItem() instanceof ItemSlashBlade) {
                     targetStack = stack;
                     ItemSlashBlade.getItemTagCompound(targetStack).setBoolean("IsRender",true);
                     itemBlade = (ItemSlashBlade) stack.getItem();
