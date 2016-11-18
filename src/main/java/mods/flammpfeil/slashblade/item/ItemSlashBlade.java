@@ -650,6 +650,7 @@ public class ItemSlashBlade extends ItemSword {
         if((!comboSec.useScabbard && comboSec.mainHandCombo == null) || IsNoScabbard.get(tag)) {
             ItemSlashBlade.damageItem(par1ItemStack, 1, par3EntityLivingBase);
 
+            /*
             if(par1ItemStack.func_190916_E() <= 0) {
                 ItemSlashBlade blade = (ItemSlashBlade)par1ItemStack.getItem();
 
@@ -669,7 +670,7 @@ public class ItemSlashBlade extends ItemSword {
 
                     blade.dropItemDestructed(par3EntityLivingBase, par1ItemStack);
                 }
-            }
+            }*/
         }
 
         StylishRankManager.doAttack(par3EntityLivingBase);
@@ -947,6 +948,9 @@ public class ItemSlashBlade extends ItemSword {
                     playerDist *= 0.35f;
                 player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
                 player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
+                player.isAirBorne = true;
+                player.velocityChanged = true;
+                //player.onGround = false;
 
                 UntouchableTime.setUntouchableTime(player, 6, false);
 
@@ -2987,46 +2991,55 @@ public class ItemSlashBlade extends ItemSword {
     static public void damageItem(ItemStack stack, int damage, EntityLivingBase user) {
 
         NBTTagCompound tag = getItemTagCompound(stack);
+        ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
+
+        boolean imotal = !blade.isDestructable(stack);
+        if(imotal)
+            stack.func_190920_e(2);
+
         tag.setBoolean(IsManagedDamage, true);
         stack.damageItem(damage, user);
         tag.setBoolean(IsManagedDamage, false);
+        boolean doDrop = stack.func_190926_b(); //isNull
 
-        if(stack.func_190916_E() <= 0) {
-            boolean setBroken = true;
-            boolean doDrop = true;
-            ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
+        if(imotal){
+            stack.func_190920_e(1);
 
-            if(!blade.isDestructable(stack)){
-                stack.func_190920_e(1);
-                stack.setItemDamage(stack.getMaxDamage());
+            if(stack.getItemDamage() >= stack.getMaxDamage()) {
+                boolean setBroken = true;
 
-                if(blade instanceof ItemSlashBladeWrapper){
+                if (!blade.isDestructable(stack)) {
+                    stack.func_190920_e(1);
+                    stack.setItemDamage(stack.getMaxDamage());
 
-                    doDrop = ((ItemSlashBladeWrapper) blade).hasWrapedItem(stack);
-                    if(!ItemSlashBladeWrapper.TrueItemName.exists(tag)){
-                        ((ItemSlashBladeWrapper)blade).removeWrapItem(stack);
+                    if (blade instanceof ItemSlashBladeWrapper) {
+
+                        doDrop = ((ItemSlashBladeWrapper) blade).hasWrapedItem(stack);
+                        if (!ItemSlashBladeWrapper.TrueItemName.exists(tag)) {
+                            ((ItemSlashBladeWrapper) blade).removeWrapItem(stack);
+                            setBroken = false;
+                        }
+                    }
+
+                    if (blade == SlashBlade.bladeSilverBambooLight) {
+                        AchievementList.triggerAchievement((EntityPlayer) user, "saya");
+
+                        ReflectionAccessHelper.setItem(stack, SlashBlade.wrapBlade);
                         setBroken = false;
+                        stack.setItemDamage(0);
+                    }
+
+                    if (blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer) {
+                        AchievementList.triggerAchievement((EntityPlayer) user, "brokenWhiteSheath");
                     }
                 }
 
-                if(blade == SlashBlade.bladeSilverBambooLight){
-                    AchievementList.triggerAchievement((EntityPlayer) user, "saya");
-
-                    ReflectionAccessHelper.setItem(stack ,SlashBlade.wrapBlade);
-                    setBroken = false;
-                    stack.setItemDamage(0);
-                }
-
-                if(blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer){
-                    AchievementList.triggerAchievement((EntityPlayer) user, "brokenWhiteSheath");
-                }
+                IsBroken.set(tag, setBroken);
             }
-
-            if(doDrop && !IsBroken.get(tag))
-                blade.dropItemDestructed(user, stack);
-
-            IsBroken.set(tag,setBroken);
         }
+
+        if(doDrop && !IsBroken.get(tag))
+            blade.dropItemDestructed(user, stack);
     }
 
     public void attackTargetEntity(ItemStack stack, Entity target, EntityPlayer player, Boolean isRightClick){

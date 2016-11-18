@@ -12,6 +12,7 @@ import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -320,41 +321,41 @@ public class SlashBlade implements IFuelHandler{
 
 
         int entityId = 1;
-        EntityRegistry.registerModEntity(EntityDrive.class, "Drive", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"Drive"), EntityDrive.class, "Drive", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SummonedSword"), EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SpearManager"), EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 10, true);
 
-        EntityRegistry.registerModEntity(EntitySummonedSwordBase.class, "SummonedSwordBase", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntityWitherSword.class, "WitherSword", entityId++, this, 250, 10, false);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SummonedSwordBase"), EntitySummonedSwordBase.class, "SummonedSwordBase", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"WitherSword"), EntityWitherSword.class, "WitherSword", entityId++, this, 250, 10, false);
 
-        EntityRegistry.registerModEntity(EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntityMaximumBetManager.class, "MaximumBetManager", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntitySpearManager.class, "SpearManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"JudgmentCutManager"), EntityJudgmentCutManager.class, "JudgmentCutManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SakuraEndManager"), EntitySakuraEndManager.class, "SakuraEndManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"MaximumBetManager"), EntityMaximumBetManager.class, "MaximumBetManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SpearManager"), EntitySpearManager.class, "SpearManager", entityId++, this, 250, 10, true);
 
-        EntityRegistry.registerModEntity(EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"JustGuardManager"), EntityJustGuardManager.class, "JustGuardManager", entityId++, this, 250, 10, true);
 
-        EntityRegistry.registerModEntity(EntityBladeStand.class, "BladeStand", entityId++, this, 250, 20, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"BladeStand"), EntityBladeStand.class, "BladeStand", entityId++, this, 250, 20, true);
 
-        EntityRegistry.registerModEntity(EntitySummonedBlade.class, "SummonedBlade", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntitySummonedSwordAirTrickMarker.class, "SummonedSwordATM", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntityBlisteringSwords.class, "BlisteringSwords", entityId++, this, 250, 200, true);
-        EntityRegistry.registerModEntity(EntityHeavyRainSwords.class, "HeavyRainSwords", entityId++, this, 250, 200, true);
-        EntityRegistry.registerModEntity(EntitySpiralSwords.class, "SpiralSwords", entityId++, this, 250, 200, true);
-        EntityRegistry.registerModEntity(EntityStormSwords.class, "StormSwords", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SummonedBlade"), EntitySummonedBlade.class, "SummonedBlade", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SummonedSwordAirTrickMarker"), EntitySummonedSwordAirTrickMarker.class, "SummonedSwordATM", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"BlisteringSwords"), EntityBlisteringSwords.class, "BlisteringSwords", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"HeavyRainSwords"), EntityHeavyRainSwords.class, "HeavyRainSwords", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SpiralSwords"), EntitySpiralSwords.class, "SpiralSwords", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"StormSwords"), EntityStormSwords.class, "StormSwords", entityId++, this, 250, 200, true);
 
-        EntityRegistry.registerModEntity(EntityRapidSlashManager.class, "RapidSlashManager", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntityHelmBrakerManager.class, "HelmbrakerManager", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntityCaliburManager.class, "CaliburManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"RapidSlashManager"), EntityRapidSlashManager.class, "RapidSlashManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"HelmBrakerManager"), EntityHelmBrakerManager.class, "HelmbrakerManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"CaliburManager"), EntityCaliburManager.class, "CaliburManager", entityId++, this, 250, 10, true);
 
-        EntityRegistry.registerModEntity(EntityGrimGrip.class, "GrimGrip", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(EntityGrimGripKey.class, "GrimGripKey", entityId++, this, 250, 200, false);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"GrimGrip"), EntityGrimGrip.class, "GrimGrip", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"GrimGripKey"), EntityGrimGripKey.class, "GrimGripKey", entityId++, this, 250, 200, false);
 
-        EntityRegistry.registerModEntity(EntitySlashDimension.class, "SlashDimension", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SlashDimension"), EntitySlashDimension.class, "SlashDimension", entityId++, this, 250, 200, true);
 
-        EntityRegistry.registerModEntity(EntityLumberManager.class, "LumberManager", entityId++, this, 250, 200, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"LumberManager"), EntityLumberManager.class, "LumberManager", entityId++, this, 250, 200, true);
 
-        EntityRegistry.registerModEntity(EntityStingerManager.class, "StingerManager", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"StingerManager"), EntityStingerManager.class, "StingerManager", entityId++, this, 250, 10, true);
 
         MinecraftForge.EVENT_BUS.register(new EntityLumberManager.BlockHarvestDropsEventHandler());
 

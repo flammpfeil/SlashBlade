@@ -9,6 +9,8 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -62,10 +64,10 @@ public class ConfigEntityListManager {
 
 
 
-				for(ResourceLocation key : EntityList.field_191308_b.getKeys()){
-					Class cls = EntityList.field_191308_b.getObject(key);
+				for(EntityEntry entry : net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES){
+					Class cls = entry.getEntityClass();
 
-					String name = (String)EntityList.func_191302_a(key);
+					String name = entry.getName();//(String)EntityList.func_191302_a(key);
 					if(name == null || name.length() == 0)
 						continue;
 
