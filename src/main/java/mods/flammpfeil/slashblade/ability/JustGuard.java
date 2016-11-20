@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -76,9 +77,7 @@ public class JustGuard {
 
                 el.setArrowCountInEntity(-1);
 
-                el.motionX = 0;
-                el.motionY = 0;
-                el.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(el,0,0,0);
 
 
                 double yOffset = 0;

@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
@@ -94,9 +95,7 @@ public class ProjectileBarrier {
 
         ItemSlashBlade.damageItem(player.getHeldItemMainhand(), 1, player);
 
-        target.motionX = 0;
-        target.motionY = 0;
-        target.motionZ = 0;
+        ReflectionAccessHelper.setVelocity(target,0,0,0);
         target.setDead();
     }
 }

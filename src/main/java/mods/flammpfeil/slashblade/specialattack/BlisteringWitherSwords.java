@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.EntityWitherSword;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -66,9 +67,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
                 blade.attackTargetEntity(stack, target, player, true);
                 player.onCriticalHit(target);
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 //target.addVelocity(0.0, 0.55D, 0.0);
 
                 if(target instanceof EntityLivingBase){

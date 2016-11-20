@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
@@ -65,9 +66,7 @@ public class EntityWitherSword extends EntitySummonedSwordBase {
                 if (!target.isEntityAlive())
                     ((EntityLivingBase)thrower).heal(1.0F);
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 target.addVelocity(0.0, 0.1D, 0.0);
 
                 ((EntityLivingBase) target).hurtTime = 1;

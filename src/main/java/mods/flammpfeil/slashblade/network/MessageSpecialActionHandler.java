@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.EntityCaliburManager;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,8 +55,10 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                 entityPlayer.fallDistance = 0;
 
                 double playerDist = 2.5;
-                entityPlayer.motionX = -Math.sin(Math.toRadians(entityPlayer.rotationYaw)) * playerDist;
-                entityPlayer.motionZ =  Math.cos(Math.toRadians(entityPlayer.rotationYaw)) * playerDist;
+                ReflectionAccessHelper.setVelocity(entityPlayer,
+                        -Math.sin(Math.toRadians(entityPlayer.rotationYaw)) * playerDist,
+                        entityPlayer.motionY,
+                        Math.cos(Math.toRadians(entityPlayer.rotationYaw)) * playerDist);
 
                 UntouchableTime.setUntouchableTime(entityPlayer, 6, false);
 

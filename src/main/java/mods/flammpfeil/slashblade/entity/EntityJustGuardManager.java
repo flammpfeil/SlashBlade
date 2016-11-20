@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.entity;
 
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.MoverType;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
@@ -119,9 +120,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
         }
 
         if(this.ticksExisted == 1 && this.getThrower() != null) {
-            this.getThrower().motionX = 0;
-            this.getThrower().motionY = 0;
-            this.getThrower().motionZ = 0;
+            ReflectionAccessHelper.setVelocity(this.getThrower(),0,0,0);
 
             if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
                 EntityPlayer player = (EntityPlayer)this.getThrower();

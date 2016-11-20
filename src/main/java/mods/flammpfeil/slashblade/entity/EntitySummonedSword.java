@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.entity;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.MoverType;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -356,9 +357,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                         if(!isDestruction)
                             continue;
                         else{
-                            curEntity.motionX = 0;
-                            curEntity.motionY = 0;
-                            curEntity.motionZ = 0;
+                            ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
                             curEntity.setDead();
 
                             for (int var1 = 0; var1 < 10; ++var1)

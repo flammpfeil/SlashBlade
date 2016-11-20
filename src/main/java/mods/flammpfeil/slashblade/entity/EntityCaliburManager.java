@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.ability.UpthrustBlast;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -96,8 +97,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                 thrower.rotationYaw,
                 thrower.rotationPitch);
 
-        motionX = thrower.motionX;
-        motionZ = thrower.motionZ;
+        ReflectionAccessHelper.setVelocity(this,thrower.motionX,this.motionY,thrower.motionZ);
     }
 
     private static final DataParameter<Boolean> SINGLE_HIT = EntityDataManager.<Boolean>createKey(EntityCaliburManager.class, DataSerializers.BOOLEAN);

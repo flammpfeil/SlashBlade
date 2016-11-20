@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -91,9 +92,7 @@ public class UpthrustBlast {
                     StylishRankManager.setNextAttackType(user ,StylishRankManager.AttackTypes.PhantomSword);
                     blade.getItem().hitEntity(blade,(EntityLivingBase)target,user);
 
-                    target.motionX = 0;
-                    target.motionY = 0;
-                    target.motionZ = 0;
+                    ReflectionAccessHelper.setVelocity(target,0,0,0);
                     target.addVelocity(0.0, 1.0d, 0.0);
 
                     ((EntityLivingBase) target).hurtTime = 1;

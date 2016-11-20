@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.MoverType;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
@@ -129,9 +130,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         }
 
         if(this.thrower != null) {
-            this.thrower.motionX = 0;
-            this.thrower.motionY = 0;
-            this.thrower.motionZ = 0;
+            ReflectionAccessHelper.setVelocity(getThrower(), 0, 0, 0);
 
             if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
                 EntityPlayer player = (EntityPlayer)this.getThrower();

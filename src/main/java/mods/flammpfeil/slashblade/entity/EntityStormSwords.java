@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -332,9 +333,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 target.addVelocity(0.0, 0.8D, 0.0);
 
                 ((EntityLivingBase) target).hurtTime = 1;

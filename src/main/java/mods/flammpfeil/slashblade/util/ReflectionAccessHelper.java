@@ -1,7 +1,10 @@
 package mods.flammpfeil.slashblade.util;
 
+import mods.flammpfeil.slashblade.ability.IllegalActionEnabler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Timer;
@@ -42,5 +45,11 @@ public class ReflectionAccessHelper {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setVelocity(Entity entity, double x, double y, double z){
+        entity.motionX = x;
+        entity.motionY = y;
+        entity.motionZ = z;
     }
 }

@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -206,9 +207,7 @@ public class EntityBladeStand extends Entity {
         */
 
         super.onUpdate();
-
-        this.motionX = 0;
-        this.motionZ = 0;
+        ReflectionAccessHelper.setVelocity(this,0, this.motionY,0);
 
         if(SlashBladeHooks.onEntityBladeStandUpdateHooks(this)){
             return;
@@ -237,9 +236,7 @@ public class EntityBladeStand extends Entity {
         if(!this.worldObj.isAirBlock(pos)
                 && this.worldObj.getBlockState(pos).getBlockHardness(this.worldObj, pos) < 0){
 
-            this.motionX = 0;
-            this.motionZ = 0;
-            this.motionY = 0;
+            ReflectionAccessHelper.setVelocity(this,0,0,0);
             this.setPositionAndUpdate(this.posX,this.posY+1.5,this.posZ);
         }
 

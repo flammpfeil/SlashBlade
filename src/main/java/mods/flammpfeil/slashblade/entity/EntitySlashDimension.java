@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.specialattack.SlashDimension;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -230,9 +231,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                         if(!isDestruction)
                             continue;
                         else{
-                            curEntity.motionX = 0;
-                            curEntity.motionY = 0;
-                            curEntity.motionZ = 0;
+                            ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
                             curEntity.setDead();
 
                             for (int var1 = 0; var1 < 10; ++var1)

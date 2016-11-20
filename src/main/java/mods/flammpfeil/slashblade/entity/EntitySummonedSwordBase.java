@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.entity;
 import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.MoverType;
@@ -468,9 +469,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
                         }
 
-                        ridingEntity.motionX = 0;
-                        ridingEntity.motionY = 0;
-                        ridingEntity.motionZ = 0;
+                        ReflectionAccessHelper.setVelocity(ridingEntity, 0, 0, 0);
                         ridingEntity.addVelocity(0.0, 0.1D, 0.0);
 
                         ((EntityLivingBase) ridingEntity).hurtTime = 1;
@@ -651,9 +650,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }
 
         if(isDestruction){
-            target.motionX = 0;
-            target.motionY = 0;
-            target.motionZ = 0;
+            ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
             target.setDead();
 
             for (int var1 = 0; var1 < 10; ++var1)
@@ -693,9 +690,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 target.addVelocity(0.0, 0.1D, 0.0);
 
                 ((EntityLivingBase) target).hurtTime = 1;
@@ -716,9 +711,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 target.addVelocity(0.0, 0.1D, 0.0);
 
                 ((EntityLivingBase) target).hurtTime = 1;

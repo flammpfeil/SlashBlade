@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.MoverType;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
@@ -127,9 +128,7 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
         }
 
         if(this.ticksExisted == 1 && this.getThrower() != null) {
-            this.getThrower().motionX = 0;
-            this.getThrower().motionY = 0;
-            this.getThrower().motionZ = 0;
+            ReflectionAccessHelper.setVelocity(this.getThrower(), 0, 0, 0);
 
             if(this.getThrower() != null){
                 this.getThrower().playSound(SoundEvents.ENTITY_BLAZE_HURT, 1.0F, 1.0F);
@@ -208,9 +207,7 @@ public class EntitySakuraEndManager extends Entity implements IThrowableEntity {
             if(!isDestruction)
                 continue;
             else{
-                curEntity.motionX = 0;
-                curEntity.motionY = 0;
-                curEntity.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
                 curEntity.setDead();
 
                 for (int var1 = 0; var1 < 10; ++var1)

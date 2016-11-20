@@ -432,9 +432,7 @@ public class ItemSlashBlade extends ItemSword {
         switch (comboSec) {
             case RisingStar:
                 target.onGround = false;
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 target.addVelocity(0.0, 0.6D, 0.0);
 
                 setDaunting(target);
@@ -442,9 +440,7 @@ public class ItemSlashBlade extends ItemSword {
 
             case Kiriage:
                 target.onGround = false;
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 target.addVelocity(0.0, 0.6D, 0.0);
 
                 setDaunting(target);
@@ -468,9 +464,7 @@ public class ItemSlashBlade extends ItemSword {
             case Stinger: {
                 setDaunting(target);
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 break;
             }
             case HiraTuki:
@@ -485,9 +479,7 @@ public class ItemSlashBlade extends ItemSword {
                 if(!(0 < knockbackFactor))
                     knockbackFactor = 1.5f;
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 target.addVelocity(
                         (double) (-MathHelper.sin(user.rotationYaw * (float) Math.PI / 180.0F) * (float) knockbackFactor * 0.5F),
                         0.2D,
@@ -510,9 +502,7 @@ public class ItemSlashBlade extends ItemSword {
             case SReturnEdge:
             case SSlashBlade:
             case Iai:
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
 
                 if(!target.onGround){
 
@@ -532,9 +522,7 @@ public class ItemSlashBlade extends ItemSword {
             //AerialRave
             case ASlashEdge:
             case AKiriorosi:
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
 
             {
 
@@ -550,9 +538,7 @@ public class ItemSlashBlade extends ItemSword {
 
             break;
             case AKiriage:
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
 
                 target.addVelocity(0.0, 0.7D, 0.0);
 
@@ -560,9 +546,7 @@ public class ItemSlashBlade extends ItemSword {
 
                 break;
             case AKiriorosiFinish:
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
 
                 target.fallDistance += 4;
 
@@ -578,9 +562,7 @@ public class ItemSlashBlade extends ItemSword {
                 //==================================
 
             case HelmBraker:
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
 
                 target.fallDistance += 5;
 
@@ -598,9 +580,7 @@ public class ItemSlashBlade extends ItemSword {
             case Saya1:
             case Saya2:
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
 
                 setDaunting(target);
                 setArmorDrop(stack,target);
@@ -609,9 +589,7 @@ public class ItemSlashBlade extends ItemSword {
             case SlashDim:
 
 
-                target.motionX = 0;
-                target.motionY = 0;
-                target.motionZ = 0;
+                ReflectionAccessHelper.setVelocity(target, 0, 0, 0);
                 /*
                 int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
                 if(0 < level){
@@ -946,9 +924,11 @@ public class ItemSlashBlade extends ItemSword {
 
                 if(!player.onGround)
                     playerDist *= 0.35f;
-                player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
-                player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
-                player.isAirBorne = true;
+                ReflectionAccessHelper.setVelocity(player,
+                        -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist,
+                        player.motionY,
+                        Math.cos(Math.toRadians(player.rotationYaw)) * playerDist);
+                //player.isAirBorne = true;
                 player.velocityChanged = true;
                 //player.onGround = false;
 
@@ -2778,9 +2758,7 @@ public class ItemSlashBlade extends ItemSword {
                 if(!isDestruction)
                     continue;
                 else{
-                    curEntity.motionX = 0;
-                    curEntity.motionY = 0;
-                    curEntity.motionZ = 0;
+                    ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
                     curEntity.setDead();
 
                     for (int var1 = 0; var1 < 10; ++var1)

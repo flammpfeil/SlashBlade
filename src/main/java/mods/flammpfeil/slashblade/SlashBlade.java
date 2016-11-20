@@ -12,11 +12,13 @@ import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -47,6 +49,9 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.AbstractLogger;
+import org.apache.logging.log4j.spi.AbstractLoggerWrapper;
 
 import java.util.*;
 
@@ -407,6 +412,7 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(new PlayerDropsEventHandler());
 
         MinecraftForge.EVENT_BUS.register(new MoveImputHandler());
+        MinecraftForge.EVENT_BUS.register(new IllegalActionEnabler());
 
         InitEventBus.register(new NamedBladeManager());
 

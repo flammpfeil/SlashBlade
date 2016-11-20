@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.ability.UpthrustBlast;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -204,8 +205,8 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         }
 
         if(1 < ticksExisted && getThrower() != null){
-            getThrower().motionX = 0;
-            getThrower().motionZ = 0;
+
+            ReflectionAccessHelper.setVelocity(getThrower(), 0, getThrower().motionY, 0);
             getThrower().moveEntity(MoverType.SELF, 0,-1.5,0);
             //getThrower().setPosition(getThrower().posX,this.posY,getThrower().posZ);
 

@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.ability.UpthrustBlast;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -187,9 +188,7 @@ public class EntityRapidSlashManager extends Entity implements IThrowableEntity 
                         if(!isDestruction)
                             continue;
                         else{
-                            curEntity.motionX = 0;
-                            curEntity.motionY = 0;
-                            curEntity.motionZ = 0;
+                            ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
                             curEntity.setDead();
 
                             for (int var1 = 0; var1 < 10; ++var1)

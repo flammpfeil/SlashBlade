@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -157,8 +158,10 @@ public class EntityStingerManager extends Entity implements IThrowableEntity {
                 double playerDist = 1.5;
                 if(!owner.onGround)
                     playerDist *= 0.35f;
-                owner.motionX = -Math.sin(Math.toRadians(owner.rotationYaw)) * playerDist;
-                owner.motionZ =  Math.cos(Math.toRadians(owner.rotationYaw)) * playerDist;
+                ReflectionAccessHelper.setVelocity(owner,
+                        -Math.sin(Math.toRadians(owner.rotationYaw)) * playerDist,
+                        owner.motionY,
+                        Math.cos(Math.toRadians(owner.rotationYaw)) * playerDist);
 
                 UntouchableTime.setUntouchableTime(owner, 5, false);
             }
@@ -227,9 +230,7 @@ public class EntityStingerManager extends Entity implements IThrowableEntity {
                         if(!isDestruction)
                             continue;
                         else{
-                            curEntity.motionX = 0;
-                            curEntity.motionY = 0;
-                            curEntity.motionZ = 0;
+                            ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
                             curEntity.setDead();
 
                             for (int var1 = 0; var1 < 10; ++var1)

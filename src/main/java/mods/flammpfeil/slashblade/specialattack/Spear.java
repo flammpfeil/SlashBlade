@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.specialattack;
 import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.EntitySpearManager;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
@@ -34,8 +35,10 @@ public class Spear extends SpecialAttackBase {
 
         if(!player.onGround)
             playerDist *= 0.35f;
-        player.motionX = -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist;
-        player.motionZ =  Math.cos(Math.toRadians(player.rotationYaw)) * playerDist;
+        ReflectionAccessHelper.setVelocity(player,
+                -Math.sin(Math.toRadians(player.rotationYaw)) * playerDist,
+                player.motionY,
+                Math.cos(Math.toRadians(player.rotationYaw)) * playerDist);
 
         if(!world.isRemote){
 
