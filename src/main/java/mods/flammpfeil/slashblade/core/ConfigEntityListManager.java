@@ -104,11 +104,10 @@ public class ConfigEntityListManager {
 								|| instance instanceof EntityTNTPrimed
 								|| instance instanceof EntityFireball
 								|| instance instanceof IThrowableEntity){
-							//allways destruction
-						}else{
-							destructableTargets.put(cls.getSimpleName(), destructable);
-
+							destructable = true;
 						}
+
+						destructableTargets.put(cls.getSimpleName(), destructable);
 
 					}
 

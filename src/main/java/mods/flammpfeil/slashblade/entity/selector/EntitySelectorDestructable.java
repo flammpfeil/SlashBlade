@@ -24,15 +24,14 @@ public final class EntitySelectorDestructable implements Predicate<Entity> {
     public boolean apply(Entity input) {
         boolean result = false;
 
-        if (input instanceof IProjectile
+        String className = input.getClass().getSimpleName();
+        if (SlashBlade.manager.destructableTargets.containsKey(className))
+            result = input.isEntityAlive() && SlashBlade.manager.destructableTargets.get(className);
+        else if (input instanceof IProjectile
                 || input instanceof EntityTNTPrimed
                 || input instanceof EntityFireball
                 || input instanceof IThrowableEntity) {
             result = input.isEntityAlive();
-        } else {
-            String className = input.getClass().getSimpleName();
-            if (SlashBlade.manager.destructableTargets.containsKey(className) && SlashBlade.manager.destructableTargets.get(className))
-                result = input.isEntityAlive();
         }
 
         return result;
