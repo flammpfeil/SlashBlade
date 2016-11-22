@@ -2971,6 +2971,8 @@ public class ItemSlashBlade extends ItemSword {
         NBTTagCompound tag = getItemTagCompound(stack);
         ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
+        ItemStack copy = stack.copy();
+
         boolean imotal = !blade.isDestructable(stack);
         if(imotal)
             stack.func_190920_e(2);
@@ -2981,9 +2983,10 @@ public class ItemSlashBlade extends ItemSword {
         boolean doDrop = stack.func_190926_b(); //isNull
 
         if(imotal){
+            doDrop = stack.func_190916_E() == 1;
             stack.func_190920_e(1);
 
-            if(stack.getItemDamage() >= stack.getMaxDamage()) {
+            if(doDrop) {
                 boolean setBroken = true;
 
                 if (!blade.isDestructable(stack)) {
@@ -3016,8 +3019,8 @@ public class ItemSlashBlade extends ItemSword {
             }
         }
 
-        if(doDrop && !IsBroken.get(tag))
-            blade.dropItemDestructed(user, stack);
+        if(doDrop && !IsBroken.get(getItemTagCompound(copy)))
+            blade.dropItemDestructed(user, copy);
     }
 
     public void attackTargetEntity(ItemStack stack, Entity target, EntityPlayer player, Boolean isRightClick){
