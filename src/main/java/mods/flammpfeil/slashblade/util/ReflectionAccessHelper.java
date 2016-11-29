@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.util;
 
+import mods.flammpfeil.slashblade.SlashBlade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -29,7 +30,7 @@ public class ReflectionAccessHelper {
         ReflectionHelper.setPrivateValue(Entity.class, entity, ticks, "fire", "field_70151_c");
     }
 
-    static public ItemStack emptyStack = new ItemStack(Blocks.AIR);
+    static public ItemStack emptyStack = new ItemStack(SlashBlade.proudSoul,0);
 
     public static ItemStack nullOr(ItemStack stack){
         if(stack == null)
@@ -42,7 +43,7 @@ public class ReflectionAccessHelper {
         if(stack == null)
             return true;
 
-        if(stack.isItemEqual(emptyStack))
+        if(ItemStack.areItemStacksEqual(stack, emptyStack))
             return true;
 
         return false;
