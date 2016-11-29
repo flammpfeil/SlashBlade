@@ -2,6 +2,8 @@ package mods.flammpfeil.slashblade.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Timer;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,5 +27,24 @@ public class ReflectionAccessHelper {
 
     public static void setFire(Entity entity, int ticks) {
         ReflectionHelper.setPrivateValue(Entity.class, entity, ticks, "fire", "field_70151_c");
+    }
+
+    static public ItemStack emptyStack = new ItemStack(Blocks.AIR);
+
+    public static ItemStack nullOr(ItemStack stack){
+        if(stack == null)
+            return emptyStack;
+
+        return stack;
+    }
+
+    public static boolean isEmpty(ItemStack stack){
+        if(stack == null)
+            return true;
+
+        if(stack.isItemEqual(emptyStack))
+            return true;
+
+        return false;
     }
 }

@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -54,9 +55,9 @@ public class EntityBladeStand extends Entity {
     @Override
     protected void entityInit() {
         //this.getDataManager().register(WatchIndexBlade, SlashBlade.getCustomBlade(SlashBlade.modid,"flammpfeil.slashblade.named.muramasa"));
-        this.getDataManager().register(WatchIndexBlade, Optional.<ItemStack>absent()); //ItemStack
-        this.getDataManager().register(WatchIndexFlipState, 0);
-        this.getDataManager().register(WatchIndexStandType, 0);
+        this.getDataManager().register(WatchIndexBlade, Optional.fromNullable(ReflectionAccessHelper.nullOr(null))); //ItemStack
+        this.getDataManager().register(WatchIndexFlipState, Integer.valueOf(0));
+        this.getDataManager().register(WatchIndexStandType, Integer.valueOf(0));
     }
 
 
@@ -68,7 +69,7 @@ public class EntityBladeStand extends Entity {
             if(2 <= value)
                 value = 0;
         }
-        this.getDataManager().set(WatchIndexFlipState,value);
+        this.getDataManager().set(WatchIndexFlipState,Integer.valueOf(value));
     }
     public void doFlip(){
         setFlip(Math.abs((getFlip() + 1) % 4));
@@ -101,14 +102,15 @@ public class EntityBladeStand extends Entity {
         return this.getDataManager().get(WatchIndexStandType);
     }
     public void setStandType(int value){
-        this.getDataManager().set(WatchIndexStandType,value);
+        this.getDataManager().set(WatchIndexStandType,Integer.valueOf(value));
     }
     public static StandType getType(EntityBladeStand e){
         return StandType.getType(e.getStandType());
     }
 
     public ItemStack getBlade(){
-        return this.getDataManager().get(WatchIndexBlade).orNull();
+        ItemStack stack = this.getDataManager().get(WatchIndexBlade).orNull();
+        return ReflectionAccessHelper.isEmpty(stack) ? null : stack;
     }
     public void setBlade(ItemStack blade){
         if(blade != null && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
@@ -121,7 +123,7 @@ public class EntityBladeStand extends Entity {
             //ItemSlashBlade.PrevExp.remove(tag);
         }
 
-        this.getDataManager().set(WatchIndexBlade, Optional.fromNullable(blade));
+        this.getDataManager().set(WatchIndexBlade, Optional.fromNullable(ReflectionAccessHelper.nullOr(blade)));
         this.getDataManager().setDirty(WatchIndexBlade);
     }
     public boolean hasBlade(){
