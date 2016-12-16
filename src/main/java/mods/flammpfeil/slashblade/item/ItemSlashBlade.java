@@ -1802,7 +1802,13 @@ public class ItemSlashBlade extends ItemSword {
 		if(!isCurrent && !par2World.isRemote){
 			if(swordType.contains(SwordType.Bewitched) && !swordType.contains(SwordType.NoScabbard) && 0 < curDamage && par2World.getTotalWorldTime() % 20 == 0){
 
-				int idx = Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
+				int idx = 0; //Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
+
+				for(ItemStack tmp : el.inventory.mainInventory)
+				    if(ItemStack.areItemStacksEqual(tmp, sitem))
+				        break;
+				    else
+                        idx++;
 
                 boolean doMaterialRepair = false;
 
