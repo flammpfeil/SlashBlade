@@ -41,7 +41,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
         if(entityPlayer == null) return null;
 
         ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack.func_190926_b()) return null;
+        if(stack.isEmpty()) return null;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return null;
 
         switch(message.mode){
@@ -67,8 +67,8 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                 ItemSlashBlade blade = (ItemSlashBlade) stack.getItem();
                 blade.doSwingItem(stack, entityPlayer);
 
-                if (!entityPlayer.worldObj.isRemote) {
-                    EntityCaliburManager mgr = new EntityCaliburManager(entityPlayer.worldObj, entityPlayer, false);
+                if (!entityPlayer.world.isRemote) {
+                    EntityCaliburManager mgr = new EntityCaliburManager(entityPlayer.world, entityPlayer, false);
                     if (mgr != null) {
                         mgr.setLifeTime(14);
 
@@ -88,13 +88,13 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                 ItemSlashBlade blade = (ItemSlashBlade) stack.getItem();
                 blade.doSwingItem(stack, entityPlayer);
 
-                if (!entityPlayer.worldObj.isRemote) {
+                if (!entityPlayer.world.isRemote) {
                     AxisAlignedBB bb = entityPlayer.getEntityBoundingBox();
                     bb = bb.expand(4, 0, 4);
 
                     bb = bb.addCoord(entityPlayer.motionX, entityPlayer.motionY, entityPlayer.motionZ);
 
-                    List<Entity> list = entityPlayer.worldObj.getEntitiesInAABBexcluding(entityPlayer, bb, EntitySelectorAttackable.getInstance());
+                    List<Entity> list = entityPlayer.world.getEntitiesInAABBexcluding(entityPlayer, bb, EntitySelectorAttackable.getInstance());
 
                     StylishRankManager.setNextAttackType(entityPlayer, StylishRankManager.AttackTypes.RapidSlash);
 
@@ -107,7 +107,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                         } else {
                             DamageSource ds = new EntityDamageSource("mob", entityPlayer);
                             curEntity.attackEntityFrom(ds, 10);
-                            if (!stack.func_190926_b() && curEntity instanceof EntityLivingBase)
+                            if (!stack.isEmpty() && curEntity instanceof EntityLivingBase)
                                 ((ItemSlashBlade) stack.getItem()).hitEntity(stack, (EntityLivingBase) curEntity, (EntityLivingBase) entityPlayer);
                         }
                     }

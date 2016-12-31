@@ -124,7 +124,7 @@ public class EntityGrimGripKey extends Entity {
         }
 
         /*
-        List<EntityLivingBase> list = this.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox());
+        List<EntityLivingBase> list = this.world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox());
 
         if (!list.isEmpty())
         {
@@ -141,9 +141,9 @@ public class EntityGrimGripKey extends Entity {
     public boolean hitByEntity(Entity entityIn) {
 
         if(entityIn instanceof EntityLivingBase
-                && ((EntityLivingBase) entityIn).getHeldItemMainhand().func_190926_b()
+                && ((EntityLivingBase) entityIn).getHeldItemMainhand().isEmpty()
                 && entityIn.isSneaking()
-                && !entityIn.worldObj.isRemote){
+                && !entityIn.world.isRemote){
 
             this.setDead();
 
@@ -193,15 +193,15 @@ public class EntityGrimGripKey extends Entity {
                 removeGrip();
         }
 
-        if(!this.worldObj.isRemote && this.grip == null && this.interval <= 0){
-            EntityGrimGrip newGrip = new EntityGrimGrip(this.worldObj);
+        if(!this.world.isRemote && this.grip == null && this.interval <= 0){
+            EntityGrimGrip newGrip = new EntityGrimGrip(this.world);
             BlockPos pos = getGrimGripPos();
             newGrip.setPositionAndRotation(pos.getX() + 0.5 ,pos.getY() + 0.5 ,pos.getZ() + 0.5, newGrip.rotationYaw, newGrip.rotationPitch);
             newGrip.setLifeTime(getLifeTime()); // 5sec
             newGrip.ticksExisted = 0;
             newGrip.setGlowing(true);
 
-            if(this.worldObj.spawnEntityInWorld(newGrip)) {
+            if(this.world.spawnEntity(newGrip)) {
                 this.grip = newGrip;
             }
         }

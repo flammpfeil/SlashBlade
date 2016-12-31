@@ -73,10 +73,10 @@ public class BladeFirstPersonRender {
             return;
         }
 
-        EntityPlayerSP player = mc.thePlayer;
+        EntityPlayerSP player = mc.player;
 
         ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (stack.func_190926_b()) return;
+        if (stack.isEmpty()) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
@@ -166,7 +166,7 @@ public class BladeFirstPersonRender {
 
 
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
-        if (stack.func_190926_b()) return;
+        if (stack.isEmpty()) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
@@ -223,7 +223,7 @@ public class BladeFirstPersonRender {
 
     private void func_178109_a(AbstractClientPlayer clientPlayer)
     {
-        int i = Minecraft.getMinecraft().theWorld.getCombinedLight(new BlockPos(clientPlayer.posX, clientPlayer.posY + (double)clientPlayer.getEyeHeight(), clientPlayer.posZ), 0);
+        int i = Minecraft.getMinecraft().world.getCombinedLight(new BlockPos(clientPlayer.posX, clientPlayer.posY + (double)clientPlayer.getEyeHeight(), clientPlayer.posZ), 0);
         float f = (float)(i & 65535);
         float f1 = (float)(i >> 16);
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
@@ -236,8 +236,8 @@ public class BladeFirstPersonRender {
     }
 
     private void func_178105_d(float p_178105_1_) {
-        float f = -0.4F * MathHelper.sin(MathHelper.sqrt_float(p_178105_1_) * (float) Math.PI);
-        float f1 = 0.2F * MathHelper.sin(MathHelper.sqrt_float(p_178105_1_) * (float) Math.PI * 2.0F);
+        float f = -0.4F * MathHelper.sin(MathHelper.sqrt(p_178105_1_) * (float) Math.PI);
+        float f1 = 0.2F * MathHelper.sin(MathHelper.sqrt(p_178105_1_) * (float) Math.PI * 2.0F);
         float f2 = -0.2F * MathHelper.sin(p_178105_1_ * (float) Math.PI);
         GlStateManager.translate(f, f1, f2);
     }
@@ -247,7 +247,7 @@ public class BladeFirstPersonRender {
         GlStateManager.translate(0.0F, equipProgress * -0.6F, 0.0F);
         GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
         float f = MathHelper.sin(swingProgress * swingProgress * (float) Math.PI);
-        float f1 = MathHelper.sin(MathHelper.sqrt_float(swingProgress) * (float) Math.PI);
+        float f1 = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float) Math.PI);
         GlStateManager.rotate(f * -20.0F, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(f1 * -20.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.rotate(f1 * -80.0F, 1.0F, 0.0F, 0.0F);
@@ -281,7 +281,7 @@ public class BladeFirstPersonRender {
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
         ItemStack offhand = entity.getHeldItem(EnumHand.OFF_HAND);
 
-        if (stack.func_190926_b()) return;
+        if (stack.isEmpty()) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
@@ -331,7 +331,7 @@ public class BladeFirstPersonRender {
         ResourceLocationRaw offHandResourceTexture = null;
         boolean offhandIsBroken = false;
         int offhandColor = 0x3333FF;
-        if(!offhand.func_190926_b() && (offhand.getItem() instanceof ItemSlashBlade)){
+        if(!offhand.isEmpty() && (offhand.getItem() instanceof ItemSlashBlade)){
 
             ItemSlashBlade offhandItemBlade = ((ItemSlashBlade) offhand.getItem());
             offhandModel = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(offhand));
@@ -435,7 +435,7 @@ public class BladeFirstPersonRender {
             int handsLoop = 1;
             if(combo.mainHandCombo != null){
                 handsLoop = 2;
-                if(!offhand.func_190926_b() && offhand.getItem() instanceof ItemSlashBlade)
+                if(!offhand.isEmpty() && offhand.getItem() instanceof ItemSlashBlade)
                     doOffhandRender = true;
             }
 

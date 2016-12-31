@@ -32,13 +32,13 @@ public class AirTrick {
 
         if(entityId == 0) return false;
 
-        Entity lastHitSS = entityPlayer.worldObj.getEntityByID(entityId);
+        Entity lastHitSS = entityPlayer.world.getEntityByID(entityId);
 
         if(lastHitSS == null) return false;
         if(!(lastHitSS instanceof EntitySummonedSwordBase)) return false;
         if(lastHitSS.isDead) return false;
 
-        if(lastHitSS.worldObj.getTotalWorldTime() < lastHitSS.getEntityData().getLong(NextAirTrick))
+        if(lastHitSS.world.getTotalWorldTime() < lastHitSS.getEntityData().getLong(NextAirTrick))
             return false;
 
         Entity target = ((EntitySummonedSwordBase) lastHitSS).getRidingEntity();
@@ -47,7 +47,7 @@ public class AirTrick {
             target = lastHitSS;
         else{
             ItemStack blade = entityPlayer.getHeldItemMainhand();
-            if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBlade){
+            if(!blade.isEmpty() && blade.getItem() instanceof ItemSlashBlade){
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                 int lockonId = ItemSlashBlade.TargetEntityId.get(tag);
 
@@ -92,15 +92,15 @@ public class AirTrick {
 
         if(teleported){
             //lastHitSS.setDead();
-            lastHitSS.getEntityData().setLong(NextAirTrick,lastHitSS.worldObj.getTotalWorldTime() + AirHikeInterval);
-            //entityPlayer.worldObj.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
+            lastHitSS.getEntityData().setLong(NextAirTrick,lastHitSS.world.getTotalWorldTime() + AirHikeInterval);
+            //entityPlayer.world.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
 
-            entityPlayer.worldObj.playSound((EntityPlayer)null, entityPlayer.prevPosX, entityPlayer.prevPosY, entityPlayer.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, entityPlayer.getSoundCategory(), 1.0F, 1.0F);
+            entityPlayer.world.playSound((EntityPlayer)null, entityPlayer.prevPosX, entityPlayer.prevPosY, entityPlayer.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, entityPlayer.getSoundCategory(), 1.0F, 1.0F);
             entityPlayer.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
 
             if(!(target instanceof EntitySummonedSwordBase)){
                 ItemStack blade = entityPlayer.getHeldItemMainhand();
-                if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBlade){
+                if(!blade.isEmpty() && blade.getItem() instanceof ItemSlashBlade){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                     ItemSlashBlade.TargetEntityId.set(tag,target.getEntityId());
                 }
@@ -116,11 +116,11 @@ public class AirTrick {
     {
         AxisAlignedBB bb = setPosition(target, pos.xCoord, pos.yCoord, pos.zCoord);
 
-        return /*!target.worldObj.isAnyLiquid(target.getEntityBoundingBox()) && */target.worldObj.getCollisionBoxes(target, bb).isEmpty() /*&& target.worldObj.checkNoEntityCollision(bb, target)*/;
+        return /*!target.world.isAnyLiquid(target.getEntityBoundingBox()) && */target.world.getCollisionBoxes(target, bb).isEmpty() /*&& target.world.checkNoEntityCollision(bb, target)*/;
 
-        //List blockCollidList = target.worldObj.getCollidingBoundingBoxes(target, bb);
+        //List blockCollidList = target.world.getCollidingBoundingBoxes(target, bb);
 
-        //return /*target.worldObj.checkNoEntityCollision(bb) && */blockCollidList.isEmpty();// && !target.worldObj.isAnyLiquid(bb);
+        //return /*target.world.checkNoEntityCollision(bb) && */blockCollidList.isEmpty();// && !target.world.isAnyLiquid(bb);
     }
 
     static private AxisAlignedBB setPosition(Entity target, double x, double y, double z)
@@ -134,10 +134,10 @@ public class AirTrick {
 
         if(!doAirTrick(player)){
 
-            if(player.worldObj.isRemote) return;
+            if(player.world.isRemote) return;
 
             ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-            if(stack.func_190926_b()) return;
+            if(stack.isEmpty()) return;
             if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
             ItemSlashBlade slashBlade = (ItemSlashBlade)stack.getItem();
@@ -153,7 +153,7 @@ public class AirTrick {
                 if(0 < level && ItemSlashBlade.ProudSoul.tryAdd(tag,-1,false)){
                     float magicDamage = 1;
 
-                    EntitySummonedSwordAirTrickMarker entitySS = new EntitySummonedSwordAirTrickMarker(player.worldObj, player, magicDamage,90.0f);
+                    EntitySummonedSwordAirTrickMarker entitySS = new EntitySummonedSwordAirTrickMarker(player.world, player, magicDamage,90.0f);
                     if (entitySS != null) {
 
                         entitySS.setInterval(0);
@@ -167,7 +167,7 @@ public class AirTrick {
                             entitySS.setColor(ItemSlashBlade.SummonedSwordColor.get(tag));
 
                         ScheduleEntitySpawner.getInstance().offer(entitySS);
-                        //player.worldObj.spawnEntityInWorld(entitySS);
+                        //player.world.spawnEntity(entitySS);
 
                         if(player instanceof EntityPlayer)
                             AchievementList.triggerAchievement((EntityPlayer) player, "phantomSword");

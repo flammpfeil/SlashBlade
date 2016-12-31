@@ -42,7 +42,7 @@ public class Drive extends SpecialAttackBase {
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
         if(!world.isRemote){
@@ -66,7 +66,7 @@ public class Drive extends SpecialAttackBase {
             if (entityDrive != null) {
                 entityDrive.setInitialSpeed(speed);
                 entityDrive.setLifeTime(lifetime);
-                world.spawnEntityInWorld(entityDrive);
+                world.spawnEntity(entityDrive);
             }
         }
 

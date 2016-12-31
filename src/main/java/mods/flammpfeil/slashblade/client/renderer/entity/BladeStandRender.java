@@ -183,7 +183,7 @@ public class BladeStandRender extends Render{
         }
 
         ItemStack blade = e.getBlade();
-        if(!blade.func_190926_b()){
+        if(!blade.isEmpty()){
             GL11.glPushMatrix();
             GL11.glShadeModel(GL11.GL_SMOOTH);
 

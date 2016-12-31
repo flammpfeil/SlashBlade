@@ -67,7 +67,7 @@ public class BambooMod {
 
         ItemStack katana = SlashBlade.findItemStack("BambooMod","katana",1);
 
-        if(Loader.isModLoaded("BambooMod") && !katana.func_190926_b()){
+        if(Loader.isModLoaded("BambooMod") && !katana.isEmpty()){
             RecipeBambooMod recipe = new BambooMod.RecipeBambooMod();
             SlashBlade.addRecipe("wrap.BambooMod.katana.sample", recipe);
 
@@ -102,16 +102,16 @@ public class BambooMod {
         {
             {
                 ItemStack ps = cInv.getStackInRowAndColumn(2, 0);
-                if(!(!ps.func_190926_b() && ps.isItemEqual(proudSoul)))
+                if(!(!ps.isEmpty() && ps.isItemEqual(proudSoul)))
                     return false;
 
                 ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
-                if(!(!sc.func_190926_b() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
+                if(!(!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
                     return false;
 
 
                 ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-                if(!(!target.func_190926_b() && target.getItem().equals(katana.getItem())))
+                if(!(!target.isEmpty() && target.getItem().equals(katana.getItem())))
                     return false;
 
                 return true;
@@ -122,11 +122,11 @@ public class BambooMod {
         public ItemStack getCraftingResult(InventoryCrafting cInv)
         {
             ItemStack scabbard = cInv.getStackInRowAndColumn(1, 1);
-            if(scabbard.func_190926_b()) return ItemStack.field_190927_a;
+            if(scabbard.isEmpty()) return ItemStack.EMPTY;
             scabbard = scabbard.copy();
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
-            if(target.func_190926_b()) return ItemStack.field_190927_a;
+            if(target.isEmpty()) return ItemStack.EMPTY;
             target = target.copy();
 
 
@@ -164,7 +164,7 @@ public class BambooMod {
 
             for(ItemStack stack : stacks){
                 if(stack.getItem().equals(katana.getItem())) {
-                    stack = ItemStack.field_190927_a;
+                    stack = ItemStack.EMPTY;
                     break;
                 }
             }

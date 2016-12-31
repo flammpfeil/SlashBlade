@@ -27,7 +27,7 @@ public class StylishRankRenderer {
         long time;
 
         mc = FMLClientHandler.instance().getClient();
-        World world = mc.theWorld;
+        World world = mc.world;
         if (event.phase == TickEvent.Phase.START || !(Minecraft.getMinecraft().getRenderViewEntity() instanceof EntityPlayer))
             return;
 
@@ -74,7 +74,7 @@ public class StylishRankRenderer {
         mc.renderEngine.bindTexture(RankImg);
 
         long lastUpdate = StylishRankManager.LastRankPointUpdate.get(player.getEntityData());
-        long now = player.worldObj.getTotalWorldTime();
+        long now = player.world.getTotalWorldTime();
 
         boolean showTextRank = false;
         if(now < lastUpdate + 20*3)

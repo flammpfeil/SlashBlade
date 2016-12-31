@@ -29,11 +29,11 @@ public class LockonCircleRender {
 
     @SubscribeEvent
     public void onRenderLiving(RenderWorldLastEvent event){
-        EntityLivingBase player = Minecraft.getMinecraft().thePlayer;
+        EntityLivingBase player = Minecraft.getMinecraft().player;
         if(player == null) return;
 
         ItemStack stack = player.getHeldItemMainhand();
-        if(stack.func_190926_b()) return;
+        if(stack.isEmpty()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
@@ -41,7 +41,7 @@ public class LockonCircleRender {
         int entityId = ItemSlashBlade.TargetEntityId.get(tag);
         if(entityId == 0) return;
 
-        Entity target = player.worldObj.getEntityByID(entityId);
+        Entity target = player.world.getEntityByID(entityId);
         if(target == null) return;
         if(!(target instanceof EntityLivingBase)) return;
 

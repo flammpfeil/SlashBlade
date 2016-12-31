@@ -82,7 +82,7 @@ public class Koseki {
             ItemStack blade = SlashBlade.getCustomBlade(name);
 
             Achievement startParent = net.minecraft.stats.AchievementList.SPAWN_WITHER;
-            if(!blade.func_190926_b()){
+            if(!blade.isEmpty()){
                 ItemStack noname = SlashBlade.findItemStack(SlashBlade.modid, "slashbladeNamed", 1);
 
                 NBTTagCompound displayTag = new NBTTagCompound();

@@ -30,6 +30,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -117,7 +119,7 @@ public class ItemProudSoul extends Item {
             EntityBladeStand e = new EntityBladeStand(world);
             e.setStandType(stack.getItemDamage());
             e.setPositionAndRotation(pos.getX() + 0.5 ,pos.getY() + 0.5 ,pos.getZ() + 0.5,Math.round(player.rotationYaw / 45.0f) * 45.0f + 180.0f,e.rotationPitch);
-            world.spawnEntityInWorld(e);
+            world.spawnEntity(e);
 
             AchievementList.triggerAchievement(player,"bladeStand");
 
@@ -150,10 +152,10 @@ public class ItemProudSoul extends Item {
                 e.setGrimGripPos(gripPos);
                 //e.ticksExisted = 0;
                 //e.setGlowing(true);
-                world.spawnEntityInWorld(e);
+                world.spawnEntity(e);
             }
 
-            stack.func_190917_f(-1);
+            stack.shrink(1);
 
             return EnumActionResult.SUCCESS;
         }else if(stack.getItemDamage() == 4 //crystal
@@ -195,7 +197,7 @@ public class ItemProudSoul extends Item {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
 
-        if(player.worldObj.isRemote) return false;
+        if(player.world.isRemote) return false;
 
         boolean using = false;
 
@@ -207,14 +209,14 @@ public class ItemProudSoul extends Item {
             if(stand.hasBlade()){
                 if(stand.isBurning()) {
                     stand.extinguish();
-                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.PLAYERS, 0.5F, 0.5F);
+                    player.world.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.PLAYERS, 0.5F, 0.5F);
                 }else {
                     using = true;
                     stand.setFire(200);
 
                     NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(stand.getBlade());
                     ItemSlashBlade.ProudSoul.add(bladeTag,50);
-                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                    player.world.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
                 }
             }
         }
@@ -229,11 +231,11 @@ public class ItemProudSoul extends Item {
                     using = true;
 
                     bladeTag.setUniqueId("Owner", player.getUniqueID());
-                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5F, 1.0F);using = true;
+                    player.world.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5F, 1.0F);using = true;
 
                     stand.setFire(200);
                     ItemSlashBlade.ProudSoul.add(bladeTag,500);
-                    player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.5F, 0.5F);
+                    player.world.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.5F, 0.5F);
 
                 }else if(player.getServer() != null){
                     boolean hasPerm = bladeTag.getUniqueId("Owner").equals(player.getUniqueID());
@@ -249,7 +251,7 @@ public class ItemProudSoul extends Item {
                         bladeTag.removeTag("OwnerMost");
                         bladeTag.removeTag("OwnerLeast");
                         stand.extinguish();
-                        player.worldObj.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.PLAYERS, 0.5F, 0.5F);
+                        player.world.playSound(null, stand.posX, stand.posY, stand.posZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.PLAYERS, 0.5F, 0.5F);
                     }
                 }
             }
@@ -268,7 +270,7 @@ public class ItemProudSoul extends Item {
                 if(ItemSlashBlade.ProudSoul.tryAdd(bladeTag, -50, false)){
                     player.onEnchantmentCritical(stand);
 
-                    ItemStack bladeSoulCrystal = ItemStack.field_190927_a;
+                    ItemStack bladeSoulCrystal = ItemStack.EMPTY;
 
                     using = true;
 
@@ -289,7 +291,7 @@ public class ItemProudSoul extends Item {
                             bladeSoulCrystal = NamedBladeManager.getNamedSoul(Item.itemRand);
                         }
 
-                        if(bladeSoulCrystal.func_190926_b())
+                        if(bladeSoulCrystal.isEmpty())
                             bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
                     }else if(stack.getItemDamage() == 0)
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
@@ -298,12 +300,12 @@ public class ItemProudSoul extends Item {
 
                     stand.extinguish();
 
-                    bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
+                    bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.world.getTotalWorldTime()));
 
-                    EntityItem entityitem = new EntityItem(stand.worldObj, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
+                    EntityItem entityitem = new EntityItem(stand.world, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
                     entityitem.setDefaultPickupDelay();
                     entityitem.setGlowing(true);
-                    stand.worldObj.spawnEntityInWorld(entityitem);
+                    stand.world.spawnEntity(entityitem);
                 }
 
             }
@@ -419,13 +421,13 @@ public class ItemProudSoul extends Item {
         }
 
         if(using){
-            stack.func_190917_f(-1);
+            stack.shrink(1);
 
             player.renderBrokenItemStack(stack);
 
-            if (stack.func_190916_E() <= 0)
+            if (stack.getCount() <= 0)
             {
-                player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
+                player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
             }
 
 
@@ -457,7 +459,7 @@ public class ItemProudSoul extends Item {
 
                 if(current < timeout){
 
-                    if(entityItem.worldObj.isRemote) {
+                    if(entityItem.world.isRemote) {
 
                         int j = Item.itemRand.nextInt(2) * 2 - 1;
                         int k = Item.itemRand.nextInt(2) * 2 - 1;
@@ -467,7 +469,7 @@ public class ItemProudSoul extends Item {
                         double d3 = (double)(Item.itemRand.nextFloat() * (float)j);
                         double d4 = ((double)Item.itemRand.nextFloat() - 0.5D) * 0.125D;
                         double d5 = (double)(Item.itemRand.nextFloat() * (float)k);
-                        entityItem.worldObj.spawnParticle(EnumParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5, new int[0]);
+                        entityItem.world.spawnParticle(EnumParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5, new int[0]);
                     }
 
                     if(entityItem.getEntityData().hasKey("LPX")) {
@@ -490,8 +492,8 @@ public class ItemProudSoul extends Item {
 
                 if(1000 > Math.abs(current - birth)){
 
-                    entityItem.worldObj.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
-                    entityItem.worldObj.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.25F, 1.25F);
+                    entityItem.world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                    entityItem.world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.25F, 1.25F);
 
                     entityItem.getEntityData().setLong("FloatingTimeout", current + 1000);
 

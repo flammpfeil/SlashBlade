@@ -34,10 +34,10 @@ public class EnemyStep {
         EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
 
-        if(!target.worldObj.isRemote) return;
+        if(!target.world.isRemote) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack.func_190926_b()) return;
+        if(stack.isEmpty()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         EnumSet<ItemSlashBlade.SwordType> swordType = ((ItemSlashBlade)stack.getItem()).getSwordType(stack);
@@ -135,7 +135,7 @@ public class EnemyStep {
     {
         AxisAlignedBB bb = this.getPositionAABB(target, pos);
         bb = bb.expand(1.0, 0.0, 1.0);
-        List<AxisAlignedBB> blockCollidList = target.worldObj.getCollisionBoxes(target, bb);
+        List<AxisAlignedBB> blockCollidList = target.world.getCollisionBoxes(target, bb);
 
         return !blockCollidList.isEmpty();
     }
@@ -154,7 +154,7 @@ public class EnemyStep {
         AxisAlignedBB bb = target.getEntityBoundingBox();
         bb = bb.expand(2.0, 1.5, 2.0);
         bb = bb.offset(0,0.5,0);
-        List<Entity> list = target.worldObj.getEntitiesInAABBexcluding(target, bb, EntitySelectorAttackable.getInstance());
+        List<Entity> list = target.world.getEntitiesInAABBexcluding(target, bb, EntitySelectorAttackable.getInstance());
         if(0 < list.size()){
             Entity enemy = null;
             float distance = 10.0f;
@@ -178,7 +178,7 @@ public class EnemyStep {
         if(target == null) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack.func_190926_b()) return;
+        if(stack.isEmpty()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         target.fallDistance = 0;

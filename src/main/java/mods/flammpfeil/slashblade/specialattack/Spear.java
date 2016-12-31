@@ -24,7 +24,7 @@ public class Spear extends SpecialAttackBase {
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -54,7 +54,7 @@ public class Spear extends SpecialAttackBase {
             EntitySpearManager entityDA = new EntitySpearManager(world, player, false);
             entityDA.setLifeTime(7);
             if (entityDA != null) {
-                world.spawnEntityInWorld(entityDA);
+                world.spawnEntity(entityDA);
             }
         }
 

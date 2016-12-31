@@ -60,7 +60,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
             ItemStack blade = SlashBlade.getCustomBlade(bladename);
             if(blade.getItemDamage() == OreDictionary.WILDCARD_VALUE)
                 blade.setItemDamage(0);
-            if(!blade.func_190926_b()) subItems.add(blade);
+            if(!blade.isEmpty()) subItems.add(blade);
         }
     }
 

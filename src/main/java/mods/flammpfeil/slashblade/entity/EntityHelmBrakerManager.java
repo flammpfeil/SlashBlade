@@ -49,7 +49,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
      */
     protected Entity thrower;
 
-    protected ItemStack blade = ItemStack.field_190927_a;
+    protected ItemStack blade = ItemStack.EMPTY;
 
     /**
      * ★多段Hit防止用List
@@ -83,8 +83,8 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = ItemStack.field_190927_a;
+        if(!blade.isEmpty() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.EMPTY;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -156,7 +156,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
 
 
         this.fallDistance = 30;
-        this.moveEntity(MoverType.SELF, motionX,motionY,motionZ);
+        this.move(MoverType.SELF, motionX,motionY,motionZ);
 
         AxisAlignedBB bb = null;
         ItemSlashBlade.ComboSequence combo = ItemSlashBlade.ComboSequence.None;
@@ -164,9 +164,9 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
             EntityLivingBase owner = (EntityLivingBase)this.getThrower();
 
-            if(blade.func_190926_b()){
+            if(blade.isEmpty()){
                 blade = owner.getHeldItemMainhand();
-                if(blade.func_190926_b() || !(blade.getItem() instanceof ItemSlashBlade))
+                if(blade.isEmpty() || !(blade.getItem() instanceof ItemSlashBlade))
                 {
                     setDead();
                     return;
@@ -182,7 +182,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         }
 
         //■死亡チェック
-        if((!worldObj.isRemote) && (
+        if((!world.isRemote) && (
                 ticksExisted >= getLifeTime()
                 || combo != ItemSlashBlade.ComboSequence.HelmBraker
                 || this.getThrower() == null
@@ -207,19 +207,19 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         if(1 < ticksExisted && getThrower() != null){
 
             ReflectionAccessHelper.setVelocity(getThrower(), 0, getThrower().motionY, 0);
-            getThrower().moveEntity(MoverType.SELF, 0,-1.5,0);
+            getThrower().move(MoverType.SELF, 0,-1.5,0);
             //getThrower().setPosition(getThrower().posX,this.posY,getThrower().posZ);
 
             getThrower().fallDistance = 0;
         }
 
-        if(!worldObj.isRemote)
+        if(!world.isRemote)
         {
 
             {
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
 
                     StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
 
@@ -263,7 +263,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -275,7 +275,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
                     }
                 }
                 if(isSingleHit() || this.ticksExisted % 3 == 0){
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                     list.removeAll(alreadyHitEntity);
 
                     if(isSingleHit())
@@ -283,7 +283,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
 
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.HelmBraker);
 
-                    if(!blade.func_190926_b()){
+                    if(!blade.isEmpty()){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
                             //curEntity.hurtResistantTime = 0;
@@ -295,7 +295,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
                             else{
                                 DamageSource ds = new EntityDamageSource("mob", this.getThrower());
                                 curEntity.attackEntityFrom(ds, 10);
-                                if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase)
+                                if(!blade.isEmpty() && curEntity instanceof EntityLivingBase)
                                     ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                             }
                         }
@@ -306,12 +306,12 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
     }
 
     boolean isLanding(){
-        int j4 = MathHelper.floor_double(this.getThrower().posX);
-        int l4 = MathHelper.floor_double(this.getThrower().posY - 0.20000000298023224D);
-        int i5 = MathHelper.floor_double(this.getThrower().posZ);
+        int j4 = MathHelper.floor(this.getThrower().posX);
+        int l4 = MathHelper.floor(this.getThrower().posY - 0.20000000298023224D);
+        int i5 = MathHelper.floor(this.getThrower().posZ);
         BlockPos blockpos = new BlockPos(j4, l4, i5);
-        IBlockState iblockstate = this.worldObj.getBlockState(blockpos);
-        return !iblockstate.getBlock().isAir(iblockstate, worldObj, blockpos);
+        IBlockState iblockstate = this.world.getBlockState(blockpos);
+        return !iblockstate.getBlock().isAir(iblockstate, world, blockpos);
     }
 
 
@@ -323,16 +323,16 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
             this.handleWaterMovement();
         }
 
-        if (!this.worldObj.isRemote && this.fallDistance > 3.0F && onGroundIn && this.getThrower() != null && this.getThrower() instanceof EntityLivingBase)
+        if (!this.world.isRemote && this.fallDistance > 3.0F && onGroundIn && this.getThrower() != null && this.getThrower() instanceof EntityLivingBase)
         {
-            float f = (float)MathHelper.ceiling_float_int(this.fallDistance - 3.0F);
+            float f = (float)MathHelper.ceil(this.fallDistance - 3.0F);
 
-            if (!state.getBlock().isAir(state, worldObj, pos))
+            if (!state.getBlock().isAir(state, world, pos))
             {
                 double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
                 int i = (int)(150.0D * d0);
-                if (!state.getBlock().addLandingEffects(state, (WorldServer)this.worldObj, pos, state, (EntityLivingBase)this.getThrower(), i))
-                    ((WorldServer)this.worldObj).spawnParticle(EnumParticleTypes.BLOCK_DUST, this.posX, this.posY, this.posZ, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.getStateId(state)});
+                if (!state.getBlock().addLandingEffects(state, (WorldServer)this.world, pos, state, (EntityLivingBase)this.getThrower(), i))
+                    ((WorldServer)this.world).spawnParticle(EnumParticleTypes.BLOCK_DUST, this.posX, this.posY, this.posZ, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.getStateId(state)});
             }
         }
 
@@ -356,8 +356,8 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
     public boolean isOffsetPositionInLiquid(double par1, double par3, double par5)
     {
         //AxisAlignedBB axisalignedbb = this.boundingBox.getOffsetBoundingBox(par1, par3, par5);
-        //List list = this.worldObj.getCollidingBoundingBoxes(this, axisalignedbb);
-        //return !list.isEmpty() ? false : !this.worldObj.isAnyLiquid(axisalignedbb);
+        //List list = this.world.getCollidingBoundingBoxes(this, axisalignedbb);
+        //return !list.isEmpty() ? false : !this.world.isAnyLiquid(axisalignedbb);
         return false;
     }
 

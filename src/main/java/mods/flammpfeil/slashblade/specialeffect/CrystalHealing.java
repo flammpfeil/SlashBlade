@@ -23,8 +23,8 @@ public class CrystalHealing implements ISpecialEffect {
         if(!SpecialEffects.isPlayer(event.getEntityLiving())) return;
         EntityPlayer player = (EntityPlayer) event.getEntityLiving();
 
-        if(player.worldObj.isRemote) return;
-        if((player.worldObj.getTotalWorldTime() & 0xF) != 0xF) return; //16tick cicle
+        if(player.world.isRemote) return;
+        if((player.world.getTotalWorldTime() & 0xF) != 0xF) return; //16tick cicle
 
         ItemStack blade = player.getHeldItem(EnumHand.MAIN_HAND);
         if(!SpecialEffects.isBlade(blade)) return;
@@ -36,7 +36,7 @@ public class CrystalHealing implements ISpecialEffect {
                 return;
         }
 
-        if(player.getActiveItemStack().func_190926_b()) return;
+        if(player.getActiveItemStack().isEmpty()) return;
         if(player.getItemInUseMaxCount() < ItemSlashBlade.RequiredChargeTick) return;
 
         boolean hasBeaconEffect = false;

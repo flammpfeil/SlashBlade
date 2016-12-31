@@ -22,7 +22,7 @@ public class WaveEdge extends SpecialAttackBase {
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -48,14 +48,14 @@ public class WaveEdge extends SpecialAttackBase {
                 EntityDrive entityDrive = new EntityDrive(world, player, magicDamage,false,0);
                 entityDrive.setInitialSpeed(speeds[i]);
                 if (entityDrive != null) {
-                    world.spawnEntityInWorld(entityDrive);
+                    world.spawnEntity(entityDrive);
                 }
             }
             {
                 EntityDrive entityDrive = new EntityDrive(world, player, magicDamage,true,0);
                 entityDrive.setInitialSpeed(0.225f);
                 if (entityDrive != null) {
-                    world.spawnEntityInWorld(entityDrive);
+                    world.spawnEntity(entityDrive);
                 }
             }
         }

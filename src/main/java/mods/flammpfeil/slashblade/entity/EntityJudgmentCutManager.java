@@ -44,7 +44,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
      */
     protected Entity thrower;
 
-    protected ItemStack blade = ItemStack.field_190927_a;
+    protected ItemStack blade = ItemStack.EMPTY;
 
     /**
      * ★多段Hit防止用List
@@ -88,8 +88,8 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         setThrowerEntityID(thrower.getEntityId());
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = ItemStack.field_190927_a;
+        if(!blade.isEmpty() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.EMPTY;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -119,10 +119,10 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         //super.onUpdate();
 
         if(this.thrower == null && this.getThrowerEntityID() != 0){
-            this.thrower = this.worldObj.getEntityByID(this.getThrowerEntityID());
+            this.thrower = this.world.getEntityByID(this.getThrowerEntityID());
         }
 
-        if(this.blade.func_190926_b() && this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
+        if(this.blade.isEmpty() && this.getThrower() != null && this.getThrower() instanceof EntityPlayer){
             EntityPlayer player = (EntityPlayer)this.getThrower();
             ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
             if(stack.getItem() instanceof ItemSlashBlade)
@@ -146,13 +146,13 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                         double d1 = player.getRNG().nextGaussian() * 0.2D;
                         double d2 = player.getRNG().nextGaussian() * 0.2D;
                         double d3 = 16.0D;
-                        this.worldObj.spawnParticle(EnumParticleTypes.SPELL_WITCH
+                        this.world.spawnParticle(EnumParticleTypes.SPELL_WITCH
                                 , player.posX + (double)(player.getRNG().nextFloat() * player.width * 2.0F) - (double)player.width - d0 * d3
                                 , player.posY // + (double)(this.itemRand.nextFloat() * par3Entity.height) - d1 * d3
                                 , player.posZ + (double)(player.getRNG().nextFloat() * player.width * 2.0F) - (double)player.width - d2 * d3, d0, d1, d2);
 
 
-                        /*this.worldObj.spawnParticle("portal",
+                        /*this.world.spawnParticle("portal",
                                 this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
                                 this.posY + this.rand.nextDouble() * (double)this.height - 0.25D,
                                 this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width,
@@ -164,23 +164,23 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
             }
         }
 
-        if(!worldObj.isRemote)
+        if(!world.isRemote)
         {
 
             AxisAlignedBB bb = this.getEntityBoundingBox().offset(0, -this.height / 2, 0);
 
             //足止め
             if(this.ticksExisted == 2 && this.getThrower() != null){
-                List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
+                List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                 list.removeAll(alreadyHitEntity);
 
-                if(!blade.func_190926_b()){
+                if(!blade.isEmpty()){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                     for(Entity curEntity : list){
                         if(curEntity instanceof EntityLivingBase){
                             int stanTicks = 40;
 
-                            if(!curEntity.worldObj.isRemote){
+                            if(!curEntity.world.isRemote){
                                 ((EntityLivingBase) curEntity).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, stanTicks, 30, true,false));
                             }
 
@@ -189,7 +189,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
 
 
                             for(int i = 0; i<5; i++)
-                                this.worldObj.spawnParticle(EnumParticleTypes.PORTAL,
+                                this.world.spawnParticle(EnumParticleTypes.PORTAL,
                                     curEntity.posX + (this.rand.nextDouble() - 0.5D) * (double)curEntity.width,
                                     curEntity.posY + this.rand.nextDouble() * (double)curEntity.height - 0.25D,
                                     curEntity.posZ + (this.rand.nextDouble() - 0.5D) * (double)curEntity.width,
@@ -203,12 +203,12 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
             if(this.ticksExisted == 25 && this.getThrower() != null){
 
 
-                List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
+                List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                 list.removeAll(alreadyHitEntity);
 
                 StylishRankManager.setNextAttackType(this.getThrower(), StylishRankManager.AttackTypes.JudgmentCut);
 
-                if(!blade.func_190926_b()){
+                if(!blade.isEmpty()){
                     NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                     ItemSlashBlade bladeItem = (ItemSlashBlade)blade.getItem();
 
@@ -225,7 +225,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
 
                         for(int i = 0; i < 5;i++){
 
-                            EntityDrive entityDrive = new EntityDrive(this.worldObj, (EntityLivingBase)this.getThrower(), Math.min(1.0f,magicDamage), true,0);
+                            EntityDrive entityDrive = new EntityDrive(this.world, (EntityLivingBase)this.getThrower(), Math.min(1.0f,magicDamage), true,0);
 
 
                             float rotationYaw = curEntity.rotationYaw + 60 * i + (entityDrive.getRand().nextFloat() - 0.5f) * 60;
@@ -256,18 +256,18 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
 
                             entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
                             if (entityDrive != null) {
-                                this.worldObj.spawnEntityInWorld(entityDrive);
+                                this.world.spawnEntity(entityDrive);
                             }
                         }
 
-                        if(!curEntity.worldObj.isRemote){
+                        if(!curEntity.world.isRemote){
                             for(int i = 0; i< 2; i++) {
-                                EntitySlashDimension dim = new EntitySlashDimension(curEntity.worldObj, (EntityLivingBase) getThrower(), 1);
+                                EntitySlashDimension dim = new EntitySlashDimension(curEntity.world, (EntityLivingBase) getThrower(), 1);
                                 if (dim != null) {
                                     dim.setPosition(curEntity.posX + (this.rand.nextFloat() - 0.5) * 5.0, curEntity.posY + curEntity.height * this.rand.nextFloat(), curEntity.posZ + (this.rand.nextFloat() - 0.5) * 5.0);
                                     dim.setLifeTime(10 + i * 3);
                                     dim.setIsSlashDimension(true);
-                                    curEntity.worldObj.spawnEntityInWorld(dim);
+                                    curEntity.world.spawnEntity(dim);
                                 }
                             }
                         }
@@ -281,7 +281,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         //■死亡チェック
         if(ticksExisted >= 30) {
 
-            if(!blade.func_190926_b()){
+            if(!blade.isEmpty()){
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                 ItemSlashBlade bladeItem = (ItemSlashBlade)blade.getItem();
 
@@ -315,8 +315,8 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
     public boolean isOffsetPositionInLiquid(double par1, double par3, double par5)
     {
         //AxisAlignedBB axisalignedbb = this.boundingBox.getOffsetBoundingBox(par1, par3, par5);
-        //List list = this.worldObj.getCollidingBoundingBoxes(this, axisalignedbb);
-        //return !list.isEmpty() ? false : !this.worldObj.isAnyLiquid(axisalignedbb);
+        //List list = this.world.getCollidingBoundingBoxes(this, axisalignedbb);
+        //return !list.isEmpty() ? false : !this.world.isAnyLiquid(axisalignedbb);
         return false;
     }
 
@@ -324,7 +324,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(MoverType moverType, double par1, double par3, double par5) {}
+    public void move(MoverType moverType, double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

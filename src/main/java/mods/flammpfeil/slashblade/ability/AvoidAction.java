@@ -25,7 +25,7 @@ public class AvoidAction {
         if(target == null) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack.func_190926_b()) return;
+        if(stack.isEmpty()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
 
@@ -35,13 +35,13 @@ public class AvoidAction {
     @SideOnly(Side.CLIENT)
     public static void doAvoid() {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayerSP player = mc.thePlayer;
+        EntityPlayerSP player = mc.player;
 
-        long now = mc.thePlayer.worldObj.getTotalWorldTime();
+        long now = mc.player.world.getTotalWorldTime();
 
         long interval = 2;
 
-        long timeout = mc.thePlayer.getEntityData().getLong("SB.AvoidTimeout");
+        long timeout = mc.player.getEntityData().getLong("SB.AvoidTimeout");
 
         if(interval < Math.abs(timeout - now)){
 
@@ -51,8 +51,8 @@ public class AvoidAction {
                 int comboLimit = 3;
 
 
-                int combo = mc.thePlayer.getEntityData().getInteger("SB.AvoidCombo");
-                long comboTimeout = mc.thePlayer.getEntityData().getLong("SB.AvoidComboTimeout");
+                int combo = mc.player.getEntityData().getInteger("SB.AvoidCombo");
+                long comboTimeout = mc.player.getEntityData().getLong("SB.AvoidComboTimeout");
 
                 if(comboInterval < Math.abs(comboTimeout - now)){
                     combo = 0;
@@ -62,21 +62,21 @@ public class AvoidAction {
                     return;
                 }else{
                     combo++;
-                    mc.thePlayer.getEntityData().setInteger("SB.AvoidCombo",combo);
-                    mc.thePlayer.getEntityData().setLong("SB.AvoidComboTimeout",now+comboInterval);
+                    mc.player.getEntityData().setInteger("SB.AvoidCombo",combo);
+                    mc.player.getEntityData().setLong("SB.AvoidComboTimeout",now+comboInterval);
                 }
             }
 
             float speedFactor;
-            if(mc.thePlayer.isSneaking())
+            if(mc.player.isSneaking())
                 speedFactor = 2.8f;
             else
                 speedFactor = 0.8f;
 
-            mc.thePlayer.getEntityData().setLong("SB.AvoidTimeout",now + interval);
+            mc.player.getEntityData().setLong("SB.AvoidTimeout",now + interval);
 
             player.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.7F, 1.6F + (player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.4F);
-            mc.thePlayer.moveRelative(mc.thePlayer.moveStrafing,mc.thePlayer.moveForward,speedFactor);
+            mc.player.moveRelative(mc.player.moveStrafing,mc.player.moveForward,speedFactor);
             mc.playerController.updateController();
             NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 2));
         }

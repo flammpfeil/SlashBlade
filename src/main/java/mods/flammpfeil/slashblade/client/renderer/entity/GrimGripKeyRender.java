@@ -71,8 +71,8 @@ public class GrimGripKeyRender extends Render{
 
         if(entity.isHide()) {
             boolean invisible = true;
-            for(ItemStack stack : Minecraft.getMinecraft().thePlayer.getHeldEquipment()){
-                if(!stack.func_190926_b()
+            for(ItemStack stack : Minecraft.getMinecraft().player.getHeldEquipment()){
+                if(!stack.isEmpty()
                     && (stack.getItem() instanceof ItemProudSoul)
                     && stack.getItemDamage() == 4) {
                     invisible = false;

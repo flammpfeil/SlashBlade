@@ -44,7 +44,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
      */
     protected Entity thrower;
 
-    protected ItemStack blade = ItemStack.field_190927_a;
+    protected ItemStack blade = ItemStack.EMPTY;
 
     /**
      * ★多段Hit防止用List
@@ -74,8 +74,8 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
         setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = ItemStack.field_190927_a;
+        if(!blade.isEmpty() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.EMPTY;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -154,9 +154,9 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
         if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase) {
             EntityLivingBase owner = (EntityLivingBase)this.getThrower();
 
-            if(blade.func_190926_b()){
+            if(blade.isEmpty()){
                 blade = owner.getHeldItemMainhand();
-                if(blade.func_190926_b() || !(blade.getItem() instanceof ItemSlashBlade))
+                if(blade.isEmpty() || !(blade.getItem() instanceof ItemSlashBlade))
                 {
                     setDead();
                     return;
@@ -175,7 +175,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
 
             int targetId = ItemSlashBlade.TargetEntityId.get(tag);
             if(targetId != 0){
-                Entity target = this.worldObj.getEntityByID(targetId);
+                Entity target = this.world.getEntityByID(targetId);
                 if(target != null){
                     double distance = target.getDistanceSqToEntity(this.getThrower());
                     if(distance < 3.0){
@@ -199,12 +199,12 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
             }*/
             owner.motionX = this.motionX = this.motionX * 0.6;
             owner.motionZ = this.motionZ = this.motionZ * 0.6;
-            owner.moveEntity(MoverType.SELF, owner.motionX, 0, owner.motionZ);
+            owner.move(MoverType.SELF, owner.motionX, 0, owner.motionZ);
 
             if(attackTicks == this.ticksExisted){
 
                 /*
-                if(owner.worldObj.isRemote)
+                if(owner.world.isRemote)
                     owner.setPositionAndUpdate(owner.posX, this.posY, owner.posZ);
 */
 
@@ -224,7 +224,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
 
 
         //■死亡チェック
-        if((!worldObj.isRemote) && (
+        if((!world.isRemote) && (
                 ticksExisted >= getLifeTime()
                 || this.getThrower() == null
                 || (this.getThrower() != null && (this.getThrower().onGround
@@ -237,13 +237,13 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
             return;
         }
 
-        if(!worldObj.isRemote)
+        if(!world.isRemote)
         {
 
             {
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
 
                     StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
 
@@ -287,7 +287,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -299,7 +299,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                     }
                 }
                 if(attackTicks > this.ticksExisted && (isSingleHit() || this.ticksExisted % 3 == 0)){
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                     list.removeAll(alreadyHitEntity);
 
                     if(isSingleHit())
@@ -307,7 +307,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
 
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.Calibur);
 
-                    if(!blade.func_190926_b()){
+                    if(!blade.isEmpty()){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
                             curEntity.hurtResistantTime = 0;
@@ -319,7 +319,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
                             else{
                                 DamageSource ds = new EntityDamageSource("mob", this.getThrower());
                                 curEntity.attackEntityFrom(ds, 10);
-                                if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase)
+                                if(!blade.isEmpty() && curEntity instanceof EntityLivingBase)
                                     ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
                             }
                         }
@@ -329,7 +329,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
         }
 
         if(moveTicks < this.ticksExisted && this.getThrower() != null)
-            spawnParticle(this.worldObj, this.getThrower());
+            spawnParticle(this.world, this.getThrower());
 
     }
 
@@ -360,8 +360,8 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
     public boolean isOffsetPositionInLiquid(double par1, double par3, double par5)
     {
         //AxisAlignedBB axisalignedbb = this.boundingBox.getOffsetBoundingBox(par1, par3, par5);
-        //List list = this.worldObj.getCollidingBoundingBoxes(this, axisalignedbb);
-        //return !list.isEmpty() ? false : !this.worldObj.isAnyLiquid(axisalignedbb);
+        //List list = this.world.getCollidingBoundingBoxes(this, axisalignedbb);
+        //return !list.isEmpty() ? false : !this.world.isAnyLiquid(axisalignedbb);
         return false;
     }
 
@@ -369,7 +369,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(MoverType moverType, double par1, double par3, double par5) {}
+    public void move(MoverType moverType, double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

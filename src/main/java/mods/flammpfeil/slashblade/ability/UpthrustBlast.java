@@ -40,7 +40,7 @@ public class UpthrustBlast {
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
-        EntitySummonedSwordBase entitySS = new EntitySummonedSwordBase(user.worldObj, user, 1,0.0f);
+        EntitySummonedSwordBase entitySS = new EntitySummonedSwordBase(user.world, user, 1,0.0f);
         if (entitySS != null) {
             entitySS.getEntityData().setBoolean(UpthrustBlastKey,true);
 
@@ -60,7 +60,7 @@ public class UpthrustBlast {
 
             entitySS.mountEntity(target);
 
-            target.worldObj.spawnEntityInWorld(entitySS);
+            target.world.spawnEntity(entitySS);
 
         }
     }
@@ -71,7 +71,7 @@ public class UpthrustBlast {
 
         AxisAlignedBB bb = user.getEntityBoundingBox();
         bb = bb.expand(20, 5, 20);
-        List<EntitySummonedSwordBase> list = user.worldObj.getEntitiesWithinAABB(EntitySummonedSwordBase.class,bb);
+        List<EntitySummonedSwordBase> list = user.world.getEntitiesWithinAABB(EntitySummonedSwordBase.class,bb);
 
         for(EntitySummonedSwordBase ss : list){
             if(ss == null) continue;
@@ -83,7 +83,7 @@ public class UpthrustBlast {
 
             ss.setDead();
 
-            if(!user.worldObj.isRemote){
+            if(!user.world.isRemote){
                 target.hurtResistantTime = 0;
                 DamageSource ds = new EntityDamageSource("directMagic",user).setDamageBypassesArmor().setMagicDamage().setDamageIsAbsolute();
                 target.attackEntityFrom(ds, list.size());

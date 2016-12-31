@@ -51,15 +51,15 @@ public class EntityWitherSword extends EntitySummonedSwordBase {
     @Override
     protected void attackEntity(Entity target) {
         if(getBurst())
-            this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, false);
+            this.world.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, false);
 
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
             float magicDamage = Math.max(1.0f, AttackLevel);
             target.hurtResistantTime = 0;
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(!blade.func_190926_b() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+            if(!blade.isEmpty() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
                 StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 

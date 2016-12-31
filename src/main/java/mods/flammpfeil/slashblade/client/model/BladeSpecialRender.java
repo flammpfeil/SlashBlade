@@ -30,7 +30,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
     public void renderTileEntityAt(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
         if(te != null) return;
 
-        if(BladeModel.targetStack.func_190926_b())
+        if(BladeModel.targetStack.isEmpty())
             return;
 
         ResourceLocationRaw resourceTexture = BladeModel.itemBlade.getModelTexture(BladeModel.targetStack);

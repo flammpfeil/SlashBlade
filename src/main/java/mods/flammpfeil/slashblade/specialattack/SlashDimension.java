@@ -36,7 +36,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -68,7 +68,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                 ItemSlashBlade.damageItem(stack, 10, player);
             }
 
-            if(!player.worldObj.isRemote) {
+            if(!player.world.isRemote) {
                 int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
                 float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (0.5f + level / 5.0f);
                 EntitySlashDimension dim = new EntitySlashDimension(world, player, magicDamage);
@@ -101,7 +101,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                     dim.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
                     dim.setLifeTime(10);
                     dim.setIsSlashDimension(true);
-                    world.spawnEntityInWorld(dim);
+                    world.spawnEntity(dim);
                 }
             }
 
@@ -132,7 +132,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                 blade.attackTargetEntity(stack, curEntity, player, true);
             }
 
-            if(!target.worldObj.isRemote){
+            if(!target.world.isRemote){
                 int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
                 float magicDamage = 0.5f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
                 EntitySlashDimension dim = new EntitySlashDimension(world, player, magicDamage);
@@ -140,14 +140,14 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                     dim.setPosition(target.posX,target.posY + target.height / 2.0,target.posZ);
                     dim.setLifeTime(10);
                     dim.setGlowing(true);
-                    world.spawnEntityInWorld(dim);
+                    world.spawnEntity(dim);
                 }
             }
         }
     }
 
     private Entity getEntityToWatch(EntityPlayer player){
-        World world = player.worldObj;
+        World world = player.world;
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
             AxisAlignedBB bb = player.getEntityBoundingBox();
@@ -193,7 +193,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
     @Override
     public void doJustSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -225,7 +225,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                 ItemSlashBlade.damageItem(stack, 10, player);
             }
 
-            if(!player.worldObj.isRemote) {
+            if(!player.world.isRemote) {
                 Vec3d pos = player.getLookVec();
                 pos = pos.scale(5);
                 pos = pos.add(player.getPositionVector());
@@ -259,7 +259,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                     dim.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
                     dim.setLifeTime(10);
                     dim.setIsSlashDimension(true);
-                    world.spawnEntityInWorld(dim);
+                    world.spawnEntity(dim);
                 }
 
                 magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
@@ -297,7 +297,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
                     entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
                     if (entityDrive != null) {
-                        world.spawnEntityInWorld(entityDrive);
+                        world.spawnEntity(entityDrive);
                     }
                 }
             }
@@ -367,19 +367,19 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
 
                     entityDrive.setRoll(90.0f + 120 * (entityDrive.getRand().nextFloat() - 0.5f));
                     if (entityDrive != null) {
-                        world.spawnEntityInWorld(entityDrive);
+                        world.spawnEntity(entityDrive);
                     }
                 }
             }
 
 
-            if(!target.worldObj.isRemote){
+            if(!target.world.isRemote){
                 EntitySlashDimension dim = new EntitySlashDimension(world, player, magicDamage);
                 if(dim != null){
                     dim.setPosition(target.posX,target.posY + target.height / 2.0,target.posZ);
                     dim.setLifeTime(10);
                     dim.setIsSlashDimension(true);
-                    world.spawnEntityInWorld(dim);
+                    world.spawnEntity(dim);
                 }
             }
         }
@@ -388,10 +388,10 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
     @Override
     public void doSuperSpecialAttack(ItemStack stack, EntityPlayer player) {
 
-        EntityJudgmentCutManager entityDA = new EntityJudgmentCutManager(player.worldObj, player);
+        EntityJudgmentCutManager entityDA = new EntityJudgmentCutManager(player.world, player);
         if (entityDA != null) {
             ScheduleEntitySpawner.getInstance().offer(entityDA);
-            //player.worldObj.spawnEntityInWorld(entityDA);
+            //player.world.spawnEntity(entityDA);
         }
         UntouchableTime.setUntouchableTime(player, 30, true);
     }

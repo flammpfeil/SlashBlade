@@ -16,13 +16,13 @@ public class TeleportCanceller {
 
     static public void setCancel(Entity entity){
         if(entity != null && entity instanceof EntityEnderman)
-            entity.getEntityData().setLong(TeleportCancelTimeout, entity.worldObj.getTotalWorldTime() + Amount);
+            entity.getEntityData().setLong(TeleportCancelTimeout, entity.world.getTotalWorldTime() + Amount);
     }
 
     static public boolean canTeleport(Entity entity){
         boolean result = false;
-        if(entity != null && !entity.worldObj.isRemote){
-            long current = entity.worldObj.getTotalWorldTime();
+        if(entity != null && !entity.world.isRemote){
+            long current = entity.world.getTotalWorldTime();
             long timeout = entity.getEntityData().getLong(TeleportCancelTimeout);
 
             result = timeout < current;

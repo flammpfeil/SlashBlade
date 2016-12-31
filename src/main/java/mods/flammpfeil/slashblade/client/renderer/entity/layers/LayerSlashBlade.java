@@ -401,17 +401,17 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
         ItemStack offhand = entity.getHeldItem(EnumHand.OFF_HAND);
 
-        if(stack.func_190926_b() || !(stack.getItem() instanceof ItemSlashBlade)){
+        if(stack.isEmpty() || !(stack.getItem() instanceof ItemSlashBlade)){
             if(entity instanceof EntityPlayer){
                 ItemStack firstItem = ((EntityPlayer)entity).inventory.getStackInSlot(0);
-                if(adjust && !firstItem.func_190926_b() && (firstItem.getItem() instanceof ItemSlashBlade)){
+                if(adjust && !firstItem.isEmpty() && (firstItem.getItem() instanceof ItemSlashBlade)){
                     renderBack(firstItem,(EntityPlayer)entity);
                 }
             }
             return;
         }
 
-        if(stack.func_190926_b()) return;
+        if(stack.isEmpty()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade)stack.getItem());
@@ -438,7 +438,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
 
         int charge;
-        if(entity instanceof EntityPlayer && !entity.getActiveItemStack().func_190926_b() )
+        if(entity instanceof EntityPlayer && !entity.getActiveItemStack().isEmpty() )
             charge = entity.getItemInUseMaxCount();
         else
             charge = 0;
@@ -474,7 +474,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         ResourceLocationRaw offHandResourceTexture = null;
         boolean offhandIsBroken = false;
         int offhandColor = 0x3333FF;
-        if(!offhand.func_190926_b() && (offhand.getItem() instanceof ItemSlashBlade)){
+        if(!offhand.isEmpty() && (offhand.getItem() instanceof ItemSlashBlade)){
 
             renderBack(offhand,entity,true, combo.mainHandCombo != null);
 
@@ -587,7 +587,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             int handsLoop = 1;
             if(combo.mainHandCombo != null){
                 handsLoop = 2;
-                if(!offhand.func_190926_b() && offhand.getItem() instanceof ItemSlashBlade)
+                if(!offhand.isEmpty() && offhand.getItem() instanceof ItemSlashBlade)
                     doOffhandRender = true;
             }
 
@@ -1075,7 +1075,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         ItemStack itemstack = entitylivingbaseIn.getHeldItem(EnumHand.MAIN_HAND);
 
-        if (!itemstack.func_190926_b())
+        if (!itemstack.isEmpty())
         {
             GlStateManager.pushMatrix();
 

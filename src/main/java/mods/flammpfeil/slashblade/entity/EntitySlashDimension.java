@@ -46,7 +46,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
      */
     protected Entity thrower;
 
-    protected ItemStack blade = ItemStack.field_190927_a;
+    protected ItemStack blade = ItemStack.EMPTY;
 
     /**
      * ★多段Hit防止用List
@@ -82,8 +82,8 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
         thrower = entityLiving;
 
         blade = entityLiving.getHeldItemMainhand();
-        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = ItemStack.field_190927_a;
+        if(!blade.isEmpty() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.EMPTY;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -188,7 +188,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
         lastTickPosY = posY;
         lastTickPosZ = posZ;
 
-        if(!worldObj.isRemote)
+        if(!world.isRemote)
         {
             if(ticksExisted < 8 && ticksExisted % 2 == 0) {
                 this.playSound(SoundEvents.ENTITY_WITHER_HURT, 0.2F, 0.5F + 0.25f * this.rand.nextFloat());
@@ -199,7 +199,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
 
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
 
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.DestructObject);
 
@@ -241,7 +241,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -254,7 +254,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                 }
 
                 if(getIsSingleHit() || this.ticksExisted % 2 == 0){
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                     list.removeAll(alreadyHitEntity);
 
                     if(getIsSingleHit())
@@ -284,7 +284,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                         DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage().setProjectile();
 
 
-                        if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase)
+                        if(!blade.isEmpty() && curEntity instanceof EntityLivingBase)
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)curEntity,(EntityLivingBase)thrower);
 
                         if(!curEntity.getPositionVector().equals(pos))
@@ -295,7 +295,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                         curEntity.motionZ = 0;
 
                         if(3 < this.ticksExisted){
-                            if(!blade.func_190926_b() && curEntity instanceof EntityLivingBase) {
+                            if(!blade.isEmpty() && curEntity instanceof EntityLivingBase) {
                                 if(getIsSlashDimension()){
                                     curEntity.addVelocity(
                                             0,
@@ -327,7 +327,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
 
             //地形衝突で消失
             /*
-            if(!worldObj.getCollisionBoxes(this, this.getEntityBoundingBox()).isEmpty()) {
+            if(!world.getCollisionBoxes(this, this.getEntityBoundingBox()).isEmpty()) {
                 this.setDead();
             }
             */
@@ -359,8 +359,8 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
     public boolean isOffsetPositionInLiquid(double par1, double par3, double par5)
     {
         //AxisAlignedBB axisalignedbb = this.boundingBox.getOffsetBoundingBox(par1, par3, par5);
-        //List list = this.worldObj.getCollidingBoundingBoxes(this, axisalignedbb);
-        //return !list.isEmpty() ? false : !this.worldObj.isAnyLiquid(axisalignedbb);
+        //List list = this.world.getCollidingBoundingBoxes(this, axisalignedbb);
+        //return !list.isEmpty() ? false : !this.world.isAnyLiquid(axisalignedbb);
         return false;
     }
 
@@ -368,7 +368,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(MoverType moverType, double par1, double par3, double par5) {}
+    public void move(MoverType moverType, double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

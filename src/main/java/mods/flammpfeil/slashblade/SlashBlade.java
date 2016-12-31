@@ -491,7 +491,7 @@ public class SlashBlade implements IFuelHandler{
 
     static public ItemStack findItemStack(String modid, String name, int count){
         ResourceLocationRaw key = new ResourceLocationRaw(modid, name);
-        ItemStack stack = ItemStack.field_190927_a;
+        ItemStack stack = ItemStack.EMPTY;
 
         if(BladeRegistry.containsKey(key)) {
             stack = BladeRegistry.get(new ResourceLocationRaw(modid, name)).copy();
@@ -503,8 +503,8 @@ public class SlashBlade implements IFuelHandler{
 
         }
 
-        if(!stack.func_190926_b()) {
-            stack.func_190920_e(count);
+        if(!stack.isEmpty()) {
+            stack.setCount(count);
         }
 
         return stack;
@@ -515,7 +515,7 @@ public class SlashBlade implements IFuelHandler{
     public static ItemStack getCustomBlade(String modid,String name){
         ItemStack blade = SlashBlade.findItemStack(modid, name, 1);
 
-        if(!blade.func_190926_b()){
+        if(!blade.isEmpty()){
             NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
 
             if(ItemSlashBladeNamed.IsDefaultBewitched.get(tag)){

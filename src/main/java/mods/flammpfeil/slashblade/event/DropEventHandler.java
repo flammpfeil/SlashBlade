@@ -70,7 +70,7 @@ public class DropEventHandler {
                     if(target == null) return;
 
                     ItemStack attackItem = target.getHeldItem(EnumHand.MAIN_HAND);
-                    if(attackItem.func_190926_b()) return;
+                    if(attackItem.isEmpty()) return;
                     if(!(attackItem.getItem() instanceof ItemSlashBlade)) return;
 
                 }
@@ -78,29 +78,29 @@ public class DropEventHandler {
                 if((event.isRecentlyHit() || forceDrop) && isDrop && drop.getValue() != null){
                     ItemStack dropitem = drop.getValue().copy();
 
-                    dropitem.func_190920_e(
+                    dropitem.setCount(
                             Math.max(
                                 dropitem.getMaxStackSize(),
                                 Math.max(1,
-                                        (int)Math.round((float)dropitem.func_190916_E() * rand.nextFloat()))));
+                                        (int)Math.round((float)dropitem.getCount() * rand.nextFloat()))));
 
                     if(dropitem.getItem() instanceof ItemSlashBlade){
 
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(dropitem);
                         if(!tag.getBoolean("IsNoStandDrop")){
-                            EntityBladeStand e = new EntityBladeStand(event.getEntityLiving().worldObj
+                            EntityBladeStand e = new EntityBladeStand(event.getEntityLiving().world
                                     ,event.getEntityLiving().posX
                                     ,event.getEntityLiving().posY
                                     ,event.getEntityLiving().posZ
                                     ,dropitem);
                             e.setGlowing(true);
-                            event.getEntityLiving().worldObj.spawnEntityInWorld(e);
+                            event.getEntityLiving().world.spawnEntity(e);
 
                             return;
                         }
                     }
 
-                    if(dropitem.func_190916_E() != 0)
+                    if(dropitem.getCount() != 0)
                         event.getEntityLiving().entityDropItem(dropitem,1);
                 }
             }

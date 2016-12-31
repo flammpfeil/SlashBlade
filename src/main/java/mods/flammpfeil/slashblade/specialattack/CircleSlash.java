@@ -30,7 +30,7 @@ public class CircleSlash extends SpecialAttackBase{
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -79,7 +79,7 @@ public class CircleSlash extends SpecialAttackBase{
                 entityDrive.setIsMultiHit(false);
                 entityDrive.setRoll(90.0f /*+ 120 * (entityDrive.getRand().nextFloat() - 0.5f)*/);
                 if (entityDrive != null) {
-                    world.spawnEntityInWorld(entityDrive);
+                    world.spawnEntity(entityDrive);
                 }
             }
 

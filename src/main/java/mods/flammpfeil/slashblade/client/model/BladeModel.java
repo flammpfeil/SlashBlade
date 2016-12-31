@@ -47,7 +47,7 @@ public class BladeModel implements IPerspectiveAwareModel {
         return emptyList;
     }
 
-    ItemStack proudsoul = ItemStack.field_190927_a;
+    ItemStack proudsoul = ItemStack.EMPTY;
     ItemModelMesher modelMesher = null;
     List<BakedQuad> getDefaultQuards(){
         if(modelMesher == null) {
@@ -57,7 +57,7 @@ public class BladeModel implements IPerspectiveAwareModel {
         return modelMesher.getItemModel(proudsoul).getQuads(null,null,0);
     }
 
-    static ItemStack targetStack = ItemStack.field_190927_a;
+    static ItemStack targetStack = ItemStack.EMPTY;
     static ItemSlashBlade itemBlade = null;
     static EntityLivingBase user = null;
 
@@ -83,7 +83,7 @@ public class BladeModel implements IPerspectiveAwareModel {
                     itemBlade = (ItemSlashBlade) stack.getItem();
                     user = entity;
                 }else{
-                    targetStack = ItemStack.field_190927_a;
+                    targetStack = ItemStack.EMPTY;
                     itemBlade = null;
                     user = null;
                 }

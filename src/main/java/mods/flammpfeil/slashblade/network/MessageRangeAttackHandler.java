@@ -19,7 +19,7 @@ public class MessageRangeAttackHandler implements IMessageHandler<MessageRangeAt
         EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
 
         ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if (!stack.func_190926_b() && stack.getItem() instanceof ItemSlashBlade) {
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemSlashBlade) {
             ((ItemSlashBlade) stack.getItem()).doRangeAttack(stack, entityPlayer, message.mode);
         }
         return null;

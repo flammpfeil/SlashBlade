@@ -186,7 +186,7 @@ public class StylishRankManager {
         NBTTagCompound tag = getTag(e);
         int rank = RankPoint.get(tag);
 
-        long now = e.worldObj.getTotalWorldTime();
+        long now = e.world.getTotalWorldTime();
         long lastUpdate = LastRankPointUpdate.get(tag);
 
         float factor = 1.0f;
@@ -273,7 +273,7 @@ public class StylishRankManager {
             //get last use AttackTypeTime stylePoint calcFactor
             String timerKey = "SBAttackTime" + attackType;
             long last = tag.getLong(timerKey);
-            long now = e.worldObj.getTotalWorldTime();
+            long now = e.world.getTotalWorldTime();
 
             if(last < now){
                 tag.setLong(timerKey,now + initCooltime);
@@ -307,7 +307,7 @@ public class StylishRankManager {
 
     public static void addRankPoint(Entity e,int amount){
         if(e == null) return;
-        if(e.worldObj.isRemote) return;
+        if(e.world.isRemote) return;
         NBTTagCompound tag = getTag(e);
 
         int rankPoint = getTotalRankPoint(e);
@@ -316,12 +316,12 @@ public class StylishRankManager {
 
         rankPoint += amount;
         RankPoint.set(tag, rankPoint);
-        LastRankPointUpdate.set(tag,e.worldObj.getTotalWorldTime());
+        LastRankPointUpdate.set(tag,e.world.getTotalWorldTime());
 
         int postRank = getStylishRank(rankPoint);
 
         if(lastRank < postRank){
-            if(!e.worldObj.isRemote && e instanceof EntityPlayerMP){
+            if(!e.world.isRemote && e instanceof EntityPlayerMP){
                 StatisticsManagerServer statMgr = ((EntityPlayerMP)e).getStatFile();
                 Achievement achievement = AchievementList.getAchievement("rank" + getRankText(postRank));
                 if(achievement != null && !statMgr.hasAchievementUnlocked(achievement) && !statMgr.canUnlockAchievement(achievement)) {
@@ -343,7 +343,7 @@ public class StylishRankManager {
 
     @SubscribeEvent
     public void LivingUpdateEvent(LivingEvent.LivingUpdateEvent event){
-        if(event.getEntityLiving().worldObj.isRemote)
+        if(event.getEntityLiving().world.isRemote)
             return;
         if(!(event.getEntityLiving() instanceof EntityPlayerMP))
             return;
@@ -384,7 +384,7 @@ public class StylishRankManager {
         NBTTagCompound tag = getTag(e.getEntity());
 
         long lastUpdate = LastRankPointUpdate.get(tag);
-        long now = e.getEntity().worldObj.getTotalWorldTime();
+        long now = e.getEntity().world.getTotalWorldTime();
 
         if(RankRange * 2 < now - lastUpdate){
             RankPoint.set(tag, 0);
@@ -397,6 +397,6 @@ public class StylishRankManager {
     public static void setRankPoint(EntityLivingBase user, int rankPoint){
         NBTTagCompound tag = getTag(user);
         RankPoint.set(tag,rankPoint);
-        LastRankPointUpdate.set(tag,user.worldObj.getTotalWorldTime());
+        LastRankPointUpdate.set(tag,user.world.getTotalWorldTime());
     }
 }

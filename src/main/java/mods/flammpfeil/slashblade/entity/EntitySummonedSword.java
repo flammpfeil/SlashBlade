@@ -42,7 +42,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
      */
     protected Entity thrower;
 
-    protected ItemStack blade = ItemStack.field_190927_a;
+    protected ItemStack blade = ItemStack.EMPTY;
 
     /**
      * ★多段Hit防止用List
@@ -75,8 +75,8 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
         thrower = entityLiving;
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = ItemStack.field_190927_a;
+        if(!blade.isEmpty() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.EMPTY;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -168,7 +168,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
     public void doTargeting(){
         int targetid = this.getTargetEntityId();
         if(targetid != 0){
-            Entity target = worldObj.getEntityByID(targetid);
+            Entity target = world.getEntityByID(targetid);
 
             if(target != null){
 
@@ -200,7 +200,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
             d2 = (boundingBox.minY + boundingBox.maxY) / 2.0D - (viewer.posY + (double)viewer.getEyeHeight());
         }
 
-        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+        double d3 = (double)MathHelper.sqrt(d0 * d0 + d1 * d1);
         float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
         float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
 
@@ -251,7 +251,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
         motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
         motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
 
-        float f3 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+        float f3 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
         rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
         rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
         if(init){
@@ -295,7 +295,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                 ridingEntity.hurtResistantTime = 0;
                 DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
                 ridingEntity.attackEntityFrom(ds, magicDamage);
-                if(!blade.func_190926_b() && ridingEntity instanceof EntityLivingBase){
+                if(!blade.isEmpty() && ridingEntity instanceof EntityLivingBase){
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.BreakPhantomSword);
                     ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
                 }
@@ -325,7 +325,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
 
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
 
                     StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
 
@@ -367,7 +367,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -383,11 +383,11 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                 }
 
                 {
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
                     list.removeAll(alreadyHitEntity);
 
                     if(getTargetEntityId() != 0){
-                        Entity target = worldObj.getEntityByID(getTargetEntityId());
+                        Entity target = world.getEntityByID(getTargetEntityId());
                         if(target != null){
                             if(target.getEntityBoundingBox().intersectsWith(bb))
                                 list.add(target);
@@ -422,7 +422,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                         hitEntity.hurtResistantTime = 0;
                         DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
                         hitEntity.attackEntityFrom(ds, magicDamage);
-                        if(!blade.func_190926_b() && hitEntity instanceof EntityLivingBase){
+                        if(!blade.isEmpty() && hitEntity instanceof EntityLivingBase){
                             StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)hitEntity,(EntityLivingBase)thrower);
                         }
@@ -433,16 +433,16 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
             }
 
             //■ブロック
-            int nPosX = MathHelper.floor_double(posX);
-            int nPosY = MathHelper.floor_double(posY);
-            int nPosZ = MathHelper.floor_double(posZ);
+            int nPosX = MathHelper.floor(posX);
+            int nPosY = MathHelper.floor(posY);
+            int nPosZ = MathHelper.floor(posZ);
 
             /*
             for (int idx = nPosX - 1; idx <= nPosX + 1; idx++) {
                 for (int idy = nPosY - 1; idy <= nPosY + 1; idy++) {
                     for (int idz = nPosZ - 1; idz <= nPosZ + 1; idz++) {
                         //▼
-                        Block nBlock = worldObj.getBlock(idx, idy, idz);
+                        Block nBlock = world.getBlock(idx, idy, idz);
 
                         //■
                         if (nBlock.getMaterial() == Material.leaves
@@ -460,7 +460,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
 
             if(this.ridingEntity2 == null)
             {
-                if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty()){
+                if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty()){
                     this.setDead();
                     return;
                 }
@@ -488,7 +488,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
         if(this.thrower instanceof EntityPlayer)
             ((EntityPlayer)thrower).onCriticalHit(this);
         /*
-        if(!this.worldObj.isRemote)
+        if(!this.world.isRemote)
             System.out.println("dead" + this.ticksExisted);
             */
         super.setDead();
@@ -511,8 +511,8 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
     public boolean isOffsetPositionInLiquid(double par1, double par3, double par5)
     {
         //AxisAlignedBB axisalignedbb = this.boundingBox.getOffsetBoundingBox(par1, par3, par5);
-        //List list = this.worldObj.getCollidingBoundingBoxes(this, axisalignedbb);
-        //return !list.isEmpty() ? false : !this.worldObj.isAnyLiquid(axisalignedbb);
+        //List list = this.world.getCollidingBoundingBoxes(this, axisalignedbb);
+        //return !list.isEmpty() ? false : !this.world.isAnyLiquid(axisalignedbb);
         return false;
     }
 
@@ -520,7 +520,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(MoverType moverType, double par1, double par3, double par5) {}
+    public void move(MoverType moverType, double par1, double par3, double par5) {}
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:

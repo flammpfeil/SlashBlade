@@ -109,7 +109,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
 
                 this.ticksExisted = 0;
 
-                this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.NEUTRAL, 0.35F, 0.2F);
+                this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.NEUTRAL, 0.35F, 0.2F);
 
                 return;
             }
@@ -139,7 +139,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
             for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.worldObj.spawnParticle(EnumParticleTypes.PORTAL
+                this.world.spawnParticle(EnumParticleTypes.PORTAL
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength
@@ -170,7 +170,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         }else{
             if(ticksExisted < 10)
                 return false;
-            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -189,7 +189,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         int targetid = this.getTargetEntityId();
 
         if(targetid != 0){
-            Entity target = worldObj.getEntityByID(targetid);
+            Entity target = world.getEntityByID(targetid);
 
             if(target != null){
 
@@ -298,7 +298,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         }
         */
 
-        double d3 = (double) MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+        double d3 = (double) MathHelper.sqrt(d0 * d0 + d1 * d1);
         float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
         float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
 

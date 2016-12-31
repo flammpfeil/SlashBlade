@@ -65,7 +65,7 @@ public class EntityLumberManager extends Entity {
         Optional<UUID> owner = this.getDataManager().get(OWNER);
 
         return owner.isPresent()
-                ? Optional.fromNullable(worldObj.getPlayerEntityByUUID(owner.get()))
+                ? Optional.fromNullable(world.getPlayerEntityByUUID(owner.get()))
                 : Optional.<EntityPlayer>absent();
     }
 
@@ -104,26 +104,26 @@ public class EntityLumberManager extends Entity {
 
 
     private boolean validTarget(BlockPos target) {
-        IBlockState state = worldObj.getBlockState(target);
-        if(state.getBlock().isAir(state, worldObj, target))
+        IBlockState state = world.getBlockState(target);
+        if(state.getBlock().isAir(state, world, target))
             return false;
 
         Block block = state.getBlock();
-        if(block.isWood(worldObj, target)){
+        if(block.isWood(world, target)){
             if(targetBlock != block)
                 return false;
 
             BlockPos under = target.add(EnumFacing.DOWN.getDirectionVec());
 
-            IBlockState underState = worldObj.getBlockState(under);
+            IBlockState underState = world.getBlockState(under);
             boolean canHarvest = false;
 
-            canHarvest |= underState.getBlock().isAir(underState, worldObj, under);
-            canHarvest |= underState.getBlock().isLeaves(underState, worldObj, under);
-            canHarvest |= underState.getBlock().isWood(worldObj, under);
+            canHarvest |= underState.getBlock().isAir(underState, world, under);
+            canHarvest |= underState.getBlock().isLeaves(underState, world, under);
+            canHarvest |= underState.getBlock().isWood(world, under);
             if(!canHarvest)
                 return false;
-        }else if(block.isLeaves(state, worldObj, target)){
+        }else if(block.isLeaves(state, world, target)){
             /*
             if(!state.getPropertyNames().contains(BlockLeaves.DECAYABLE)
                     || !((Boolean)state.getValue(BlockLeaves.DECAYABLE)).booleanValue())
@@ -132,14 +132,14 @@ public class EntityLumberManager extends Entity {
 
             BlockHarvestDropsEventHandler.captureDrops(true);
 
-            block.beginLeavesDecay(state, worldObj, target);
-            block.updateTick(worldObj, target, state, this.rand);
+            block.beginLeavesDecay(state, world, target);
+            block.updateTick(world, target, state, this.rand);
 
             List<ItemStack> drops = BlockHarvestDropsEventHandler.captureDrops(false);
             for (ItemStack item : drops) {
-                Block.spawnAsEntity(worldObj, root, item);
+                Block.spawnAsEntity(world, root, item);
             }
-            if(!state.getBlock().isAir(state, worldObj, target))
+            if(!state.getBlock().isAir(state, world, target))
                 return false;
         }else{
             return false;
@@ -156,13 +156,13 @@ public class EntityLumberManager extends Entity {
         public void onBlockHarvestDropsEvent(BlockEvent.HarvestDropsEvent event) {
             IBlockState state = event.getState();
             Block block = state.getBlock();
-            World worldObj = event.getWorld();
+            World world = event.getWorld();
             BlockPos root = event.getPos();
 
-            if(fastLeavesDecay && block.isLeaves(state, worldObj, root)){
+            if(fastLeavesDecay && block.isLeaves(state, world, root)){
                 for(EnumFacing facing : EnumFacing.VALUES){
                     BlockPos pos = root.offset(facing);
-                    worldObj.scheduleBlockUpdate(pos, block, block.tickRate(worldObj) + worldObj.rand.nextInt(10) , 1);
+                    world.scheduleBlockUpdate(pos, block, block.tickRate(world) + world.rand.nextInt(10) , 1);
                 }
             }
 
@@ -170,7 +170,7 @@ public class EntityLumberManager extends Entity {
                 List<ItemStack> drops = event.getDrops();
                 float chance = event.getDropChance();
                 for(ItemStack stack : drops)
-                    if(worldObj.rand.nextFloat() < chance)
+                    if(world.rand.nextFloat() < chance)
                         capturedDrops.get().add(stack);
                 drops.clear();
             }
@@ -204,10 +204,10 @@ public class EntityLumberManager extends Entity {
     public void onUpdate() {
         super.onUpdate();
 
-        if(worldObj.isRemote)
+        if(world.isRemote)
             return;
 
-        if(!worldObj.isRemote
+        if(!world.isRemote
                 && (getLifeTime() < this.ticksExisted || !getOwner().isPresent())){
             this.kill();
             return;
@@ -226,7 +226,7 @@ public class EntityLumberManager extends Entity {
 
             EntityPlayerMP playerMp = ((EntityPlayerMP) player.get());
 
-            if(playerMp.getHeldItemMainhand().func_190926_b()
+            if(playerMp.getHeldItemMainhand().isEmpty()
                     || !(playerMp.getHeldItemMainhand().getItem() instanceof ItemSlashBlade)){
                 this.kill();
                 return;
@@ -250,28 +250,28 @@ public class EntityLumberManager extends Entity {
                  */
 
                 PlayerInteractionManager im = playerMp.interactionManager;
-                IBlockState state = worldObj.getBlockState(pos);
+                IBlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
-                if (block.isWood(worldObj, pos)) {
+                if (block.isWood(world, pos)) {
                     BlockHarvestDropsEventHandler.captureDrops(true);
 
                     harvested |= im.tryHarvestBlock(pos);
 
                     List<ItemStack> drops = BlockHarvestDropsEventHandler.captureDrops(false);
                     for (ItemStack item : drops) {
-                        Block.spawnAsEntity(worldObj, root, item);
+                        Block.spawnAsEntity(world, root, item);
                     }
-                }else if(block.isLeaves(state, worldObj, pos)){
+                }else if(block.isLeaves(state, world, pos)){
 
                     BlockHarvestDropsEventHandler.captureDrops(true);
 
-                    block.beginLeavesDecay(state, worldObj, pos);
-                    block.updateTick(worldObj, pos, state, this.rand);
+                    block.beginLeavesDecay(state, world, pos);
+                    block.updateTick(world, pos, state, this.rand);
 
                     List<ItemStack> drops = BlockHarvestDropsEventHandler.captureDrops(false);
                     harvested |= 0 < drops.size();
                     for (ItemStack item : drops) {
-                        Block.spawnAsEntity(worldObj, root, item);
+                        Block.spawnAsEntity(world, root, item);
                     }
                 }
 

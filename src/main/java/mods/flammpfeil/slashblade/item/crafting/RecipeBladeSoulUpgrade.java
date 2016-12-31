@@ -30,7 +30,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
 
             for(int idx = 0; idx < inv.getSizeInventory(); idx++){
                 ItemStack stack = inv.getStackInSlot(idx);
-                if(stack.func_190926_b()) continue;
+                if(stack.isEmpty()) continue;
                 if(!(stack.getItem() instanceof ItemProudSoul)) continue;
 
                 soulCount++;
@@ -68,7 +68,7 @@ public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
 
         for(int idx = 0; idx < var1.getSizeInventory(); idx++){
             ItemStack stack = var1.getStackInSlot(idx);
-            if(stack.func_190926_b()) continue;
+            if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof ItemProudSoul)) continue;
 
 

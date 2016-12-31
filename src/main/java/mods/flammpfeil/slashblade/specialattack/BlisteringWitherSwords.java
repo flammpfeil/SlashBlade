@@ -30,7 +30,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -98,7 +98,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
 
                             entityDrive.setTargetEntityId(target.getEntityId());
 
-                            world.spawnEntityInWorld(entityDrive);
+                            world.spawnEntity(entityDrive);
 
                         }
                     }
@@ -109,7 +109,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
     }
 
     private Entity getEntityToWatch(EntityPlayer player){
-        World world = player.worldObj;
+        World world = player.world;
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
             AxisAlignedBB bb = player.getEntityBoundingBox();

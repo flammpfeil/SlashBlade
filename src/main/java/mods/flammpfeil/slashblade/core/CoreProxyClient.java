@@ -277,10 +277,10 @@ public class CoreProxyClient extends CoreProxy {
             public void upkey(int count) {
                 charged = false;
                 Minecraft mc = Minecraft.getMinecraft();
-                EntityPlayerSP player = mc.thePlayer;
+                EntityPlayerSP player = mc.player;
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                     ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                    if(!item.func_190926_b() && item.getItem() instanceof ItemSlashBlade){
+                    if(!item.isEmpty() && item.getItem() instanceof ItemSlashBlade){
 
                         mc.playerController.updateController();
 
@@ -306,10 +306,10 @@ public class CoreProxyClient extends CoreProxy {
                 if(ChargeTime < count && !charged){
                     charged = true;
                     Minecraft mc = Minecraft.getMinecraft();
-                    EntityPlayerSP player = mc.thePlayer;
+                    EntityPlayerSP player = mc.player;
                     if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                         ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                        if(!item.func_190926_b() && item.getItem() instanceof ItemSlashBlade){
+                        if(!item.isEmpty() && item.getItem() instanceof ItemSlashBlade){
 
                             mc.playerController.updateController();
 
@@ -340,14 +340,14 @@ public class CoreProxyClient extends CoreProxy {
             @Override
             public void downkey() {
                 Minecraft mc = Minecraft.getMinecraft();
-                EntityPlayerSP player = mc.thePlayer;
+                EntityPlayerSP player = mc.player;
                 if(player == null) return;
                 if(mc.isGamePaused()) return;
                 if(!mc.inGameHasFocus) return;
                 if(mc.currentScreen != null) return;
 
                 ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                if(item.func_190926_b()) return;
+                if(item.isEmpty()) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)
@@ -357,7 +357,7 @@ public class CoreProxyClient extends CoreProxy {
                     NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));
 
                 }else
-                if(mc.thePlayer.moveStrafing != 0.0f || mc.thePlayer.moveForward != 0.0f){
+                if(mc.player.moveStrafing != 0.0f || mc.player.moveForward != 0.0f){
                     AvoidAction.doAvoid();
                 }
             }
@@ -367,14 +367,14 @@ public class CoreProxyClient extends CoreProxy {
                 super.presskey(count);
 
                 Minecraft mc = Minecraft.getMinecraft();
-                EntityPlayerSP player = mc.thePlayer;
+                EntityPlayerSP player = mc.player;
                 if(player == null) return;
                 if(mc.isGamePaused()) return;
                 if(!mc.inGameHasFocus) return;
                 if(mc.currentScreen != null) return;
 
                 ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                if(item.func_190926_b()) return;
+                if(item.isEmpty()) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 ItemSlashBlade bladeItem = (ItemSlashBlade)item.getItem();
@@ -385,7 +385,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(!types.contains(ItemSlashBlade.SwordType.FiercerEdge)) return;
 
 
-                player.worldObj.spawnParticle(EnumParticleTypes.PORTAL,
+                player.world.spawnParticle(EnumParticleTypes.PORTAL,
                         player.posX + (player.getRNG().nextDouble() - 0.5D) * (double)player.width,
                         player.posY + player.getRNG().nextDouble() * (double)player.height - 0.25D,
                         player.posZ + (player.getRNG().nextDouble() - 0.5D) * (double)player.width,
@@ -397,14 +397,14 @@ public class CoreProxyClient extends CoreProxy {
                 super.upkey(count);
 
                 Minecraft mc = Minecraft.getMinecraft();
-                EntityPlayerSP player = mc.thePlayer;
+                EntityPlayerSP player = mc.player;
                 if(player == null) return;
                 if(mc.isGamePaused()) return;
                 if(!mc.inGameHasFocus) return;
                 if(mc.currentScreen != null) return;
 
                 ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
-                if(item.func_190926_b()) return;
+                if(item.isEmpty()) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
                 ItemSlashBlade bladeItem = (ItemSlashBlade)item.getItem();
@@ -580,7 +580,7 @@ public class CoreProxyClient extends CoreProxy {
 
         if(ctx.getClientHandler() == null) return null;
 
-        EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
         if(entityPlayer == null) return null;
 
         StylishRankManager.setRankPoint(entityPlayer, message.rankpoint);

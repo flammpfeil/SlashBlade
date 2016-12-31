@@ -22,7 +22,7 @@ public class AerialRave {
         if(target == null) return;
 
         ItemStack stack = target.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack.func_190926_b()) return;
+        if(stack.isEmpty()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
 
         int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FEATHER_FALLING,stack);

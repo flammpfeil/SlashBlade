@@ -28,8 +28,8 @@ public class ProjectileBarrier {
     static public boolean isAvailable(EntityLivingBase owner ,ItemStack stack ,int duration){
 
         if(owner == null) return false;
-        if(owner.getActiveItemStack().func_190926_b()) return false;
-        if(stack.func_190926_b()) return false;
+        if(owner.getActiveItemStack().isEmpty()) return false;
+        if(stack.isEmpty()) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
         if(!stack.isItemEnchanted()) return false;
 
@@ -61,12 +61,12 @@ public class ProjectileBarrier {
     private void expandBarrier(EntityLivingBase player){
 
         if(player.ticksExisted % 7 == 0)
-            player.worldObj.playSound(null, player.posX, player.posY, player.posZ
+            player.world.playSound(null, player.posX, player.posY, player.posZ
                     , SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS,0.45f,0.5f);
 
 
         AxisAlignedBB bb = player.getEntityBoundingBox().expand(2,2,2);
-        List<Entity> list = player.worldObj.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
+        List<Entity> list = player.world.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
         for(Entity target : list){
 
             if(target instanceof EntitySummonedSwordBase)
@@ -83,9 +83,9 @@ public class ProjectileBarrier {
 
     private void destructEntity(EntityLivingBase player, Entity target){
         //EnumParticleTypes.CRIT_MAGIC
-        if(player.worldObj instanceof WorldServer) {
-            ((WorldServer) player.worldObj).getEntityTracker().sendToTrackingAndSelf(player, new SPacketAnimation(target, 5));
-            player.worldObj.playSound(null, player.posX, player.posY, player.posZ
+        if(player.world instanceof WorldServer) {
+            ((WorldServer) player.world).getEntityTracker().sendToTrackingAndSelf(player, new SPacketAnimation(target, 5));
+            player.world.playSound(null, player.posX, player.posY, player.posZ
                     , SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS,0.8f,1.5f + player.getRNG().nextFloat() * 0.5f);
         }
         /*

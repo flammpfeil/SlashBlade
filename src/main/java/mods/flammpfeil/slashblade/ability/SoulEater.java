@@ -27,11 +27,11 @@ public class SoulEater {
             player.getEntityData().setInteger(tag, getPosHash(player));
             player.getEntityData().setInteger(tag3, exp);
 
-            if(!player.worldObj.isRemote)
+            if(!player.world.isRemote)
                 player.getEntityData().setInteger(tag2, 1);
         }else{
             player.getEntityData().setInteger(tag, getPosHash(player));
-            if(!player.worldObj.isRemote){
+            if(!player.world.isRemote){
                 int count = player.getEntityData().getInteger(tag2);
                 count += 1;
                 player.getEntityData().setInteger(tag2, count);
@@ -66,7 +66,7 @@ public class SoulEater {
 
 
         if(player.getHealth() != player.getMaxHealth()){
-            if(!player.worldObj.isRemote) {
+            if(!player.world.isRemote) {
                 float count = player.getEntityData().getInteger(tag2);
                 count = Math.min(count, player.getMaxHealth() / 10.0f);
                 player.getEntityData().removeTag(tag2);
@@ -94,7 +94,7 @@ public class SoulEater {
     }
 
     static boolean isAveilable(ItemStack stack){
-        if(stack.func_190926_b()) return false;
+        if(stack.isEmpty()) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
         return true;
     }

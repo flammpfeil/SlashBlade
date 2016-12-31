@@ -18,7 +18,7 @@ public class SakuraEnd extends SpecialAttackBase {
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -33,7 +33,7 @@ public class SakuraEnd extends SpecialAttackBase {
 
             EntitySakuraEndManager entityDA = new EntitySakuraEndManager(world, player);
             if (entityDA != null) {
-                world.spawnEntityInWorld(entityDA);
+                world.spawnEntity(entityDA);
             }
         }
 

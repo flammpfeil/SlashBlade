@@ -38,10 +38,10 @@ public class ScheduleEntitySpawner {
         if(event.side != Side.SERVER) return;
 
         for(Entity entity = targetQueue.poll(); entity != null; entity = targetQueue.poll()){
-            if(entity.worldObj == null)
+            if(entity.world == null)
                 continue;
 
-            entity.worldObj.spawnEntityInWorld(entity);
+            entity.world.spawnEntity(entity);
         }
     }
 }

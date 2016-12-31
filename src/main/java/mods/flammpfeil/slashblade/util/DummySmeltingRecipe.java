@@ -27,7 +27,7 @@ public class DummySmeltingRecipe implements IRecipe {
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting p_77572_1_) {
-        return ItemStack.field_190927_a;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DummySmeltingRecipe implements IRecipe {
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>func_191197_a(inv.getSizeInventory(), ItemStack.field_190927_a);
+        NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         return nonnulllist;
     }
 }

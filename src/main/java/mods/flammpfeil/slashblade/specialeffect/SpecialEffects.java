@@ -49,14 +49,14 @@ public class SpecialEffects {
     public static boolean isPlayer(Entity target){
 
         if(target == null) return false;
-        if(target.worldObj == null) return false;
-        if(target.worldObj.isRemote) return false;
+        if(target.world == null) return false;
+        if(target.world.isRemote) return false;
         if(!(target instanceof EntityPlayer)) return false;
         return true;
     }
 
     public static boolean isBlade(ItemStack stack){
-        if(stack.func_190926_b()) return false;
+        if(stack.isEmpty()) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
         return true;
     }

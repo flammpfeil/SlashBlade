@@ -141,7 +141,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
             {
                 ItemStack output = currentRecipe.getRecipeOutput();
-                if(!output.func_190926_b()){
+                if(!output.isEmpty()){
                     this.title = output.getItem().getItemStackDisplayName(output);
                 }
             }
@@ -157,7 +157,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 DummySmeltingRecipe dummySmeltingRecipe = (DummySmeltingRecipe)currentRecipe;
 
                 ItemStack targetItemStack = dummySmeltingRecipe.input;
-                if(!targetItemStack.func_190926_b()){
+                if(!targetItemStack.isEmpty()){
 
                     targetItemStack = getWildCardStack(targetItemStack);
 
@@ -169,7 +169,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 }
 
                 targetItemStack = dummySmeltingRecipe.getRecipeOutput();
-                if(!targetItemStack.func_190926_b()){
+                if(!targetItemStack.isEmpty()){
                     itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
                     itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop,null);
 
@@ -182,7 +182,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 }
 
                 targetItemStack = dummySmeltingRecipe.input;
-                if(!targetItemStack.func_190926_b()){
+                if(!targetItemStack.isEmpty()){
                     targetItemStack = getWildCardStack(targetItemStack);
                     
                     if (this.checkMouseOver(gridLeft + slotSize * 1, gridTop + slotSize * 1, 16, 16, mouseX, mouseY))
@@ -214,7 +214,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         int idx = gy*gridHeight + gx;
                         Object target = input[gy*gridHeight + gx];
 
-                        ItemStack targetItemStack = ItemStack.field_190927_a;
+                        ItemStack targetItemStack = ItemStack.EMPTY;
 
                         boolean isDict = false;
 
@@ -232,7 +232,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         }
 
 
-                        if(!targetItemStack.func_190926_b()){
+                        if(!targetItemStack.isEmpty()){
                             targetItemStack = getWildCardStack(targetItemStack);
 
                             itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + gridLeft + slotSize * gx, this.guiTop + gridTop + slotSize * gy);
@@ -255,7 +255,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                 {
                     ItemStack targetItemStack = shapedOreRecipe.getRecipeOutput();
 
-                    if(!targetItemStack.func_190926_b()){
+                    if(!targetItemStack.isEmpty()){
                         itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
                         itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop, null);
 
@@ -275,7 +275,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         int idx = gy*gridHeight + gx;
                         Object target = input[gy*gridHeight + gx];
 
-                        ItemStack targetItemStack = ItemStack.field_190927_a;
+                        ItemStack targetItemStack = ItemStack.EMPTY;
                         if (target instanceof ItemStack){
                             targetItemStack = (ItemStack)target;
                         }
@@ -287,7 +287,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                             }
                         }
 
-                        if(!targetItemStack.func_190926_b()){
+                        if(!targetItemStack.isEmpty()){
                         /*
                         itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + 16 * gx, this.guiTop + 16 * gy);
                         itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), targetItemStack, this.guiLeft + 16 * gx, this.guiTop + 16 * gy)

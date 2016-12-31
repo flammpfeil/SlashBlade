@@ -44,7 +44,7 @@ public class JustGuard {
 
         long last = ChargeStart.get(e.getEntityData());
         if(!atJustGuard(e))
-            ChargeStart.set(e.getEntityData(), e.worldObj.getTotalWorldTime() + hurtTicks);
+            ChargeStart.set(e.getEntityData(), e.world.getTotalWorldTime() + hurtTicks);
     }
 
     @SubscribeEvent
@@ -58,7 +58,7 @@ public class JustGuard {
         EntityLivingBase el = e.getEntityLiving();
 
         ItemStack stack = e.getEntityLiving().getHeldItem(EnumHand.MAIN_HAND);
-        if(el instanceof  EntityPlayer && !el.getActiveItemStack().func_190926_b() && !stack.func_190926_b() && stack.getItem() instanceof ItemSlashBlade){
+        if(el instanceof  EntityPlayer && !el.getActiveItemStack().isEmpty() && !stack.isEmpty() && stack.getItem() instanceof ItemSlashBlade){
 
             //mobからの攻撃は常にguard可能
             boolean guardable = e.getSource().getEntity() != null;
@@ -66,7 +66,7 @@ public class JustGuard {
             if(!guardable && e.getSource().isUnblockable()) return;
 
             long cs = ChargeStart.get(el.getEntityData());
-            if(0 < cs && el.worldObj.getTotalWorldTime() - cs < activeTicks){
+            if(0 < cs && el.world.getTotalWorldTime() - cs < activeTicks){
 
                 e.setCanceled(true);
                 e.setAmount(0);
@@ -99,9 +99,9 @@ public class JustGuard {
                 StylishRankManager.addRankPoint(el, StylishRankManager.AttackTypes.JustGuard);
 
 
-                EntityJustGuardManager entityManager = new EntityJustGuardManager(el.worldObj, el);
+                EntityJustGuardManager entityManager = new EntityJustGuardManager(el.world, el);
                 if (entityManager != null) {
-                    el.worldObj.spawnEntityInWorld(entityManager);
+                    el.world.spawnEntity(entityManager);
                 }
             }
         }
@@ -111,7 +111,7 @@ public class JustGuard {
         EntityLivingBase el = e.getEntityLiving();
 
         ItemStack stack = el.getHeldItem(EnumHand.MAIN_HAND);
-        if(!stack.func_190926_b() && stack.getItem() instanceof ItemSlashBlade){
+        if(!stack.isEmpty() && stack.getItem() instanceof ItemSlashBlade){
 
             long cs = ChargeStart.get(el.getEntityData());
             cs = Math.max(interval,cs);

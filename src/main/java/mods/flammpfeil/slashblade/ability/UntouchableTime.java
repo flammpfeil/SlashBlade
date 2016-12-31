@@ -30,7 +30,7 @@ public class UntouchableTime {
         setUntouchableTime(target,ticks,false);
     }
     static public void setUntouchableTime(Entity target, int ticks,boolean isAvoid){
-        target.getEntityData().setLong(UntouchableTimeOut, target.worldObj.getTotalWorldTime() + ticks);
+        target.getEntityData().setLong(UntouchableTimeOut, target.world.getTotalWorldTime() + ticks);
 
         setIsAvoid(target, isAvoid);
 
@@ -57,12 +57,12 @@ public class UntouchableTime {
 
     static private boolean isUntouchable(EntityLivingBase target) {
         if (target == null) return false;
-        if (target.worldObj == null) return false;
+        if (target.world == null) return false;
         NBTTagCompound tag = target.getEntityData();
         if (!tag.hasKey(UntouchableTimeOut)) return false;
 
         long timeOut = tag.getLong(UntouchableTimeOut);
-        long now = target.worldObj.getTotalWorldTime();
+        long now = target.world.getTotalWorldTime();
 
         if (timeOut < now) {
             removeUntouchableTag(target);

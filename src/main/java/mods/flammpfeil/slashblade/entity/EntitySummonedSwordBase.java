@@ -45,7 +45,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      */
     protected Entity thrower;
 
-    protected ItemStack blade = ItemStack.field_190927_a;
+    protected ItemStack blade = ItemStack.EMPTY;
 
     /**
      * ★多段Hit防止用List
@@ -86,8 +86,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         setThrower(entityLiving);
 
         blade = entityLiving.getHeldItem(EnumHand.MAIN_HAND);
-        if(!blade.func_190926_b() && !(blade.getItem() instanceof ItemSlashBlade)){
-            blade = ItemStack.field_190927_a;
+        if(!blade.isEmpty() && !(blade.getItem() instanceof ItemSlashBlade)){
+            blade = ItemStack.EMPTY;
         }
 
         //■撃った人と、撃った人が（に）乗ってるEntityも除外
@@ -233,7 +233,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }
 
         if(targetid != 0){
-            Entity target = worldObj.getEntityByID(targetid);
+            Entity target = world.getEntityByID(targetid);
 
             if(target != null){
 
@@ -268,7 +268,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         Vec3d lookVec = getLook(owner, par1);
         Vec3d reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
         pointedEntity = null;
-        List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this
+        List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
                 , this.getEntityBoundingBox()
                 .addCoord(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax)
                 .expand((double) expandFactor, (double) expandFactor, (double) expandFactor));
@@ -320,7 +320,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         Vec3d Vec3d = getPosition(owner);
         Vec3d Vec3d1 = getLook(owner, par3);
         Vec3d Vec3d2 = Vec3d.addVector(Vec3d1.xCoord * par1, Vec3d1.yCoord * par1, Vec3d1.zCoord * par1);
-        return owner.worldObj.rayTraceBlocks(Vec3d, Vec3d2, false, false, true);
+        return owner.world.rayTraceBlocks(Vec3d, Vec3d2, false, false, true);
     }
     public static Vec3d getPosition(Entity owner)
     {
@@ -370,7 +370,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             d2 = (boundingBox.minY + boundingBox.maxY) / 2.0D - (viewer.posY + (double)viewer.getEyeHeight());
         }
 
-        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+        double d3 = (double)MathHelper.sqrt(d0 * d0 + d1 * d1);
         float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
         float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
 
@@ -421,7 +421,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
         motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
 
-        float f3 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+        float f3 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
         rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
         rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
         if(init){
@@ -458,12 +458,12 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         if(ticksExisted >= 200/*getLifeTime()*/) {
 
             if(!ridingEntity.isDead){
-                if(!worldObj.isRemote){
+                if(!world.isRemote){
                     float magicDamage = Math.max(1.0f, AttackLevel / 2);
                     ridingEntity.hurtResistantTime = 0;
                     DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
                     ridingEntity.attackEntityFrom(ds, magicDamage);
-                    if(!blade.func_190926_b() && ridingEntity instanceof EntityLivingBase){
+                    if(!blade.isEmpty() && ridingEntity instanceof EntityLivingBase){
                         if(thrower != null){
                             StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.BreakPhantomSword);
                             ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)ridingEntity,(EntityLivingBase)thrower);
@@ -488,7 +488,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
+            float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
             this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D / Math.PI);
             this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f) * 180.0D / Math.PI);
         }
@@ -501,7 +501,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     protected RayTraceResult getRayTraceResult(){
         Vec3d Vec3d = new Vec3d(this.posX, this.posY, this.posZ);
         Vec3d Vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-        RayTraceResult movingobjectposition = this.worldObj.rayTraceBlocks(Vec3d, Vec3d1);
+        RayTraceResult movingobjectposition = this.world.rayTraceBlocks(Vec3d, Vec3d1);
         Vec3d = new Vec3d(this.posX, this.posY, this.posZ);
         Vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
@@ -510,8 +510,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             IBlockState state = null;
             BlockPos pos = movingobjectposition.getBlockPos();
             if(pos != null)
-                state = worldObj.getBlockState(pos);
-            if(state != null && state.getCollisionBoundingBox(worldObj, pos) == null)
+                state = world.getBlockState(pos);
+            if(state != null && state.getCollisionBoundingBox(world, pos) == null)
                 movingobjectposition = null;
             else
                 Vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
@@ -523,11 +523,11 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         Predicate<Entity>[] selectors = new Predicate[]{EntitySelectorDestructable.getInstance(), EntitySelectorAttackable.getInstance()};
         for(Predicate<Entity> selector : selectors){
-            List list = this.worldObj.getEntitiesInAABBexcluding(this, bb, selector);
+            List list = this.world.getEntitiesInAABBexcluding(this, bb, selector);
             list.removeAll(alreadyHitEntity);
 
             if(selector.equals(EntitySelectorAttackable.getInstance()) && getTargetEntityId() != 0){
-                Entity target = worldObj.getEntityByID(getTargetEntityId());
+                Entity target = world.getEntityByID(getTargetEntityId());
                 if(target != null){
                     if(target.getEntityBoundingBox().intersectsWith(bb))
                         list.add(target);
@@ -592,7 +592,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         if(doTargeting()) return;
 
         float f2;
-        f2 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
+        f2 = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
         this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D / Math.PI);
 
         for (this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f2) * 180.0D / Math.PI); this.rotationPitch - this.prevRotationPitch < -180.0F; this.prevRotationPitch -= 360.0F)
@@ -660,7 +660,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 double var4 = rand.nextGaussian() * 0.02D;
                 double var6 = rand.nextGaussian() * 0.02D;
                 double var8 = 10.0D;
-                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
                         , target.posX + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width - var2 * var8
                         , target.posY + (double)(rand.nextFloat() * target.height) - var4 * var8
                         , target.posZ + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width - var6 * var8
@@ -680,13 +680,13 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         mountEntity(target);
 
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
             float magicDamage = Math.max(1.0f, AttackLevel);
             target.hurtResistantTime = 0;
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(!blade.func_190926_b() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+            if(!blade.isEmpty() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
@@ -701,13 +701,13 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     }
 
     protected void blastAttackEntity(Entity target){
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
             float magicDamage = 1;
             target.hurtResistantTime = 0;
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(!blade.func_190926_b() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+            if(!blade.isEmpty() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 
@@ -740,7 +740,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }else{
 
 
-            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -759,7 +759,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE
+                this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength
@@ -814,7 +814,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             doRotation();
 
             if(getInterval() < this.ticksExisted)
-                moveEntity(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+                move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
 
             normalizeRotation();
 
@@ -828,14 +828,14 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         if(this.thrower != null && this.thrower instanceof EntityPlayer)
             ((EntityPlayer)thrower).onCriticalHit(this);
         /*
-        if(!this.worldObj.isRemote)
+        if(!this.world.isRemote)
             System.out.println("dead" + this.ticksExisted);
             */
 
-        this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.NEUTRAL, 0.25F, 1.6F);
+        this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.NEUTRAL, 0.25F, 1.6F);
 
         AxisAlignedBB bb = this.getEntityBoundingBox().expand(1.0D, 1.0D, 1.0D);
-        List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());
+        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());
         list.removeAll(alreadyHitEntity);
         for(Entity target : list){
             if(target == null) continue;
@@ -862,8 +862,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     public boolean isOffsetPositionInLiquid(double par1, double par3, double par5)
     {
         //AxisAlignedBB axisalignedbb = this.boundingBox.getOffsetBoundingBox(par1, par3, par5);
-        //List list = this.worldObj.getCollidingBoundingBoxes(this, axisalignedbb);
-        //return !list.isEmpty() ? false : !this.worldObj.isAnyLiquid(axisalignedbb);
+        //List list = this.world.getCollidingBoundingBoxes(this, axisalignedbb);
+        //return !list.isEmpty() ? false : !this.world.isAnyLiquid(axisalignedbb);
         return false;
     }
 
@@ -871,8 +871,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      * ■Tries to moves the entity by the passed in displacement. Args: x, y, z
      */
     @Override
-    public void moveEntity(MoverType moverType, double x, double y, double z) {
-        super.moveEntity(moverType, x,y,z);
+    public void move(MoverType moverType, double x, double y, double z) {
+        super.move(moverType, x,y,z);
     }
 
 

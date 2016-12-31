@@ -22,17 +22,17 @@ public class InventoryUtility {
             int count = 0;
             for(int index : indexList){
                 ItemStack tmp = inventory.getStackInSlot(index);
-                count += tmp.func_190916_E();
+                count += tmp.getCount();
             }
 
-            if(count < stack.func_190916_E()) return false;
+            if(count < stack.getCount()) return false;
 
             if(!isVirtual){
-                int usage = stack.func_190916_E();
+                int usage = stack.getCount();
 
                 for(int index : indexList){
                     ItemStack tmp = inventory.decrStackSize(index, usage);
-                    usage -= tmp.func_190916_E();
+                    usage -= tmp.getCount();
 
                     if(usage <= 0) break;
                 }
@@ -50,7 +50,7 @@ public class InventoryUtility {
         for (int idx = inventory.getSizeInventory(); 0 < --idx;)
         {
             ItemStack current = inventory.getStackInSlot(idx);
-            if(current.func_190926_b()) continue;
+            if(current.isEmpty()) continue;
             if(stack.isItemEqual(current) && ItemStack.areItemStackTagsEqual(stack,current)){
                 result.add(idx);
             }

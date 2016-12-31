@@ -74,19 +74,19 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     }
 
     public ItemStack getWrapedItem(ItemStack par1ItemStack){
-        ItemStack wrapItem = ItemStack.field_190927_a;
+        ItemStack wrapItem = ItemStack.EMPTY;
         if(hasWrapedItem(par1ItemStack)){
             try{
                 NBTTagCompound tag = getItemTagCompound(par1ItemStack);
                 wrapItem = new ItemStack(tag.getCompoundTag(WrapItemStr));
-                if(wrapItem.func_190926_b()) {
+                if(wrapItem.isEmpty()) {
                     removeWrapItem(par1ItemStack);
-                    wrapItem = ItemStack.field_190927_a;
+                    wrapItem = ItemStack.EMPTY;
                 }
 
             }catch(Throwable e){
                 removeWrapItem(par1ItemStack);
-                wrapItem = ItemStack.field_190927_a;
+                wrapItem = ItemStack.EMPTY;
             }
         }
         return wrapItem;
@@ -111,7 +111,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     {
         if(hasWrapedItem(stack)){
             ItemStack wrapItem = getWrapedItem(stack);
-            if(!wrapItem.func_190926_b())
+            if(!wrapItem.isEmpty())
                 return wrapItem.getMaxDamage();
         }
         return this.getMaxDamage();
@@ -168,7 +168,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
 
         if(!result){
             ItemStack wrapedItem = getWrapedItem(par1ItemStack);
-            if(!wrapedItem.func_190926_b())
+            if(!wrapedItem.isEmpty())
                 result = wrapedItem.getItem().getIsRepairable(wrapedItem,par2ItemStack);
         }
 

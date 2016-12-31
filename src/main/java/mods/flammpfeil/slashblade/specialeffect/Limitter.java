@@ -22,8 +22,8 @@ public class Limitter implements ISpecialEffect {
         if(!SpecialEffects.isPlayer(event.getEntityLiving())) return;
         EntityPlayer player = (EntityPlayer) event.getEntityLiving();
 
-        if(player.worldObj.isRemote) return;
-        if((player.worldObj.getTotalWorldTime() & 0xF) != 0xF) return; //16tick cicle
+        if(player.world.isRemote) return;
+        if((player.world.getTotalWorldTime() & 0xF) != 0xF) return; //16tick cicle
 
         ItemStack blade = player.getHeldItem(EnumHand.MAIN_HAND);
         if(!SpecialEffects.isBlade(blade)) return;

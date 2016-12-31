@@ -56,7 +56,7 @@ public class EntityGrimGrip extends Entity {
     public void onUpdate() {
         super.onUpdate();
 
-        if(!worldObj.isRemote && getLifeTime() < this.ticksExisted){
+        if(!world.isRemote && getLifeTime() < this.ticksExisted){
 
             this.createRunningParticles();
             this.kill();

@@ -28,15 +28,15 @@ public class DefeatTheBoss {
 
         player.entityDropItem(tinySoul, 0.0F);
 
-        if(!target.isNonBoss() && !target.worldObj.isRemote){
+        if(!target.isNonBoss() && !target.world.isRemote){
             ItemStack soul = NamedBladeManager.getNamedSoul(player.getRNG());
-            if(!soul.func_190926_b())
+            if(!soul.isEmpty())
                 player.entityDropItem(soul, 0.0F);
         }
     }
 
     static boolean isAveilable(ItemStack stack){
-        if(stack.func_190926_b()) return false;
+        if(stack.isEmpty()) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
         return true;
     }

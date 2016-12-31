@@ -124,7 +124,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
 
                 this.getEntityWorld().updateEntityWithOptionalForce(this,true);
 
-                this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.NEUTRAL, 0.35F, 0.2F);
+                this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.NEUTRAL, 0.35F, 0.2F);
 
                 //this.ticksExisted = 0;
                 return;
@@ -165,7 +165,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
             for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.worldObj.spawnParticle(EnumParticleTypes.PORTAL
+                this.world.spawnParticle(EnumParticleTypes.PORTAL
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength
@@ -196,7 +196,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
         }else{
             if(this.ticksExisted < getInterval())
                 return false;
-            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -218,7 +218,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
         int targetid = this.getTargetEntityId();
 
         if(targetid != 0){
-            Entity target = worldObj.getEntityByID(targetid);
+            Entity target = world.getEntityByID(targetid);
 
             if(target != null){
 
@@ -287,7 +287,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
         motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
         motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
 
-        float f3 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+        float f3 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
         rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
         rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
         if(init){
@@ -319,7 +319,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
     @Override
     protected void attackEntity(Entity target){
 
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
 
             if(this.alreadyHitEntity.contains(target)) return;
             this.alreadyHitEntity.add(target);
@@ -329,7 +329,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if(!blade.func_190926_b() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
+            if(!blade.isEmpty() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase){
                 StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade)blade.getItem()).hitEntity(blade,(EntityLivingBase)target,(EntityLivingBase)thrower);
 

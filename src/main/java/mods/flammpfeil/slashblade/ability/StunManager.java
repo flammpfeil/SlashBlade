@@ -27,11 +27,11 @@ public class StunManager {
     public void onEntityLivingUpdate(LivingEvent.LivingUpdateEvent event){
         EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
-        if(target.worldObj == null) return;
+        if(target.world == null) return;
 
         long timeout = target.getEntityData().getLong(EntityAIStun.StunTimeout);
         if(timeout == 0) return;
-        timeout = timeout - target.worldObj.getTotalWorldTime();
+        timeout = timeout - target.world.getTotalWorldTime();
         if(timeout <= 0 || EntityAIStun.timeoutLimit < timeout){
             target.getEntityData().removeTag(EntityAIStun.StunTimeout);
             return;
@@ -42,16 +42,16 @@ public class StunManager {
     }
 
     public static void setStun(EntityLivingBase target, long duration){
-        if(target.worldObj == null) return;
+        if(target.world == null) return;
         if(!(target instanceof EntityLiving)) return;
         if(duration <= 0) return;
 
         duration = Math.min(duration, EntityAIStun.timeoutLimit);
-        target.getEntityData().setLong(EntityAIStun.StunTimeout,target.worldObj.getTotalWorldTime() + duration);
+        target.getEntityData().setLong(EntityAIStun.StunTimeout,target.world.getTotalWorldTime() + duration);
     }
 
     public static void removeStun(EntityLivingBase target){
-        if(target.worldObj == null) return;
+        if(target.world == null) return;
         if(!(target instanceof EntityLiving)) return;
         target.getEntityData().removeTag(EntityAIStun.StunTimeout);
         target.getEntityData().removeTag(FreezeTimeout);
@@ -65,12 +65,12 @@ public class StunManager {
         if(event.isCanceled()) return;
         Entity target = event.getEntity();
         if(target == null) return;
-        if(target.worldObj == null) return;
+        if(target.world == null) return;
 
         long timeout = target.getEntityData().getLong(FreezeTimeout);
         if(timeout == 0) return;
 
-        long timeLeft = timeout - target.worldObj.getTotalWorldTime();
+        long timeLeft = timeout - target.world.getTotalWorldTime();
         if(timeLeft <= 0 || freezeLimit < timeLeft){
             target.getEntityData().removeTag(FreezeTimeout);
             return;
@@ -80,13 +80,13 @@ public class StunManager {
     }
 
     public static void setFreeze(EntityLivingBase target, long duration){
-        if(target.worldObj == null) return;
+        if(target.world == null) return;
         if(!(target instanceof EntityLiving)) return;
         if(duration <= 0) return;
 
         duration = Math.min(duration, freezeLimit);
         long oldTimeout = target.getEntityData().getLong(FreezeTimeout);
-        long timeout = target.worldObj.getTotalWorldTime() + duration;
+        long timeout = target.world.getTotalWorldTime() + duration;
 
         timeout = Math.max(oldTimeout, timeout);
 

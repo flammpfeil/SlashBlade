@@ -56,7 +56,7 @@ public class EntityBladeStand extends Entity {
     @Override
     protected void entityInit() {
         //this.getDataManager().register(WatchIndexBlade, SlashBlade.getCustomBlade(SlashBlade.modid,"flammpfeil.slashblade.named.muramasa"));
-        this.getDataManager().register(WatchIndexBlade, ItemStack.field_190927_a); //ItemStack
+        this.getDataManager().register(WatchIndexBlade, ItemStack.EMPTY); //ItemStack
         this.getDataManager().register(WatchIndexFlipState, 0);
         this.getDataManager().register(WatchIndexStandType, 0);
     }
@@ -113,21 +113,21 @@ public class EntityBladeStand extends Entity {
         return this.getDataManager().get(WatchIndexBlade);
     }
     public void setBlade(ItemStack blade){
-        if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
+        if(!blade.isEmpty() && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
             if(2 <= getFlip())
                 setFlip(0);
         }
 
-        if(!blade.func_190926_b() && blade.getItem() instanceof ItemSlashBlade){
+        if(!blade.isEmpty() && blade.getItem() instanceof ItemSlashBlade){
             NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
             //ItemSlashBlade.PrevExp.remove(tag);
         }
 
-        this.getDataManager().set(WatchIndexBlade, !blade.func_190926_b() ? blade : ItemStack.field_190927_a);
+        this.getDataManager().set(WatchIndexBlade, !blade.isEmpty() ? blade : ItemStack.EMPTY);
         this.getDataManager().setDirty(WatchIndexBlade);
     }
     public boolean hasBlade(){
-        return !getBlade().func_190926_b();
+        return !getBlade().isEmpty();
     }
 
 
@@ -159,7 +159,7 @@ public class EntityBladeStand extends Entity {
     protected void writeEntityToNBT(NBTTagCompound p_70014_1_) {
 
         ItemStack blade = getBlade();
-        if(!blade.func_190926_b()){
+        if(!blade.isEmpty()){
             NBTTagCompound tag = new NBTTagCompound();
             blade.writeToNBT(tag);
 
@@ -233,14 +233,14 @@ public class EntityBladeStand extends Entity {
 
         noClip = false;
         BlockPos pos = new BlockPos(this.posX,this.posY,this.posZ);
-        if(!this.worldObj.isAirBlock(pos)
-                && this.worldObj.getBlockState(pos).getBlockHardness(this.worldObj, pos) < 0){
+        if(!this.world.isAirBlock(pos)
+                && this.world.getBlockState(pos).getBlockHardness(this.world, pos) < 0){
 
             ReflectionAccessHelper.setVelocity(this,0,0,0);
             this.setPositionAndUpdate(this.posX,this.posY+1.5,this.posZ);
         }
 
-        this.moveEntity(MoverType.SELF,  this.motionX, this.motionY, this.motionZ);
+        this.move(MoverType.SELF,  this.motionX, this.motionY, this.motionZ);
 
         if(!hasBlade() && posY < -10){
             this.setDead();
@@ -253,12 +253,12 @@ public class EntityBladeStand extends Entity {
 
     public boolean setStandBlade(Entity e){
 
-        if(e instanceof EntityPlayer && !e.worldObj.isRemote){
+        if(e instanceof EntityPlayer && !e.world.isRemote){
 
             EntityPlayer p = (EntityPlayer)e;
 
             ItemStack stack = p.getHeldItem(EnumHand.MAIN_HAND);
-            if(stack.func_190926_b() && this.hasBlade()){
+            if(stack.isEmpty() && this.hasBlade()){
 
                 ItemStack blade = this.getBlade();
 
@@ -276,7 +276,7 @@ public class EntityBladeStand extends Entity {
                     }
 
                     if(!hasPerm) {
-                        p.addChatMessage(new TextComponentTranslation("flammpfeil.swaepon.info.notowner.msg"));
+                        p.sendMessage(new TextComponentTranslation("flammpfeil.swaepon.info.notowner.msg"));
                         return false;
                     }
                 }
@@ -284,27 +284,27 @@ public class EntityBladeStand extends Entity {
                 if(SpecialEffects.isEffective(p,blade, SpecialEffects.Limitter) == SpecialEffects.State.NonEffective
                         && !p.isCreative()){
                     int level = ItemSlashBlade.getSpecialEffect(blade).getInteger(SpecialEffects.Limitter.getEffectKey());
-                    p.addChatMessage(new TextComponentTranslation("flammpfeil.swaepon.info.needlevel.msg",Integer.toString(level)));
+                    p.sendMessage(new TextComponentTranslation("flammpfeil.swaepon.info.needlevel.msg",Integer.toString(level)));
                     return false;
                 }
 
                 AchievementList.triggerCraftingAchievement(this.getBlade(), p);
 
                 p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, this.getBlade());
-                this.setBlade(ItemStack.field_190927_a);
+                this.setBlade(ItemStack.EMPTY);
 
                 if(getType(this) == StandType.Naked)
                     this.setDead();
 
                 return true;
 
-            }else if(!stack.func_190926_b()
+            }else if(!stack.isEmpty()
                     && stack.getItem() instanceof ItemSlashBlade
                     && !this.hasBlade()){
 
                 this.setBlade(stack);
 
-                p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.field_190927_a);
+                p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
                 return true;
             }
@@ -323,7 +323,7 @@ public class EntityBladeStand extends Entity {
         if(!this.hasBlade()){
             if(p_85031_1_.isSneaking()){
 
-                if(!p_85031_1_.worldObj.isRemote)
+                if(!p_85031_1_.world.isRemote)
                     this.setDead();
 
                 return true;

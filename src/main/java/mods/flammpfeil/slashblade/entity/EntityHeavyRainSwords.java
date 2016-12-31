@@ -85,7 +85,7 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
         super.spawnParticle();
 
         if(!getEntityWorld().isRemote && this.ticksExisted == this.getInterval()){
-            this.worldObj.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_BLAZE_HURT, SoundCategory.NEUTRAL, 0.40F, 2.0F);
+            this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_BLAZE_HURT, SoundCategory.NEUTRAL, 0.40F, 2.0F);
         }
 
         if(this.ticksExisted < this.getInterval() && this.ridingEntity2 == null){
@@ -93,7 +93,7 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
             //for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.worldObj.spawnParticle(EnumParticleTypes.PORTAL
+                this.world.spawnParticle(EnumParticleTypes.PORTAL
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength
@@ -164,7 +164,7 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
         motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
         motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
 
-        float f3 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+        float f3 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
         rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
         rotationPitch = (float)((Math.atan2(motionY, f3) * 180D) / Math.PI);
         if(init){
@@ -177,13 +177,13 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
     @Override
     protected void attackEntity(Entity target){
 
-        if(!this.worldObj.isRemote) {
+        if(!this.world.isRemote) {
             float magicDamage = Math.max(1.0f, AttackLevel);
             target.hurtResistantTime = 0;
             DamageSource ds = new EntityDamageSource("directMagic", this.getThrower()).setDamageBypassesArmor().setMagicDamage();
             target.attackEntityFrom(ds, magicDamage);
 
-            if (!blade.func_190926_b() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase) {
+            if (!blade.isEmpty() && target instanceof EntityLivingBase && thrower != null && thrower instanceof EntityLivingBase) {
                 StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.PhantomSword);
                 ((ItemSlashBlade) blade.getItem()).hitEntity(blade, (EntityLivingBase) target, (EntityLivingBase) thrower);
 
@@ -204,7 +204,7 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
     protected void blastAttackEntity(Entity target) {
         super.blastAttackEntity(target);
 
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
             if (target instanceof EntityLivingBase) {
                 StunManager.setFreeze((EntityLivingBase) target, 20);
             }

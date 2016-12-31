@@ -59,7 +59,7 @@ public class EntitySummonedSwordAirTrickMarker extends EntitySummonedSwordBase {
                 result = true;
             }
         }else{
-            if(!worldObj.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -75,7 +75,7 @@ public class EntitySummonedSwordAirTrickMarker extends EntitySummonedSwordBase {
     public void mountEntity(Entity par1Entity) {
         super.mountEntity(par1Entity);
 
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
             if(this.getThrower() instanceof EntityPlayerMP)
                 AirTrick.doAirTrick((EntityPlayerMP)this.getThrower());
         }
@@ -88,7 +88,7 @@ public class EntitySummonedSwordAirTrickMarker extends EntitySummonedSwordBase {
         int targetid = this.getTargetEntityId();
 
         if(targetid != 0 && getInterval() < this.ticksExisted ){
-            Entity target = worldObj.getEntityByID(targetid);
+            Entity target = world.getEntityByID(targetid);
 
             if(target != null){
 

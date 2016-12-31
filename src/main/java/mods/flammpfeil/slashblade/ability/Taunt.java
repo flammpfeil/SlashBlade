@@ -22,14 +22,14 @@ import java.util.List;
 public class Taunt {
 
     public static void fire(ItemStack stack , EntityLivingBase player){
-        if(player.worldObj.isRemote)
+        if(player.world.isRemote)
            return;
-        if(!(player.worldObj instanceof WorldServer))
+        if(!(player.world instanceof WorldServer))
             return;
 
         AxisAlignedBB bb = player.getEntityBoundingBox();
         bb = bb.expand(10, 5, 10);
-        List<Entity> list = player.worldObj.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
+        List<Entity> list = player.world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
 
         int soundCounter = 0;
         for(Entity entity : list){
@@ -49,7 +49,7 @@ public class Taunt {
                 level = Math.max(level ,effect.getAmplifier() - 1);
             livingEntity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE,600, level));
 
-            ((WorldServer)livingEntity.worldObj).spawnParticle(EnumParticleTypes.VILLAGER_ANGRY,
+            ((WorldServer)livingEntity.world).spawnParticle(EnumParticleTypes.VILLAGER_ANGRY,
                     livingEntity.posX,
                     livingEntity.posY,
                     livingEntity.posZ,
@@ -58,7 +58,7 @@ public class Taunt {
                     0.02d, new int[0]);
 
             if(soundCounter++ < 3)
-                player.worldObj.playSound(null, livingEntity.posX, livingEntity.posY, livingEntity.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                player.world.playSound(null, livingEntity.posX, livingEntity.posY, livingEntity.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
         }
     }
 }

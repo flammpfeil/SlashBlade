@@ -125,7 +125,7 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
         int targetid = this.getTargetEntityId();
         if(targetid == 0){
             double expandFactor = 15;
-            List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this
+            List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
                     , this.getEntityBoundingBox()
                             .expand(expandFactor, expandFactor, expandFactor));
             list.removeAll(alreadyHitEntity);
@@ -170,7 +170,7 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
         }
 
         if(targetid != 0 && getInterval() < this.ticksExisted ){
-            Entity target = worldObj.getEntityByID(targetid);
+            Entity target = world.getEntityByID(targetid);
 
             if(target != null){
 

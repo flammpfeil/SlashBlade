@@ -26,10 +26,10 @@ public class EntityAIStun extends EntityAIBase {
     @Override
     public boolean shouldExecute() {
         if(this.owner == null) return false;
-        if(this.owner.worldObj == null) return false;
+        if(this.owner.world == null) return false;
         long timeout = this.owner.getEntityData().getLong(StunTimeout);
         if(timeout == 0) return false;
-        timeout = timeout - this.owner.worldObj.getTotalWorldTime();
+        timeout = timeout - this.owner.world.getTotalWorldTime();
         if(timeout <= 0 || timeoutLimit < timeout){
             this.owner.getEntityData().removeTag(StunTimeout);
             return false;

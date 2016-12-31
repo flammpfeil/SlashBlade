@@ -31,7 +31,7 @@ public class BladeMaterials {
 
         {
             ItemStack result = itemTinyBladeSoul.copy();
-            result.func_190920_e(2);
+            result.setCount(2);
 
             SlashBlade.addRecipe(SlashBlade.TinyBladeSoulStr,
                     new RecipeBladeSoulUpgrade(result,"X", 'X', itemProudSoul));

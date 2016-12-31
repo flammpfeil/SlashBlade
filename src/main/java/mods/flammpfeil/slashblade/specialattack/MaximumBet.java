@@ -19,7 +19,7 @@ public class MaximumBet extends SpecialAttackBase {
 
     @Override
     public void doSpacialAttack(ItemStack stack, EntityPlayer player) {
-        World world = player.worldObj;
+        World world = player.world;
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -34,7 +34,7 @@ public class MaximumBet extends SpecialAttackBase {
 
             EntityMaximumBetManager entityDA = new EntityMaximumBetManager(world, player);
             if (entityDA != null) {
-                world.spawnEntityInWorld(entityDA);
+                world.spawnEntity(entityDA);
             }
         }
 
