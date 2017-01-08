@@ -109,8 +109,7 @@ public class LockonCircleRender {
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
 
-
-        Face.setColor(0x88000000 | color);
+        Face.setColor(0xAA000000 | color);
         model.renderPart("lockonBase");
 
         GL11.glPushMatrix();
@@ -119,7 +118,7 @@ public class LockonCircleRender {
         model.renderPart("lockonHealthMask");
         GL11.glPopMatrix();
 
-        Face.setColor(0x88000000 | color);
+        Face.setColor(0xAA000000 | color);
 
         GlStateManager.depthFunc(GL11.GL_LEQUAL);
         model.renderPart("lockonHealth");
