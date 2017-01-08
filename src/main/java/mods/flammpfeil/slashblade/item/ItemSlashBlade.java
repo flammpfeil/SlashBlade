@@ -14,6 +14,7 @@ import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
+import net.minecraft.block.BlockFence;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
@@ -3488,5 +3489,13 @@ public class ItemSlashBlade extends ItemSword {
         }else {
             return super.getMetadata(stack);
         }
+    }
+
+    @Override
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+        if(world.getBlockState(pos).getBlock() instanceof BlockFence)
+            return EnumActionResult.FAIL;
+
+        return super.onItemUseFirst(stack, player, world, pos, side, hitX, hitY, hitZ, hand);
     }
 }
