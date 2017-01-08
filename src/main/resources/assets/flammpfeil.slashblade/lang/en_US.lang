@@ -68,6 +68,7 @@ death.attack.directMagic=%1$s was hacked by %2$s using magic blade
 
 slashblade.seffect.name.WitherEdge=WitherEdge
 slashblade.seffect.name.Limitter=Limitter
+slashblade.seffect.name.BlastEdge=BlastEdge
 
 slashblade.rangeattack.false=SummonedSword
 slashblade.rangeattack.true=SummonedBlade

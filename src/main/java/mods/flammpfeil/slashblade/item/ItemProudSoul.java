@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
 import mods.flammpfeil.slashblade.entity.EntityGrimGripKey;
 import mods.flammpfeil.slashblade.named.NamedBladeManager;
+import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
@@ -34,6 +35,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ItemProudSoul extends Item {
 
@@ -183,6 +185,19 @@ public class ItemProudSoul extends Item {
             String key = "flammpfeil.slashblade.specialattack." + SlashBlade.weapon.getSpecialAttack(par1ItemStack).toString();
 
             par3List.add(String.format("SA:%s",  I18n.translateToLocal(key)));
+        }
+
+        NBTTagCompound etag = ItemSlashBlade.getSpecialEffect(par1ItemStack);
+        if(0 < etag.getSize()){
+            Set<String> tagKeys = etag.getKeySet();
+
+            for(String key : tagKeys){
+                int reqiredLevel = etag.getInteger(key);
+
+                par3List.add(
+                        I18n.translateToLocal("slashblade.seffect.name." + key)
+                                + reqiredLevel);
+            }
         }
 
         if(tag.hasKey("GPX")){
@@ -350,6 +365,55 @@ public class ItemProudSoul extends Item {
 
                             using = true;
                         }
+                    }
+                }
+            }
+        }
+
+        if(!using && stack.getItemDamage() == 4 && entity instanceof EntityBladeStand && !entity.isBurning()){
+            EntityBladeStand stand = (EntityBladeStand)entity;
+            NBTTagCompound seTag = ItemSlashBlade.getSpecialEffect(stack);
+            if(stand.hasBlade()){
+                ItemStack blade = stand.getBlade();
+
+                if(0 < seTag.getSize()) //wirte
+                {
+                    for(String key : seTag.getKeySet()){
+                        NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
+
+                        int level = seTag.getInteger(key);
+
+                        SpecialEffects.addEffect(blade, key, level);
+
+                        player.onEnchantmentCritical(stand);
+
+                        using = true;
+                    }
+                }else{ //remove
+                    int playerLevel = 0;
+                    if(player != null){
+                        playerLevel = player.experienceLevel;
+                    }
+                    NBTTagCompound effects = ItemSlashBlade.getSpecialEffect(blade);
+
+                    for(String key : effects.getKeySet()){
+                        int level = effects.getInteger(key);
+                        if(playerLevel < level) continue; //削除者のLevelが満たない場合解除できない
+
+                        effects.removeTag(key);
+
+                        ItemStack bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
+                        SpecialEffects.addEffect(bladeSoulCrystal, key , level);
+
+                        bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
+
+                        EntityItem entityitem = new EntityItem(stand.worldObj, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
+                        entityitem.setDefaultPickupDelay();
+                        entityitem.setGlowing(true);
+                        stand.worldObj.spawnEntityInWorld(entityitem);
+
+                        using = true;
+                        break;
                     }
                 }
             }
