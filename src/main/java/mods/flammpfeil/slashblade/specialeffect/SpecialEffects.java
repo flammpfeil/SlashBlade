@@ -18,6 +18,7 @@ public class SpecialEffects {
     public static ISpecialEffect WitherEdge = register(new WitherEdge());
     public static ISpecialEffect CrystalHealing = register(new CrystalHealing());
     public static ISpecialEffect Limitter = register(new Limitter());
+    public static ISpecialEffect BlastEdge = register(new BlastEdge());
 
     public static ISpecialEffect register(ISpecialEffect effect){
         effects.add(effect);
@@ -52,6 +53,7 @@ public class SpecialEffects {
         if(target.worldObj == null) return false;
         if(target.worldObj.isRemote) return false;
         if(!(target instanceof EntityPlayer)) return false;
+        if(!target.isEntityAlive()) return false;
         return true;
     }
 

@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
+import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -160,5 +161,19 @@ public class SimpleBlade {
                 'S', Items.STRING,
                 '#', brokenBladeWhite
         ));
+
+        {
+            ItemStack customblade = new ItemStack(SlashBlade.weapon);
+            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(customblade);
+
+            SpecialEffects.addEffect(customblade,SpecialEffects.BlastEdge);
+
+            customblade.setStackDisplayName("TestBlastEdge");
+
+            String key = "TestBlastEdge";
+            SlashBlade.registerCustomItemStack(key, customblade);
+            ItemSlashBladeNamed.NamedBlades.add(key);
+
+        }
     }
 }
