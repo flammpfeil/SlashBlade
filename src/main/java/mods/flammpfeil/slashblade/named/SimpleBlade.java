@@ -1,8 +1,11 @@
 package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
+import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
+import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -171,6 +174,36 @@ public class SimpleBlade {
             customblade.setStackDisplayName("TestBlastEdge");
 
             String key = "TestBlastEdge";
+            SlashBlade.registerCustomItemStack(key, customblade);
+            ItemSlashBladeNamed.NamedBlades.add(key);
+
+        }
+
+        {
+            ItemStack customblade = new ItemStack(SlashBlade.weapon);
+            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(customblade);
+
+            SpecialEffects.addEffect(customblade,SpecialEffects.HFCustom);
+
+            customblade.setStackDisplayName("TestHFCustom");
+
+            String key = "TestHFCustom";
+            SlashBlade.registerCustomItemStack(key, customblade);
+            ItemSlashBladeNamed.NamedBlades.add(key);
+
+        }
+        {
+            ItemStack customblade = new ItemStack(SlashBlade.weapon);
+            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(customblade);
+
+            SpecialEffects.addEffect(customblade,SpecialEffects.HFCustom);
+
+            customblade.setStackDisplayName("TestHFCustom");
+
+            IEnergyStorage storage = customblade.getCapability(BladeCapabilityProvider.ENERGY, null);
+            storage.receiveEnergy(storage.getMaxEnergyStored(),false);
+
+            String key = "TestHFCustomFull";
             SlashBlade.registerCustomItemStack(key, customblade);
             ItemSlashBladeNamed.NamedBlades.add(key);
 

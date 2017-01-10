@@ -46,6 +46,9 @@ public class MoveImputHandler {
         if(CoreProxyClient.camera.isKeyDown())
             message.command += MessageMoveCommandState.CAMERA;
 
+        if(CoreProxyClient.styleaction.isKeyDown())
+            message.command += MessageMoveCommandState.STYLE;
+
 
         byte lastCommand = player.getEntityData().getByte("SB.MCS");
 
