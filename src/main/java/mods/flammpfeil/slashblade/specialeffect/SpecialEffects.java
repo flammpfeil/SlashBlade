@@ -19,6 +19,7 @@ public class SpecialEffects {
     public static ISpecialEffect CrystalHealing = register(new CrystalHealing());
     public static ISpecialEffect Limitter = register(new Limitter());
     public static ISpecialEffect BlastEdge = register(new BlastEdge());
+    public static ISpecialEffect HFCustom = register(new HFCustom());
 
     public static ISpecialEffect register(ISpecialEffect effect){
         effects.add(effect);

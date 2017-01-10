@@ -1,8 +1,8 @@
 flammpfeil.slashblade=SlashBlade
 Key.SlashBlade.PS=Summoned Sword
-Key.SlashBlade.SA=StyleAction
+Key.SlashBlade.SA=SA:StyleAction
 Key.SlashBlade.LO=Lock-on
-Key.SlashBlade.CA=QuickTurn
+Key.SlashBlade.CA=QT:QuickTurn
 itemGroup.flammpfeil.slashblade=SlashBlade
 item.flammpfeil.slashblade.name=SlashBlade--
 item.flammpfeil.slashblade.proudsoul.name=ProudSoul
@@ -14,6 +14,14 @@ item.flammpfeil.slashblade.proudsoul.trapezohedron.name=BladeSoulTrapezohedron
 flammpfeil.swaepon.info.bewitched=bewitched
 flammpfeil.swaepon.info.magic=enchanted
 flammpfeil.swaepon.info.noname=sealed
+
+flammpfeil.sweapon.info.hold=Hold
+flammpfeil.sweapon.info.shift=Shift
+flammpfeil.sweapon.info.forDetails=for Details
+flammpfeil.sweapon.info.energy=Energy
+
+flammpfeil.sweapon.info.hfeffect.trunon=turn on : press QT+SA key
+flammpfeil.sweapon.info.hfeffect.trunoff=turn off : press Sneak+QT+SA key
 
 flammpfeil.swaepon.info.notowner.msg=§8You are not worthy as my master.
 flammpfeil.swaepon.info.needlevel.msg=§8You need more experience. Requirements level:%1$s
@@ -69,12 +77,13 @@ death.attack.directMagic=%1$s was hacked by %2$s using magic blade
 slashblade.seffect.name.WitherEdge=WitherEdge
 slashblade.seffect.name.Limitter=Limitter
 slashblade.seffect.name.BlastEdge=BlastEdge
+slashblade.seffect.name.HFCustom=HFCustom
 
 slashblade.rangeattack.false=SummonedSword
 slashblade.rangeattack.true=SummonedBlade
 
 achievement.flammpfeil.slashblade.slashWoodenSword=Fighting Spirit
-achievement.flammpfeil.slashblade.slashWoodenSword.desc=1 damaged wooden sword
+achievement.flammpfeil.slashblade.slashWoodenSword.desc=1 damaged wooden sword<br>recipies : please click Achievement Icon.
 achievement.flammpfeil.slashblade.slashWoodenSword.pos=0,0
 
 achievement.flammpfeil.slashblade.buildWoodenBlade=Anonymity-Wood-

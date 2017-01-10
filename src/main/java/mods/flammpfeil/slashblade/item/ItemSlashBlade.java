@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.*;
+import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
@@ -13,6 +14,7 @@ import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageRangeAttack;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import mods.flammpfeil.slashblade.specialeffect.HFCustom;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.state.IBlockState;
@@ -22,6 +24,9 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.text.translation.LanguageMap;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.*;
@@ -50,7 +55,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import org.lwjgl.input.Keyboard;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -2348,6 +2356,7 @@ public class ItemSlashBlade extends ItemSword {
         return par1 + f3;
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationOwner(ItemStack par1ItemStack,
                                          EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
@@ -2362,7 +2371,8 @@ public class ItemSlashBlade extends ItemSword {
             }
         }
     }
-    
+
+    @SideOnly(Side.CLIENT)
     public void addInformationSwordClass(ItemStack par1ItemStack,
 			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
@@ -2383,6 +2393,7 @@ public class ItemSlashBlade extends ItemSword {
 		}
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationKillCount(ItemStack par1ItemStack,
     		EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
     	EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
@@ -2392,6 +2403,7 @@ public class ItemSlashBlade extends ItemSword {
 
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationProudSoul(ItemStack par1ItemStack,
                                         EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
@@ -2401,6 +2413,7 @@ public class ItemSlashBlade extends ItemSword {
 
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationSpecialAttack(ItemStack par1ItemStack,
                                             EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
@@ -2414,6 +2427,7 @@ public class ItemSlashBlade extends ItemSword {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationRangeAttack(ItemStack par1ItemStack,
                                             EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
@@ -2427,6 +2441,7 @@ public class ItemSlashBlade extends ItemSword {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationRepairCount(ItemStack par1ItemStack,
                                           EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
@@ -2437,6 +2452,7 @@ public class ItemSlashBlade extends ItemSword {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationMaxAttack(ItemStack par1ItemStack,
                                         EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
@@ -2469,8 +2485,9 @@ public class ItemSlashBlade extends ItemSword {
 
     }
 
+    @SideOnly(Side.CLIENT)
     public void addInformationSpecialEffec(ItemStack par1ItemStack,
-                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                           EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
         NBTTagCompound etag = getSpecialEffect(par1ItemStack);
 
@@ -2487,9 +2504,36 @@ public class ItemSlashBlade extends ItemSword {
 
             par3List.add(
                     I18n.translateToLocal("slashblade.seffect.name." + key)
-                    + "§r "
-                    + (reqiredLevel <= playerLevel ? "§c" : "§8") + reqiredLevel);
+                            + "§r "
+                            + (reqiredLevel <= playerLevel ? "§c" : "§8") + reqiredLevel);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformationEnergy(ItemStack stack,
+                                           EntityPlayer player, List lines, boolean advanced) {
+
+        if(!stack.hasCapability(BladeCapabilityProvider.ENERGY, null)) return;
+        IEnergyStorage storage = stack.getCapability(BladeCapabilityProvider.ENERGY,null);
+        if(storage == null) return;
+
+        if (!(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
+            lines.add(
+                    "§7" +  I18n.translateToLocal("flammpfeil.sweapon.info.hold") + " " + "§e" + "§o" + I18n.translateToLocal("flammpfeil.sweapon.info.shift") + " " + "§r" + "§7"
+                            + I18n.translateToLocal("flammpfeil.sweapon.info.forDetails") + "§r");
+        }else{
+            lines.add(I18n.translateToLocal("flammpfeil.sweapon.info.energy") + ":" + String.format("%,3.1fK/%,3.1fK",storage.getEnergyStored() / 1000.0,storage.getMaxEnergyStored() / 1000.0));
+
+            int level = getSpecialEffect(stack).getInteger(SpecialEffects.HFCustom.getEffectKey());
+            if (0 < level) {
+                if(HFCustom.isEmpowered(stack)){
+                    lines.add(I18n.translateToLocal("flammpfeil.sweapon.info.hfeffect.trunoff"));
+                } else {
+                    lines.add(I18n.translateToLocal("flammpfeil.sweapon.info.hfeffect.trunon"));
+                }
+            }
+        }
+
     }
     
 	@Override
@@ -2525,6 +2569,7 @@ public class ItemSlashBlade extends ItemSword {
             par3List.add(String.format("adjust x:%.1f y:%.1f z:%.1f", ax,ay,az));
         }
 
+        addInformationEnergy(par1ItemStack, par2EntityPlayer, par3List, par4);
 	}
 
 
@@ -3475,9 +3520,29 @@ public class ItemSlashBlade extends ItemSword {
         return 72000;
     }
 
+    boolean viewEnergyBar(ItemStack stack){
+        if(!stack.hasCapability(BladeCapabilityProvider.ENERGY, null)) return false;
+        IEnergyStorage storage = stack.getCapability(BladeCapabilityProvider.ENERGY,null);
+        if(storage == null) return false;
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            return true;
+        }else
+            return false;
+    }
+
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return false;//super.showDurabilityBar(stack);
+        return viewEnergyBar(stack);//super.showDurabilityBar(stack);
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        if(viewEnergyBar(stack)) {
+            IEnergyStorage storage = stack.getCapability(BladeCapabilityProvider.ENERGY,null);
+            return 1.0 - (double)storage.getEnergyStored() / (double)storage.getMaxEnergyStored();
+        }else
+            return super.getDurabilityForDisplay(stack);
     }
 
     @Override
@@ -3497,5 +3562,11 @@ public class ItemSlashBlade extends ItemSword {
             return EnumActionResult.FAIL;
 
         return super.onItemUseFirst(stack, player, world, pos, side, hitX, hitY, hitZ, hand);
+    }
+
+
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+        return new BladeCapabilityProvider(stack, nbt);
     }
 }
