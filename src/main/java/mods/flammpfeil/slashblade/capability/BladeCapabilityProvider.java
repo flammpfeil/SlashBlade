@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.capability;
 
+import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.specialeffect.HFCustom;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
@@ -16,6 +17,8 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Furia on 2017/01/10.
@@ -91,12 +94,40 @@ public class BladeCapabilityProvider implements ICapabilityProvider, INBTSeriali
     }
 
     private void updateStorage(){
-        if(storage != null) return;
-
         NBTTagCompound tag = ItemSlashBlade.getSpecialEffect(this.container);
         int level = tag.getInteger(SpecialEffects.HFCustom.getEffectKey());
+
         if(0 < level){
-            this.storage = new EnergyStorage(defaultCapacity);
+            int newCapacity = getDefaultCapacity(container);
+            if(storage == null){
+                this.storage = new EnergyStorage(newCapacity);
+            }else{
+                int currentCapacity = storage.getMaxEnergyStored();
+                if(currentCapacity != newCapacity){
+                    NBTBase stored = ENERGY.writeNBT(storage, null);
+                    this.storage = new EnergyStorage(newCapacity);
+                    ENERGY.readNBT(storage, null, stored);
+                }
+            }
         }
+
+
+    }
+
+    private static Map<Integer, Integer> defaultCapacityMap = new HashMap<Integer, Integer>(){{
+        this.put(1, 100000);
+        this.put(2, 150000);
+        this.put(3, 250000);
+        this.put(4, 1000000);
+    }};
+    private static int getDefaultCapacity(ItemStack stack){
+        int effectLevel = ItemSlashBlade.getSpecialEffect(stack).getInteger(SpecialEffects.HFCustom.getEffectKey());
+
+        if(defaultCapacityMap.containsKey(effectLevel))
+            return defaultCapacityMap.get(effectLevel);
+        else if(effectLevel <= 0)
+            return 0;
+        else
+            return defaultCapacity;
     }
 }

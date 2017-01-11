@@ -38,7 +38,7 @@ import java.util.UUID;
 /**
  * Created by Furia on 15/06/19.
  */
-public class HFCustom implements ISpecialEffect{
+public class HFCustom implements ISpecialEffect, IRemovable{
     private static final String EffectKey = "HFCustom";
 
     private boolean useBlade(ItemSlashBlade.ComboSequence sequence){
@@ -52,7 +52,7 @@ public class HFCustom implements ISpecialEffect{
     public static int startupCost = 1000;
     public static int runningCost = 100;
 
-    public static int energyCostBase = 100;
+    public static int energyCostBase = 200;
 
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event){
@@ -128,7 +128,7 @@ public class HFCustom implements ISpecialEffect{
 
         float damage = 0.5f * (1 + rank + effectLevel);
 
-        int usage = (int)(energyCostBase * Math.pow(1.5,rank));
+        int usage = (int)(energyCostBase * Math.pow(1.2, rank + effectLevel));
         if (storage.extractEnergy(usage,false) == usage)
             forceAttack(target, damage);
     }
@@ -311,5 +311,15 @@ public class HFCustom implements ISpecialEffect{
                 player.prevPosY,
                 player.prevPosZ, SoundEvents.UI_BUTTON_CLICK, SoundCategory.NEUTRAL, 0.25F, 2.0F);
 
+    }
+
+    @Override
+    public boolean canCopy(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean canRemoval(ItemStack stack) {
+        return false;
     }
 }

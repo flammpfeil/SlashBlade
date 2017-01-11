@@ -164,6 +164,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             bindTexture(BladeModelManager.resourceDurabilityTexture);
 
             double par = BladeModel.itemBlade.getDurabilityForDisplay(BladeModel.targetStack);
+            par = Math.min(Math.max(par, 0.0),1.0);
 
             GlStateManager.translate(0.0F, 0.0F, 0.1f);
 
