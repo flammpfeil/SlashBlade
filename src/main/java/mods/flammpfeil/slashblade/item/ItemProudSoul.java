@@ -5,6 +5,8 @@ import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
 import mods.flammpfeil.slashblade.entity.EntityGrimGripKey;
 import mods.flammpfeil.slashblade.named.NamedBladeManager;
+import mods.flammpfeil.slashblade.specialeffect.IRemovable;
+import mods.flammpfeil.slashblade.specialeffect.ISpecialEffect;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
@@ -396,20 +398,33 @@ public class ItemProudSoul extends Item {
                         int level = effects.getInteger(key);
                         if(playerLevel < level) continue; //削除者のLevelが満たない場合解除できない
 
-                        effects.removeTag(key);
+                        boolean canRemoval = true;
+                        boolean canCopy = true;
 
-                        ItemStack bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
-                        SpecialEffects.addEffect(bladeSoulCrystal, key , level);
+                        ISpecialEffect effect = SpecialEffects.getEffect(key);
+                        if(effect != null && effect instanceof IRemovable){
+                            canCopy = ((IRemovable) effect).canCopy(blade);
+                            canRemoval = ((IRemovable) effect).canRemoval(blade);
+                        }
 
-                        bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
+                        if(canRemoval)
+                            effects.removeTag(key);
 
-                        EntityItem entityitem = new EntityItem(stand.worldObj, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
-                        entityitem.setDefaultPickupDelay();
-                        entityitem.setGlowing(true);
-                        stand.worldObj.spawnEntityInWorld(entityitem);
+                        if(canCopy){
+                            ItemStack bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
+                            SpecialEffects.addEffect(bladeSoulCrystal, key , level);
 
-                        using = true;
-                        break;
+                            bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
+
+                            EntityItem entityitem = new EntityItem(stand.worldObj, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
+                            entityitem.setDefaultPickupDelay();
+                            entityitem.setGlowing(true);
+                            stand.worldObj.spawnEntityInWorld(entityitem);
+                        }
+
+                        using = canRemoval || canCopy;
+                        if(using)
+                            break;
                     }
                 }
             }

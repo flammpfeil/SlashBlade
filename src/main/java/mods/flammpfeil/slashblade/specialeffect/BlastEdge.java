@@ -36,7 +36,7 @@ import java.util.Random;
 /**
  * Created by Furia on 15/06/19.
  */
-public class BlastEdge implements ISpecialEffect{
+public class BlastEdge implements ISpecialEffect, IRemovable{
     private static final String EffectKey = "BlastEdge";
 
     private boolean useBlade(ItemSlashBlade.ComboSequence sequence){
@@ -233,5 +233,15 @@ public class BlastEdge implements ISpecialEffect{
                 event.getEntityLiving().entityDropItem(bladeSoulCrystal,1);
             }
         }
+    }
+
+    @Override
+    public boolean canCopy(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean canRemoval(ItemStack stack) {
+        return true;
     }
 }
