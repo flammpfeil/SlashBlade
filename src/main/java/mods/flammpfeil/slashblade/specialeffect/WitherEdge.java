@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
@@ -13,7 +14,7 @@ import net.minecraft.potion.PotionEffect;
 /**
  * Created by Furia on 15/06/19.
  */
-public class WitherEdge implements ISpecialEffect{
+public class WitherEdge implements ISpecialEffect, IRemovable{
     private static final String EffectKey = "WitherEdge";
 
     private boolean useBlade(ItemSlashBlade.ComboSequence sequence){
@@ -88,5 +89,17 @@ public class WitherEdge implements ISpecialEffect{
     @Override
     public String getEffectKey() {
         return EffectKey;
+    }
+
+    @Override
+    public boolean canCopy(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public boolean canRemoval(ItemStack stack) {
+        if(stack.getUnlocalizedName().equals("item.flammpfeil.slashblade.named.koseki"))
+            return false;
+        return true;
     }
 }

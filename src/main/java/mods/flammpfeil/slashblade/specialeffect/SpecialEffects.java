@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.Entity;
@@ -7,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,7 +16,7 @@ import java.util.Set;
  */
 public class SpecialEffects {
 
-    private static Set<ISpecialEffect> effects = Sets.newHashSet();
+    private static Map<String,ISpecialEffect> effects = Maps.newHashMap();
     public static ISpecialEffect WitherEdge = register(new WitherEdge());
     public static ISpecialEffect CrystalHealing = register(new CrystalHealing());
     public static ISpecialEffect Limitter = register(new Limitter());
@@ -22,12 +24,16 @@ public class SpecialEffects {
     public static ISpecialEffect HFCustom = register(new HFCustom());
 
     public static ISpecialEffect register(ISpecialEffect effect){
-        effects.add(effect);
+        effects.put(effect.getEffectKey(), effect);
         return effect;
     }
 
+    public static ISpecialEffect getEffect(String key){
+        return effects.get(key);
+    }
+
     public static void init(){
-        for(ISpecialEffect effect : effects){
+        for(ISpecialEffect effect : effects.values()){
             effect.register();
         }
     }
