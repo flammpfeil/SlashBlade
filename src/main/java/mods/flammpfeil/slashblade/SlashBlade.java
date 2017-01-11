@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import mods.flammpfeil.slashblade.compat.CompatManager;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.event.*;
@@ -458,6 +459,9 @@ public class SlashBlade implements IFuelHandler{
                     'I', itemSphereBladeSoul,
                     'L', "logWood"));
         }
+
+        CompatManager manager = new CompatManager();
+        manager.init();
 
         InitEventBus.post(new LoadEvent.PostInitEvent(evt));
 
