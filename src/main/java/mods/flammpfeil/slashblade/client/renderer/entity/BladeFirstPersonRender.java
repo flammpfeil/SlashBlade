@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
 import com.google.common.base.Predicate;
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.ability.ProjectileBarrier;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
@@ -677,7 +678,7 @@ public class BladeFirstPersonRender {
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-                if (stack.hasEffect()) {
+                if (stack.hasEffect() && SlashBlade.RenderEnchantEffect) {
                     GL11.glDepthFunc(GL11.GL_EQUAL);
                     GL11.glDisable(GL11.GL_LIGHTING);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(RES_ITEM_GLINT);
@@ -802,7 +803,7 @@ public class BladeFirstPersonRender {
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-                if (stack.hasEffect()) {
+                if (stack.hasEffect() && SlashBlade.RenderEnchantEffect) {
 
                     GL11.glDepthFunc(GL11.GL_EQUAL);
                     GL11.glDisable(GL11.GL_LIGHTING);

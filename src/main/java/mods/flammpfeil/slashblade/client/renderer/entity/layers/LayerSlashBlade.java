@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.client.renderer.entity.layers;
 
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.ability.ProjectileBarrier;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
@@ -274,7 +275,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-                if (item.hasEffect()) {
+                if (item.hasEffect() && SlashBlade.RenderEnchantEffect) {
 
                     GL11.glDepthFunc(GL11.GL_EQUAL);
                     GL11.glDisable(GL11.GL_LIGHTING);
@@ -345,7 +346,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-                if (item.hasEffect()) {
+                if (item.hasEffect() && SlashBlade.RenderEnchantEffect) {
                     GL11.glDepthFunc(GL11.GL_EQUAL);
                     GL11.glDisable(GL11.GL_LIGHTING);
                     this.render.bindTexture(RES_ITEM_GLINT);
@@ -848,7 +849,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                     GL11.glEnable(GL11.GL_LIGHTING);
                     OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-                    if (stack.hasEffect()) {
+                    if (stack.hasEffect() && SlashBlade.RenderEnchantEffect) {
                         GL11.glDepthFunc(GL11.GL_EQUAL);
                         GL11.glDisable(GL11.GL_LIGHTING);
                         this.render.bindTexture(RES_ITEM_GLINT);
@@ -964,7 +965,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             GL11.glEnable(GL11.GL_LIGHTING);
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-            if (stack.hasEffect())
+            if (stack.hasEffect() && SlashBlade.RenderEnchantEffect)
             {
 
                 GL11.glDepthFunc(GL11.GL_EQUAL);

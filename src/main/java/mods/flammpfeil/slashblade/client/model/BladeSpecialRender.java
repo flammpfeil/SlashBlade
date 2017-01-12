@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.client.model;
 
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.client.renderer.entity.BladeFirstPersonRender;
@@ -48,6 +49,9 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
     private void renderEffect()
     {
+        if(!SlashBlade.RenderEnchantEffect)
+            return;
+
         GlStateManager.depthMask(false);
         GlStateManager.depthFunc(514);
         GlStateManager.disableLighting();
