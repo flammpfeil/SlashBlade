@@ -215,7 +215,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
     public void LivingDrops(LivingDropsEvent event){
         String key = EntityList.getEntityString(event.getEntityLiving());
 
-        if(key.equals("Creeper")){
+        if(key != null && key.equals("Creeper")){
 
             NBTTagCompound tag = event.getEntityLiving().writeToNBT(new NBTTagCompound());
             if(tag.getBoolean("powered")){
