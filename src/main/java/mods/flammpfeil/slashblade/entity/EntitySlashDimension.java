@@ -194,7 +194,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                 this.playSound(SoundEvents.ENTITY_WITHER_HURT, 0.2F, 0.5F + 0.25f * this.rand.nextFloat());
             }
 
-            {
+            if(this.getThrower() != null){
                 AxisAlignedBB bb = this.getEntityBoundingBox();
 
                 if(this.getThrower() instanceof EntityLivingBase){

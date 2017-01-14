@@ -145,7 +145,7 @@ public class EntityStingerManager extends Entity implements IThrowableEntity {
         //super.onUpdate();
 
 
-        if(this.getThrower() instanceof EntityLivingBase){
+        if(this.getThrower() != null && this.getThrower() instanceof EntityLivingBase){
             EntityLivingBase owner = (EntityLivingBase)this.getThrower();
             if(blade.isEmpty()){
                 ItemStack stack = owner.getHeldItemMainhand();
@@ -190,7 +190,7 @@ public class EntityStingerManager extends Entity implements IThrowableEntity {
         if(!world.isRemote)
         {
 
-            {
+            if(this.getThrower() != null){
                 double dAmbit = 1.5D;
                 AxisAlignedBB bb = new AxisAlignedBB(
                         thrower.posX - dAmbit, thrower.posY - dAmbit, thrower.posZ - dAmbit,
