@@ -214,7 +214,7 @@ public class EntityHelmBrakerManager extends Entity implements IThrowableEntity 
         if(!worldObj.isRemote)
         {
 
-            {
+            if(this.getThrower() != null){
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
                     List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());

@@ -129,7 +129,7 @@ public class EntitySpearManager extends Entity implements IThrowableEntity {
         if(!worldObj.isRemote)
         {
 
-            {
+            if(this.getThrower() != null){
                 double dAmbit = 1.5D;
                 AxisAlignedBB bb = new AxisAlignedBB(
                         thrower.posX - dAmbit, thrower.posY - dAmbit, thrower.posZ - dAmbit,
