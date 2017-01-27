@@ -47,6 +47,7 @@ public class StylishRankManager {
 
             {
                 Property propIgnoreDamageType = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "RankDownIgnoreDamageTypes" ,new String[]{});
+                propIgnoreDamageType.setShowInGui(false);
 
                 String[] strs = propIgnoreDamageType.getStringList();
                 ArrayList<String> tmp = Lists.newArrayList();

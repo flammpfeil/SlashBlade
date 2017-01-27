@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
@@ -123,6 +124,11 @@ public class Doutanuki {
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","SpawnRate",(double)spawnRate);
+                prop.setShowInGui(true)
+                        .setMinValue(0.0).setMaxValue(1.0)
+                        .setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
+                        .setLanguageKey("flammpfeil.slashblade.config.rustblade.spawnrate");
+
                 spawnRate = (float)prop.getDouble(spawnRate);
                 spawnRate = Math.min(1.0f,Math.max(0.0f,spawnRate));
                 prop.set(spawnRate);
@@ -130,6 +136,11 @@ public class Doutanuki {
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","IsBrokenRate",(double)isBrokenRate);
+                prop.setShowInGui(true)
+                        .setMinValue(0.0).setMaxValue(1.0)
+                        .setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
+                        .setLanguageKey("flammpfeil.slashblade.config.rustblade.isbrokenrate");
+
                 isBrokenRate = (float)prop.getDouble(isBrokenRate);
                 isBrokenRate = Math.min(1.0f,Math.max(0.0f,isBrokenRate));
                 prop.set(isBrokenRate);
@@ -137,6 +148,11 @@ public class Doutanuki {
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","NoSheathRate",(double)noSheathRate,"0.0<rate<1");
+                prop.setShowInGui(true)
+                        .setMinValue(0.0).setMaxValue(1.0)
+                        .setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
+                        .setLanguageKey("flammpfeil.slashblade.config.rustblade.scabbardlost");
+
                 noSheathRate = (float)prop.getDouble(noSheathRate);
                 noSheathRate = Math.min(1.0f,Math.max(0.0f,noSheathRate));
                 prop.set(noSheathRate);
@@ -144,8 +160,15 @@ public class Doutanuki {
             {
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","DropRate",(double)dropRate,"0:nodrop , 0<droprate<1 , 2:forceDrop");
+                prop.setShowInGui(true)
+                        .setMinValue(0.0).setMaxValue(2.0)
+                        .setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
+                        .setLanguageKey("flammpfeil.slashblade.config.rustblade.drop");
+
                 dropRate = (float)prop.getDouble(dropRate);
                 dropRate = Math.max(0.0f,dropRate);
+                if(1.0 < dropRate)
+                    dropRate = 2.0f;
                 prop.set(dropRate);
             }
 
@@ -153,6 +176,8 @@ public class Doutanuki {
                 double directDropRate = -1;
                 Property prop;
                 prop = SlashBlade.mainConfiguration.get("RustBlade","DirectDropChance",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
+                prop.setShowInGui(true);
+
                 directDropRate = prop.getDouble(directDropRate);
 
                 if(0 < directDropRate)

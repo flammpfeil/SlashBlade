@@ -1,7 +1,7 @@
 [
 {
-  "modid": "${modid}",
-  "name": "${modname}",
+  "modid": "flammpfeil.slashblade",
+  "name": "SlashBlade",
   "description":"",
   "version": "${version}",
   "mcversion": "${mcversion}",
