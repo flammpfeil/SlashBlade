@@ -1697,7 +1697,7 @@ public class ItemSlashBlade extends ItemSword {
     }
 
 
-    public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityPlayer el,ItemStack sitem){
+    public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityLivingBase el,ItemStack sitem){
         float tagAttackAmplifier = this.AttackAmplifier.get(tag);
 
 
@@ -1709,7 +1709,11 @@ public class ItemSlashBlade extends ItemSword {
         if(rank < 3 || swordType.contains(SwordType.Broken) || swordType.contains(SwordType.Sealed)){
             attackAmplifier = 2 - baseModif;
         }else if( rank == 7 || 5 <= rank && swordType.contains(SwordType.FiercerEdge)){
-            float level = el.experienceLevel;
+            float level;
+            if(el instanceof EntityPlayer)
+                level = ((EntityPlayer)el).experienceLevel;
+            else
+                level = el.getHealth();
 
             float max = RefineBase + RepairCount.get(tag);
 
@@ -1752,12 +1756,12 @@ public class ItemSlashBlade extends ItemSword {
             return;
         }
 
-		if(!(par3Entity instanceof EntityPlayer)){
+		if(!(par3Entity instanceof EntityLivingBase)){
 			super.onUpdate(sitem, par2World, par3Entity, indexOfMainSlot, isCurrent);
 			return;
 		}
 
-        EntityPlayer el = (EntityPlayer)par3Entity;
+        EntityLivingBase el = (EntityLivingBase)par3Entity;
 
 		NBTTagCompound tag = getItemTagCompound(sitem);
 
@@ -1826,10 +1830,10 @@ public class ItemSlashBlade extends ItemSword {
         }
         */
 
-		if(!isCurrent && !par2World.isRemote){
+		if(!isCurrent && !par2World.isRemote && el instanceof EntityPlayer){
 			if(swordType.contains(SwordType.Bewitched) && !swordType.contains(SwordType.NoScabbard) && 0 < curDamage && par2World.getTotalWorldTime() % 20 == 0){
 
-				int idx = Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
+				int idx = Arrays.asList(((EntityPlayer)el).inventory.mainInventory).indexOf(sitem);
 
                 boolean doMaterialRepair = false;
 
@@ -1838,11 +1842,11 @@ public class ItemSlashBlade extends ItemSword {
                     ItemStack tinySoulHasEmptyTag = tinySoul.copy();
                     tinySoulHasEmptyTag.setTagCompound(new NBTTagCompound());
 
-                    doMaterialRepair = InventoryUtility.consumeInventoryItem(el.inventory,tinySoul,false)
-                                    || InventoryUtility.consumeInventoryItem(el.inventory,tinySoulHasEmptyTag,false);
+                    doMaterialRepair = InventoryUtility.consumeInventoryItem(((EntityPlayer)el).inventory,tinySoul,false)
+                                    || InventoryUtility.consumeInventoryItem(((EntityPlayer)el).inventory,tinySoulHasEmptyTag,false);
                 }
 
-				if(0<= idx && idx < 9 && 0 < el.experienceLevel || doMaterialRepair){
+				if(0<= idx && idx < 9 && 0 < ((EntityPlayer)el).experienceLevel || doMaterialRepair){
 					int repair;
 					int descExp = 0;
                     int descLv = 0;
@@ -1863,7 +1867,7 @@ public class ItemSlashBlade extends ItemSword {
 					}
 
 					if(0 < curDamage){
-                        el.addExhaustion(0.025F);
+                        ((EntityPlayer)el).addExhaustion(0.025F);
 						sitem.setItemDamage(Math.max(0,curDamage-repair));
 					}
 
@@ -1871,17 +1875,17 @@ public class ItemSlashBlade extends ItemSword {
 
                     if(0 < descExp){
                         for(;descExp > 0;descExp--){
-                            if(el.experienceLevel <= 0) break;
+                            if(((EntityPlayer)el).experienceLevel <= 0) break;
 
-                            el.addExperience(-1);
+                            ((EntityPlayer)el).addExperience(-1);
 
-                            if(el.experience < 0){
-                                if(el.experienceLevel <= 0){
-                                    el.experience = 0;
+                            if(((EntityPlayer)el).experience < 0){
+                                if(((EntityPlayer)el).experienceLevel <= 0){
+                                    ((EntityPlayer)el).experience = 0;
                                 }else{
                                     //el.experienceLevel--;
-                                    el.addExperienceLevel(-1);
-                                    el.experience = 1.0f - (0.9f/el.xpBarCap());
+                                    ((EntityPlayer)el).addExperienceLevel(-1);
+                                    ((EntityPlayer)el).experience = 1.0f - (0.9f/((EntityPlayer)el).xpBarCap());
                                 }
                             }
                         }
@@ -1889,9 +1893,9 @@ public class ItemSlashBlade extends ItemSword {
 
                     if(0 < descLv){
                         for(;descLv > 0;descLv--){
-                            if(0 < el.experienceLevel){
+                            if(0 < ((EntityPlayer)el).experienceLevel){
                                 //el.experienceLevel--;
-                                el.addExperienceLevel(-1);
+                                ((EntityPlayer)el).addExperienceLevel(-1);
                                 //el.addExperience(-1);
                             }
                         }
@@ -2034,7 +2038,8 @@ public class ItemSlashBlade extends ItemSword {
 								}
                                 */
 
-								el.onCriticalHit(el);
+                                if(el instanceof EntityPlayer)
+                                    ((EntityPlayer)el).onCriticalHit(el);
 
                                 /*
 								if(!el.worldObj.isRemote){
