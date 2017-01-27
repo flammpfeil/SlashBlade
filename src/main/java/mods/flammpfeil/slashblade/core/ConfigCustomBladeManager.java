@@ -34,6 +34,7 @@ public class ConfigCustomBladeManager {
     public void loadConfig(Configuration config){
         Property propCustomBlade = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "CustomBlade" ,new String[]{"dios"});
         lines = propCustomBlade.getStringList();
+        propCustomBlade.setShowInGui(false);
     }
 
     @SubscribeEvent

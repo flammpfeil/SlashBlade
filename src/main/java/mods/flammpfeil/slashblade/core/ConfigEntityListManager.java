@@ -116,6 +116,7 @@ public class ConfigEntityListManager {
 
 				{
 					Property propAttackableTargets = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "AttackableTargets" ,new String[]{});
+					propAttackableTargets.setShowInGui(false);
 
 					for(String curEntry : propAttackableTargets.getStringList()){
 						curEntry = unescape(curEntry);
@@ -143,6 +144,7 @@ public class ConfigEntityListManager {
 
 				{
 					Property propDestructableTargets = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "DestructableTargets" ,new String[]{});
+					propDestructableTargets.setShowInGui(false);
 
 					for(String curEntry : propDestructableTargets.getStringList()){
 						curEntry = unescape(curEntry);

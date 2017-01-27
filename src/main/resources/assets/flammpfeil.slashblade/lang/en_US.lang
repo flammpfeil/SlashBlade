@@ -3,6 +3,12 @@ Key.SlashBlade.PS=Summoned Sword
 Key.SlashBlade.SA=SA:StyleAction
 Key.SlashBlade.LO=Lock-on
 Key.SlashBlade.CA=QT:QuickTurn
+
+flammpfeil.slashblade.config.rustblade.spawnrate=Spawn Rate
+flammpfeil.slashblade.config.rustblade.broken=Already broken
+flammpfeil.slashblade.config.rustblade.scabbardlost=Scabbard is lost
+flammpfeil.slashblade.config.rustblade.drop=Drop rate
+
 itemGroup.flammpfeil.slashblade=SlashBlade
 item.flammpfeil.slashblade.name=SlashBlade--
 item.flammpfeil.slashblade.proudsoul.name=ProudSoul

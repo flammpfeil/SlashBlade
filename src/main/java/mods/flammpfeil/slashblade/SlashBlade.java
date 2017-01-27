@@ -4,9 +4,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.compat.CompatManager;
+import mods.flammpfeil.slashblade.config.ConfigManager;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.event.*;
+import mods.flammpfeil.slashblade.gui.config.ConfigGuiFactory;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
@@ -49,11 +51,13 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import java.io.File;
 import java.util.*;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 
-@Mod(name = SlashBlade.modname, modid = SlashBlade.modid, version = SlashBlade.version)
+@Mod(name = SlashBlade.modname, modid = SlashBlade.modid, version = SlashBlade.version,
+    guiFactory = "mods.flammpfeil.slashblade.gui.config.ConfigGuiFactory")
 public class SlashBlade implements IFuelHandler{
 
 
@@ -74,7 +78,8 @@ public class SlashBlade implements IFuelHandler{
 
 	public static Item proudSoul;
 
-	public static Configuration mainConfiguration;
+    public static Configuration mainConfiguration;
+    public static File mainConfigurationFile;
 
 	public static ConfigEntityListManager manager;
 
@@ -133,7 +138,7 @@ public class SlashBlade implements IFuelHandler{
 
     @EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
-		mainConfiguration = new Configuration(evt.getSuggestedConfigurationFile());
+		mainConfiguration = new Configuration(this.mainConfigurationFile = evt.getSuggestedConfigurationFile());
 
 		try {
             mainConfiguration.load();
@@ -142,16 +147,19 @@ public class SlashBlade implements IFuelHandler{
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "EnchantVisualEffect" , true);
                 SlashBlade.RenderEnchantEffect = prop.getBoolean();
+                prop.setShowInGui(true);
             }
 
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "FastLeavesDecay" , false);
                 EntityLumberManager.BlockHarvestDropsEventHandler.fastLeavesDecay = prop.getBoolean(false);
+                prop.setShowInGui(true);
             }
 
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop" , true, "true:bladestand / false:all ways EntityItem drop");
                 SafeDrop = prop.getBoolean(true);
+                prop.setShowInGui(true);
             }
 
             {
@@ -169,6 +177,8 @@ public class SlashBlade implements IFuelHandler{
                 float range = Math.max(1, Math.min(200, prop.getInt()));
                 StylishRankManager.setRankRate(range / 100.0f);
             }
+
+            MinecraftForge.EVENT_BUS.register(new ConfigManager());
 		}
 		finally
 		{
