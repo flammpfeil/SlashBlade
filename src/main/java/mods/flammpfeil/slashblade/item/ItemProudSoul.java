@@ -418,12 +418,12 @@ public class ItemProudSoul extends Item {
                             ItemStack bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
                             SpecialEffects.addEffect(bladeSoulCrystal, key , level);
 
-                            bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.worldObj.getTotalWorldTime()));
+                            bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.world.getTotalWorldTime()));
 
-                            EntityItem entityitem = new EntityItem(stand.worldObj, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
+                            EntityItem entityitem = new EntityItem(stand.world, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
                             entityitem.setDefaultPickupDelay();
                             entityitem.setGlowing(true);
-                            stand.worldObj.spawnEntityInWorld(entityitem);
+                            stand.world.spawnEntity(entityitem);
                         }
 
                         using = canRemoval || canCopy;

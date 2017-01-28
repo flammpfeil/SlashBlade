@@ -54,14 +54,14 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
         PotionEffect effect = target.getActivePotionEffect(MobEffects.FIRE_RESISTANCE);
         int currentLevel = effect != null ? effect.getAmplifier() : 0;
 
-        if(!target.worldObj.isRemote){
+        if(!target.world.isRemote){
             if(target.isWet() && currentLevel < 0){
                 target.removePotionEffect(MobEffects.FIRE_RESISTANCE);
                 target.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.7F, 1.6F + (target.getRNG().nextFloat() - target.getRNG().nextFloat()) * 0.4F);
             }
         }
 
-        if(target.worldObj instanceof WorldServer &&  currentLevel < 0 && target.ticksExisted % 20 == 0){
+        if(target.world instanceof WorldServer &&  currentLevel < 0 && target.ticksExisted % 20 == 0){
             currentLevel = Math.abs(currentLevel);
             Random rand = target.getRNG();
             for (int i = 0; i < currentLevel; ++i)
@@ -69,7 +69,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
                 double d0 = rand.nextGaussian() * 0.5D;
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d2 = rand.nextGaussian() * 0.5D;
-                ((WorldServer)target.worldObj).spawnParticle(EnumParticleTypes.REDSTONE,
+                ((WorldServer)target.world).spawnParticle(EnumParticleTypes.REDSTONE,
                         false,
                         target.posX,
                         target.posY + target.getEyeHeight(),
@@ -91,7 +91,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
         if(currentLevel < 0){
             target.removePotionEffect(MobEffects.FIRE_RESISTANCE);
 
-            target.worldObj.createExplosion(null, target.posX , target.posY, target.posZ, 1, false);
+            target.world.createExplosion(null, target.posX , target.posY, target.posZ, 1, false);
         }
 
     }
@@ -99,7 +99,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
     @SubscribeEvent
     public void onImpactEffectEvent(SlashBladeEvent.ImpactEffectEvent event){
 
-        if(event.user.worldObj.isRemote) return;
+        if(event.user.world.isRemote) return;
 
         if(!useBlade(event.sequence)) return;
 
@@ -130,7 +130,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
 
         if(currentLevel <= -3){
             target.removePotionEffect(MobEffects.FIRE_RESISTANCE);
-            Explosion blast = target.worldObj.createExplosion(player, target.posX , target.posY + player.getEyeHeight() + 0.1f, target.posZ, 0.5f, false);
+            Explosion blast = target.world.createExplosion(player, target.posX , target.posY + player.getEyeHeight() + 0.1f, target.posZ, 0.5f, false);
             target.hurtResistantTime = 0;
             int level = 1 + EnchantmentHelper.getEnchantmentLevel(Enchantments.KNOCKBACK, event.blade);
             target.attackEntityFrom(DamageSource.causeExplosionDamage(blast), (float)level * 2);
@@ -148,7 +148,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
             double d0 = rand.nextGaussian() * 0.02D;
             double d1 = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
-            target.worldObj.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK,
+            target.world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK,
                     target.posX + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width,
                     target.posY + 1.0D + (double)(rand.nextFloat() * target.height),
                     target.posZ + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width, d0, d1, d2, new int[0]);
@@ -185,7 +185,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
 
         if(currentLevel <= -5){
             player.removePotionEffect(MobEffects.FIRE_RESISTANCE);
-            player.worldObj.createExplosion(null, player.posX , player.posY + player.getEyeHeight() + 0.1f, player.posZ, 1.0f, false);
+            player.world.createExplosion(null, player.posX , player.posY + player.getEyeHeight() + 0.1f, player.posZ, 1.0f, false);
         }else{
             currentLevel = Math.min(0, currentLevel);
             player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 20 * 10,-5, false, false));

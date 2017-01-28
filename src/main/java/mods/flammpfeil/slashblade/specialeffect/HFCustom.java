@@ -62,14 +62,14 @@ public class HFCustom implements ISpecialEffect, IRemovable{
         PotionEffect effect = target.getActivePotionEffect(MobEffects.FIRE_RESISTANCE);
         int currentLevel = effect != null ? effect.getAmplifier() : 0;
 
-        if(!target.worldObj.isRemote){
+        if(!target.world.isRemote){
             if(target.isWet() && currentLevel < 0){
                 target.removePotionEffect(MobEffects.FIRE_RESISTANCE);
                 target.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.7F, 1.6F + (target.getRNG().nextFloat() - target.getRNG().nextFloat()) * 0.4F);
             }
         }
 
-        if(target.worldObj instanceof WorldServer &&  currentLevel < 0 && target.ticksExisted % 20 == 0){
+        if(target.world instanceof WorldServer &&  currentLevel < 0 && target.ticksExisted % 20 == 0){
             currentLevel = Math.abs(currentLevel);
             Random rand = target.getRNG();
             for (int i = 0; i < currentLevel; ++i)
@@ -77,7 +77,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
                 double d0 = rand.nextGaussian() * 0.5D;
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d2 = rand.nextGaussian() * 0.5D;
-                ((WorldServer)target.worldObj).spawnParticle(EnumParticleTypes.REDSTONE,
+                ((WorldServer)target.world).spawnParticle(EnumParticleTypes.REDSTONE,
                         false,
                         target.posX,
                         target.posY + target.getEyeHeight(),
@@ -90,7 +90,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
     @SubscribeEvent
     public void onImpactEffectEvent(SlashBladeEvent.ImpactEffectEvent event){
 
-        //if(event.user.worldObj.isRemote) return;
+        //if(event.user.world.isRemote) return;
 
         if(!useBlade(event.sequence)) return;
 
@@ -136,7 +136,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
     @SubscribeEvent
     public void onUpdateItemSlashBlade(SlashBladeEvent.OnUpdateEvent event){
 
-        if(event.entity.worldObj.isRemote) return;
+        if(event.entity.world.isRemote) return;
 
         if(!SpecialEffects.isPlayer(event.entity)) return;
         EntityPlayer player = (EntityPlayer) event.entity;
@@ -163,7 +163,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
         IEnergyStorage storage = blade.getCapability(BladeCapabilityProvider.ENERGY, null);
         if(storage == null) return;
 
-        if(player.worldObj instanceof WorldServer && player.worldObj.getTotalWorldTime() % 10 == 0 &&
+        if(player.world instanceof WorldServer && player.world.getTotalWorldTime() % 10 == 0 &&
                 (player.getHeldItemMainhand() != blade
                         || !ItemSlashBlade.OnClick.get(tag)
                         || (!player.isSwingInProgress && player.getActiveItemStack() != null))){
@@ -179,7 +179,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
             double d0 = rand.nextGaussian() * 0.02D;
             double d1 = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
-            ((WorldServer)player.worldObj).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK,
+            ((WorldServer)player.world).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK,
                     false,
                     player.posX,
                     player.posY + player.height / 2.0f,
@@ -273,7 +273,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
 
 
     public void updateEmpoweredState(EntityPlayer player, ItemStack blade) {
-        if(player.worldObj.isRemote)
+        if(player.world.isRemote)
            return;
 
         boolean currentState = isEmpowered(blade);
@@ -301,12 +301,12 @@ public class HFCustom implements ISpecialEffect, IRemovable{
             return;
 
         if(newState){
-            player.worldObj.playSound((EntityPlayer) null,
+            player.world.playSound((EntityPlayer) null,
                     player.prevPosX,
                     player.prevPosY,
                     player.prevPosZ, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, SoundCategory.NEUTRAL, 1.0F, 1.2F);
         }
-        player.worldObj.playSound((EntityPlayer) null,
+        player.world.playSound((EntityPlayer) null,
                 player.prevPosX,
                 player.prevPosY,
                 player.prevPosZ, SoundEvents.UI_BUTTON_CLICK, SoundCategory.NEUTRAL, 0.25F, 2.0F);
