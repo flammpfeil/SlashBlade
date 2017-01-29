@@ -698,7 +698,7 @@ public class ItemSlashBlade extends ItemSword {
             NBTTagCompound tag = getItemTagCompound(stack);
             int id = tag.getInteger("lumbmanager");
             Entity prevEntity = worldIn.getEntityByID(id);
-            if(prevEntity == null || !(prevEntity instanceof EntityLumberManager)){
+            if((prevEntity == null || !(prevEntity instanceof EntityLumberManager)) && stack.getItem() instanceof ItemSlashBlade){
                 ItemSlashBlade bladeItem = (ItemSlashBlade)stack.getItem();
 
                 ItemSlashBlade.setComboSequence(tag, ItemSlashBlade.ComboSequence.Battou);
