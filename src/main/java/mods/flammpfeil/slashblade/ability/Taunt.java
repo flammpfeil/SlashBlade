@@ -13,6 +13,8 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 
@@ -20,6 +22,9 @@ import java.util.List;
  * Created by Furia on 2016/10/07.
  */
 public class Taunt {
+    static final String TauntLevel = "SB.TauntLevel";
+    static public int maxTauntLevel = 5;
+    static public int expBase = 5;
 
     public static void fire(ItemStack stack , EntityLivingBase player){
         if(player.world.isRemote)
@@ -35,6 +40,10 @@ public class Taunt {
         for(Entity entity : list){
             if(!(entity instanceof EntityLivingBase))
                 continue;
+
+            if(!((EntityLivingBase) entity).canEntityBeSeen(player))
+                return;
+
             EntityLivingBase livingEntity = (EntityLivingBase) entity;
             DamageSource ds = DamageSource.causeMobDamage(player);
 
@@ -57,8 +66,27 @@ public class Taunt {
                     livingEntity.width * 2.0F, livingEntity.height, livingEntity.width * 2.0F,
                     0.02d, new int[0]);
 
+            int tLv = livingEntity.getEntityData().getInteger(TauntLevel);
+            tLv = Math.min(tLv + 1, maxTauntLevel);
+            livingEntity.getEntityData().setInteger(TauntLevel, tLv);
+
+            if(tLv <= 2)
+                StunManager.setStun(livingEntity, 10);
+
             if(soundCounter++ < 3)
                 player.world.playSound(null, livingEntity.posX, livingEntity.posY, livingEntity.posZ, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 0.5F, 1.0F);
         }
+    }
+
+    @SubscribeEvent
+    public void onLivingExperienceDrop(LivingExperienceDropEvent event){
+        if(event.getEntityLiving() == null)
+            return;
+
+        int dropExp = event.getDroppedExperience();
+
+        int tLv = event.getEntityLiving().getEntityData().getInteger(TauntLevel);
+        if( 0 < tLv)
+            event.setDroppedExperience(dropExp + tLv * expBase);
     }
 }

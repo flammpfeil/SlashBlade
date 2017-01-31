@@ -2008,7 +2008,8 @@ public class ItemSlashBlade extends ItemSword {
 
                             SoulEater.fire(sitem, el);
 
-                            Taunt.fire(sitem, el);
+                            if(el.onGround)
+                                Taunt.fire(sitem, el);
 
 							AxisAlignedBB bb = el.getEntityBoundingBox();
 							bb = bb.expand(10, 5, 10);
@@ -2048,6 +2049,7 @@ public class ItemSlashBlade extends ItemSword {
                     case SIai:
                             StylishRankManager.setNextAttackType(el, AttackTypes.None);
 							setComboSequence(tag, ComboSequence.None);
+                            SoulEater.fire(sitem, el);
 							break;
 					default:
 						if(comboSeq.useScabbard || (comboSeq.mainHandCombo != null && comboSeq.mainHandCombo.useScabbard)){
@@ -2058,6 +2060,9 @@ public class ItemSlashBlade extends ItemSword {
                             tag.setInteger(lastPosHashStr, (int) ((el.posX + el.posZ) * 10.0));
                             LastActionTime.set(tag, currentTime + 5);
                             setComboSequence(tag, ComboSequence.Noutou);
+
+                            if(!el.worldObj.isRemote)
+                                el.addPotionEffect(new PotionEffect(MobEffects.HASTE, 5, 0, true, false));
 
                             UpthrustBlast.doBlast(sitem, el);
 

@@ -23,31 +23,19 @@ public class SoulEater {
         int exp = ItemSlashBlade.PrevExp.get(nbtTag);
         exp = Math.max(0,exp);
 
-        if(!isNoMove(player)){
-            player.getEntityData().setInteger(tag, getPosHash(player));
-            player.getEntityData().setInteger(tag3, exp);
-
-            if(!player.world.isRemote)
-                player.getEntityData().setInteger(tag2, 1);
-        }else{
-            player.getEntityData().setInteger(tag, getPosHash(player));
-            if(!player.world.isRemote){
-                int count = player.getEntityData().getInteger(tag2);
-                count += 1;
-                player.getEntityData().setInteger(tag2, count);
-            }
-
-            int sumexp = player.getEntityData().getInteger(tag3);
-            sumexp += exp;
-            player.getEntityData().setInteger(tag3, sumexp);
+        if(!player.world.isRemote){
+            int count = player.getEntityData().getInteger(tag2);
+            count += 1;
+            player.getEntityData().setInteger(tag2, count);
         }
+
+        int sumexp = player.getEntityData().getInteger(tag3);
+        sumexp += exp;
+        player.getEntityData().setInteger(tag3, sumexp);
     }
 
     public static void fire(ItemStack stack ,EntityLivingBase player){
-        if(!player.getEntityData().hasKey(tag)) return;
-
-        if(!isNoMove(player)) return;
-        player.getEntityData().removeTag(tag);
+        if(!player.getEntityData().hasKey(tag3)) return;
 
         int exp = player.getEntityData().getInteger(tag3);
         player.getEntityData().removeTag(tag3);
@@ -94,7 +82,7 @@ public class SoulEater {
     }
 
     static boolean isAveilable(ItemStack stack){
-        if(stack.isEmpty()) return false;
+        if(stack == null) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
         return true;
     }
