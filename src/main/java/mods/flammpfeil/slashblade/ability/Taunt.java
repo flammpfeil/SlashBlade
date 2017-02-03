@@ -1,18 +1,25 @@
 package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
+import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -43,6 +50,8 @@ public class Taunt {
 
             if(!((EntityLivingBase) entity).canEntityBeSeen(player))
                 return;
+
+            StylishRankManager.addRankPoint(player, StylishRankManager.AttackTypes.Taunt);
 
             EntityLivingBase livingEntity = (EntityLivingBase) entity;
             DamageSource ds = DamageSource.causeMobDamage(player);
@@ -88,5 +97,31 @@ public class Taunt {
         int tLv = event.getEntityLiving().getEntityData().getInteger(TauntLevel);
         if( 0 < tLv)
             event.setDroppedExperience(dropExp + tLv * expBase);
+    }
+
+    @SubscribeEvent
+    public void onRenderLivingPre(RenderLivingEvent.Pre<EntityPlayer> event){
+
+        if(!event.getEntity().onGround)
+            return;
+
+        ItemStack stack = event.getEntity().getHeldItemMainhand();
+        if(stack == null) return;
+        if(!(stack.getItem() instanceof ItemSlashBlade)) return;
+
+        //クイックターン押下状態で射撃攻撃で発動
+        byte command = event.getEntity().getEntityData().getByte("SB.MCS");
+        if(0 == (command & MessageMoveCommandState.CAMERA))
+            return;
+
+        if(!(event.getRenderer().getMainModel() instanceof ModelBiped))
+            return;
+
+        ModelBiped model = (ModelBiped)event.getRenderer().getMainModel();
+
+
+        model.rightArmPose = ModelBiped.ArmPose.BLOCK;
+        model.leftArmPose = ModelBiped.ArmPose.EMPTY;
+
     }
 }

@@ -100,7 +100,7 @@ public class StylishRankManager {
         public static String BreakPhantomSword = registerAttackType("BreakPhantomSword", 0.1f);
 
         public static String JustGuard = registerAttackType("JustGuard", 1.0f);
-        public static String Noutou = registerAttackType("Noutou", -1.5f);
+        public static String Noutou = registerAttackType("Noutou", -1.0f);
 
         public static String KillNoutou = registerAttackType("KillNoutou", -0.5f);
 
@@ -134,6 +134,9 @@ public class StylishRankManager {
         public static String Force4 = registerAttackType("Force4", 0.3f);
         public static String Force5 = registerAttackType("Force5", 0.3f);
         public static String Force6 = registerAttackType("Force6", 0.3f);
+
+        public static String Taunt = registerAttackType("Taunt", 0.1f);
+        public static String TauntFinish = registerAttackType("TauntFinish", -0.5f);
 
         public static String registerAttackType(String key,float factor){
             types.put(key,factor);
