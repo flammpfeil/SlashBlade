@@ -55,39 +55,6 @@ public class HFCustom implements ISpecialEffect, IRemovable{
     public static int energyCostBase = 200;
 
     @SubscribeEvent
-    public void onLivingUpdate(LivingEvent.LivingUpdateEvent event){
-
-        EntityLivingBase target = event.getEntityLiving();
-
-        PotionEffect effect = target.getActivePotionEffect(MobEffects.FIRE_RESISTANCE);
-        int currentLevel = effect != null ? effect.getAmplifier() : 0;
-
-        if(!target.world.isRemote){
-            if(target.isWet() && currentLevel < 0){
-                target.removePotionEffect(MobEffects.FIRE_RESISTANCE);
-                target.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.7F, 1.6F + (target.getRNG().nextFloat() - target.getRNG().nextFloat()) * 0.4F);
-            }
-        }
-
-        if(target.world instanceof WorldServer &&  currentLevel < 0 && target.ticksExisted % 20 == 0){
-            currentLevel = Math.abs(currentLevel);
-            Random rand = target.getRNG();
-            for (int i = 0; i < currentLevel; ++i)
-            {
-                double d0 = rand.nextGaussian() * 0.5D;
-                double d1 = rand.nextGaussian() * 0.02D;
-                double d2 = rand.nextGaussian() * 0.5D;
-                ((WorldServer)target.world).spawnParticle(EnumParticleTypes.REDSTONE,
-                        false,
-                        target.posX,
-                        target.posY + target.getEyeHeight(),
-                        target.posZ,
-                        currentLevel, d0, d1, d2, 0.0);
-            }
-        }
-    }
-
-    @SubscribeEvent
     public void onImpactEffectEvent(SlashBladeEvent.ImpactEffectEvent event){
 
         //if(event.user.world.isRemote) return;
