@@ -3182,7 +3182,41 @@ public class ItemSlashBlade extends ItemSword {
 
                 entity.worldObj.playSound((EntityPlayer) null, entity.prevPosX, entity.prevPosY, entity.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.35F, 1.0F);
 
-                if (tag.getInteger("RangeAttackType") == 0) {
+                final String tauntIdKey = "SB.TauntId";
+                int tauntId = entity.getEntityData().getInteger(tauntIdKey);
+                if(tauntId != 0){
+                    Entity tauntEntity = entity.getEntityWorld().getEntityByID(tauntId);
+                    if(tauntEntity == null || tauntEntity.isDead || !(tauntEntity instanceof EntitySpinningSword)){
+                        tauntId = 0;
+                        entity.getEntityData().removeTag(tauntIdKey);
+                    }
+                }
+                byte command = entity.getEntityData().getByte("SB.MCS");
+                if(tauntId == 0 && entity.onGround && entity.motionX == 0 && entity.motionZ == 0 && 0 < (command & MessageMoveCommandState.CAMERA)) {
+                    EntitySpinningSword entityDrive = new EntitySpinningSword(w, entity);
+                    if (entityDrive != null) {
+                        entityDrive.setLifeTime(40);
+
+                        /*
+                        int targetid = ItemSlashBlade.TargetEntityId.get(tag);
+                        entityDrive.setTargetEntityId(targetid);
+                        */
+
+                        if (SummonedSwordColor.exists(tag))
+                            entityDrive.setColor(SummonedSwordColor.get(tag));
+
+                        ScheduleEntitySpawner.getInstance().offer(entityDrive);
+                        entity.getEntityData().setInteger(tauntIdKey, entityDrive.getEntityId());
+                        //w.spawnEntityInWorld(entityDrive);
+
+                        /*
+                        if (entity instanceof EntityPlayer)
+                            AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                        */
+
+                    }
+
+                }else if (tag.getInteger("RangeAttackType") == 0) {
                     EntitySummonedSwordBase entityDrive = new EntitySummonedSwordBase(w, entity, magicDamage, 90.0f);
                     if (entityDrive != null) {
                         entityDrive.setLifeTime(30);

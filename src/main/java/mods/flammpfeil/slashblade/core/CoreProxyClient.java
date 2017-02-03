@@ -251,6 +251,13 @@ public class CoreProxyClient extends CoreProxy {
             }
         });
 
+        RenderingRegistry.registerEntityRenderingHandler(EntitySpinningSword.class, new IRenderFactory<EntitySpinningSword>() {
+            @Override
+            public Render<? super EntitySpinningSword> createRenderFor(RenderManager manager) {
+                return new RenderSpinningSword(manager);
+            }
+        });
+
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntityGrimGrip.class, new IRenderFactory<EntityGrimGrip>() {
