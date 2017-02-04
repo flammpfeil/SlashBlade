@@ -1648,7 +1648,7 @@ public class ItemSlashBlade extends ItemSword {
             if(itemStack.isItemEnchanted()){
                 result.add(SwordType.Enchanted);
 
-                if(itemStack.hasDisplayName()){
+                if(itemStack.hasDisplayName() || ItemSlashBladeNamed.IsDefaultBewitched.get(tag)){
                     result.add(SwordType.Bewitched);
                 }
             }
@@ -3503,7 +3503,12 @@ public class ItemSlashBlade extends ItemSword {
         }
 
 
-        if(forceDrop || stack.getRarity() != EnumRarity.COMMON || stack.hasDisplayName() || stack.hasTagCompound() && ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())){
+        if(forceDrop
+                || stack.getRarity() != EnumRarity.COMMON
+                || stack.hasDisplayName()
+                || stack.hasTagCompound()
+                    && (ItemSlashBladeNamed.TrueItemName.exists(stack.getTagCompound())
+                        || ItemSlashBladeNamed.IsDefaultBewitched.get(stack.getTagCompound()))){
 
             EntityBladeStand e = new EntityBladeStand(entityItem.world, entityItem.posX, entityItem.posY, entityItem.posZ, stack.copy());
 

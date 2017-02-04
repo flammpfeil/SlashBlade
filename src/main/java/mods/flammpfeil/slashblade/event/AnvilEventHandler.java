@@ -135,13 +135,8 @@ public class AnvilEventHandler {
 
         out.setItemDamage(out.getItemDamage() - repair);
 
-        if(StringUtils.isBlank(event.getName())){
-            if(ItemSlashBladeNamed.IsDefaultBewitched.get(tag)){
-                out.clearCustomName();
-                out.setStackDisplayName(out.getDisplayName());
-            }else if(out.hasDisplayName()) {
-                out.clearCustomName();
-            }
+        if(StringUtils.isBlank(event.getName()) && out.hasDisplayName()){
+            out.clearCustomName();
         }else{
             out.setStackDisplayName(event.getName());
         }
