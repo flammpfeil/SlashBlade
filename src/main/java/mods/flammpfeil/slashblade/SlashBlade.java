@@ -15,6 +15,7 @@ import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import mods.flammpfeil.slashblade.util.DummyRecipeBase;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -128,7 +129,7 @@ public class SlashBlade implements IFuelHandler{
         recipeMultimap.put(key,new DummySmeltingRecipe(input,output));
     }
     public static void addRecipe(String key, IRecipe value) {
-        addRecipe(key, value, false);
+        addRecipe(key, value, value instanceof DummyRecipeBase);
     }
     public static void addRecipe(String key, IRecipe value, boolean isDummy) {
         if(!isDummy)

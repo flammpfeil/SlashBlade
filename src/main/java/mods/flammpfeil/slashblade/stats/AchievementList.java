@@ -200,6 +200,15 @@ public class AchievementList {
 
                     parent.push(registerCraftingAchievement("soulCrystal", SlashBlade.getCustomBlade("crystal_bladesoul"), parent.peek()));
                     setContent(parent.peek(), "crystal_bladesoul");
+                    {
+                        parent.push(registerCraftingAchievement("namedbladeSoul", SlashBlade.getCustomBlade("crystal_bladesoul"), parent.peek()).setSpecial());
+                        setContent(parent.peek(), "namedblade_soul");
+                        parent.pop();
+
+                        parent.push(registerCraftingAchievement("soulTrapezohedron", SlashBlade.getCustomBlade("trapezohedron_bladesoul"), parent.peek()).setSpecial());
+                        setContent(parent.peek(), "trapezohedron_bladesoul");
+                        parent.pop();
+                    }
                     parent.pop();
 
                     parent.push(registerCraftingAchievement("tinySoul", SlashBlade.getCustomBlade("tiny_bladesoul"), parent.peek()));
@@ -224,6 +233,10 @@ public class AchievementList {
 
 
                     parent.push(registerAchievement("phantomSword", new ItemStack(Items.DIAMOND_SWORD), parent.peek()));
+                    {
+                        parent.push(registerAchievement("phantomBlade", new ItemStack(Items.FEATHER), parent.peek()));
+                        parent.pop();
+                    }
                     parent.pop();
                 }
                 parent.pop();

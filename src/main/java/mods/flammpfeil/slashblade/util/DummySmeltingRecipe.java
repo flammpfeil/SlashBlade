@@ -9,38 +9,17 @@ import net.minecraft.world.World;
 /**
  * Created by Furia on 15/02/12.
  */
-public class DummySmeltingRecipe implements IRecipe {
+public class DummySmeltingRecipe extends DummyRecipeBase {
 
     public ItemStack input;
-    public ItemStack output;
 
     public DummySmeltingRecipe(ItemStack input, ItemStack output) {
+        super(output);
         this.input = input;
-        this.output = output;
     }
 
     @Override
-    public boolean matches(InventoryCrafting p_77569_1_, World p_77569_2_) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getCraftingResult(InventoryCrafting p_77572_1_) {
-        return null;
-    }
-
-    @Override
-    public int getRecipeSize() {
-        return 0;
-    }
-
-    @Override
-    public ItemStack getRecipeOutput() {
-        return output;
-    }
-
-    @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        return new ItemStack[]{input};
+    public RecipeType getRecipeType() {
+        return RecipeType.Smelting;
     }
 }

@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import mods.flammpfeil.slashblade.util.DummyPotionRecipe;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionUtils;
@@ -70,14 +71,9 @@ public class BladeMaterials {
         });
 
         SlashBlade.addRecipe(SlashBlade.SphereBladeSoulStr,
-                new ShapedOreRecipe(new ItemStack(Items.EXPERIENCE_BOTTLE),
-                        " P ",
-                        " S ",
-                        " I ",
-                        'S', new ItemStack(Items.BREWING_STAND),
-                        'P', itemSphereBladeSoul,
-                        'I', PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER))
-                ,true);
+                new DummyPotionRecipe(new ItemStack(Items.EXPERIENCE_BOTTLE),
+                        itemSphereBladeSoul,
+                        PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER)));
 
         BrewingRecipeRegistry.addRecipe(new BrewingRecipe(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER), itemProudSoul, PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.STRONG_STRENGTH)){
             @Override
@@ -87,13 +83,8 @@ public class BladeMaterials {
         });
 
         SlashBlade.addRecipe(SlashBlade.ProudSoulStr,
-                new ShapedOreRecipe(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.STRONG_STRENGTH),
-                        " P ",
-                        " S ",
-                        " I ",
-                        'S',new ItemStack(Items.BREWING_STAND),
-                        'P',itemProudSoul,
-                        'I',PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER))
-                ,true);
+                new DummyPotionRecipe(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.STRONG_STRENGTH),
+                       itemProudSoul,
+                       PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER)));
     }
 }
