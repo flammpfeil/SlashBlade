@@ -545,17 +545,7 @@ public class SlashBlade implements IFuelHandler{
 
 
     public static ItemStack getCustomBlade(String modid,String name){
-        ItemStack blade = SlashBlade.findItemStack(modid, name, 1);
-
-        if(blade != null){
-            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
-
-            if(ItemSlashBladeNamed.IsDefaultBewitched.get(tag)){
-                blade.setStackDisplayName(blade.getDisplayName());
-            }
-        }
-
-        return blade;
+        return SlashBlade.findItemStack(modid, name, 1);
     }
     public static ItemStack getCustomBlade(String key){
         String modid;
