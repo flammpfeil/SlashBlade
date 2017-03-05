@@ -18,12 +18,12 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
 
-import java.time.chrono.MinguoEra;
 import java.util.EnumSet;
 
 /**
@@ -34,7 +34,7 @@ public class BladeFirstPersonRender {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onRenderFirstPersonHand(RenderHandEvent event) {
+    public void onRenderWorldLastEvent(RenderWorldLastEvent event){
         if(event.isCanceled()) return;
 
 
@@ -55,11 +55,15 @@ public class BladeFirstPersonRender {
 
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack);
 
-        GlStateManager.clear(256);
+        GlStateManager.pushAttrib();
+        //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
-        int xOffset = event.renderPass;
+        //GlStateManager.clear(256);
+
+        int xOffset = net.minecraftforge.client.MinecraftForgeClient.getRenderPass();
 
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         float f = 0.07F;
 
@@ -69,18 +73,17 @@ public class BladeFirstPersonRender {
 
         Project.gluPerspective(70.0F, (float) mc.displayWidth / (float) mc.displayHeight, 0.05F, (float) (16) * 2.0F);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
 
         if (mc.gameSettings.anaglyph) {
             GlStateManager.translate((float) (xOffset * 2 - 1) * 0.1F, 0.0F, 0.0F);
         }
 
-        GlStateManager.pushMatrix();
-
 
         //if (mc.gameSettings.thirdPersonView == 0 && !flag && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator())
         {
-            mc.entityRenderer.enableLightmap();
+            //mc.entityRenderer.enableLightmap();
 
             float partialTicks = event.partialTicks;
 
@@ -106,13 +109,26 @@ public class BladeFirstPersonRender {
                 GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 
                 Face.resetColor();
+
+                GL11.glTranslatef(0.0f, 0.25f, 0);
+                GL11.glRotatef(-25.0F, 0.9F, 0.1F, 0.0F);
+                GL11.glScalef(1.2F, 1.0F, 1.0F);
+                //GL11.glRotatef(8.0F, 0.0F, 1.0F, 0.0F);
+                /**/
                 render(player, partialTicks);
             }
 
-            mc.entityRenderer.disableLightmap();
+            //mc.entityRenderer.disableLightmap();
         }
 
         GlStateManager.popMatrix();
+
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManager.popMatrix();
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+
+        GlStateManager.popAttrib();
     }
 
     void renderNakedBlade(EntityLivingBase entity, float partialTicks){
