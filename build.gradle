@@ -18,11 +18,11 @@ group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-nami
 archivesBaseName = "SlashBlade"
 
 minecraft {
-    version = "1.8.9-11.15.0.1718"
+    version = "1.8.9-11.15.1.1902-1.8.9"
     runDir = "run"
-    
+
     mappings = "stable_20"
-    
+
     //static final boolean isRelease = /*@IS_RELEASE@*/ false;
     replace '@IS_RELEASE@', '*/true;//'
 
@@ -30,20 +30,20 @@ minecraft {
     replace '@MC_VERSION@', version
 }
 processResources
-{
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+        {
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
 
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modname':project.archivesBaseName, 'modid':project.group
-    }
+                // replace version and mcversion
+                expand 'version':project.version, 'mcversion':project.minecraft.version, 'modname':project.archivesBaseName, 'modid':project.group
+            }
 
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+            // copy everything else, thats not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
 
 dependencies {
     runtime fileTree(dir: 'libs', include: '*.jar')
