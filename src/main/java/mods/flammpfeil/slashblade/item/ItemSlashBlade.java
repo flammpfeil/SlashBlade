@@ -2995,7 +2995,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return false;//super.showDurabilityBar(stack);
+        return super.showDurabilityBar(stack);
     }
 
     @Override
