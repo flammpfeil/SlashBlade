@@ -310,11 +310,15 @@ public class ItemProudSoul extends Item {
 
                         if(bladeSoulCrystal.isEmpty())
                             bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
-                    }else if(stack.getItemDamage() == 0)
-                        bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
-                    else
-                        bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TrapezohedronBladeSoulStr,1);
-
+                        else
+                            AchievementList.triggerAchievement(player, "namedbladeSoul");
+                    }else if(stack.getItemDamage() == 0) {
+                        bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.CrystalBladeSoulStr, 1);
+                        AchievementList.triggerAchievement(player, "soulCrystal");
+                    }else {
+                        bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TrapezohedronBladeSoulStr, 1);
+                        AchievementList.triggerAchievement(player, "soulTrapezohedron");
+                    }
                     stand.extinguish();
 
                     bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.world.getTotalWorldTime()));
@@ -364,6 +368,7 @@ public class ItemProudSoul extends Item {
                             NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
 
                             bladeTag.setBoolean("RangeAttackType",!bladeTag.getBoolean("RangeAttackType"));
+                            AchievementList.triggerAchievement(player,"phantomBlade");
 
                             using = true;
                         }

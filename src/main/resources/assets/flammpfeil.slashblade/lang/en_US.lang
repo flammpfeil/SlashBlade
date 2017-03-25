@@ -201,6 +201,14 @@ achievement.flammpfeil.slashblade.soulCrystal=pure crystal
 achievement.flammpfeil.slashblade.soulCrystal.desc=blade soul crystal<br>burning BladeStand < Click ProudSoul
 achievement.flammpfeil.slashblade.soulCrystal.pos=-7,-3
 
+achievement.flammpfeil.slashblade.namedbladeSoul=Named Blade Soul
+achievement.flammpfeil.slashblade.namedbladeSoul.desc=burning BladeStand < Click Enchanted ProudSoul<br>or DefeatTheBoss
+achievement.flammpfeil.slashblade.namedbladeSoul.pos=-8,-4
+
+achievement.flammpfeil.slashblade.soulTrapezohedron=bladesoul trapezohedron
+achievement.flammpfeil.slashblade.soulTrapezohedron.desc=burning BladeStand < Click pure blade soul crystal<br>owner registration key
+achievement.flammpfeil.slashblade.soulTrapezohedron.pos=-9,-2
+
 achievement.flammpfeil.slashblade.enchantmentSoul=force fragment
 achievement.flammpfeil.slashblade.enchantmentSoul.desc=click! blade stand
 achievement.flammpfeil.slashblade.enchantmentSoul.pos=-2,-1
@@ -255,8 +263,12 @@ achievement.flammpfeil.slashblade.fluorescentbar.pos=15, -0
 achievement.flammpfeil.slashblade.snowcrow.pos=17, -0
 
 achievement.flammpfeil.slashblade.phantomSword=Summoned Swords
-achievement.flammpfeil.slashblade.phantomSword.desc=power of sparda
+achievement.flammpfeil.slashblade.phantomSword.desc=power of sparda<br>Power enchanted
 achievement.flammpfeil.slashblade.phantomSword.pos=-6,-5
+
+achievement.flammpfeil.slashblade.phantomBlade=Summoned Blades
+achievement.flammpfeil.slashblade.phantomBlade.desc=power of soul<br>switch BladeSphere click
+achievement.flammpfeil.slashblade.phantomBlade.pos=-7,-6
 
 
 achievement.flammpfeil.slashblade.nihil.pos=22, -4
