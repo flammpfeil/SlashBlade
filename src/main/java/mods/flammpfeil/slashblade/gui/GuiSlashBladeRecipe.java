@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.lwjgl.input.Keyboard;
@@ -38,12 +38,6 @@ public class GuiSlashBladeRecipe extends GuiScreen {
     protected int guiLeft;
     protected int guiTop;
 
-<<<<<<< HEAD
-
-    private static final ResourceLocationRaw BackGroundResource = new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe.png");
-
-=======
->>>>>>> ea3c052... add: Achievement Recipe GUI (potion / anvil)
     public String title;
     public List<IRecipe> recipe;
 
@@ -70,10 +64,6 @@ public class GuiSlashBladeRecipe extends GuiScreen {
     protected void drawGuiContainerBackgroundLayer()
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-<<<<<<< HEAD
-        this.mc.getTextureManager().bindTexture(new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe.png"));//BackGroundResource);
-=======
->>>>>>> ea3c052... add: Achievement Recipe GUI (potion / anvil)
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 

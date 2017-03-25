@@ -45,11 +45,13 @@ public class ItemProudSoul extends Item {
         setHasSubtypes(true);
 	}
 
+    static public final int AchievementIconIdHead = 0x1000;
+    static public final int AchievementEffectedIconIdHead = 0x1500;
     @Override
 	public boolean hasEffect(ItemStack par1ItemStack) {
 
-        if(0x10000 <= par1ItemStack.getItemDamage()){
-            return 0x20000 < par1ItemStack.getItemDamage();
+        if(AchievementIconIdHead <= par1ItemStack.getItemDamage()){
+            return AchievementEffectedIconIdHead <= par1ItemStack.getItemDamage();
         }
 
 		if(	par1ItemStack.getItem() == SlashBlade.proudSoul){

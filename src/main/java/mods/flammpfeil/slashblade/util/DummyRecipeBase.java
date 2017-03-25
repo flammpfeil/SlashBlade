@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.util;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -13,8 +14,8 @@ import javax.annotation.Nullable;
  */
 public abstract class DummyRecipeBase implements IRecipe {
 
-    public static final ResourceLocation BackGroundResource = new ResourceLocation("flammpfeil.slashblade","textures/gui/crafting_recipe.png");
-    public static final ResourceLocation BackGroundResource2 = new ResourceLocation("flammpfeil.slashblade","textures/gui/crafting_recipe2.png");
+    public static final ResourceLocation BackGroundResource = new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe.png");
+    public static final ResourceLocation BackGroundResource2 = new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe2.png");
 
     public enum RecipeType{
         Crafting(BackGroundResource, 0),
@@ -61,7 +62,8 @@ public abstract class DummyRecipeBase implements IRecipe {
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        return new ItemStack[]{};
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+        return nonnulllist;
     }
 }

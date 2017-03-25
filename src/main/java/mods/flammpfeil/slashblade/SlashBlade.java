@@ -3,35 +3,27 @@ package mods.flammpfeil.slashblade;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import mods.flammpfeil.slashblade.compat.CompatManager;
 import mods.flammpfeil.slashblade.config.ConfigManager;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.event.*;
-import mods.flammpfeil.slashblade.gui.config.ConfigGuiFactory;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-<<<<<<< HEAD
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.ResourceLocation;
-=======
 import mods.flammpfeil.slashblade.util.DummyRecipeBase;
->>>>>>> ea3c052... add: Achievement Recipe GUI (potion / anvil)
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.*;
@@ -57,9 +49,6 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.spi.AbstractLogger;
-import org.apache.logging.log4j.spi.AbstractLoggerWrapper;
 
 import java.io.File;
 import java.util.*;
@@ -386,7 +375,7 @@ public class SlashBlade implements IFuelHandler{
 
         EntityRegistry.registerModEntity(new ResourceLocation(modid,"StingerManager"), EntityStingerManager.class, "StingerManager", entityId++, this, 250, 10, true);
 
-        EntityRegistry.registerModEntity(EntitySpinningSword.class, "SpinningSword", entityId++, this, 250, 10, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SpinningSword"), EntitySpinningSword.class, "SpinningSword", entityId++, this, 250, 10, true);
 
         MinecraftForge.EVENT_BUS.register(new EntityLumberManager.BlockHarvestDropsEventHandler());
 

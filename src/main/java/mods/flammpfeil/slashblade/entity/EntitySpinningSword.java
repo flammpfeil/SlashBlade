@@ -10,6 +10,7 @@ import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -100,7 +101,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
             }
         }
 
-        if(!worldObj.isRemote)
+        if(!world.isRemote)
         {
 
             if(this.getThrower() != null){
@@ -111,7 +112,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
 
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
 
                     StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
 
@@ -153,7 +154,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -166,10 +167,10 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
                 }
 
                 if(this.ticksExisted % 6 == 0){
-                    this.worldObj.playSound(null, this.posX, this.posY, this.posZ
+                    this.world.playSound(null, this.posX, this.posY, this.posZ
                             , SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.NEUTRAL,0.35f,1.1f);
 
-                    List<Entity> list = this.worldObj.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
+                    List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorAttackable.getInstance());
 
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.RapidSlash);
 
@@ -191,7 +192,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
 
             AxisAlignedBB bb = getThrower().getEntityBoundingBox();
             bb = bb.expand(10, 5, 10);
-            List<Entity> list = worldObj.getEntitiesInAABBexcluding(getThrower(), bb, EntitySelectorAttackable.getInstance());
+            List<Entity> list = world.getEntitiesInAABBexcluding(getThrower(), bb, EntitySelectorAttackable.getInstance());
 
             if(0 < list.size()) {
                 StylishRankManager.addRankPoint(getThrower(), StylishRankManager.AttackTypes.TauntFinish);
@@ -208,7 +209,9 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
     }
 
     @Override
-    public void moveEntity(double par1, double par3, double par5) {}
+    public void move(MoverType moverType, double x, double y, double z) {
+        //super.move(moverType, x, y, z);
+    }
 
     /**
      * ■Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:
@@ -338,7 +341,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
 
     @Override
     protected void blastAttackEntity(Entity target){
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
             float magicDamage = 1;
             target.hurtResistantTime = 0;
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();
@@ -366,7 +369,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
         if(this.thrower != null)
             this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
 
-        if(!this.worldObj.isRemote){
+        if(!this.world.isRemote){
             float magicDamage = 1;
             target.hurtResistantTime = 0;
             DamageSource ds = new EntityDamageSource("directMagic",this.getThrower()).setDamageBypassesArmor().setMagicDamage();

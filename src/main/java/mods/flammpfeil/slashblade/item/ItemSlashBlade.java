@@ -2061,7 +2061,7 @@ public class ItemSlashBlade extends ItemSword {
                             LastActionTime.set(tag, currentTime + 5);
                             setComboSequence(tag, ComboSequence.Noutou);
 
-                            if(!el.worldObj.isRemote)
+                            if(!el.world.isRemote)
                                 el.addPotionEffect(new PotionEffect(MobEffects.HASTE, 5, 0, true, false));
 
                             UpthrustBlast.doBlast(sitem, el);

@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.stats;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
+import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.translation.I18n;
@@ -48,15 +49,15 @@ public class AchievementList {
 
     static{
         String[] icons = {
-                "rankA","rankB","rankC","rankD","rankS","rankSS"
-                ,"slash","soulEater","hundredKill","stand"};
-        int achievementIconId = 0x10000;
+                "rank_a","rank_b","rank_c","rank_d","rank_s","rank_ss"
+                ,"slash","soul_eater","hundred_kill","stand"};
+        int achievementIconId = ItemProudSoul.AchievementIconIdHead;
         for(String s : icons) {
             int id = achievementIconId++;
             achievementIcons.put(s,id);
         }
-        String[] effectIcons = {"rankSSS","thousandKill"};
-        int achievementEffectedIconId = 0x20000;
+        String[] effectIcons = {"rank_sss","thousand_kill"};
+        int achievementEffectedIconId = ItemProudSoul.AchievementEffectedIconIdHead;
         for(String s : effectIcons) {
             int id = achievementEffectedIconId++;
             achievementIcons.put(s,id);
@@ -178,16 +179,16 @@ public class AchievementList {
             }
 
             {
-                parent.push(registerAchievement("hundredKill", getIconStack("hundredKill"), parent.peek()));
+                parent.push(registerAchievement("hundredKill", getIconStack("hundred_kill"), parent.peek()));
                 {
-                    parent.push(registerAchievement("thousandKill", getIconStack("thousandKill"), parent.peek()).setSpecial());
+                    parent.push(registerAchievement("thousandKill", getIconStack("thousand_kill"), parent.peek()).setSpecial());
                     parent.pop();
                 }
                 parent.pop();
             }
 
             {
-                parent.push(registerAchievement("soulEater", getIconStack("soulEater"), parent.peek()));
+                parent.push(registerAchievement("soulEater", getIconStack("soul_eater"), parent.peek()));
                 parent.pop();
             }
 
@@ -243,19 +244,19 @@ public class AchievementList {
             }
 
             {
-                parent.push(registerAchievement("rankD", getIconStack("rankD"), parent.peek()));
+                parent.push(registerAchievement("rankD", getIconStack("rank_d"), parent.peek()));
                 {
-                    parent.push(registerAchievement("rankC", getIconStack("rankC"), parent.peek()));
+                    parent.push(registerAchievement("rankC", getIconStack("rank_c"), parent.peek()));
                     {
-                        parent.push(registerAchievement("rankB", getIconStack("rankB"), parent.peek()));
+                        parent.push(registerAchievement("rankB", getIconStack("rank_b"), parent.peek()));
                         {
-                            parent.push(registerAchievement("rankA", getIconStack("rankA"), parent.peek()));
+                            parent.push(registerAchievement("rankA", getIconStack("rank_a"), parent.peek()));
                             {
-                                parent.push(registerAchievement("rankS", getIconStack("rankS"), parent.peek()));
+                                parent.push(registerAchievement("rankS", getIconStack("rank_s"), parent.peek()));
                                 {
-                                    parent.push(registerAchievement("rankSS", getIconStack("rankSS"), parent.peek()));
+                                    parent.push(registerAchievement("rankSS", getIconStack("rank_ss"), parent.peek()));
                                     {
-                                        parent.push(registerAchievement("rankSSS", getIconStack("rankSSS"), parent.peek()).setSpecial());
+                                        parent.push(registerAchievement("rankSSS", getIconStack("rank_sss"), parent.peek()).setSpecial());
                                         parent.pop();
                                     }
                                     parent.pop();

@@ -1,7 +1,7 @@
 {
     "parent": "builtin/generated",
     "textures": {
-        "layer0": "flammpfeil.slashblade:items/hundredKill"
+        "layer0": "flammpfeil.slashblade:items/rank_a"
     },
     "display": {
         "thirdperson": {
