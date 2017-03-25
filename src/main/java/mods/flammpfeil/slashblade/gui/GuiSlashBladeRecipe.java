@@ -1,5 +1,8 @@
 package mods.flammpfeil.slashblade.gui;
 
+import mods.flammpfeil.slashblade.util.DummyAnvilRecipe;
+import mods.flammpfeil.slashblade.util.DummyPotionRecipe;
+import mods.flammpfeil.slashblade.util.DummyRecipeBase;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import net.minecraft.client.gui.GuiScreen;
@@ -35,9 +38,12 @@ public class GuiSlashBladeRecipe extends GuiScreen {
     protected int guiLeft;
     protected int guiTop;
 
+<<<<<<< HEAD
 
     private static final ResourceLocationRaw BackGroundResource = new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe.png");
 
+=======
+>>>>>>> ea3c052... add: Achievement Recipe GUI (potion / anvil)
     public String title;
     public List<IRecipe> recipe;
 
@@ -59,19 +65,30 @@ public class GuiSlashBladeRecipe extends GuiScreen {
         this.guiTop = (this.height - this.ySize) / 2;
     }
 
-
-    boolean isSmelting = false;
+    DummyRecipeBase.RecipeType recipeType = null;
 
     protected void drawGuiContainerBackgroundLayer()
     {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+<<<<<<< HEAD
         this.mc.getTextureManager().bindTexture(new ResourceLocationRaw("flammpfeil.slashblade","textures/gui/crafting_recipe.png"));//BackGroundResource);
+=======
+>>>>>>> ea3c052... add: Achievement Recipe GUI (potion / anvil)
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        int shiftTop = 0;
-        if(isSmelting)
-            shiftTop = this.ySize;
+        int shiftTop;
+        ResourceLocation texture;
+
+        if(recipeType != null) {
+            shiftTop = recipeType.yOffset;
+            texture = recipeType.backGround;
+        }else{
+            shiftTop = 0;
+            texture = DummyRecipeBase.BackGroundResource;
+        }
+
+        this.mc.getTextureManager().bindTexture(texture);//BackGroundResource);
 
         this.drawTexturedModalRect(k, l, 0, shiftTop, this.xSize, this.ySize);
     }
@@ -132,12 +149,11 @@ public class GuiSlashBladeRecipe extends GuiScreen {
 
             if(currentRecipe == null) break exit;
 
-            if(currentRecipe instanceof DummySmeltingRecipe){
-                isSmelting = true;
+            if(currentRecipe instanceof DummyRecipeBase){
+                recipeType = ((DummyRecipeBase) currentRecipe).getRecipeType();
             }else{
-                isSmelting = false;
+                recipeType = DummyRecipeBase.RecipeType.Crafting;
             }
-
 
             {
                 ItemStack output = currentRecipe.getRecipeOutput();
@@ -153,7 +169,150 @@ public class GuiSlashBladeRecipe extends GuiScreen {
             GL11.glEnable(GL11.GL_DEPTH_TEST);
 
             super.drawScreen(mouseX, mouseY, p_73863_3_);
-            if(currentRecipe instanceof DummySmeltingRecipe){
+
+            if(currentRecipe instanceof DummyPotionRecipe){
+
+                DummyPotionRecipe dummyRecipe = (DummyPotionRecipe)currentRecipe;
+
+                ItemStack targetItemStack;
+                targetItemStack = dummyRecipe.top;
+                if(targetItemStack != null){
+                    int posX = 1;
+                    int posY = 0;
+
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    //
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack,
+                            this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY, null);
+
+                }
+                targetItemStack = dummyRecipe.bottom;
+                if(targetItemStack != null){
+                    int posX = 1;
+                    int posY = 2;
+
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    //
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack,
+                            this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY, null);
+
+                }
+
+                targetItemStack = dummyRecipe.getRecipeOutput();
+                if(targetItemStack != null){
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop,null);
+
+                    if (this.checkMouseOver(resultLeft, resultTop, 16, 16, mouseX, mouseY))
+                    {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        this.renderToolTip(targetItemStack, mouseX, mouseY);
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                    }
+                }
+
+                targetItemStack = dummyRecipe.top;
+                if(targetItemStack != null){
+                    int posX = 1;
+                    int posY = 0;
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    if (this.checkMouseOver(gridLeft + slotSize * posX, gridTop + slotSize * posY, 16, 16, mouseX, mouseY))
+                    {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        this.renderToolTip(targetItemStack, mouseX, mouseY);
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                    }
+                }
+                targetItemStack = dummyRecipe.bottom;
+                if(targetItemStack != null){
+                    int posX = 1;
+                    int posY = 2;
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    if (this.checkMouseOver(gridLeft + slotSize * posX, gridTop + slotSize * posY, 16, 16, mouseX, mouseY))
+                    {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        this.renderToolTip(targetItemStack, mouseX, mouseY);
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                    }
+                }
+            }else if(currentRecipe instanceof DummyAnvilRecipe){
+
+                DummyAnvilRecipe dummyRecipe = (DummyAnvilRecipe)currentRecipe;
+
+                ItemStack targetItemStack;
+                targetItemStack = dummyRecipe.left;
+                if(targetItemStack != null){
+                    int posX = 0;
+                    int posY = 1;
+
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    //
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack,
+                            this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY, null);
+
+                }
+                targetItemStack = dummyRecipe.right;
+                if(targetItemStack != null){
+                    int posX = 2;
+                    int posY = 1;
+
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    //
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack,
+                            this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + gridLeft + slotSize * posX, this.guiTop + gridTop + slotSize * posY, null);
+
+                }
+
+                targetItemStack = dummyRecipe.getRecipeOutput();
+                if(targetItemStack != null){
+                    itemRender.renderItemAndEffectIntoGUI(targetItemStack, this.guiLeft + resultLeft , this.guiTop + resultTop);
+                    itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, targetItemStack, this.guiLeft + resultLeft, this.guiTop + resultTop,null);
+
+                    if (this.checkMouseOver(resultLeft, resultTop, 16, 16, mouseX, mouseY))
+                    {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        this.renderToolTip(targetItemStack, mouseX, mouseY);
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                    }
+                }
+
+                targetItemStack = dummyRecipe.left;
+                if(targetItemStack != null){
+                    int posX = 0;
+                    int posY = 1;
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    if (this.checkMouseOver(gridLeft + slotSize * posX, gridTop + slotSize * posY, 16, 16, mouseX, mouseY))
+                    {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        this.renderToolTip(targetItemStack, mouseX, mouseY);
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                    }
+                }
+                targetItemStack = dummyRecipe.right;
+                if(targetItemStack != null){
+                    int posX = 2;
+                    int posY = 1;
+                    targetItemStack = getWildCardStack(targetItemStack);
+
+                    if (this.checkMouseOver(gridLeft + slotSize * posX, gridTop + slotSize * posY, 16, 16, mouseX, mouseY))
+                    {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        this.renderToolTip(targetItemStack, mouseX, mouseY);
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                    }
+                }
+            }else if(currentRecipe instanceof DummySmeltingRecipe){
                 DummySmeltingRecipe dummySmeltingRecipe = (DummySmeltingRecipe)currentRecipe;
 
                 ItemStack targetItemStack = dummySmeltingRecipe.input;
@@ -279,7 +438,7 @@ public class GuiSlashBladeRecipe extends GuiScreen {
                         if (target instanceof ItemStack){
                             targetItemStack = (ItemStack)target;
                         }
-                        else if (target instanceof ArrayList){
+                        else if (target instanceof List){
                             List<ItemStack> list = (List<ItemStack>)target;
                             if(list.size() != 0){
                                 long index = (System.currentTimeMillis() / 1000) % list.size();

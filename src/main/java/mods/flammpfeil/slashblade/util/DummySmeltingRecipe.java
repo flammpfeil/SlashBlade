@@ -10,17 +10,17 @@ import net.minecraft.world.World;
 /**
  * Created by Furia on 15/02/12.
  */
-public class DummySmeltingRecipe implements IRecipe {
+public class DummySmeltingRecipe extends DummyRecipeBase {
 
     public ItemStack input;
-    public ItemStack output;
 
     public DummySmeltingRecipe(ItemStack input, ItemStack output) {
+        super(output);
         this.input = input;
-        this.output = output;
     }
 
     @Override
+<<<<<<< HEAD
     public boolean matches(InventoryCrafting p_77569_1_, World p_77569_2_) {
         return false;
     }
@@ -44,5 +44,9 @@ public class DummySmeltingRecipe implements IRecipe {
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
         NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         return nonnulllist;
+=======
+    public RecipeType getRecipeType() {
+        return RecipeType.Smelting;
+>>>>>>> ea3c052... add: Achievement Recipe GUI (potion / anvil)
     }
 }

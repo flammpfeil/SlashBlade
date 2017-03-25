@@ -19,7 +19,7 @@ archivesBaseName = "SlashBlade"
 
 minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    version = "1.11.2-13.20.0.2201"
+    version = "1.11.2-13.20.0.2260"
     runDir = "run"
 
     mappings = "snapshot_20161220"
