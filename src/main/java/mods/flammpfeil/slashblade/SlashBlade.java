@@ -85,6 +85,7 @@ public class SlashBlade implements IFuelHandler{
     public static boolean SafeDrop = true;
 
     public static boolean RenderEnchantEffect = true;
+    public static boolean RenderNFCSEffect = true;
 
 	public static final String ProudSoulStr = "proudsoul";
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
@@ -139,6 +140,11 @@ public class SlashBlade implements IFuelHandler{
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "EnchantVisualEffect" , true);
                 SlashBlade.RenderEnchantEffect = prop.getBoolean();
+                prop.setShowInGui(true);
+            }
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "NFCSVisualEffect" , true);
+                SlashBlade.RenderNFCSEffect = prop.getBoolean();
                 prop.setShowInGui(true);
             }
 

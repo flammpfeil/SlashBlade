@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -81,6 +82,74 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         render(entitylivingbaseIn, partialTicks);
 
         GlStateManager.popMatrix();
+    }
+
+    RingState ringStates = new RingState(){
+        @Override
+        public void transform() {
+            super.transform();
+
+            GlStateManager.rotate(90, 0, 0, 1);
+            GlStateManager.translate(5, 50, 0);
+
+            float scale = 0.25f;
+            GlStateManager.scale(scale,scale,scale);
+
+            long ticks = Minecraft.getMinecraft().world == null ? 0 : Minecraft.getMinecraft().world.getWorldTime();
+            float partialTicks = ReflectionAccessHelper.getPartialTicks();
+
+            double rotate = (ticks % 1500 + partialTicks ) / 1500.0d * 180.0d;
+
+            GL11.glRotated(rotate, 0, 1, 0);
+
+        }
+    };
+
+    public static class RingState{
+
+        static public WavefrontObject ringModel = null;
+        public static final ResourceLocationRaw ringModelLoc = new ResourceLocationRaw("flammpfeil.slashblade","model/util/ring.obj");
+        public static final ResourceLocationRaw ringTexLoc = new ResourceLocationRaw("flammpfeil.slashblade","model/util/ring.png");
+
+        public void transform(){
+
+        }
+
+        public void renderRing(){
+            if(!SlashBlade.RenderNFCSEffect) return;
+
+            if(ringModel == null){
+                ringModel = new WavefrontObject(ringModelLoc);
+            }
+
+            GlStateManager.pushMatrix();
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+            transform();
+
+            Minecraft.getMinecraft().getTextureManager().bindTexture(ringTexLoc);
+
+            GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.01f);
+
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+            float lastx = OpenGlHelper.lastBrightnessX;
+            float lasty = OpenGlHelper.lastBrightnessY;
+            //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
+            ringModel.renderAll();
+
+            //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
+            GL11.glEnable(GL11.GL_LIGHTING);
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+
+            GL11.glPopAttrib();
+            GlStateManager.popMatrix();
+        }
     }
 
     @Override
@@ -274,6 +343,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+                ringStates.renderRing();
 
                 if (item.hasEffect() && SlashBlade.RenderEnchantEffect) {
 
@@ -848,6 +919,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
                     GL11.glEnable(GL11.GL_LIGHTING);
                     OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+                    ringStates.renderRing();
 
                     if (stack.hasEffect() && SlashBlade.RenderEnchantEffect) {
                         GL11.glDepthFunc(GL11.GL_EQUAL);

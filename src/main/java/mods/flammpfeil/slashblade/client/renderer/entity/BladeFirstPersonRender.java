@@ -6,8 +6,10 @@ import mods.flammpfeil.slashblade.ability.ProjectileBarrier;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
+import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -56,6 +58,29 @@ public class BladeFirstPersonRender {
 
     static public ResourceLocationRaw modelLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.obj");
     static public ResourceLocationRaw textureLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.png");
+
+
+
+    LayerSlashBlade.RingState ringStates = new LayerSlashBlade.RingState(){
+        @Override
+        public void transform() {
+            super.transform();
+
+            GlStateManager.rotate(90, 0, 0, 1);
+            GlStateManager.translate(3, 50, 0);
+
+            float scale = 0.25f;
+            GlStateManager.scale(scale,scale,scale);
+
+            long ticks = Minecraft.getMinecraft().world == null ? 0 : Minecraft.getMinecraft().world.getWorldTime();
+            float partialTicks = ReflectionAccessHelper.getPartialTicks();
+
+            double rotate = (ticks % 1500 + partialTicks ) / 1500.0d * 180.0d;
+
+            GL11.glRotated(rotate, 0, 1, 0);
+
+        }
+    };
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onRenderWorldLastEvent(RenderWorldLastEvent event){
@@ -677,6 +702,8 @@ public class BladeFirstPersonRender {
 
                 GL11.glEnable(GL11.GL_LIGHTING);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+                ringStates.renderRing();
 
                 if (stack.hasEffect() && SlashBlade.RenderEnchantEffect) {
                     GL11.glDepthFunc(GL11.GL_EQUAL);
