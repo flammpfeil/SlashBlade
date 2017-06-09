@@ -22,6 +22,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -99,6 +101,7 @@ public class Taunt {
             event.setDroppedExperience(dropExp + tLv * expBase);
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onRenderLivingPre(RenderLivingEvent.Pre<EntityPlayer> event){
 
