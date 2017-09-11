@@ -4,23 +4,26 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class RecipeAdjustPos extends ShapedRecipes
 {
 
-    static private ItemStack dirIS(String name){
-        return new ItemStack(Items.STICK, 0, 0).setStackDisplayName(name);
+    static private Ingredient dirIS(String name){
+        return Ingredient.fromStacks(new ItemStack(Items.STICK, 0, 0).setStackDisplayName(name));
     }
 
     public RecipeAdjustPos()
     {
-        super(3, 3, new ItemStack[] {
-        		null, dirIS("Up"), dirIS("Front"),
-                dirIS("Left"), new ItemStack(SlashBlade.weapon, 1, 0), dirIS("Right"),
-                dirIS("Back"), dirIS("Down"), null}
+        super(SlashBlade.modid + ":adjust" ,3, 3, NonNullList.<Ingredient>from(
+                Ingredient.EMPTY, dirIS("Up"), dirIS("Front"),
+                dirIS("Left"), Ingredient.fromStacks(new ItemStack(SlashBlade.weapon, 1, 0)), dirIS("Right"),
+                dirIS("Back"), dirIS("Down"), Ingredient.EMPTY)
         , new ItemStack(SlashBlade.weapon, 1, 0));
     }
 

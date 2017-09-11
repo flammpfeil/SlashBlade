@@ -1,11 +1,13 @@
 package mods.flammpfeil.slashblade.item.crafting;
 
 import com.google.common.collect.Maps;
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -16,7 +18,7 @@ import java.util.Map;
  */
 public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
     public RecipeBladeSoulUpgrade(ItemStack result, Object... recipe) {
-        super(result, recipe);
+        super(new ResourceLocation(SlashBlade.modid,"SoulUpgrade"),result, recipe);
     }
 
     @Override

@@ -4,7 +4,6 @@ import mods.flammpfeil.slashblade.entity.EntitySummonedSwordAirTrickMarker;
 import mods.flammpfeil.slashblade.event.ScheduleEntitySpawner;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -67,10 +66,10 @@ public class AirTrick {
 
         boolean teleported = false;
         for(double y = 0.5; 0.0 < y; y -= 0.1){
-            Vec3d pos = new Vec3d(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
+            Vec3d pos = new Vec3d(-look.x + target.posX, y + target.posY, -look.z + target.posZ);
 
             if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
-                entityPlayer.connection.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
+                entityPlayer.connection.setPlayerLocation(pos.x,pos.y,pos.z,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
                 entityPlayer.onEnchantmentCritical(entityPlayer);
                 teleported = true;
                 break;
@@ -78,10 +77,10 @@ public class AirTrick {
         }
         if(!teleported){
             for(double y = 0.6; y < 1.5; y += 0.1){
-                Vec3d pos = new Vec3d(-look.xCoord + target.posX, y + target.posY, -look.zCoord + target.posZ);
+                Vec3d pos = new Vec3d(-look.x + target.posX, y + target.posY, -look.z + target.posZ);
 
                 if(getCanSpawnHere(entityPlayer,pos, target, lastHitSS)){
-                    entityPlayer.connection.setPlayerLocation(pos.xCoord,pos.yCoord,pos.zCoord,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
+                    entityPlayer.connection.setPlayerLocation(pos.x,pos.y,pos.z,entityPlayer.rotationYaw,entityPlayer.rotationPitch);
                     entityPlayer.onEnchantmentCritical(entityPlayer);
                     teleported = true;
                     break;
@@ -114,7 +113,7 @@ public class AirTrick {
 
     static private boolean getCanSpawnHere(Entity target,Vec3d pos,Entity... ignore)
     {
-        AxisAlignedBB bb = setPosition(target, pos.xCoord, pos.yCoord, pos.zCoord);
+        AxisAlignedBB bb = setPosition(target, pos.x, pos.y, pos.z);
 
         return /*!target.world.isAnyLiquid(target.getEntityBoundingBox()) && */target.world.getCollisionBoxes(target, bb).isEmpty() /*&& target.world.checkNoEntityCollision(bb, target)*/;
 
@@ -169,8 +168,10 @@ public class AirTrick {
                         ScheduleEntitySpawner.getInstance().offer(entitySS);
                         //player.world.spawnEntity(entitySS);
 
+                        /* todo:advancement
                         if(player instanceof EntityPlayer)
                             AchievementList.triggerAchievement((EntityPlayer) player, "phantomSword");
+                        */
 
                     }
                 }

@@ -36,7 +36,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
     public IMessage onMessage(MessageSpecialAction message, MessageContext ctx) {
         if(ctx.getServerHandler() == null) return null;
 
-        EntityPlayerMP entityPlayer = ctx.getServerHandler().playerEntity;
+        EntityPlayerMP entityPlayer = ctx.getServerHandler().player;
 
         if(entityPlayer == null) return null;
 
@@ -92,7 +92,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
                     AxisAlignedBB bb = entityPlayer.getEntityBoundingBox();
                     bb = bb.expand(4, 0, 4);
 
-                    bb = bb.addCoord(entityPlayer.motionX, entityPlayer.motionY, entityPlayer.motionZ);
+                    bb = bb.offset(entityPlayer.motionX, entityPlayer.motionY, entityPlayer.motionZ);
 
                     List<Entity> list = entityPlayer.world.getEntitiesInAABBexcluding(entityPlayer, bb, EntitySelectorAttackable.getInstance());
 

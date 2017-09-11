@@ -3,7 +3,7 @@ package mods.flammpfeil.slashblade.client.renderer.entity;
 
 import mods.flammpfeil.slashblade.entity.EntityDrive;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -88,7 +88,7 @@ public class RenderDrive extends Render {
         //■スタート
         float lifetime = entityDrive.getLifeTime();
         float ticks = entityDrive.ticksExisted;
-        VertexBuffer wr = tessellator.getBuffer();
+        BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
         float alpha = (float)Math.pow((lifetime - Math.min(lifetime,ticks)) / lifetime,2.0f);

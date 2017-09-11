@@ -220,7 +220,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
             NBTTagCompound tag = event.getEntityLiving().writeToNBT(new NBTTagCompound());
             if(tag.getBoolean("powered")){
 
-                EntityLivingBase target =event.getEntityLiving().getAITarget();
+                EntityLivingBase target =event.getEntityLiving().getRevengeTarget();
                 if(target == null) return;
 
                 ItemStack attackItem = target.getHeldItem(EnumHand.MAIN_HAND);

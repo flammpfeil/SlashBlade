@@ -48,7 +48,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     public static List<String> NamedBlades = Lists.newArrayList();
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         //super.getSubItems(itemIn, tab, subItems);
 
         ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);

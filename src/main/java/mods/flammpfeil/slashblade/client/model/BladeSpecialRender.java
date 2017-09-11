@@ -28,7 +28,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
     private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
 
     @Override
-    public void renderTileEntityAt(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if(te != null) return;
 
         if(BladeModel.targetStack.isEmpty())

@@ -21,7 +21,7 @@ public class MessageMoveCommandStateHandler implements IMessageHandler<MessageMo
     public IMessage onMessage(MessageMoveCommandState message, MessageContext ctx) {
         if(ctx.getServerHandler() == null) return null;
 
-        EntityPlayerMP entityPlayer = ctx.getServerHandler().playerEntity;
+        EntityPlayerMP entityPlayer = ctx.getServerHandler().player;
 
         if(entityPlayer == null) return null;
 

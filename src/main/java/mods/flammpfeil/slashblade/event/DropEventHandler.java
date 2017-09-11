@@ -66,7 +66,7 @@ public class DropEventHandler {
                 boolean forceDrop = rate > 1.1f;
 
                 if(requiredBlade){
-                    EntityLivingBase target =event.getEntityLiving().getAITarget();
+                    EntityLivingBase target =event.getEntityLiving().getRevengeTarget();
                     if(target == null) return;
 
                     ItemStack attackItem = target.getHeldItem(EnumHand.MAIN_HAND);

@@ -16,7 +16,7 @@ public class MessageRangeAttackHandler implements IMessageHandler<MessageRangeAt
 
     @Override
     public IMessage onMessage(MessageRangeAttack message, MessageContext ctx) {
-        EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
+        EntityPlayer entityPlayer = ctx.getServerHandler().player;
 
         ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
         if (!stack.isEmpty() && stack.getItem() instanceof ItemSlashBlade) {

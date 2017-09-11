@@ -9,7 +9,6 @@ import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.network.*;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.KeyBindingEx;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
@@ -25,7 +24,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import mods.flammpfeil.slashblade.ability.AvoidAction;
 import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.entity.*;
-import mods.flammpfeil.slashblade.gui.AchievementsExtendedGuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.item.ItemStack;
@@ -35,7 +33,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.lwjgl.input.Keyboard;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -99,9 +96,11 @@ public class CoreProxyClient extends CoreProxy {
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 5, new ModelResourceLocation(SlashBlade.modid + ":" + "trapezohedron.obj"));
         OBJLoader.INSTANCE.addDomain(SlashBlade.modid);
 
+        /* todo:advancement
         for(Map.Entry<String, Integer> entry : AchievementList.achievementIcons.entrySet()) {
             ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, entry.getValue(), new ModelResourceLocation(SlashBlade.modid + ":" + entry.getKey()));
         }
+        */
 
 
         MinecraftForge.EVENT_BUS.register(new StylishRankRenderer());
@@ -420,7 +419,6 @@ public class CoreProxyClient extends CoreProxy {
         camera = new KeyBindingEx("Key.SlashBlade.CA", Keyboard.KEY_LCONTROL, "flammpfeil.slashblade"){
         };
 
-        AchievementsExtendedGuiHandler extendedGuiHandler = new AchievementsExtendedGuiHandler();
 	}
 
 
@@ -499,11 +497,11 @@ public class CoreProxyClient extends CoreProxy {
                 }
 
                 Vec3d vec31 = entity.getLook(partialTicks);
-                Vec3d vec32 = vec3.addVector(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0);
+                Vec3d vec32 = vec3.addVector(vec31.x * d0, vec31.y * d0, vec31.z * d0);
                 Entity pointedEntity = null;
                 Vec3d vec33 = null;
                 float f = 1.0F;
-                List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
+                List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().offset(vec31.x * d0, vec31.y * d0, vec31.z * d0).expand((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
                     public boolean apply(Entity p_apply_1_) {
                         return p_apply_1_.canBeCollidedWith();
                     }
@@ -520,7 +518,7 @@ public class CoreProxyClient extends CoreProxy {
                         AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double) f2, (double) f2, (double)f2);
                         RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
 
-                        if (axisalignedbb.isVecInside(vec3))
+                        if (axisalignedbb.contains(vec3))
                         {
                             if (0.0D <= d2)
                             {

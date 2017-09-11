@@ -13,7 +13,7 @@ public class TossEventHandler {
         if(!event.getPlayer().isSneaking())
             return;
 
-        if(!(event.getEntityItem().getEntityItem().getItem() instanceof ItemSlashBlade))
+        if(!(event.getEntityItem().getItem().getItem() instanceof ItemSlashBlade))
             return;
 
         event.getEntityItem().getEntityData().setBoolean("noBladeStand",true);

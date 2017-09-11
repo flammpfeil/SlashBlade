@@ -90,7 +90,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                         if(state != null && state.getCollisionBoundingBox(world, blockPos) == null)
                             movingobjectposition = null;
                         else {
-                            Vec3d tmppos = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+                            Vec3d tmppos = new Vec3d(movingobjectposition.hitVec.x, movingobjectposition.hitVec.y, movingobjectposition.hitVec.z);
                             if(1 < tmppos.distanceTo(player.getPositionVector())){
                                 pos = tmppos;
                             }
@@ -98,7 +98,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                     }
 
 
-                    dim.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
+                    dim.setPosition(pos.x, pos.y, pos.z);
                     dim.setLifeTime(10);
                     dim.setIsSlashDimension(true);
                     world.spawnEntity(dim);
@@ -154,7 +154,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
             Vec3d vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
-            bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);
+            bb = bb.offset(vec.x*(float)dist,vec.y*(float)dist,vec.z*(float)dist);
 
             List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
             float distance = 30.0f;
@@ -245,7 +245,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                     if(state != null && state.getCollisionBoundingBox(world, blockPos) == null)
                         movingobjectposition = null;
                     else {
-                        Vec3d tmppos = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+                        Vec3d tmppos = new Vec3d(movingobjectposition.hitVec.x, movingobjectposition.hitVec.y, movingobjectposition.hitVec.z);
                         if(1 < tmppos.distanceTo(player.getPositionVector())){
                             pos = tmppos;
                         }
@@ -256,7 +256,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                 float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (0.5f + level / 5.0f);
                 EntitySlashDimension dim = new EntitySlashDimension(world, player, magicDamage);
                 if (dim != null) {
-                    dim.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
+                    dim.setPosition(pos.x, pos.y, pos.z);
                     dim.setLifeTime(10);
                     dim.setIsSlashDimension(true);
                     world.spawnEntity(dim);
@@ -279,9 +279,9 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
                     float motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
                     float motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst * 2;
 
-                    entityDrive.setLocationAndAngles(pos.xCoord - motionX,
-                            pos.yCoord - motionY,
-                            pos.zCoord - motionZ,
+                    entityDrive.setLocationAndAngles(pos.x - motionX,
+                            pos.y - motionY,
+                            pos.z - motionZ,
                             rotationYaw,
                             rotationPitch);
                     entityDrive.setDriveVector(fYVecOfst);

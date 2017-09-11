@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -493,7 +493,7 @@ public class BladeStandRender extends Render{
             GlStateManager.scale(f, f, f);
 
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer vertexbuffer = tessellator.getBuffer();
+            BufferBuilder BufferBuilder = tessellator.getBuffer();
             float f1 = 0.5F;
             float f2 = 0.0F;
             float f3 = entity.height / f;
@@ -512,7 +512,7 @@ public class BladeStandRender extends Render{
             GlStateManager.color(0.1F, 0.0F, 1.0F, 1.0F);
 
             float f5 = 0.0F;
-            vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+            BufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
 
             while (f3 > 0.0F) {
                 TextureAtlasSprite textureatlassprite2 = i % 2 == 0 ? textureatlassprite : textureatlassprite1;
@@ -528,10 +528,10 @@ public class BladeStandRender extends Render{
                     f6 = f10;
                 }
 
-                vertexbuffer.pos((double) (f1 - f2), (double) (0.0F - f4), (double) f5).tex((double) f8, (double) f9).endVertex();
-                vertexbuffer.pos((double) (-f1 - f2), (double) (0.0F - f4), (double) f5).tex((double) f6, (double) f9).endVertex();
-                vertexbuffer.pos((double) (-f1 - f2), (double) (1.4F - f4), (double) f5).tex((double) f6, (double) f7).endVertex();
-                vertexbuffer.pos((double) (f1 - f2), (double) (1.4F - f4), (double) f5).tex((double) f8, (double) f7).endVertex();
+                BufferBuilder.pos((double) (f1 - f2), (double) (0.0F - f4), (double) f5).tex((double) f8, (double) f9).endVertex();
+                BufferBuilder.pos((double) (-f1 - f2), (double) (0.0F - f4), (double) f5).tex((double) f6, (double) f9).endVertex();
+                BufferBuilder.pos((double) (-f1 - f2), (double) (1.4F - f4), (double) f5).tex((double) f6, (double) f7).endVertex();
+                BufferBuilder.pos((double) (f1 - f2), (double) (1.4F - f4), (double) f5).tex((double) f8, (double) f7).endVertex();
                 f3 -= 0.45F;
                 f4 -= 0.45F;
                 f1 *= 0.9F;

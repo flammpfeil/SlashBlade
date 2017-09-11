@@ -116,7 +116,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
             Vec3d vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.expand(2.0f, 0.25f, 2.0f);
-            bb = bb.offset(vec.xCoord*(float)dist,vec.yCoord*(float)dist,vec.zCoord*(float)dist);
+            bb = bb.offset(vec.x*(float)dist,vec.y*(float)dist,vec.z*(float)dist);
 
             List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
             float distance = 30.0f;

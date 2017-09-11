@@ -5,7 +5,7 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.IEntityMultiPart;
 
 public final class EntitySelectorAttackable implements Predicate<Entity>{
 
@@ -26,7 +26,7 @@ public final class EntitySelectorAttackable implements Predicate<Entity>{
         String entityStr = EntityList.getEntityString(input);
 
         if (((entityStr != null && SlashBlade.manager.attackableTargets.containsKey(entityStr) && SlashBlade.manager.attackableTargets.get(entityStr))
-                || input instanceof EntityDragonPart
+                || input instanceof IEntityMultiPart
                 || input instanceof EntityGrimGrip
         ))
             result = input.isEntityAlive();

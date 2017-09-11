@@ -176,7 +176,7 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        subItems.add(new ItemStack(itemIn, 1, 0));
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        subItems.add(new ItemStack(this, 1, 0));
     }
 }

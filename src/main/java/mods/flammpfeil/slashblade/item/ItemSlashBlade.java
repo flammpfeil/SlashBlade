@@ -19,6 +19,8 @@ import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.util.*;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
@@ -33,7 +35,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.specialattack.*;
-import mods.flammpfeil.slashblade.stats.AchievementList;
+//import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
@@ -294,9 +296,10 @@ public class ItemSlashBlade extends ItemSword {
 
             ProudSoul.set(tag, proudSouls);
             entity.entityDropItem(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, count), 0.0F);
+            /* todo: advancement
             if(entity instanceof EntityPlayer)
                 AchievementList.triggerAchievement((EntityPlayer)entity,"proudSoul");
-
+            */
             if(stack.isItemEnchanted() && entity instanceof EntityLivingBase){
 
                 ItemStack tinySoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.TinyBladeSoulStr,1);
@@ -322,8 +325,10 @@ public class ItemSlashBlade extends ItemSword {
 
                 entity.entityDropItem(tinySoul, 0.0F);
 
+                /* todo:advancement
                 if(entity instanceof EntityPlayer)
                     AchievementList.triggerAchievement((EntityPlayer)entity,"enchantmentSoul");
+                    */
 
                 int enchCount = stack.getEnchantmentTagList().tagCount();
                 if(5 < enchCount){
@@ -387,6 +392,7 @@ public class ItemSlashBlade extends ItemSword {
             SoulEater.entityKilled(stack, target, player);
             DefeatTheBoss.entityKilled(stack, target, player);
 
+            /* todo: advancement
             if(player instanceof EntityPlayer){
                 switch (count){
                     case 100:
@@ -398,6 +404,7 @@ public class ItemSlashBlade extends ItemSword {
                     default:
                 }
             }
+            */
         }
     }
 
@@ -1424,7 +1431,8 @@ public class ItemSlashBlade extends ItemSword {
 
     public void doChargeAttack(ItemStack stack, EntityPlayer par3EntityPlayer,boolean isJust){
 
-        AchievementList.triggerAchievement(par3EntityPlayer, "enchanted");
+        //todo: advancement
+        //AchievementList.triggerAchievement(par3EntityPlayer, "enchanted");
 
         SpecialAttackBase sa = getSpecialAttack(stack);
         if(isJust && sa instanceof IJustSpecialAttack){
@@ -1446,7 +1454,7 @@ public class ItemSlashBlade extends ItemSword {
 
         if(player.world.isRemote && player.onGround) {
             if (charge == 3 && getComboSequence(tag) == ComboSequence.Kiriage) {
-                Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player, new String[]{"jump", "func_70664_aZ"});
+                Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, "jump","func_70664_aZ");
                 try {
                     if (jump != null)
                         jump.invoke(player);
@@ -1459,7 +1467,7 @@ public class ItemSlashBlade extends ItemSword {
 
             } else if (charge == 7 && getComboSequence(tag) == ComboSequence.RapidSlash) {
                 if (player.world.isRemote) {
-                    Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, player, new String[]{"jump", "func_70664_aZ"});
+                    Method jump = ReflectionHelper.findMethod(EntityLivingBase.class, "jump","func_70664_aZ");
                     try {
                         if (jump != null)
                             jump.invoke(player);
@@ -1545,7 +1553,7 @@ public class ItemSlashBlade extends ItemSword {
     	AxisAlignedBB bb = user.getEntityBoundingBox();
 
     	Vec3d vec = user.getLookVec();
-        vec = new Vec3d(vec.xCoord,0,vec.zCoord);
+        vec = new Vec3d(vec.x,0,vec.z);
     	vec = vec.normalize();
 
     	switch (combo) {
@@ -1560,23 +1568,23 @@ public class ItemSlashBlade extends ItemSword {
 		case Battou:
 			if(swordType.contains(SwordType.Broken)){
 				bb = bb.expand(1.0f, 0.0f, 1.0f);
-				bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+				bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
 
 			}else if(swordType.containsAll(SwordType.BewitchedPerfect)){
 				bb = bb.expand(5.0f, 0.75f, 5.0f);
 			}else{
 				bb = bb.expand(2.0f, 0.75f, 2.0f);
-				bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+				bb = bb.offset(vec.x*2.5f,0,vec.z*2.5f);
 			}
 			break;
 
         case SSlashBlade:
             if(swordType.contains(SwordType.Broken)) {
                 bb = bb.expand(1.0f, 0.0f, 1.0f);
-                bb = bb.offset(vec.xCoord * 1.0f, 0, vec.zCoord * 1.0f);
+                bb = bb.offset(vec.x * 1.0f, 0, vec.z * 1.0f);
             }else{
                 bb = bb.expand(3.0f, 1.0f, 3.0f);
-                bb = bb.offset(vec.xCoord * 2.5f, 0, vec.zCoord * 2.5f);
+                bb = bb.offset(vec.x * 2.5f, 0, vec.z * 2.5f);
             }
             break;
 
@@ -1584,36 +1592,36 @@ public class ItemSlashBlade extends ItemSword {
         case Iai:
             if(swordType.contains(SwordType.Broken)){
                 bb = bb.expand(1.0f, 0.0f, 1.0f);
-                bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+                bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
             }else{
                 bb = bb.expand(2.0f, 1.0f, 2.0f);
-                bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+                bb = bb.offset(vec.x*2.5f,0,vec.z*2.5f);
             }
 			break;
 
 		case Saya1:
 		case Saya2:
 			bb = bb.expand(1.2f, 0.25f, 1.2f);
-			bb = bb.offset(vec.xCoord*2.0f,0,vec.zCoord*2.0f);
+			bb = bb.offset(vec.x*2.0f,0,vec.z*2.0f);
 			break;
 
         case HelmBraker:
             if(swordType.contains(SwordType.Broken)){
                 bb = bb.expand(1.0f, 0.0f, 1.0f);
-                bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+                bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
             }else{
                 bb = bb.expand(2.0f, 2.5f, 2.0f);
-                bb = bb.offset(vec.xCoord*2.5f,0,vec.zCoord*2.5f);
+                bb = bb.offset(vec.x*2.5f,0,vec.z*2.5f);
             }
             break;
         case Kiriorosi:
 		default:
             if(swordType.contains(SwordType.Broken)){
                 bb = bb.expand(1.0f, 0.0f, 1.0f);
-                bb = bb.offset(vec.xCoord*1.0f,0,vec.zCoord*1.0f);
+                bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
             }else{
                 bb = bb.expand(1.2f, 1.25f, 1.2f);
-                bb = bb.offset(vec.xCoord*2.0f,0.5f,vec.zCoord*2.0f);
+                bb = bb.offset(vec.x*2.0f,0.5f,vec.z*2.0f);
             }
 			break;
 		}
@@ -2144,11 +2152,11 @@ public class ItemSlashBlade extends ItemSword {
 
                                 Vec3d vec = el.getLookVec();
 
-                                double y = -vec.yCoord * 2.0;
+                                double y = -vec.y * 2.0;
                                 if(target.posY <= el.posY + 5.0)
                                     y = 0;
 
-                                target.addVelocity(vec.xCoord,y,vec.zCoord);
+                                target.addVelocity(vec.x,y,vec.z);
                             }
                         }
                     }
@@ -2280,8 +2288,10 @@ public class ItemSlashBlade extends ItemSword {
                 case Battou:
                     EnumSet<SwordType> swordType = getSwordType(stack);
                     if (swordType.containsAll(SwordType.BewitchedPerfect)) {
+                        /* todo: advancement
                         if (e instanceof EntityPlayer)
                             AchievementList.triggerAchievement((EntityPlayer) e, "bewitched");
+                        */
                         key = AttackTypes.IaiBattou;
                     } else if (e.onGround)
                         key = AttackTypes.Battou;
@@ -2536,10 +2546,14 @@ public class ItemSlashBlade extends ItemSword {
     
 	@Override
 	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+			World world, List par3List, ITooltipFlag inFlag) {
 
+        EntityPlayer par2EntityPlayer = Minecraft.getMinecraft().player;
+        boolean par4 = inFlag.isAdvanced();
 
-		super.addInformation(par1ItemStack, par2EntityPlayer, par3List, par4);
+		super.addInformation(par1ItemStack, world, par3List, inFlag);
+
+        if(par2EntityPlayer == null) return;
 
         addInformationOwner(par1ItemStack, par2EntityPlayer, par3List, par4);
 
@@ -2638,9 +2652,9 @@ public class ItemSlashBlade extends ItemSword {
 
         	Vec3d vector = new Vec3d(projecTile.motionX,projecTile.motionY,projecTile.motionZ);
 
-        	projecTile.motionX = dir.xCoord;
-        	projecTile.motionY = dir.yCoord;
-        	projecTile.motionZ = dir.zCoord;
+        	projecTile.motionX = dir.x;
+        	projecTile.motionY = dir.y;
+        	projecTile.motionZ = dir.z;
 
         	if(projecTile instanceof EntityFireball){
 	        	((EntityFireball)projecTile).accelerationX = projecTile.motionX * 0.1D;
@@ -2854,7 +2868,7 @@ public class ItemSlashBlade extends ItemSword {
     {
         Vec3d vec3 = getPosition(owner);
         Vec3d vec31 = owner.getLook(par3);
-        Vec3d vec32 = vec3.addVector(vec31.xCoord * par1, vec31.yCoord * par1, vec31.zCoord * par1);
+        Vec3d vec32 = vec3.addVector(vec31.x * par1, vec31.y * par1, vec31.z * par1);
         return owner.world.rayTraceBlocks(vec3, vec32, false, false, true);
     }
     public Vec3d getPosition(EntityLivingBase owner)
@@ -2880,13 +2894,13 @@ public class ItemSlashBlade extends ItemSword {
         }
 
         Vec3d lookVec = owner.getLook(par1);
-        Vec3d reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
+        Vec3d reachVec = entityPos.addVector(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax);
         pointedEntity = null;
         float expandFactor = 1.0F;
         List<Entity> list = owner.world.getEntitiesWithinAABBExcludingEntity(
                 owner
                 , owner.getEntityBoundingBox()
-                        .addCoord(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax)
+                        .offset(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax)
                         .expand((double) expandFactor, (double) expandFactor, (double) expandFactor));
         double tmpDistance = reachMin;
 
@@ -2899,7 +2913,7 @@ public class ItemSlashBlade extends ItemSword {
             AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
             RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 
-            if (axisalignedbb.isVecInside(entityPos))
+            if (axisalignedbb.contains(entityPos))
             {
                 if (0.0D < tmpDistance || tmpDistance == 0.0D)
                 {
@@ -3065,16 +3079,19 @@ public class ItemSlashBlade extends ItemSword {
                     }
 
                     if (blade == SlashBlade.bladeSilverBambooLight) {
-                        AchievementList.triggerAchievement((EntityPlayer) user, "saya");
+                        //todo:advancement
+                        //AchievementList.triggerAchievement((EntityPlayer) user, "saya");
 
                         ReflectionAccessHelper.setItem(stack, SlashBlade.wrapBlade);
                         setBroken = false;
                         stack.setItemDamage(0);
                     }
 
+                    /* todo:advancement
                     if (blade == SlashBlade.bladeWhiteSheath && user instanceof EntityPlayer) {
                         AchievementList.triggerAchievement((EntityPlayer) user, "brokenWhiteSheath");
                     }
+                    */
                 }
 
                 IsBroken.set(tag, setBroken);
@@ -3228,8 +3245,10 @@ public class ItemSlashBlade extends ItemSword {
                         ScheduleEntitySpawner.getInstance().offer(entityDrive);
                         //w.spawnEntity(entityDrive);
 
+                        /* todo:advancement
                         if (entity instanceof EntityPlayer)
                             AchievementList.triggerAchievement((EntityPlayer) entity, "phantomSword");
+                            */
 
                     }
 
@@ -3474,7 +3493,8 @@ public class ItemSlashBlade extends ItemSword {
     public void onCreated(ItemStack p_77622_1_, World p_77622_2_, EntityPlayer p_77622_3_) {
         super.onCreated(p_77622_1_, p_77622_2_, p_77622_3_);
 
-        AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
+        //todo :advancement
+        //AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
     }
 
     @Override
@@ -3495,7 +3515,7 @@ public class ItemSlashBlade extends ItemSword {
 
         boolean forceDrop = entityItem.getTags().contains("SB.DeathDrop");
 
-        ItemStack stack = entityItem.getEntityItem();
+        ItemStack stack = entityItem.getItem();
 
         if(!forceDrop && stack.getItem() instanceof ItemSlashBladeWrapper){
             if(!ItemSlashBladeWrapper.hasWrapedItem(stack))
@@ -3543,7 +3563,7 @@ public class ItemSlashBlade extends ItemSword {
 
     static void incrementProudSoul(ItemStack stack, EntityLivingBase target,EntityLivingBase player){
         if(player instanceof EntityPlayer) {
-            Method getExperiencePoints = ReflectionHelper.findMethod(EntityLivingBase.class, target, new String[]{"getExperiencePoints", "func_70693_a"}, EntityPlayer.class);
+            Method getExperiencePoints = ReflectionHelper.findMethod(EntityLivingBase.class, "getExperiencePoints", "func_70693_a", EntityPlayer.class);
             try {
                 int exp = (Integer)getExperiencePoints.invoke(target, (EntityPlayer) player);
                 exp = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(target, (EntityPlayer) player, exp);

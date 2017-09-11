@@ -69,9 +69,9 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
             Vec3d vec = thrower.getLookVec();
 
             if(vec != null){
-                x -= vec.xCoord;
-                y -= vec.yCoord;
-                z -= vec.zCoord;
+                x -= vec.x;
+                y -= vec.y;
+                z -= vec.z;
             }
 
             //■初期位置・初期角度等の設定

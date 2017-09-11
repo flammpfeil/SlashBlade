@@ -22,8 +22,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * Created by Furia on 2016/02/07.
  */
-public class BladeModel implements IPerspectiveAwareModel {
+public class BladeModel implements IBakedModel {
 
     List<BakedQuad> emptyList = null;
     List<BakedQuad> getEmptyList(){
@@ -271,6 +271,6 @@ public class BladeModel implements IPerspectiveAwareModel {
         this.type = cameraTransformType;
 
         drawStep = 0;
-        return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, ModelRotation.X0_Y0, cameraTransformType);
+        return PerspectiveMapWrapper.handlePerspective(this, ModelRotation.X0_Y0, cameraTransformType);
     }
 }

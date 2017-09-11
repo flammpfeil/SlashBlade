@@ -49,7 +49,7 @@ public class EntityGrimGrip extends Entity {
     protected void setBeenAttacked() {
         super.setBeenAttacked();
 
-        this.kill();
+        this.onKillCommand();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class EntityGrimGrip extends Entity {
         if(!world.isRemote && getLifeTime() < this.ticksExisted){
 
             this.createRunningParticles();
-            this.kill();
+            this.onKillCommand();
         }
     }
 

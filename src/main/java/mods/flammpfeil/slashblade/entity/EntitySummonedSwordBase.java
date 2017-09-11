@@ -266,11 +266,11 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }
 
         Vec3d lookVec = getLook(owner, par1);
-        Vec3d reachVec = entityPos.addVector(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax);
+        Vec3d reachVec = entityPos.addVector(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax);
         pointedEntity = null;
         List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
                 , this.getEntityBoundingBox()
-                .addCoord(lookVec.xCoord * reachMax, lookVec.yCoord * reachMax, lookVec.zCoord * reachMax)
+                .offset(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax)
                 .expand((double) expandFactor, (double) expandFactor, (double) expandFactor));
         list.removeAll(alreadyHitEntity);
 
@@ -291,7 +291,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
             RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 
-            if (axisalignedbb.isVecInside(entityPos)) {
+            if (axisalignedbb.contains(entityPos)) {
                 if (0.0D < tmpDistance || tmpDistance == 0.0D) {
                     pointedEntity = entity;
                     tmpDistance = 0.0D;
@@ -319,7 +319,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     {
         Vec3d Vec3d = getPosition(owner);
         Vec3d Vec3d1 = getLook(owner, par3);
-        Vec3d Vec3d2 = Vec3d.addVector(Vec3d1.xCoord * par1, Vec3d1.yCoord * par1, Vec3d1.zCoord * par1);
+        Vec3d Vec3d2 = Vec3d.addVector(Vec3d1.x * par1, Vec3d1.y * par1, Vec3d1.z * par1);
         return owner.world.rayTraceBlocks(Vec3d, Vec3d2, false, false, true);
     }
     public static Vec3d getPosition(Entity owner)
@@ -514,12 +514,12 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             if(state != null && state.getCollisionBoundingBox(world, pos) == null)
                 movingobjectposition = null;
             else
-                Vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+                Vec3d1 = new Vec3d(movingobjectposition.hitVec.x, movingobjectposition.hitVec.y, movingobjectposition.hitVec.z);
         }
 
         Entity entity = null;
 
-        AxisAlignedBB bb = this.getEntityBoundingBox().addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB bb = this.getEntityBoundingBox().offset(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D);
 
         Predicate<Entity>[] selectors = new Predicate[]{EntitySelectorDestructable.getInstance(), EntitySelectorAttackable.getInstance()};
         for(Predicate<Entity> selector : selectors){
@@ -529,7 +529,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             if(selector.equals(EntitySelectorAttackable.getInstance()) && getTargetEntityId() != 0){
                 Entity target = world.getEntityByID(getTargetEntityId());
                 if(target != null){
-                    if(target.getEntityBoundingBox().intersectsWith(bb))
+                    if(target.getEntityBoundingBox().intersects(bb))
                         list.add(target);
                 }
             }
@@ -915,7 +915,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      */
     @SideOnly(Side.CLIENT)
     @Override
-    public int getBrightnessForRender(float par1)
+    public int getBrightnessForRender()
     {
         float f1 = 0.5F;
 
@@ -929,7 +929,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             f1 = 1.0F;
         }
 
-        int i = super.getBrightnessForRender(par1);
+        int i = super.getBrightnessForRender();
         int j = i & 255;
         int k = i >> 16 & 255;
         j += (int)(f1 * 15.0F * 16.0F);
@@ -947,13 +947,13 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      *    EntityPortalFXのぱくり
      */
     @Override
-    public float getBrightness(float par1)
+    public float getBrightness()
     {
-        float f1 = super.getBrightness(par1);
+        float f1 = super.getBrightness();
         float f2 = 0.9F;
         f2 = f2 * f2 * f2 * f2;
         return f1 * (1.0F - f2) + f2;
-        //return super.getBrightness(par1);
+        //return super.getBrightness();
     }
 
     /**

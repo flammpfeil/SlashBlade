@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -43,7 +44,7 @@ public class SimpleBlade {
             displayTag.setTag("Lore", loreList);
 
             SlashBlade.addRecipe("slashbladeWood",
-                    new ShapedOreRecipe(new ItemStack(SlashBlade.bladeWood),
+                    new ShapedOreRecipe(new ResourceLocation(SlashBlade.modid,"recipexes"), new ItemStack(SlashBlade.bladeWood),
                             "  #",
                             " # ",
                             "X  ",

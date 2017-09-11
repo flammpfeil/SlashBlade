@@ -4,7 +4,7 @@ package mods.flammpfeil.slashblade.client.renderer.entity;
 import mods.flammpfeil.slashblade.entity.EntitySpinningSword;
 import mods.flammpfeil.slashblade.entity.EntitySummonedBlade;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -110,7 +110,7 @@ public class RenderSpinningSword extends Render {
         //■スタート
         float lifetime = entity.getLifeTime();
         float ticks = entity.ticksExisted;
-        VertexBuffer wr = tessellator.getBuffer();
+        BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
         int r = color >> 16 & 255;

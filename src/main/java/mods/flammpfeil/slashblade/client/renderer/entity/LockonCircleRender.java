@@ -68,7 +68,7 @@ public class LockonCircleRender {
         Vec3d pos = lerp(new Vec3d(target.prevPosX, target.prevPosY, target.prevPosZ),target.getPositionVector(), partialTicks)
                 .addVector(0,target.height / 2.0, 0)
                 .addVector(-d3,-d4,-d5);
-        GL11.glTranslated(pos.xCoord, pos.yCoord, pos.zCoord);
+        GL11.glTranslated(pos.x, pos.y, pos.z);
         float scale = 0.00625f;
         GL11.glScalef(scale, scale, scale);
         double rotYaw = lerp(entity.prevRotationYaw, entity.rotationYaw, partialTicks);

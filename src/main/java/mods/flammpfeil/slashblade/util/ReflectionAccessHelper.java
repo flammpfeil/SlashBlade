@@ -37,7 +37,7 @@ public class ReflectionAccessHelper {
 
     public static void setItem(ItemStack stack , Item item){
         ReflectionHelper.setPrivateValue(ItemStack.class, stack, item, "item", "field_151002_e");
-        Method forgeInit = ReflectionHelper.findMethod(ItemStack.class, stack, new String[]{"forgeInit"});
+        Method forgeInit = ReflectionHelper.findMethod(ItemStack.class, "forgeInit","forgeInit");
         if(forgeInit != null) try {
             forgeInit.invoke(stack);
         } catch (IllegalAccessException e) {

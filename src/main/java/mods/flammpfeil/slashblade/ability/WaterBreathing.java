@@ -37,7 +37,7 @@ public class WaterBreathing {
         speedfactor *= (float)level;
 
         if(target.isInWater())
-            target.moveRelative(target.moveStrafing,target.moveForward,0.1f + speedfactor);
+            target.moveRelative(target.moveStrafing,target.moveForward,0.1f + speedfactor, 0.02f);
 
         target.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING,2,level-1,true,false));
     }

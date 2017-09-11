@@ -92,7 +92,7 @@ public class EntityLumberManager extends Entity {
     protected void setBeenAttacked() {
         super.setBeenAttacked();
 
-        this.kill();
+        this.onKillCommand();
     }
 
     Deque<BlockPos> harvestTargets = Queues.newLinkedBlockingDeque(50);
@@ -209,12 +209,12 @@ public class EntityLumberManager extends Entity {
 
         if(!world.isRemote
                 && (getLifeTime() < this.ticksExisted || !getOwner().isPresent())){
-            this.kill();
+            this.onKillCommand();
             return;
         }
 
         if(targetBlock == null) {
-            this.kill();
+            this.onKillCommand();
             return;
         }
 
@@ -228,7 +228,7 @@ public class EntityLumberManager extends Entity {
 
             if(playerMp.getHeldItemMainhand().isEmpty()
                     || !(playerMp.getHeldItemMainhand().getItem() instanceof ItemSlashBlade)){
-                this.kill();
+                this.onKillCommand();
                 return;
             }
 
@@ -300,12 +300,12 @@ public class EntityLumberManager extends Entity {
             } while (!harvested && !harvestTargets.isEmpty() && stackCounter++ < 30);
 
             if(30 <= stackCounter)
-                this.kill();
+                this.onKillCommand();
 
         }
 
         if(harvestTargets.isEmpty())
-            this.kill();
+            this.onKillCommand();
     }
 
     @Override

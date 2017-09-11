@@ -141,7 +141,7 @@ public class EnemyStep {
     }
 
     public AxisAlignedBB getPositionAABB(Entity target, Vec3d pos) {
-        return getPositionAABB(target, pos.xCoord, pos.yCoord, pos.zCoord);
+        return getPositionAABB(target, pos.x, pos.y, pos.z);
     }
     public AxisAlignedBB getPositionAABB(Entity target, double x, double y, double z)
     {

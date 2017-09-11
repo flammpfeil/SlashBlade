@@ -93,7 +93,7 @@ public class UntouchableTime {
 
         doAvoid(target);
 
-        WitchTime(event.getSource().getEntity(), 10);
+        WitchTime(event.getSource().getTrueSource(), 10);
 
         event.setCanceled(true);
         event.setAmount(0);
@@ -106,7 +106,7 @@ public class UntouchableTime {
 
         doAvoid(target);
 
-        WitchTime(event.getSource().getEntity(), 10);
+        WitchTime(event.getSource().getTrueSource(), 10);
 
         event.setCanceled(true);
     }

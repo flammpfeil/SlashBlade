@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
@@ -106,7 +106,7 @@ public class RenderPhantomSwordBase extends Render {
         //■スタート
         float lifetime = entityPhantomSword.getLifeTime();
         float ticks = entityPhantomSword.ticksExisted;
-        VertexBuffer wr = tessellator.getBuffer();
+        BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
         int r = color >> 16 & 255;

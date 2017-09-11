@@ -6,6 +6,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -16,7 +17,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
     ItemStack requiredStateBlade = ItemStack.EMPTY;
 
     public RecipeAwakeBlade(ItemStack result, ItemStack requiredStateBlade, Object... recipe) {
-        super(result, recipe);
+        super(new ResourceLocation(SlashBlade.modid,"recipexxx"), result, recipe);
         this.requiredStateBlade = requiredStateBlade;
     }
 
@@ -133,7 +134,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                         boolean canApplyFlag = enchantment.canApply(result);
                         if(canApplyFlag){
                             for(Enchantment curEnchantIndex : newItemEnchants.keySet()){
-                                if (curEnchantIndex != enchantIndex && !enchantment.func_191560_c(curEnchantIndex) /*canApplyTogether*/)
+                                if (curEnchantIndex != enchantIndex && !enchantment.isCompatibleWith(curEnchantIndex) /*canApplyTogether*/)
                                 {
                                     canApplyFlag = false;
                                     break;

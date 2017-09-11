@@ -9,7 +9,6 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
@@ -21,7 +20,6 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.stats.Achievement;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 /**
@@ -63,7 +61,7 @@ public class Koseki {
     public void onBladeStandAttack(SlashBladeEvent.BladeStandAttack event){
         if(!event.entityBladeStand.hasBlade()) return;
         if(EntityBladeStand.getType(event.entityBladeStand) != EntityBladeStand.StandType.Single) return;
-        if(!(event.damageSource.getEntity() instanceof EntityWither)) return;
+        if(!(event.damageSource.getTrueSource() instanceof EntityWither)) return;
         if(!event.damageSource.isExplosion()) return;
         if(!event.damageSource.getDamageType().equals("explosion.player")) return;
 
@@ -76,6 +74,7 @@ public class Koseki {
         event.entityBladeStand.setBlade(resultBlade);
     }
 
+    /* todo:advancement
     @SubscribeEvent
     public void onSlashBladeAchievementCreate(SlashBladeAchievementCreateEvent event){
         {
@@ -106,4 +105,5 @@ public class Koseki {
             }
         }
     }
+    */
 }

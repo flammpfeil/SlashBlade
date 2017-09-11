@@ -34,9 +34,9 @@ public class EntitySummonedSwordAirTrickMarker extends EntitySummonedSwordBase {
             Vec3d eyeDir = thrower.getLookVec();
 
             this.setLocationAndAngles(
-                    thrower.posX + eyeDir.xCoord * 2,
-                    thrower.posY + eyeDir.yCoord * 2 + thrower.getEyeHeight(),
-                    thrower.posZ + eyeDir.zCoord * 2,
+                    thrower.posX + eyeDir.x * 2,
+                    thrower.posY + eyeDir.y * 2 + thrower.getEyeHeight(),
+                    thrower.posZ + eyeDir.z * 2,
                     thrower.rotationYaw,
                     thrower.rotationPitch);
 

@@ -19,8 +19,8 @@ public class EntityAIStun extends EntityAIBase {
     static public final long timeoutLimit = 200;
 
     @Override
-    public boolean continueExecuting() {
-        return super.continueExecuting();
+    public boolean shouldContinueExecuting() {
+        return super.shouldContinueExecuting();
     }
 
     @Override

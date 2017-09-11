@@ -5,13 +5,13 @@ import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
-import mods.flammpfeil.slashblade.stats.AchievementList;
+//import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.Achievement;
+//import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -70,12 +70,12 @@ public class ConfigCustomBladeManager {
 
             SlashBlade.addRecipe(key,recipe);
             SlashBlade.registerCustomItemStack(key, customBlade);
-
+/* todo: advancement
             Achievement achievement = AchievementList.registerCraftingAchievement(
                     key, -3 + x++, y, SlashBlade.getCustomBlade(key), AchievementList.getAchievement("noname"));
 
             AchievementList.setContent(achievement, key);
-
+*/
             ItemSlashBladeNamed.NamedBlades.add(key);
         }
     }

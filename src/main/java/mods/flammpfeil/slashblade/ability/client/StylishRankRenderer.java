@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.ability.client;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -107,7 +107,7 @@ public class StylishRankRenderer {
         float var7 = 0.00390625F;
         float var8 = 0.00390625F;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer wr = tessellator.getBuffer();
+        BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         wr.pos(par1 + 0, par2 + par6, zLevel).tex((par3 + 0.0) * var7, (par4 + par6) * var8).endVertex();
         wr.pos(par1 + par5, par2 + par6, zLevel).tex((par3 + par5) * var7, (par4 + par6) * var8).endVertex();

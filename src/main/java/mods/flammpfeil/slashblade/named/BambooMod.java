@@ -83,7 +83,8 @@ public class BambooMod {
         float attackModif;
 
         public RecipeBambooMod() {
-            super(SlashBlade.findItemStack(SlashBlade.modid,"wrap.BambooMod.katana.sample",1),
+            super(new ResourceLocation(SlashBlade.modid,"bamboo"),
+                    SlashBlade.findItemStack(SlashBlade.modid,"wrap.BambooMod.katana.sample",1),
                     "  P",
                     " S ",
                     "B  ",

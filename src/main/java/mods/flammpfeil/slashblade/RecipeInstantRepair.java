@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +22,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 
     public RecipeInstantRepair()
     {
-        super(new ItemStack(SlashBlade.weapon, 1, 0),
+        super(new ResourceLocation(SlashBlade.modid,"recipexxsx"), new ItemStack(SlashBlade.weapon, 1, 0),
                 " X",
                 "B ",
                 'X',"cobblestone",

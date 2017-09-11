@@ -8,9 +8,10 @@ import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import mods.flammpfeil.slashblade.specialeffect.IRemovable;
 import mods.flammpfeil.slashblade.specialeffect.ISpecialEffect;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -84,8 +85,8 @@ public class ItemProudSoul extends Item {
 	}
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        super.getSubItems(itemIn, tab, subItems);
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        super.getSubItems(tab, subItems);
 		subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1));
 		subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1));
         subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.SphereBladeSoulStr, 1));
@@ -127,7 +128,8 @@ public class ItemProudSoul extends Item {
             e.setPositionAndRotation(pos.getX() + 0.5 ,pos.getY() + 0.5 ,pos.getZ() + 0.5,Math.round(player.rotationYaw / 45.0f) * 45.0f + 180.0f,e.rotationPitch);
             world.spawnEntity(e);
 
-            AchievementList.triggerAchievement(player,"bladeStand");
+            //todo : advancement
+            //AchievementList.triggerAchievement(player,"bladeStand");
 
             return EnumActionResult.SUCCESS;
         }else if(stack.getItemDamage() == 4 //crystal
@@ -180,8 +182,10 @@ public class ItemProudSoul extends Item {
     }
 
     @Override
-    public void addInformation(ItemStack par1ItemStack, EntityPlayer p_77624_2_, List par3List, boolean p_77624_4_) {
-        super.addInformation(par1ItemStack, p_77624_2_, par3List, p_77624_4_);
+    public void addInformation(ItemStack par1ItemStack, World world, List par3List, ITooltipFlag flagIn) {
+        EntityPlayer p_77624_2_ = Minecraft.getMinecraft().player;
+        boolean p_77624_4_ = flagIn.isAdvanced();
+        super.addInformation(par1ItemStack, world, par3List, flagIn);
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(par1ItemStack);
 
@@ -312,14 +316,20 @@ public class ItemProudSoul extends Item {
 
                         if(bladeSoulCrystal.isEmpty())
                             bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
+                        /* todo: advancement
                         else
                             AchievementList.triggerAchievement(player, "namedbladeSoul");
+                        */
                     }else if(stack.getItemDamage() == 0) {
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.CrystalBladeSoulStr, 1);
+                        /* todo: advancement
                         AchievementList.triggerAchievement(player, "soulCrystal");
+                        */
                     }else {
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.TrapezohedronBladeSoulStr, 1);
+                        /* todo: advancement
                         AchievementList.triggerAchievement(player, "soulTrapezohedron");
+                        */
                     }
                     stand.extinguish();
 
@@ -370,7 +380,9 @@ public class ItemProudSoul extends Item {
                             NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
 
                             bladeTag.setBoolean("RangeAttackType",!bladeTag.getBoolean("RangeAttackType"));
+                            /* todo: advancement
                             AchievementList.triggerAchievement(player,"phantomBlade");
+                            */
 
                             using = true;
                         }
@@ -526,13 +538,15 @@ public class ItemProudSoul extends Item {
     public void onCreated(ItemStack p_77622_1_, World p_77622_2_, EntityPlayer p_77622_3_) {
         super.onCreated(p_77622_1_, p_77622_2_, p_77622_3_);
 
+        /* todo: advancement
         AchievementList.triggerCraftingAchievement(p_77622_1_, p_77622_3_);
+        */
     }
 
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
 
-        ItemStack stack = entityItem.getEntityItem();
+        ItemStack stack = entityItem.getItem();
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
         if(stack.getItemDamage() == 4 || stack.getItemDamage() == 5){
             long current = entityItem.getEntityWorld().getTotalWorldTime();

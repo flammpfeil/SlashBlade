@@ -7,12 +7,10 @@ import mods.flammpfeil.slashblade.RecipeWrapBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.DummyAnvilRecipe;
 import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.Achievement;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
@@ -116,14 +114,17 @@ public class NamedBladeManager {
             }
 
             if(!icon.isEmpty()){
+                /*todo:advancement
                 String achievementKey = entry.getKey().replaceFirst("flammpfeil.slashblade.named.","");
                 achievementKey = achievementKey.replaceFirst("flammpfeil.slashblade.","");
                 Achievement ach = AchievementList.registerCraftingAchievement(achievementKey, icon, net.minecraft.stats.AchievementList.BUILD_SWORD);
+                */
 
                 String contentKey = entry.getKey();
                 ItemStack base = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
                 SlashBlade.addRecipe(contentKey, new DummyAnvilRecipe(icon, base, entry.getValue()));
-                AchievementList.setContent(ach , contentKey);
+                //todo:advancement
+                //AchievementList.setContent(ach , contentKey);
             }
 
         }

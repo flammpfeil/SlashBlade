@@ -7,7 +7,7 @@ import mods.flammpfeil.slashblade.network.MessageRankpointSynchronize;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.stats.Achievement;
+//import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatisticsManagerServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -18,7 +18,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -324,6 +323,7 @@ public class StylishRankManager {
 
         int postRank = getStylishRank(rankPoint);
 
+        /* todo: advancement
         if(lastRank < postRank){
             if(!e.world.isRemote && e instanceof EntityPlayerMP){
                 StatisticsManagerServer statMgr = ((EntityPlayerMP)e).getStatFile();
@@ -343,6 +343,7 @@ public class StylishRankManager {
                 }
             }
         }
+        */
     }
 
     @SubscribeEvent
@@ -373,11 +374,11 @@ public class StylishRankManager {
         if(!(e.getEntity() instanceof EntityPlayer)) return;
 
         //guard不可でかつ、mobからの攻撃ではない
-        if(e.getSource().isUnblockable() && e.getSource().getEntity() != null) return;
+        if(e.getSource().isUnblockable() && e.getSource().getTrueSource() != null) return;
 
         //反射攻撃ではないこと
-        if(e.getSource().getEntity() != null && e.getSource().getEntity() instanceof EntityLivingBase){
-            EntityLivingBase attacker = (EntityLivingBase)e.getSource().getEntity();
+        if(e.getSource().getTrueSource() != null && e.getSource().getTrueSource() instanceof EntityLivingBase){
+            EntityLivingBase attacker = (EntityLivingBase)e.getSource().getTrueSource();
 
             if(attacker.getRevengeTimer() == attacker.ticksExisted)
                 return;

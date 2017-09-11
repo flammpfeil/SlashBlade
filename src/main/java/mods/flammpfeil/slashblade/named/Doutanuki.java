@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -246,7 +247,7 @@ public class Doutanuki {
     public static class RecipeSheath extends ShapedOreRecipe {
 
         public RecipeSheath() {
-            super(SlashBlade.getCustomBlade(SlashBlade.modid , name),
+            super(new ResourceLocation(SlashBlade.modid,"recipex"),SlashBlade.getCustomBlade(SlashBlade.modid , name),
                     "  P",
                     " S ",
                     "B  ",
@@ -319,7 +320,7 @@ public class Doutanuki {
     public static class RecipeRepairBrokenBlade extends ShapedOreRecipe {
 
         public RecipeRepairBrokenBlade() {
-            super(SlashBlade.getCustomBlade(SlashBlade.modid, name),
+            super(new ResourceLocation(SlashBlade.modid,"recipexx"),SlashBlade.getCustomBlade(SlashBlade.modid, name),
                     "  I",
                     " I ",
                     "B  ",

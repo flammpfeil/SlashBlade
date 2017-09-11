@@ -135,7 +135,7 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
                 /*
                 Vec3d vec = this.getLook(1.0f);
                 vec = vec.normalize().scale(-0.25).add(getPositionVector());
-                this.setPosition(vec.xCoord, vec.yCoord, vec.zCoord);
+                this.setPosition(vec.x, vec.y, vec.z);
                 */
             } else {
                 super.updateRidden();
@@ -357,7 +357,7 @@ public class EntitySpiralSwords extends EntitySummonedSwordBase {
 
 
         //■初期位置・初期角度等の設定
-        setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
+        setPosition(pos.x, pos.y, pos.z);
 
         setRotation((float)Math.toDegrees(rot.y), (float)Math.toDegrees(rot.x));
 //        setRotation((float) (-degYaw + (ticks * 5.0)), (float)(-(pitch) * Math.sin(yaw))/**/);

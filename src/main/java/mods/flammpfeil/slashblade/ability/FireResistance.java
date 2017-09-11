@@ -39,7 +39,7 @@ public class FireResistance {
         speedfactor *= (float)level;
 
         if(player.isBurning()){
-            player.moveRelative(player.moveStrafing,player.moveForward,0.25f + speedfactor);
+            player.moveRelative(player.moveStrafing,player.moveForward,0.25f + speedfactor, 0.02f);
 
             int ticks = stack.getMaxItemUseDuration() - event.getDuration();
             if(ItemSlashBlade.RequiredChargeTick < ticks){

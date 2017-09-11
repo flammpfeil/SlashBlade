@@ -473,7 +473,7 @@ public class AchievementList {
 
     @SubscribeEvent
     public void playerEventItemPickupEvent(PlayerEvent.ItemPickupEvent event){
-        triggerCraftingAchievement(event.pickedUp.getEntityItem(),event.player);
+        triggerCraftingAchievement(event.pickedUp.getItem(),event.player);
     }
 
     @SubscribeEvent

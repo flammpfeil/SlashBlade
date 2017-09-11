@@ -82,9 +82,9 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
 
                 if(vec != null) {
                     vec = vec.normalize().scale(-0.25).add(getPositionVector());
-                    this.setPosition(vec.xCoord,
-                            vec.yCoord,
-                            vec.zCoord);
+                    this.setPosition(vec.x,
+                            vec.y,
+                            vec.z);
                 }
             }else {
                 super.updateRidden();
@@ -261,9 +261,9 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         Vec3d vec = getThrower().getLookVec();
 
         if(vec != null){
-            x -= vec.xCoord;
-            y -= vec.yCoord;
-            z -= vec.zCoord;
+            x -= vec.x;
+            y -= vec.y;
+            z -= vec.z;
         }
 
         //■初期位置・初期角度等の設定
@@ -281,9 +281,9 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
 
         if(lookVec == null) return;
 
-        double d0 = lookVec.xCoord; //target.posX - viewer.posX;
-        double d1 = lookVec.zCoord; //target.posZ - viewer.posZ;
-        double d2 = lookVec.yCoord;
+        double d0 = lookVec.x; //target.posX - viewer.posX;
+        double d1 = lookVec.z; //target.posZ - viewer.posZ;
+        double d2 = lookVec.y;
 
         /*
         if (target instanceof EntityLivingBase)

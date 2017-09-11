@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.entity.*;
@@ -33,7 +34,6 @@ import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.BladeMaterials;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.init.Blocks;
@@ -47,7 +47,6 @@ import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.File;
@@ -120,8 +119,11 @@ public class SlashBlade implements IFuelHandler{
         addRecipe(key, value, value instanceof DummyRecipeBase);
     }
     public static void addRecipe(String key, IRecipe value, boolean isDummy) {
-        if(!isDummy)
-            GameRegistry.addRecipe(value);
+        if(!isDummy) {
+            if(value.getRegistryName() == null)
+                value.setRegistryName(new ResourceLocation(value.getGroup()));
+            ForgeRegistries.RECIPES.register(value);
+        }
         recipeMultimap.put(key, value);
     }
 
@@ -179,7 +181,7 @@ public class SlashBlade implements IFuelHandler{
 				.setUnlocalizedName("flammpfeil.slashblade.proudsoul")
 				.setCreativeTab(tab)
                 .setRegistryName("proudsoul");
-		GameRegistry.register(proudSoul);
+		ForgeRegistries.ITEMS.register(proudSoul);
 
 
 		ItemStack itemProudSoul = new ItemStack(proudSoul,1,0);
@@ -214,7 +216,7 @@ public class SlashBlade implements IFuelHandler{
 				.setCreativeTab(tab)
                 .setRegistryName("slashblade");
 
-		GameRegistry.register(weapon);
+        ForgeRegistries.ITEMS.register(weapon);
 
         //==================================================================================================================================
 
@@ -226,7 +228,7 @@ public class SlashBlade implements IFuelHandler{
                 .setUnlocalizedName("flammpfeil.slashblade.wood")
                 .setCreativeTab(tab)
                 .setRegistryName("slashbladeWood");
-        GameRegistry.register(bladeWood);
+        ForgeRegistries.ITEMS.register(bladeWood);
 
         bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
                 .setDestructable(true)
@@ -236,7 +238,7 @@ public class SlashBlade implements IFuelHandler{
                 .setUnlocalizedName("flammpfeil.slashblade.bamboo")
                 .setCreativeTab(tab)
                 .setRegistryName("slashbladeBambooLight");
-        GameRegistry.register(bladeBambooLight);
+        ForgeRegistries.ITEMS.register(bladeBambooLight);
 
         bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(true)
@@ -246,7 +248,7 @@ public class SlashBlade implements IFuelHandler{
                 .setUnlocalizedName("flammpfeil.slashblade.silverbamboo")
                 .setCreativeTab(tab)
                 .setRegistryName("slashbladeSilverBambooLight");
-        GameRegistry.register(bladeSilverBambooLight);
+        ForgeRegistries.ITEMS.register(bladeSilverBambooLight);
 
         bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
                 .setDestructable(false)
@@ -257,7 +259,7 @@ public class SlashBlade implements IFuelHandler{
                 .setUnlocalizedName("flammpfeil.slashblade.white")
                 .setCreativeTab(tab)
                 .setRegistryName("slashbladeWhite");
-        GameRegistry.register(bladeWhiteSheath);
+        ForgeRegistries.ITEMS.register(bladeWhiteSheath);
 
 
 
@@ -268,7 +270,7 @@ public class SlashBlade implements IFuelHandler{
                 .setUnlocalizedName("flammpfeil.slashblade.wrapper")
                 .setCreativeTab(tab)
                 .setRegistryName("slashbladeWrapper");
-        GameRegistry.register(wrapBlade);
+        ForgeRegistries.ITEMS.register(wrapBlade);
 
 
 
@@ -278,7 +280,7 @@ public class SlashBlade implements IFuelHandler{
                 .setUnlocalizedName("flammpfeil.slashblade.named")
                 .setCreativeTab(tab)
                 .setRegistryName("slashbladeNamed");
-        GameRegistry.register(bladeNamed);
+        ForgeRegistries.ITEMS.register(bladeNamed);
 
 
 		GameRegistry.registerFuelHandler(this);
@@ -290,15 +292,6 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(manager);
 
         NetworkManager.init();
-
-        RecipeSorter.register("flammpfeil.slashblade:upgrade", RecipeUpgradeBlade.class, SHAPED, "after:forge:shaped");
-        RecipeSorter.register("flammpfeil.slashblade:wrap", RecipeWrapBlade.class, SHAPED, "after:forge:shaped");
-        RecipeSorter.register("flammpfeil.slashblade:adjust", RecipeAdjustPos.class, SHAPED, "after:forge:shaped");
-        RecipeSorter.register("flammpfeil.slashblade:repair", RecipeInstantRepair.class, SHAPED, "after:forge:shaped");
-        RecipeSorter.register("flammpfeil.slashblade:awake", RecipeAwakeBlade.class, SHAPED, "after:forge:shaped");
-        RecipeSorter.register("flammpfeil.slashblade:soulupgrade", RecipeBladeSoulUpgrade.class, SHAPED, "after:forge:shaped");
-        RecipeSorter.register("flammpfeil.slashblade:customblade", RecipeCustomBlade.class, SHAPED, "after:forge:shaped");
-
 
         InitEventBus.register(new BladeMaterials());
         InitEventBus.register(new SimpleBlade());
@@ -328,12 +321,12 @@ public class SlashBlade implements IFuelHandler{
     @EventHandler
     public void init(FMLInitializationEvent evt){
 
-        GameRegistry.addRecipe(new RecipeWrapBlade());
+        SlashBlade.addRecipe("wrap", new RecipeWrapBlade());
 
-        GameRegistry.addRecipe(new RecipeAdjustPos());
+        SlashBlade.addRecipe("adjust", new RecipeAdjustPos());
 
         RecipeInstantRepair recipeRepair = new RecipeInstantRepair();
-        GameRegistry.addRecipe(recipeRepair);
+        SlashBlade.addRecipe("repair", recipeRepair);
 
         MinecraftForge.EVENT_BUS.register(recipeRepair);
 
@@ -461,7 +454,8 @@ public class SlashBlade implements IFuelHandler{
             ItemStack itemSphereBladeSoul =
                     SlashBlade.findItemStack(modid, SphereBladeSoulStr, 1);
 
-            GameRegistry.addRecipe(new ShapedOreRecipe(wrapBlade,
+            SlashBlade.addRecipe("sheath", new ShapedOreRecipe(new ResourceLocation(modid,"recipe")
+                    ,wrapBlade,
                     "RBL",
                     "CIC",
                     "LBR",
@@ -478,7 +472,7 @@ public class SlashBlade implements IFuelHandler{
 
         SpecialEffects.init();
 
-        AchievementList.init();
+        //AchievementList.init();
 
         CoreProxy.proxy.postInit();
 

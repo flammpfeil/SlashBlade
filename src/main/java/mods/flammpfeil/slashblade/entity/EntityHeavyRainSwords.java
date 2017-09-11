@@ -123,7 +123,7 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
         } else {
             pos = pos.add(getThrower().getPositionVector());
             float len = 8.0f;
-            pos = pos.addVector(lookVec.xCoord * len, 0, lookVec.zCoord * len);
+            pos = pos.addVector(lookVec.x * len, 0, lookVec.z * len);
         }
 
         float areaSize;
@@ -135,9 +135,9 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
         pos = pos.addVector((getRand().nextGaussian() - 0.5) * areaSize, 8.0, (getRand().nextGaussian() - 0.5) * areaSize);
 
         //■初期位置・初期角度等の設定
-        setPosition(pos.xCoord,
-                pos.yCoord,
-                pos.zCoord);
+        setPosition(pos.x,
+                pos.y,
+                pos.z);
         setRotation(getRand().nextFloat() * 360.0f,
                 (float)(90.0 + (getRand().nextGaussian() - 0.5) * 8.0));
 

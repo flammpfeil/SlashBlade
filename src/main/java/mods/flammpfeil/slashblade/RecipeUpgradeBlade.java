@@ -4,12 +4,13 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class RecipeUpgradeBlade extends ShapedOreRecipe {
 
 	public RecipeUpgradeBlade(ItemStack result, Object... recipe) {
-		super(result, recipe);
+		super(new ResourceLocation(SlashBlade.modid,"recipexxxxx"), result, recipe);
 	}
 
 	@Override

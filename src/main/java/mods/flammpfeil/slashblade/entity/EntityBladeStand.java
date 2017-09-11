@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
-import mods.flammpfeil.slashblade.stats.AchievementList;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.block.material.Material;
@@ -47,7 +46,7 @@ public class EntityBladeStand extends Entity {
     }
 
     private static final DataParameter<ItemStack> WatchIndexBlade
-            = EntityDataManager.<ItemStack>createKey(EntityBladeStand.class, DataSerializers.OPTIONAL_ITEM_STACK);
+            = EntityDataManager.<ItemStack>createKey(EntityBladeStand.class, DataSerializers.ITEM_STACK);
     private static final DataParameter<Integer> WatchIndexFlipState
             = EntityDataManager.<Integer>createKey(EntityBladeStand.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> WatchIndexStandType
@@ -288,7 +287,8 @@ public class EntityBladeStand extends Entity {
                     return false;
                 }
 
-                AchievementList.triggerCraftingAchievement(this.getBlade(), p);
+                //todo:advancement
+                //AchievementList.triggerCraftingAchievement(this.getBlade(), p);
 
                 p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, this.getBlade());
                 this.setBlade(ItemStack.EMPTY);
@@ -379,10 +379,10 @@ public class EntityBladeStand extends Entity {
     }
 
     @Override
-    protected void kill() {
+    public void onKillCommand() {
         if(hasBlade() && this.posY < 0 ){
             this.posY = 0;
         }else
-            super.kill();
+            super.onKillCommand();
     }
 }

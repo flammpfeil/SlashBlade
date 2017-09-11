@@ -66,9 +66,9 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
         //■初期位置・初期角度等の設定
         Vec3d look = getVectorForRotation(0, thrower.rotationYaw + 20);
         setLocationAndAngles(
-                thrower.posX + look.xCoord * 1.0f,
+                thrower.posX + look.x * 1.0f,
                 thrower.posY + thrower.height,
-                thrower.posZ + look.zCoord * 1.0f,
+                thrower.posZ + look.z * 1.0f,
                 0,
                 0);
 
@@ -244,7 +244,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
      */
     @SideOnly(Side.CLIENT)
     @Override
-    public int getBrightnessForRender(float par1)
+    public int getBrightnessForRender()
     {
         float f1 = 0.5F;
 
@@ -258,7 +258,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
             f1 = 1.0F;
         }
 
-        int i = super.getBrightnessForRender(par1);
+        int i = super.getBrightnessForRender();
         int j = i & 255;
         int k = i >> 16 & 255;
         j += (int)(f1 * 15.0F * 16.0F);
@@ -276,13 +276,13 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
      *    EntityPortalFXのぱくり
      */
     @Override
-    public float getBrightness(float par1)
+    public float getBrightness()
     {
-        float f1 = super.getBrightness(par1);
+        float f1 = super.getBrightness();
         float f2 = 0.9F;
         f2 = f2 * f2 * f2 * f2;
         return f1 * (1.0F - f2) + f2;
-        //return super.getBrightness(par1);
+        //return super.getBrightness();
     }
 
     @Override

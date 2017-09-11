@@ -61,7 +61,7 @@ public class JustGuard {
         if(el instanceof  EntityPlayer && !el.getActiveItemStack().isEmpty() && !stack.isEmpty() && stack.getItem() instanceof ItemSlashBlade){
 
             //mobからの攻撃は常にguard可能
-            boolean guardable = e.getSource().getEntity() != null;
+            boolean guardable = e.getSource().getTrueSource() != null;
             //特殊guardも通常guard不可なものはguard不可
             if(!guardable && e.getSource().isUnblockable()) return;
 

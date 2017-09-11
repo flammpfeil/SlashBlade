@@ -389,7 +389,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                     if(getTargetEntityId() != 0){
                         Entity target = world.getEntityByID(getTargetEntityId());
                         if(target != null){
-                            if(target.getEntityBoundingBox().intersectsWith(bb))
+                            if(target.getEntityBoundingBox().intersects(bb))
                                 list.add(target);
                         }
                     }
@@ -561,7 +561,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
      */
     @SideOnly(Side.CLIENT)
     @Override
-    public int getBrightnessForRender(float par1)
+    public int getBrightnessForRender()
     {
         float f1 = 0.5F;
 
@@ -575,7 +575,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
             f1 = 1.0F;
         }
 
-        int i = super.getBrightnessForRender(par1);
+        int i = super.getBrightnessForRender();
         int j = i & 255;
         int k = i >> 16 & 255;
         j += (int)(f1 * 15.0F * 16.0F);
@@ -593,13 +593,13 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
      *    EntityPortalFXのぱくり
      */
     @Override
-    public float getBrightness(float par1)
+    public float getBrightness()
     {
-        float f1 = super.getBrightness(par1);
+        float f1 = super.getBrightness();
         float f2 = 0.9F;
         f2 = f2 * f2 * f2 * f2;
         return f1 * (1.0F - f2) + f2;
-        //return super.getBrightness(par1);
+        //return super.getBrightness();
     }
 
     /**

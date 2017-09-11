@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -19,10 +19,11 @@ archivesBaseName = "SlashBlade"
 
 minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    version = "1.11.2-13.20.0.2260"
+
+    version = "1.12.1-14.22.0.2475"
     runDir = "run"
 
-    mappings = "snapshot_20161220"
+    mappings = "snapshot_20170624"
     
     //static final boolean isRelease = /*@IS_RELEASE@*/ false;
     replace '@IS_RELEASE@', '*/true;//'

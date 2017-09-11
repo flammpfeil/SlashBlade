@@ -52,11 +52,6 @@ public abstract class DummyRecipeBase implements IRecipe {
     }
 
     @Override
-    public int getRecipeSize() {
-        return 0;
-    }
-
-    @Override
     public ItemStack getRecipeOutput() {
         return output;
     }
@@ -65,5 +60,26 @@ public abstract class DummyRecipeBase implements IRecipe {
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
         NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         return nonnulllist;
+    }
+
+    @Override
+    public boolean canFit(int width, int height) {
+        return false;
+    }
+
+    @Override
+    public IRecipe setRegistryName(ResourceLocation name) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ResourceLocation getRegistryName() {
+        return null;
+    }
+
+    @Override
+    public Class<IRecipe> getRegistryType() {
+        return null;
     }
 }

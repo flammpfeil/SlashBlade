@@ -1,10 +1,13 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.Maps;
+import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import net.minecraft.init.Enchantments;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -19,6 +22,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -30,10 +35,10 @@ public class RecipeWrapBlade extends ShapedRecipes {
     private static Map<String,Float> wrapableBaseAttackModifiers = Maps.newHashMap();
     public RecipeWrapBlade()
     {
-        super(3, 3, new ItemStack[] {
-                null, null, SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1),
-                null, new ItemStack(SlashBlade.wrapBlade, 1, 0), null ,
-                new ItemStack(Items.WOODEN_SWORD), null, null }
+        super(SlashBlade.modid+":wrap",3, 3, NonNullList.<Ingredient>from(Ingredient.EMPTY,
+                Ingredient.EMPTY, Ingredient.EMPTY, Ingredient.fromStacks(SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1)),
+                Ingredient.EMPTY, Ingredient.fromStacks(new ItemStack(SlashBlade.wrapBlade, 1, 0)), Ingredient.EMPTY ,
+                Ingredient.fromStacks(new ItemStack(Items.WOODEN_SWORD)), Ingredient.EMPTY, Ingredient.EMPTY)
                 , new ItemStack(SlashBlade.wrapBlade, 1, 0));
 
         proudSoul = new ItemStack(SlashBlade.proudSoul,1,0);

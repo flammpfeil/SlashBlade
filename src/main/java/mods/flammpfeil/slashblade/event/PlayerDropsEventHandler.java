@@ -16,10 +16,10 @@ public class PlayerDropsEventHandler {
     public void onPlayerDropsEvent(LivingDropsEvent event){
         boolean isPlayer = event.getEntityLiving() instanceof EntityPlayer;
         for(EntityItem item : event.getDrops()){
-            if(!(item.getEntityItem().getItem() instanceof ItemSlashBlade))
+            if(!(item.getItem().getItem() instanceof ItemSlashBlade))
                 continue;
 
-            if(isPlayer || item.hasCustomName() || item.getEntityItem().getRarity() != EnumRarity.COMMON)
+            if(isPlayer || item.hasCustomName() || item.getItem().getRarity() != EnumRarity.COMMON)
                 item.addTag("SB.DeathDrop");
         }
     }

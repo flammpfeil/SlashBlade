@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.client.model.obj;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -54,7 +54,7 @@ public class Face
 
         float offsetU, offsetV;
 
-        VertexBuffer wr = tessellator.getBuffer();
+        BufferBuilder wr = tessellator.getBuffer();
 
         for (int i = 0; i < vertices.length; ++i)
         {
@@ -108,6 +108,6 @@ public class Face
 
         normalVector = v1.crossProduct(v2).normalize();
 
-        return new Vertex((float) normalVector.xCoord, (float) normalVector.yCoord, (float) normalVector.zCoord);
+        return new Vertex((float) normalVector.x, (float) normalVector.y, (float) normalVector.z);
     }
 }
