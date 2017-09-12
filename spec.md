@@ -4,7 +4,71 @@
 機能一覧
 ---------
 
-1. コンボルート
+1.コンボルート
+Commands
+
+    L:LeftClick
+    R:RightClick
+    S:SummonedSword
+
+Special Attack
+
+    R hold > release
+
+On Ground Combo
+
+    ComboA
+        R>R>R
+            rank under S
+        R>R>>R
+            rank over S
+    ComboB rank over S
+        R>R>R>R>R
+    ComboC
+        L>L
+
+Air Combo
+
+    ComboA
+        R>R>R
+    ComboB
+        R>R>>R>R
+    ComboC
+        L>L
+
+Arts
+
+    Upper Slash
+        Lock-on + moveBack + R
+            R hold : auto jump
+    Rapid Slash
+        Lock-on + moveForward + R
+            R hold : auto jump > Rising Star
+    ProjectileBarrier
+        Sneak + R hold (Charged)
+            Required:Thorns Enchantment
+            Don't hit the LivingEntity
+    Helm Braker
+        Aerial + Lock-on + moveForward + R
+    Calibur
+        Aerial + Lock-on + (moveBack > moveForward) + R
+
+SummonedSwordArts
+
+    Spiral Swords
+        S hold
+            fire : S hold again
+    Blistering Swords
+        Lock-on & moveForward + S hold
+            fire : S release
+    Storm Swords
+        Lock-on & moveBack + S hold
+            fire : auto
+    Heavy Rain Swords
+        Lock-on & (moveBack > moveForward) + S hold
+	
+
+旧コンボルート
     * 地上
         * 左：切り上げ
         単体 敵拘束 打ち上げ attackableList無視
