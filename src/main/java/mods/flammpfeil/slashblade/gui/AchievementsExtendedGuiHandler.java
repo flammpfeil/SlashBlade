@@ -41,12 +41,15 @@ public class AchievementsExtendedGuiHandler {
 
     @SubscribeEvent
     public void guiRenderPreHandler(GuiScreenEvent.DrawScreenEvent.Pre event){
-        nowTargetGui = targetGui.contains(event.getGui().getClass().getSimpleName());
+        if(event.getGui() == null)
+            nowTargetGui = false;
+        else
+           nowTargetGui = targetGui.contains(event.getGui().getClass().getSimpleName());
     }
 
     @SubscribeEvent
     public void guiRenderHandler(GuiScreenEvent.DrawScreenEvent.Post event){
-        if(!(event.getGui() instanceof GuiAchievements) && !targetGui.contains(event.getGui().getClass().getSimpleName()) ){
+        if(event.getGui() == null || !(event.getGui() instanceof GuiAchievements) && !targetGui.contains(event.getGui().getClass().getSimpleName()) ){
             visible = false;
             AchievementList.currentMouseOver = null;
             return;
