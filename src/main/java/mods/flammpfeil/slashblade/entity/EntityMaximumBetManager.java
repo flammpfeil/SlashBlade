@@ -186,7 +186,7 @@ public class EntityMaximumBetManager extends Entity implements IThrowableEntity 
         double dAmbit = 0.5D;
         AxisAlignedBB bb = itemBlade.getBBofCombo(blade, combo, entityLiving);
 
-        bb = bb.expand(0,dAmbit,0);
+        bb = bb.grow(0,dAmbit,0);
 
         List<Entity> list = this.world.getEntitiesInAABBexcluding(this.getThrower(), bb, EntitySelectorDestructable.getInstance());
 

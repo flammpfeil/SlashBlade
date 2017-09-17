@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.event.DropEventHandler;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
@@ -89,7 +90,8 @@ public class Yamato {
 
                     ItemStack yamato = SlashBlade.findItemStack(SlashBlade.modid,nameTrue,1);
                     SlashBlade.addRecipe(nameTrue,
-                            new RecipeAwakeBlade(yamato,
+                            new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"yamato"),
+                                    yamato,
                                     reqiredBlade,
                                     "XXX",
                                     "XBX",

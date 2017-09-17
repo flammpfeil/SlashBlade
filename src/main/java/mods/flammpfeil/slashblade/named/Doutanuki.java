@@ -389,7 +389,8 @@ public class Doutanuki {
     public static class RecipeDoutanuki extends RecipeAwakeBlade {
 
         public RecipeDoutanuki() {
-            super(SlashBlade.getCustomBlade(SlashBlade.modid , namedou),getBrokenBlade(),
+            super(new ResourceLocation(SlashBlade.modid,"doutanuki"),
+                    SlashBlade.getCustomBlade(SlashBlade.modid , namedou),getBrokenBlade(),
                     "  S",
                     " B ",
                     "S  ",

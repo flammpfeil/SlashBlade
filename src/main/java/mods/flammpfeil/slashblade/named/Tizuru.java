@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
@@ -60,7 +61,8 @@ public class Tizuru {
             reqiredBlade = reqiredBlade.copy();
             reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
 
-            IRecipe recipe = new RecipeAwakeBlade(blade,reqiredBlade,
+            IRecipe recipe = new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"muramasa"),
+                    blade,reqiredBlade,
                     "PPP",
                     "PXP",
                     "PPP",

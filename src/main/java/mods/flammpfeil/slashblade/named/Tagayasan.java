@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.named;
 
 import net.minecraft.init.Enchantments;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -58,7 +59,8 @@ public class Tagayasan {
             ItemSlashBladeNamed.NamedBlades.add(name);
 
             SlashBlade.addRecipe(Tagayasan,
-                    new RecipeAwakeBlade(customblade,
+                    new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"tagayasan"),
+                            customblade,
                     reqiredBlade,
                     "XEX",
                     "PBP",

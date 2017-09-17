@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.named;
 
 import net.minecraft.init.Enchantments;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -63,7 +64,8 @@ public class Tukumo {
                 ItemSlashBladeNamed.NamedBlades.add(nameReqired);
 
                 SlashBlade.addRecipe(YuzukiTukumo,
-                        new RecipeAwakeBlade(customblade,
+                        new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"tukumo"),
+                                customblade,
                                 custombladeReqired,
                                 "ESD",
                                 "RBL",

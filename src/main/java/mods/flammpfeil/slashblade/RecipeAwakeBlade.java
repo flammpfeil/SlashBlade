@@ -16,8 +16,8 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
 
     ItemStack requiredStateBlade = ItemStack.EMPTY;
 
-    public RecipeAwakeBlade(ItemStack result, ItemStack requiredStateBlade, Object... recipe) {
-        super(new ResourceLocation(SlashBlade.modid,"recipexxx"), result, recipe);
+    public RecipeAwakeBlade(ResourceLocation loc,ItemStack result, ItemStack requiredStateBlade, Object... recipe) {
+        super(loc, result, recipe);
         this.requiredStateBlade = requiredStateBlade;
     }
 

@@ -90,7 +90,7 @@ public class MessageSpecialActionHandler implements IMessageHandler<MessageSpeci
 
                 if (!entityPlayer.world.isRemote) {
                     AxisAlignedBB bb = entityPlayer.getEntityBoundingBox();
-                    bb = bb.expand(4, 0, 4);
+                    bb = bb.grow(4, 0, 4);
 
                     bb = bb.offset(entityPlayer.motionX, entityPlayer.motionY, entityPlayer.motionZ);
 

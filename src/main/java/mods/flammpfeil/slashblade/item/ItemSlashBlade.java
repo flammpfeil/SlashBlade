@@ -1552,7 +1552,7 @@ public class ItemSlashBlade extends ItemSword {
 
     	AxisAlignedBB bb = user.getEntityBoundingBox();
 
-    	Vec3d vec = user.getLookVec();
+    	Vec3d vec = user.getLook(1.0f);
         vec = new Vec3d(vec.x,0,vec.z);
     	vec = vec.normalize();
 
@@ -1567,23 +1567,23 @@ public class ItemSlashBlade extends ItemSword {
         case Stinger:
 		case Battou:
 			if(swordType.contains(SwordType.Broken)){
-				bb = bb.expand(1.0f, 0.0f, 1.0f);
+				bb = bb.grow(1.0f, 0.0f, 1.0f);
 				bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
 
 			}else if(swordType.containsAll(SwordType.BewitchedPerfect)){
-				bb = bb.expand(5.0f, 0.75f, 5.0f);
+				bb = bb.grow(5.0f, 0.75f, 5.0f);
 			}else{
-				bb = bb.expand(2.0f, 0.75f, 2.0f);
+				bb = bb.grow(2.0f, 0.75f, 2.0f);
 				bb = bb.offset(vec.x*2.5f,0,vec.z*2.5f);
 			}
 			break;
 
         case SSlashBlade:
             if(swordType.contains(SwordType.Broken)) {
-                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.grow(1.0f, 0.0f, 1.0f);
                 bb = bb.offset(vec.x * 1.0f, 0, vec.z * 1.0f);
             }else{
-                bb = bb.expand(3.0f, 1.0f, 3.0f);
+                bb = bb.grow(3.0f, 1.0f, 3.0f);
                 bb = bb.offset(vec.x * 2.5f, 0, vec.z * 2.5f);
             }
             break;
@@ -1591,36 +1591,36 @@ public class ItemSlashBlade extends ItemSword {
         case SIai:
         case Iai:
             if(swordType.contains(SwordType.Broken)){
-                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.grow(1.0f, 0.0f, 1.0f);
                 bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
             }else{
-                bb = bb.expand(2.0f, 1.0f, 2.0f);
+                bb = bb.grow(2.0f, 1.0f, 2.0f);
                 bb = bb.offset(vec.x*2.5f,0,vec.z*2.5f);
             }
 			break;
 
 		case Saya1:
 		case Saya2:
-			bb = bb.expand(1.2f, 0.25f, 1.2f);
+			bb = bb.grow(1.2f, 0.25f, 1.2f);
 			bb = bb.offset(vec.x*2.0f,0,vec.z*2.0f);
 			break;
 
         case HelmBraker:
             if(swordType.contains(SwordType.Broken)){
-                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.grow(1.0f, 0.0f, 1.0f);
                 bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
             }else{
-                bb = bb.expand(2.0f, 2.5f, 2.0f);
+                bb = bb.grow(2.0f, 2.5f, 2.0f);
                 bb = bb.offset(vec.x*2.5f,0,vec.z*2.5f);
             }
             break;
         case Kiriorosi:
 		default:
             if(swordType.contains(SwordType.Broken)){
-                bb = bb.expand(1.0f, 0.0f, 1.0f);
+                bb = bb.grow(1.0f, 0.0f, 1.0f);
                 bb = bb.offset(vec.x*1.0f,0,vec.z*1.0f);
             }else{
-                bb = bb.expand(1.2f, 1.25f, 1.2f);
+                bb = bb.grow(1.2f, 1.25f, 1.2f);
                 bb = bb.offset(vec.x*2.0f,0.5f,vec.z*2.0f);
             }
 			break;
@@ -2020,7 +2020,7 @@ public class ItemSlashBlade extends ItemSword {
                                 Taunt.fire(sitem, el);
 
 							AxisAlignedBB bb = el.getEntityBoundingBox();
-							bb = bb.expand(10, 5, 10);
+							bb = bb.grow(10, 5, 10);
 							List<Entity> list = par2World.getEntitiesInAABBexcluding(el, bb, EntitySelectorAttackable.getInstance());
 
 							if(0 < list.size()){
@@ -2119,7 +2119,7 @@ public class ItemSlashBlade extends ItemSword {
 
                         }else{
                             AxisAlignedBB bb = el.getEntityBoundingBox();
-                            bb = bb.expand(10, 5, 10);
+                            bb = bb.grow(10, 5, 10);
                             float distance = 20.0f;
 
                             List<Entity> list = par2World.getEntitiesInAABBexcluding(el, bb, EntitySelectorAttackable.getInstance());
@@ -2901,7 +2901,7 @@ public class ItemSlashBlade extends ItemSword {
                 owner
                 , owner.getEntityBoundingBox()
                         .offset(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax)
-                        .expand((double) expandFactor, (double) expandFactor, (double) expandFactor));
+                        .grow((double) expandFactor, (double) expandFactor, (double) expandFactor));
         double tmpDistance = reachMin;
 
         for(Entity entity : list){
@@ -2910,7 +2910,7 @@ public class ItemSlashBlade extends ItemSword {
             if(0.01f < expandBorder && (!owner.canEntityBeSeen(entity) || !EntitySelectorAttackable.getInstance().apply(entity))) continue;
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder;
-            AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
+            AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double) borderSize, (double) borderSize, (double) borderSize);
             RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 
             if (axisalignedbb.contains(entityPos))

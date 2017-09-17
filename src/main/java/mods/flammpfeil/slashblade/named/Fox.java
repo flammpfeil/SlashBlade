@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.init.Enchantments;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
@@ -161,7 +162,8 @@ public class Fox {
             reqiredBlade = reqiredBlade.copy();
             reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
 
-            IRecipe recipe = new RecipeAwakeBladeFox(blade,reqiredBlade,
+            IRecipe recipe = new RecipeAwakeBladeFox(new ResourceLocation(SlashBlade.modid,"fox_white"),
+                    blade,reqiredBlade,
                     "FPF",
                     "FXF",
                     "FIF",
@@ -197,7 +199,8 @@ public class Fox {
             reqiredBlade = reqiredBlade.copy();
             reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
 
-            IRecipe recipe = new RecipeAwakeBladeFox(blade,reqiredBlade,
+            IRecipe recipe = new RecipeAwakeBladeFox(new ResourceLocation(SlashBlade.modid,"fox_black"),
+                    blade,reqiredBlade,
                     "FPF",
                     "FXF",
                     "FIF",

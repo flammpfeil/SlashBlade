@@ -191,7 +191,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
             Taunt.fire(blade, (EntityLivingBase)getThrower());
 
             AxisAlignedBB bb = getThrower().getEntityBoundingBox();
-            bb = bb.expand(10, 5, 10);
+            bb = bb.grow(10, 5, 10);
             List<Entity> list = world.getEntitiesInAABBexcluding(getThrower(), bb, EntitySelectorAttackable.getInstance());
 
             if(0 < list.size()) {

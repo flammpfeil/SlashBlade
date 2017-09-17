@@ -127,7 +127,7 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
             double expandFactor = 15;
             List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
                     , this.getEntityBoundingBox()
-                            .expand(expandFactor, expandFactor, expandFactor));
+                            .grow(expandFactor, expandFactor, expandFactor));
             list.removeAll(alreadyHitEntity);
 
             double tmpDistance = 15;

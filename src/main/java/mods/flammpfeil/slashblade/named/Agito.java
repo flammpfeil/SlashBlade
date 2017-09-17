@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.event.DropEventHandler;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
@@ -81,7 +82,8 @@ public class Agito {
 
                     ItemStack destBlade = SlashBlade.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
                     SlashBlade.addRecipe(nameAgito,
-                            new RecipeAwakeBlade(destBlade,
+                            new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"agito"),
+                                    destBlade,
                             reqiredBlade,
                             " X ",
                             "XBX",
@@ -160,7 +162,8 @@ public class Agito {
 
                     ItemStack destBlade = SlashBlade.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
                     SlashBlade.addRecipe(nameOrotiagito,
-                            new RecipeAwakeBlade(destBlade,
+                            new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"agito_ex"),
+                                    destBlade,
                             reqiredBlade,
                             "PXP",
                             "XBX",
@@ -208,7 +211,8 @@ public class Agito {
 
                     ItemStack destBlade = SlashBlade.findItemStack(SlashBlade.modid,ItemSlashBladeNamed.TrueItemName.get(tag),1);
                     SlashBlade.addRecipe(nameOrotiagitoSeald,
-                            new RecipeAwakeBlade(destBlade,
+                            new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"agito2"),
+                                    destBlade,
                             reqiredBlade,
                             " X ",
                             "XBX",

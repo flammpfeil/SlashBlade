@@ -134,7 +134,7 @@ public class EnemyStep {
     public boolean hasCollidWallBlocks(Entity target, Vec3d pos)
     {
         AxisAlignedBB bb = this.getPositionAABB(target, pos);
-        bb = bb.expand(1.0, 0.0, 1.0);
+        bb = bb.grow(1.0, 0.0, 1.0);
         List<AxisAlignedBB> blockCollidList = target.world.getCollisionBoxes(target, bb);
 
         return !blockCollidList.isEmpty();
@@ -152,7 +152,7 @@ public class EnemyStep {
 
     private Entity getStepEntity(EntityLivingBase target){
         AxisAlignedBB bb = target.getEntityBoundingBox();
-        bb = bb.expand(2.0, 1.5, 2.0);
+        bb = bb.grow(2.0, 1.5, 2.0);
         bb = bb.offset(0,0.5,0);
         List<Entity> list = target.world.getEntitiesInAABBexcluding(target, bb, EntitySelectorAttackable.getInstance());
         if(0 < list.size()){

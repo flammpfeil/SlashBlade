@@ -65,7 +65,7 @@ public class ProjectileBarrier {
                     , SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS,0.45f,0.5f);
 
 
-        AxisAlignedBB bb = player.getEntityBoundingBox().expand(2,2,2);
+        AxisAlignedBB bb = player.getEntityBoundingBox().grow(2,2,2);
         List<Entity> list = player.world.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
         for(Entity target : list){
 

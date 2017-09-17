@@ -39,7 +39,7 @@ public class Taunt {
             return;
 
         AxisAlignedBB bb = player.getEntityBoundingBox();
-        bb = bb.expand(10, 5, 10);
+        bb = bb.grow(10, 5, 10);
         List<Entity> list = player.world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
 
         int soundCounter = 0;

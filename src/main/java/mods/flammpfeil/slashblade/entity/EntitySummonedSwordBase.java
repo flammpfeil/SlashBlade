@@ -271,7 +271,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
                 , this.getEntityBoundingBox()
                 .offset(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax)
-                .expand((double) expandFactor, (double) expandFactor, (double) expandFactor));
+                .grow((double) expandFactor, (double) expandFactor, (double) expandFactor));
         list.removeAll(alreadyHitEntity);
 
         double tmpDistance = reachMin;
@@ -288,7 +288,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 continue;
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder; //視線外10幅まで判定拡張
-            AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand((double) borderSize, (double) borderSize, (double) borderSize);
+            AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double) borderSize, (double) borderSize, (double) borderSize);
             RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
 
             if (axisalignedbb.contains(entityPos)) {
@@ -519,7 +519,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         Entity entity = null;
 
-        AxisAlignedBB bb = this.getEntityBoundingBox().offset(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB bb = this.getEntityBoundingBox().offset(this.motionX, this.motionY, this.motionZ).grow(1.0D, 1.0D, 1.0D);
 
         Predicate<Entity>[] selectors = new Predicate[]{EntitySelectorDestructable.getInstance(), EntitySelectorAttackable.getInstance()};
         for(Predicate<Entity> selector : selectors){
@@ -549,7 +549,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 if (entity1.canBeCollidedWith())
                 {
                     f1 = 0.3F;
-                    AxisAlignedBB axisalignedbb1 = entity1.getEntityBoundingBox().expand((double) f1, (double) f1, (double) f1);
+                    AxisAlignedBB axisalignedbb1 = entity1.getEntityBoundingBox().grow((double) f1, (double) f1, (double) f1);
                     RayTraceResult movingobjectposition1 = axisalignedbb1.calculateIntercept(Vec3d1, Vec3d);
 
                     if (movingobjectposition1 != null)
@@ -834,7 +834,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.NEUTRAL, 0.25F, 1.6F);
 
-        AxisAlignedBB bb = this.getEntityBoundingBox().expand(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB bb = this.getEntityBoundingBox().grow(1.0D, 1.0D, 1.0D);
         List<Entity> list = this.world.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());
         list.removeAll(alreadyHitEntity);
         for(Entity target : list){

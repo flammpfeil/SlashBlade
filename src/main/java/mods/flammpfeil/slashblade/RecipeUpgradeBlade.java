@@ -9,8 +9,8 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class RecipeUpgradeBlade extends ShapedOreRecipe {
 
-	public RecipeUpgradeBlade(ItemStack result, Object... recipe) {
-		super(new ResourceLocation(SlashBlade.modid,"recipexxxxx"), result, recipe);
+	public RecipeUpgradeBlade(ResourceLocation loc, ItemStack result, Object... recipe) {
+		super(loc, result, recipe);
 	}
 
 	@Override

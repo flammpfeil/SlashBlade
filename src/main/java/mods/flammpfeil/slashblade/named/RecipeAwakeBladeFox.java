@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
@@ -11,8 +12,8 @@ import net.minecraft.item.ItemStack;
  */
 public class RecipeAwakeBladeFox extends RecipeAwakeBlade {
 
-    public RecipeAwakeBladeFox(ItemStack result, ItemStack requiredStateBlade, Object... recipe) {
-        super(result, requiredStateBlade, recipe);
+    public RecipeAwakeBladeFox(ResourceLocation loc, ItemStack result, ItemStack requiredStateBlade, Object... recipe) {
+        super(loc, result, requiredStateBlade, recipe);
     }
 
     @Override

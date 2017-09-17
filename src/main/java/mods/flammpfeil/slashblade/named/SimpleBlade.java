@@ -57,7 +57,8 @@ public class SimpleBlade {
         if(OreDictionary.getOres("bamboo").isEmpty()){
 
             SlashBlade.addRecipe("slashbladeBambooLight",
-                    new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeBambooLight),
+                    new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"bamboolight"),
+                            new ItemStack(SlashBlade.bladeBambooLight),
                             "  #",
                             " # ",
                             "X  ",
@@ -66,7 +67,8 @@ public class SimpleBlade {
         }else{
 
             SlashBlade.addRecipe("slashbladeBambooLight",
-                    new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeBambooLight),
+                    new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"bamboolight2"),
+                            new ItemStack(SlashBlade.bladeBambooLight),
                             "  #",
                             " # ",
                             "X  ",
@@ -76,7 +78,8 @@ public class SimpleBlade {
 
 
         SlashBlade.addRecipe("slashbladeSilverBambooLight",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeSilverBambooLight),
+                new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"silverlight"),
+                        new ItemStack(SlashBlade.bladeSilverBambooLight),
                 " TI",
                 "SXK",
                 "PS ",
@@ -88,7 +91,8 @@ public class SimpleBlade {
                 'P', Items.PAPER //S
         ));
         SlashBlade.addRecipe("slashbladeSilverBambooLight",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeSilverBambooLight),
+                new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"silverlight2"),
+                        new ItemStack(SlashBlade.bladeSilverBambooLight),
                 " TI",
                 "SXK",
                 "PS ",
@@ -115,7 +119,8 @@ public class SimpleBlade {
 
 
         SlashBlade.addRecipe("slashbladeWhite",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1, SlashBlade.bladeWhiteSheath.getMaxDamage() / 3),
+                new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"white"),
+                        new ItemStack(SlashBlade.bladeWhiteSheath, 1, SlashBlade.bladeWhiteSheath.getMaxDamage() / 3),
                 "  #",
                 " # ",
                 "XG ",
@@ -123,7 +128,8 @@ public class SimpleBlade {
                 'G', Items.GOLD_INGOT,
                 'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
         SlashBlade.addRecipe("slashbladeWhite",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.bladeWhiteSheath, 1, SlashBlade.bladeWhiteSheath.getMaxDamage() / 4),
+                new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"white2"),
+                        new ItemStack(SlashBlade.bladeWhiteSheath, 1, SlashBlade.bladeWhiteSheath.getMaxDamage() / 4),
                 "  #",
                 " # ",
                 "XG ",
@@ -135,7 +141,8 @@ public class SimpleBlade {
         white.addEnchantment(Enchantments.UNBREAKING,4);
         ItemStack requiredBlade =new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE);
         SlashBlade.addRecipe("slashbladeWhite",
-                new RecipeAwakeBlade(white, requiredBlade,
+                new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,"white3"),
+                        white, requiredBlade,
                 "  #",
                 " # ",
                 "XG ",
@@ -153,7 +160,8 @@ public class SimpleBlade {
 
 
         SlashBlade.addRecipe("slashblade",
-                new RecipeUpgradeBlade(new ItemStack(SlashBlade.weapon),
+                new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"slashblade"),
+                        new ItemStack(SlashBlade.weapon),
                 " BI",
                 "L#C",
                 "SG ",

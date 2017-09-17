@@ -501,7 +501,7 @@ public class CoreProxyClient extends CoreProxy {
                 Entity pointedEntity = null;
                 Vec3d vec33 = null;
                 float f = 1.0F;
-                List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().offset(vec31.x * d0, vec31.y * d0, vec31.z * d0).expand((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
+                List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().offset(vec31.x * d0, vec31.y * d0, vec31.z * d0).grow((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
                     public boolean apply(Entity p_apply_1_) {
                         return p_apply_1_.canBeCollidedWith();
                     }
@@ -515,7 +515,7 @@ public class CoreProxyClient extends CoreProxy {
                     if (entity1.canBeCollidedWith())
                     {
                         float f2 = entity1.getCollisionBorderSize();
-                        AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double) f2, (double) f2, (double)f2);
+                        AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double) f2, (double) f2, (double)f2);
                         RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
 
                         if (axisalignedbb.contains(vec3))
