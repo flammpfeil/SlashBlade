@@ -13,13 +13,13 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
-version = "mc1.10.2-r34"
+version = "mc1.10.2-r38"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
 minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    version = "1.10.2-12.18.3.2202"
+    version = "1.10.2-12.18.3.2488"
     runDir = "run"
 
     mappings = "snapshot_20161111"

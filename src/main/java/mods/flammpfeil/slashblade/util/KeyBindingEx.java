@@ -23,6 +23,11 @@ public abstract class KeyBindingEx extends KeyBinding {
         }
     }
 
+    @Override
+    public boolean conflicts(KeyBinding other) {
+        return false;
+    }
+
     private static final int dumyKeyCode = -200;
 
     public int overrideKeyCode;
@@ -48,6 +53,11 @@ public abstract class KeyBindingEx extends KeyBinding {
 
     @Override
     public void setKeyCode(int keyCode) {
+        this.overrideKeyCode = keyCode;
+    }
+
+    public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier keyModifier, int keyCode)
+    {
         this.overrideKeyCode = keyCode;
     }
 
