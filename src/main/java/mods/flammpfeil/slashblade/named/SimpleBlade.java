@@ -2,8 +2,10 @@ package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
+import mods.flammpfeil.slashblade.item.crafting.BladeIngredient;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -44,12 +46,12 @@ public class SimpleBlade {
             displayTag.setTag("Lore", loreList);
 
             SlashBlade.addRecipe("slashbladeWood",
-                    new ShapedOreRecipe(new ResourceLocation(SlashBlade.modid,"recipexes"), new ItemStack(SlashBlade.bladeWood),
+                    new ShapedOreRecipe(new ResourceLocation(SlashBlade.modid,"recipexes"), new ItemStack(SlashBlade.bladeWood) ,
                             "  #",
                             " # ",
                             "X  ",
                             '#', "logWood",
-                            'X', woodSword));//new ItemStack(Items.wooden_sword, 1, 1)));
+                            'X', new BladeIngredient(woodSword)));//new ItemStack(Items.wooden_sword, 1, 1)));
         }
 
 
@@ -63,7 +65,7 @@ public class SimpleBlade {
                             " # ",
                             "X  ",
                             '#', new ItemStack(Items.REEDS),
-                            'X', new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE)));
+                            'X', new BladeIngredient(new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE))));
         }else{
 
             SlashBlade.addRecipe("slashbladeBambooLight",
@@ -73,7 +75,7 @@ public class SimpleBlade {
                             " # ",
                             "X  ",
                             '#',"bamboo",
-                            'X', new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE)));
+                            'X', new BladeIngredient(new ItemStack(SlashBlade.bladeWood,1, OreDictionary.WILDCARD_VALUE))));
         }
 
 
@@ -86,7 +88,7 @@ public class SimpleBlade {
                 'T', Items.EGG,
                 'I', Items.IRON_INGOT,
                 'S', Items.STRING,
-                'X', new ItemStack(SlashBlade.bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
+                'X', new BladeIngredient(new ItemStack(SlashBlade.bladeBambooLight,1,OreDictionary.WILDCARD_VALUE)),
                 'K', "dyeBlack",
                 'P', Items.PAPER //S
         ));
@@ -99,7 +101,7 @@ public class SimpleBlade {
                 'T', Items.EGG,
                 'I', "ingotSilver",
                 'S', Items.STRING,
-                'X', new ItemStack(SlashBlade.bladeBambooLight,1,OreDictionary.WILDCARD_VALUE),
+                'X', new BladeIngredient(new ItemStack(SlashBlade.bladeBambooLight,1,OreDictionary.WILDCARD_VALUE)),
                 'K', "dyeBlack",
                 'P', Items.PAPER
         ));
@@ -126,7 +128,7 @@ public class SimpleBlade {
                 "XG ",
                 '#', Items.IRON_INGOT,
                 'G', Items.GOLD_INGOT,
-                'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+                'X', new BladeIngredient(new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE))));
         SlashBlade.addRecipe("slashbladeWhite",
                 new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"white2"),
                         new ItemStack(SlashBlade.bladeWhiteSheath, 1, SlashBlade.bladeWhiteSheath.getMaxDamage() / 4),
@@ -135,7 +137,7 @@ public class SimpleBlade {
                 "XG ",
                 '#', "ingotSteel",
                 'G', Items.GOLD_INGOT,
-                'X', new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE)));
+                'X', new BladeIngredient(new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE))));
 
         ItemStack white = new ItemStack(SlashBlade.bladeWhiteSheath, 1);
         white.addEnchantment(Enchantments.UNBREAKING,4);
@@ -148,7 +150,7 @@ public class SimpleBlade {
                 "XG ",
                 '#', itemIngotBladeSoul,
                 'G', Items.GOLD_INGOT,
-                'X', requiredBlade));
+                'X', new BladeIngredient(requiredBlade)));
 
 
         ItemStack brokenBladeWhite = new ItemStack(SlashBlade.bladeWhiteSheath,1,0);
@@ -165,13 +167,13 @@ public class SimpleBlade {
                 " BI",
                 "L#C",
                 "SG ",
-                'L', Blocks.LAPIS_BLOCK,
-                'C', Blocks.COAL_BLOCK,
+                'L', new ItemStack(Blocks.LAPIS_BLOCK),
+                'C', new ItemStack(Blocks.COAL_BLOCK),
                 'I', itemSphereBladeSoul,
-                'B', Items.BLAZE_ROD,
-                'G', Items.GOLD_INGOT,
-                'S', Items.STRING,
-                '#', brokenBladeWhite
+                'B', new ItemStack(Items.BLAZE_ROD),
+                'G', new ItemStack(Items.GOLD_INGOT),
+                'S', new ItemStack(Items.STRING),
+                '#', new BladeIngredient(brokenBladeWhite)
         ));
 
         {

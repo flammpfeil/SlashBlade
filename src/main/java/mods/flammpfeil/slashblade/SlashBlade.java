@@ -16,6 +16,7 @@ import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.util.ResourceLocation;
 import mods.flammpfeil.slashblade.util.DummyRecipeBase;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -477,6 +478,8 @@ public class SlashBlade implements IFuelHandler{
         CoreProxy.proxy.postInit();
 
         MinecraftForge.EVENT_BUS.register(ScheduleEntitySpawner.getInstance());
+
+        FMLCommonHandler.instance().resetClientRecipeBook();
     }
 
 
