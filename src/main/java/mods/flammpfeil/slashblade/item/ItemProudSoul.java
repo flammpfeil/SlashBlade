@@ -33,6 +33,8 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -86,6 +88,7 @@ public class ItemProudSoul extends Item {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!this.isInCreativeTab(tab)) return;
         super.getSubItems(tab, subItems);
 		subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1));
 		subItems.add(SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.IngotBladeSoulStr, 1));
@@ -182,6 +185,7 @@ public class ItemProudSoul extends Item {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack par1ItemStack, World world, List par3List, ITooltipFlag flagIn) {
         EntityPlayer p_77624_2_ = Minecraft.getMinecraft().player;
         boolean p_77624_4_ = flagIn.isAdvanced();

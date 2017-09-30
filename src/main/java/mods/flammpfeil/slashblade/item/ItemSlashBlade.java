@@ -2545,6 +2545,7 @@ public class ItemSlashBlade extends ItemSword {
     }
     
 	@Override
+    @SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack par1ItemStack,
 			World world, List par3List, ITooltipFlag inFlag) {
 

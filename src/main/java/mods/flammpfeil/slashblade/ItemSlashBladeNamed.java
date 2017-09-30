@@ -49,6 +49,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!this.isInCreativeTab(tab)) return;
         //super.getSubItems(itemIn, tab, subItems);
 
         ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
