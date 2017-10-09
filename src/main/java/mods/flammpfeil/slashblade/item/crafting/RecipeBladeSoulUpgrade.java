@@ -17,8 +17,8 @@ import java.util.Map;
  * Created by Furia on 14/08/24.
  */
 public class RecipeBladeSoulUpgrade extends ShapedOreRecipe {
-    public RecipeBladeSoulUpgrade(ItemStack result, Object... recipe) {
-        super(new ResourceLocation(SlashBlade.modid,"SoulUpgrade"),result, recipe);
+    public RecipeBladeSoulUpgrade(ResourceLocation loc, ItemStack result, Object... recipe) {
+        super(loc,result, recipe);
     }
 
     @Override

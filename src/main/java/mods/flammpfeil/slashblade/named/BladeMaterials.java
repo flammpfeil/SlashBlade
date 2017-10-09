@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.util.DummyPotionRecipe;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.brewing.BrewingOreRecipe;
 import net.minecraftforge.common.brewing.BrewingRecipe;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
@@ -35,16 +36,19 @@ public class BladeMaterials {
             result.setCount(2);
 
             SlashBlade.addRecipe(SlashBlade.TinyBladeSoulStr,
-                    new RecipeBladeSoulUpgrade(result,"X", 'X', itemProudSoul));
+                    new RecipeBladeSoulUpgrade(new ResourceLocation(SlashBlade.modid,"ps_soul2tiny"),
+                            result,"X", 'X', itemProudSoul));
         }
 
         SlashBlade.addRecipe(SlashBlade.ProudSoulStr,
-                new RecipeBladeSoulUpgrade(itemProudSoul,
+                new RecipeBladeSoulUpgrade(new ResourceLocation(SlashBlade.modid,"ps_tiny2soul"),
+                        itemProudSoul,
                 "XX",
                 'X', itemTinyBladeSoul));
 
         SlashBlade.addRecipe(SlashBlade.IngotBladeSoulStr,
-                new RecipeBladeSoulUpgrade(itemIngotBladeSoul,
+                new RecipeBladeSoulUpgrade(new ResourceLocation(SlashBlade.modid,"ps_soul2ingot"),
+                        itemIngotBladeSoul,
                 " P ",
                 "PIP",
                 " P ",
@@ -52,7 +56,8 @@ public class BladeMaterials {
                 'P', itemProudSoul));
 
         SlashBlade.addRecipe(SlashBlade.IngotBladeSoulStr,
-                new RecipeBladeSoulUpgrade(itemIngotBladeSoul,
+                new RecipeBladeSoulUpgrade(new ResourceLocation(SlashBlade.modid,"ps_tiny2ingot"),
+                        itemIngotBladeSoul,
                 " P ",
                 "PIP",
                 " P ",

@@ -13,14 +13,15 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
-version = "mc1.12.1-r2"
+version = "mc1.12-r4"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
 minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    version = "1.12.1-14.22.0.2475"
+    //version = "1.12.1-14.22.0.2475"
+    version = "1.12-14.21.1.2443"
     runDir = "run"
 
     mappings = "snapshot_20170624"
@@ -54,12 +55,12 @@ dependencies {
 def defaultEncoding = 'UTF-8'
 tasks.withType(AbstractCompile) each {
     it.options.encoding = defaultEncoding
-    it.options.compilerArgs += ['-source', '1.6', '-target', '1.6']
+    it.options.compilerArgs += ['-source', '1.8', '-target', '1.8']
 }
 
 compileTestJava {
     options.encoding = defaultEncoding
-    options.compilerArgs += ['-source', '1.6', '-target', '1.6']
+    options.compilerArgs += ['-source', '1.8', '-target', '1.8']
 }
 
 
