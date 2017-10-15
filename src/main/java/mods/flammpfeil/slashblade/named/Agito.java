@@ -226,8 +226,8 @@ public class Agito {
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("TwilightForest.Hydra", 0.3f, SlashBlade.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
-        DropEventHandler.registerEntityDrop("TwilightForest.Naga",0.3f,SlashBlade.findItemStack(SlashBlade.modid,"flammpfeil.slashblade.named.agito.rust",1));
+        DropEventHandler.registerEntityDrop(new ResourceLocation("twilightforest","hydra"), 0.3f, SlashBlade.findItemStack(SlashBlade.modid, "flammpfeil.slashblade.named.orotiagito.rust", 1));
+        DropEventHandler.registerEntityDrop(new ResourceLocation("twilightforest","naga"),0.3f,SlashBlade.findItemStack(SlashBlade.modid,"flammpfeil.slashblade.named.agito.rust",1));
 
     }
 

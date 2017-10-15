@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.event.DropEventHandler;
@@ -37,6 +38,6 @@ public class PSSange {
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        DropEventHandler.registerEntityDrop("WitherBoss", -0.3f, SlashBlade.findItemStack(SlashBlade.modid, name, 1));
+        DropEventHandler.registerEntityDrop(new ResourceLocation("wither"), -0.3f, SlashBlade.findItemStack(SlashBlade.modid, name, 1));
     }
 }

@@ -182,7 +182,7 @@ public class Doutanuki {
                 directDropRate = prop.getDouble(directDropRate);
 
                 if(0 < directDropRate)
-                    DropEventHandler.registerEntityDrop("Zombie", (float) directDropRate, SlashBlade.getCustomBlade(Doutanuki.name + ".directdrop"));
+                    DropEventHandler.registerEntityDrop(new ResourceLocation("zombie"), (float) directDropRate, SlashBlade.getCustomBlade(Doutanuki.name + ".directdrop"));
             }
         }
         finally

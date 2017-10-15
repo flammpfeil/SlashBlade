@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.event;
 import com.google.common.collect.*;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import net.minecraft.entity.EntityList;
@@ -23,31 +24,31 @@ public class DropEventHandler {
 
     public static Set<String> registerdEntityNames = Sets.newHashSet();
 
-    public static Map<String,Multimap<Float,ItemStack>> dropData = Maps.newHashMap();
+    public static Map<ResourceLocation,Multimap<Float,ItemStack>> dropData = Maps.newHashMap();
 
     /**
      *
-     * @param entityName
+     * @param entityKey
      * @param rate
      * under 0 : need blade
      * abs(rate) over 1 forcedrop
      *
      * @param item
      */
-    public static void registerEntityDrop(String entityName,float rate, ItemStack item){
+    public static void registerEntityDrop(ResourceLocation entityKey,float rate, ItemStack item){
         Multimap<Float,ItemStack> drops = null;
-        if(!dropData.containsKey(entityName)){
+        if(!dropData.containsKey(entityKey)){
             drops = HashMultimap.create();
-            dropData.put(entityName,drops);
+            dropData.put(entityKey,drops);
         }else{
-            drops = dropData.get(entityName);
+            drops = dropData.get(entityKey);
         }
         drops.put(rate, item);
     }
 
     @SubscribeEvent
     public void LivingDrops(LivingDropsEvent event){
-        String key = EntityList.getEntityString(event.getEntityLiving());
+        ResourceLocation key = EntityList.getKey(event.getEntityLiving());
 
         if(dropData.containsKey(key)){
             Random rand = event.getEntityLiving().getRNG();

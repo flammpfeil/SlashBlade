@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.named;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.event.DropEventHandler;
@@ -65,8 +66,8 @@ public class PSYasha {
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
         ItemStack stack = SlashBlade.findItemStack(SlashBlade.modid, name, 1);
-        DropEventHandler.registerEntityDrop("TwilightForest.Minotaur"  , 0.05f, stack);
+        DropEventHandler.registerEntityDrop(new ResourceLocation("twilightforest","minotaur")  , 0.05f, stack);
         stack = SlashBlade.findItemStack(SlashBlade.modid, nameTrue, 1);
-        DropEventHandler.registerEntityDrop("TwilightForest.Minoshroom", 0.2f , stack);
+        DropEventHandler.registerEntityDrop(new ResourceLocation("twilightforest","minoshroom"), 0.2f , stack);
     }
 }
