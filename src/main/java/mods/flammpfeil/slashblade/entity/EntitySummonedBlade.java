@@ -149,7 +149,7 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
                     if(!viewer.canEntityBeSeen(entity))
                         continue;
 
-                    double d3 = this.getDistanceToEntity(entity);
+                    double d3 = this.getDistance(entity);
 
                     if (d3 < tmpDistance || tmpDistance == 0.0D) {
                         if (entity == this.getRidingEntity() && !entity.canRiderInteract()) {

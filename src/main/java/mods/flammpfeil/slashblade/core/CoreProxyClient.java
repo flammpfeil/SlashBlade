@@ -464,7 +464,7 @@ public class CoreProxyClient extends CoreProxy {
 
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
             @Override
-            public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+            public int colorMultiplier(ItemStack stack, int tintIndex) {
                 return stack.getItemDamage() != 4 ? -1 : 0xCCC0FF;
             }
         }, SlashBlade.proudSoul);

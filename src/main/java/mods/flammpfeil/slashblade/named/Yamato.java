@@ -39,7 +39,7 @@ public class Yamato {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameTrue);
                 ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getAttackDamage());
                 ItemSlashBlade.TextureName.set(tag,"named/yamato");
                 ItemSlashBlade.ModelName.set(tag,"named/yamato");
                 ItemSlashBlade.SpecialAttackType.set(tag, 0);
@@ -61,7 +61,7 @@ public class Yamato {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameBrokend);
 
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getAttackDamage());
                 ItemSlashBlade.TextureName.set(tag, "named/yamato");
                 ItemSlashBlade.ModelName.set(tag, "named/yamato");
                 ItemSlashBlade.SpecialAttackType.set(tag, 0);

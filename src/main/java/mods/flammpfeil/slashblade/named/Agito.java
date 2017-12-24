@@ -34,7 +34,7 @@ public class Agito {
 
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameAgito);
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
                 ItemSlashBlade.TextureName.set(tag, "named/agito_false");
                 ItemSlashBlade.ModelName.set(tag, "named/agito");
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);
@@ -53,7 +53,7 @@ public class Agito {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameAgitoRust);
 
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.STONE.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.STONE.getAttackDamage());
                 ItemSlashBlade.TextureName.set(tag, "named/agito_rust");
                 ItemSlashBlade.ModelName.set(tag, "named/agito");
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);
@@ -111,7 +111,7 @@ public class Agito {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameOrotiagito);
 
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getAttackDamage());
                 ItemSlashBlade.TextureName.set(tag, "named/orotiagito");
                 ItemSlashBlade.ModelName.set(tag, "named/agito");
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);
@@ -135,7 +135,7 @@ public class Agito {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameOrotiagitoSeald);
 
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
                 ItemSlashBlade.TextureName.set(tag,"named/agito_true");
                 ItemSlashBlade.ModelName.set(tag,"named/agito");
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);
@@ -183,7 +183,7 @@ public class Agito {
                 ItemSlashBladeNamed.CurrentItemName.set(tag, nameOrotiagitoRust);
 
                 ItemSlashBladeNamed.CustomMaxDamage.set(tag, 60);
-                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.STONE.getDamageVsEntity());
+                ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.STONE.getAttackDamage());
                 ItemSlashBlade.TextureName.set(tag, "named/agito_rust_true");
                 ItemSlashBlade.ModelName.set(tag, "named/agito");
                 ItemSlashBlade.SpecialAttackType.set(tag, 2);

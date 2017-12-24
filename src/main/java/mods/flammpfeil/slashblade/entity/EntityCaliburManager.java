@@ -177,7 +177,7 @@ public class EntityCaliburManager extends Entity implements IThrowableEntity {
             if(targetId != 0){
                 Entity target = this.world.getEntityByID(targetId);
                 if(target != null){
-                    double distance = target.getDistanceSqToEntity(this.getThrower());
+                    double distance = target.getDistanceSq(this.getThrower());
                     if(distance < 3.0){
                         if(moveTicks > this.ticksExisted){
                             this.ticksExisted = moveTicks;

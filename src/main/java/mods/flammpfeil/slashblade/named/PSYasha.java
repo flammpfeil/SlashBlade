@@ -29,7 +29,7 @@ public class PSYasha {
 
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
             ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
             ItemSlashBlade.TextureName.set(tag, "named/yasha/yasha");
             ItemSlashBlade.ModelName.set(tag, "named/yasha/yasha");
             ItemSlashBlade.SpecialAttackType.set(tag, 4);
@@ -50,7 +50,7 @@ public class PSYasha {
 
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
             ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
             ItemSlashBlade.TextureName.set(tag, "named/yasha/yasha");
             ItemSlashBlade.ModelName.set(tag, "named/yasha/yashaTrue");
             ItemSlashBlade.SpecialAttackType.set(tag, 5);

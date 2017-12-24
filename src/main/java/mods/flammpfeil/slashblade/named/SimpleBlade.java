@@ -36,14 +36,16 @@ public class SimpleBlade {
         ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
 
         {
-            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD,1,1);
+            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD,1/*,1*/);
             NBTTagCompound displayTag = new NBTTagCompound();
+            /*
             woodSword.setTagInfo("display",displayTag);
             NBTTagList loreList = new NBTTagList();
             loreList.appendTag(new NBTTagString("required 1 damage"));
             loreList.appendTag(new NBTTagString("bad : break block 2damage"));
             loreList.appendTag(new NBTTagString("good : attack mob 1damage﻿"));
             displayTag.setTag("Lore", loreList);
+            */
 
             SlashBlade.addRecipe("slashbladeWood",
                     new ShapedOreRecipe(new ResourceLocation(SlashBlade.modid,"recipexes"), new ItemStack(SlashBlade.bladeWood) ,
@@ -51,9 +53,8 @@ public class SimpleBlade {
                             " # ",
                             "X  ",
                             '#', "logWood",
-                            'X', new BladeIngredient(woodSword)));//new ItemStack(Items.wooden_sword, 1, 1)));
+                            'X', Ingredient.fromStacks(woodSword)));//new ItemStack(Items.wooden_sword, 1, 1)));
         }
-
 
 
         if(OreDictionary.getOres("bamboo").isEmpty()){
@@ -69,7 +70,7 @@ public class SimpleBlade {
         }else{
 
             SlashBlade.addRecipe("slashbladeBambooLight",
-                    new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"bamboolight2"),
+                    new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"bamboolight"),
                             new ItemStack(SlashBlade.bladeBambooLight),
                             "  #",
                             " # ",
@@ -85,12 +86,12 @@ public class SimpleBlade {
                 " TI",
                 "SXK",
                 "PS ",
-                'T', Items.EGG,
-                'I', Items.IRON_INGOT,
-                'S', Items.STRING,
+                'T', new ItemStack(Items.EGG),
+                'I', new ItemStack(Items.IRON_INGOT),
+                'S', new ItemStack(Items.STRING),
                 'X', new BladeIngredient(new ItemStack(SlashBlade.bladeBambooLight,1,OreDictionary.WILDCARD_VALUE)),
                 'K', "dyeBlack",
-                'P', Items.PAPER //S
+                'P', new ItemStack(Items.PAPER) //S
         ));
         SlashBlade.addRecipe("slashbladeSilverBambooLight",
                 new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"silverlight2"),
@@ -126,8 +127,8 @@ public class SimpleBlade {
                 "  #",
                 " # ",
                 "XG ",
-                '#', Items.IRON_INGOT,
-                'G', Items.GOLD_INGOT,
+                '#', new ItemStack(Items.IRON_INGOT),
+                'G', new ItemStack(Items.GOLD_INGOT),
                 'X', new BladeIngredient(new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE))));
         SlashBlade.addRecipe("slashbladeWhite",
                 new RecipeUpgradeBlade(new ResourceLocation(SlashBlade.modid,"white2"),
@@ -136,7 +137,7 @@ public class SimpleBlade {
                 " # ",
                 "XG ",
                 '#', "ingotSteel",
-                'G', Items.GOLD_INGOT,
+                'G', new ItemStack(Items.GOLD_INGOT),
                 'X', new BladeIngredient(new ItemStack(SlashBlade.bladeWood,1,OreDictionary.WILDCARD_VALUE))));
 
         ItemStack white = new ItemStack(SlashBlade.bladeWhiteSheath, 1);
@@ -149,7 +150,7 @@ public class SimpleBlade {
                 " # ",
                 "XG ",
                 '#', itemIngotBladeSoul,
-                'G', Items.GOLD_INGOT,
+                'G', new ItemStack(Items.GOLD_INGOT),
                 'X', new BladeIngredient(requiredBlade)));
 
 

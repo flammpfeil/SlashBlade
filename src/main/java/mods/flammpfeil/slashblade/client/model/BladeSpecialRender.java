@@ -81,6 +81,10 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
     private boolean render(){
 
+        boolean depthState = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
+        if(!depthState)
+            GlStateManager.enableDepth();
+
         if(BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND
@@ -205,6 +209,9 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         GL11.glPopAttrib();
 
         Face.resetColor();
+
+        if(!depthState)
+            GlStateManager.disableDepth();
 
         return true;
     }

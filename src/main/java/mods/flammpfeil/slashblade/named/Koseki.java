@@ -35,7 +35,7 @@ public class Koseki {
 
         ItemSlashBladeNamed.CurrentItemName.set(tag, name);
         ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
         ItemSlashBlade.TextureName.set(tag, "named/dios/koseki");
         ItemSlashBlade.ModelName.set(tag, "named/dios/dios");
         ItemSlashBlade.SpecialAttackType.set(tag, 6);

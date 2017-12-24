@@ -47,7 +47,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
         if(entityId != 0){
             Entity tmp = world.getEntityByID(entityId);
             if(tmp != null){
-                if(tmp.getDistanceToEntity(player) < 30.0f)
+                if(tmp.getDistance(player) < 30.0f)
                     target = tmp;
             }
         }
@@ -159,7 +159,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
             List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
             float distance = 30.0f;
             for(Entity curEntity : list){
-                float curDist = curEntity.getDistanceToEntity(player);
+                float curDist = curEntity.getDistance(player);
                 if(curDist < distance)
                 {
                     target = curEntity;
@@ -204,7 +204,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
         if(entityId != 0){
             Entity tmp = world.getEntityByID(entityId);
             if(tmp != null){
-                if(tmp.getDistanceToEntity(player) < 30.0f)
+                if(tmp.getDistance(player) < 30.0f)
                     target = tmp;
             }
         }

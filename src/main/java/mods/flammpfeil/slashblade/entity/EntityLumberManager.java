@@ -89,8 +89,8 @@ public class EntityLumberManager extends Entity {
     }
 
     @Override
-    protected void setBeenAttacked() {
-        super.setBeenAttacked();
+    protected void markVelocityChanged() {
+        super.markVelocityChanged();
 
         this.onKillCommand();
     }

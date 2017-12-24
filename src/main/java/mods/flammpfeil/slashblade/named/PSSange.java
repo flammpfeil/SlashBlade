@@ -25,7 +25,7 @@ public class PSSange {
 
         ItemSlashBladeNamed.CurrentItemName.set(tag, name);
         ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
         ItemSlashBlade.TextureName.set(tag, "named/sange/sange");
         ItemSlashBlade.ModelName.set(tag, "named/sange/sange");
         ItemSlashBlade.SpecialAttackType.set(tag, 7); //4:シュンカ一段

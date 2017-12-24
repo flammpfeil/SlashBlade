@@ -89,7 +89,7 @@ slashblade.rangeattack.false=SummonedSword
 slashblade.rangeattack.true=SummonedBlade
 
 achievement.flammpfeil.slashblade.slashWoodenSword=Fighting Spirit
-achievement.flammpfeil.slashblade.slashWoodenSword.desc=1 damaged wooden sword<br>recipies : please click Achievement Icon.
+achievement.flammpfeil.slashblade.slashWoodenSword.desc=Try fighting with wooden sword.
 achievement.flammpfeil.slashblade.slashWoodenSword.pos=0,0
 
 achievement.flammpfeil.slashblade.buildWoodenBlade=Anonymity-Wood-

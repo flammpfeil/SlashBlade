@@ -25,7 +25,7 @@ public class Tizuru {
 
         ItemSlashBladeNamed.CurrentItemName.set(tag, name);
         ItemSlashBladeNamed.CustomMaxDamage.set(tag, 50);
-        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
         ItemSlashBlade.TextureName.set(tag, "named/muramasa/muramasa");
         ItemSlashBlade.ModelName.set(tag, "named/muramasa/muramasa");
         ItemSlashBlade.SpecialAttackType.set(tag, 1);

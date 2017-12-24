@@ -39,7 +39,7 @@ public class Tukumo {
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
             ItemSlashBladeNamed.IsDefaultBewitched.set(tag, true);
             ItemSlashBladeNamed.CustomMaxDamage.set(tag, 40);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getDamageVsEntity());
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.DIAMOND.getAttackDamage());
             ItemSlashBlade.TextureName.set(tag, "named/a_tukumo");
             ItemSlashBlade.ModelName.set(tag, "named/agito");
             ItemSlashBlade.SpecialAttackType.set(tag, 3);

@@ -1,0 +1,38 @@
+{
+  "display": {
+    "title": {
+      "translate": "flammpfeil.slashblade"
+    },
+    "description": {
+      "translate": "achievement.flammpfeil.slashblade.slashWoodenSword.desc",
+      "with": ["\n"]
+    },
+    "icon": {
+      "item": "flammpfeil.slashblade:slashbladenamed",
+      "data": 0,
+      "nbt": "{ench: [{lvl:1,id:35}], ModelName: \"named/yamato\", TextureName: \"named/yamato\", CurrentItemName: \"flammpfeil.slashblade.named.yamato\"}"
+    },
+    "background": "minecraft:textures/blocks/red_nether_brick.png",
+    "frame": "task"
+  },
+  "criteria": {
+    "attackTheEntity": {
+      "trigger": "minecraft:player_hurt_entity"
+    },
+    "useWoodenSword": {
+      "trigger": "minecraft:item_durability_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:wooden_sword",
+            "delta": 1
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "recipes": ["flammpfeil.slashblade:recipexes"],
+    "loot": ["flammpfeil.slashblade:rewards/root"]
+  }
+}

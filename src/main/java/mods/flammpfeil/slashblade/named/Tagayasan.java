@@ -37,7 +37,7 @@ public class Tagayasan {
         ItemSlashBladeNamed.IsDefaultBewitched.set(tag,true);
         ItemSlashBladeNamed.CurrentItemName.set(tag, name);
         ItemSlashBladeNamed.CustomMaxDamage.set(tag, 70);
-        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+        ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
         ItemSlashBlade.TextureName.set(tag,"named/tagayasan");
         ItemSlashBlade.SpecialAttackType.set(tag, 1);
         ItemSlashBlade.StandbyRenderType.set(tag, 1);

@@ -1314,7 +1314,7 @@ public class ItemSlashBlade extends ItemSword {
                     if(rank < 3 || swordType.contains(SwordType.Broken)){
                         attack = 2.0f;
                     }else{
-                        attack += Item.ToolMaterial.STONE.getDamageVsEntity(); //stone like
+                        attack += Item.ToolMaterial.STONE.getAttackDamage(); //stone like
                         if(swordType.contains(SwordType.FiercerEdge) && player instanceof EntityPlayer){
                             attack += AttackAmplifier.get(tag) * 0.5f;
                         }
@@ -1873,7 +1873,8 @@ public class ItemSlashBlade extends ItemSword {
                         for(;descExp > 0;descExp--){
                             if(((EntityPlayer)el).experienceLevel <= 0) break;
 
-                            ((EntityPlayer)el).addExperience(-1);
+                            if( 0 < ((EntityPlayer)el).experienceTotal)
+                                ((EntityPlayer)el).addExperience(-1);
 
                             if(((EntityPlayer)el).experience < 0){
                                 if(((EntityPlayer)el).experienceLevel <= 0){
@@ -1950,7 +1951,7 @@ public class ItemSlashBlade extends ItemSword {
                             if(rank < 3 || swordType.contains(SwordType.Broken)){
                                 attack = 2.0f;
                             }else{
-                                attack += Item.ToolMaterial.STONE.getDamageVsEntity(); //stone like
+                                attack += Item.ToolMaterial.STONE.getAttackDamage(); //stone like
                                 if(swordType.contains(SwordType.FiercerEdge) && el instanceof EntityPlayer){
                                     attack += AttackAmplifier.get(tag) * 0.5f;
                                 }
@@ -2126,7 +2127,7 @@ public class ItemSlashBlade extends ItemSword {
                             for(Entity curEntity : list){
                                 if(!el.canEntityBeSeen(curEntity)) continue;
 
-                                float curDist = curEntity.getDistanceToEntity(el);
+                                float curDist = curEntity.getDistance(el);
                                 if(curDist < distance)
                                 {
                                     eId = curEntity.getEntityId();
@@ -2145,7 +2146,7 @@ public class ItemSlashBlade extends ItemSword {
                         if(3 <= EnchantmentHelper.getEnchantmentLevel(Enchantments.THORNS, sitem)){
                             Entity target = par2World.getEntityByID(eId);
                             if(target != null && target instanceof EntityWither
-                                    && 10 > el.getDistanceToEntity(target)
+                                    && 10 > el.getDistance(target)
                                     && ((EntityWither)target).getHealth() / ((EntityWither)target).getMaxHealth() > 0.5)
                             {
 
@@ -2792,7 +2793,7 @@ public class ItemSlashBlade extends ItemSword {
                             if(eId != 0){
                                 Entity tmp = entityLiving.world.getEntityByID(eId);
                                 if(tmp != null){
-                                    if(tmp.getDistanceToEntity(entityLiving) < 30.0f)
+                                    if(tmp.getDistance(entityLiving) < 30.0f)
                                         target = tmp;
                                 }
                             }

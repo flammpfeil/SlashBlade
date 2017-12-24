@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.config.ConfigManager;
@@ -13,6 +14,7 @@ import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import net.minecraft.command.FunctionObject;
 import net.minecraft.util.ResourceLocation;
 import mods.flammpfeil.slashblade.util.DummyRecipeBase;
 import net.minecraftforge.common.config.Property;
@@ -20,10 +22,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -216,7 +215,7 @@ public class SlashBlade implements IFuelHandler{
 
         //==================================================================================================================================
 
-		weapon = (ItemSlashBlade)(new ItemSlashBlade(ToolMaterial.IRON, 4 + ToolMaterial.DIAMOND.getDamageVsEntity()))
+		weapon = (ItemSlashBlade)(new ItemSlashBlade(ToolMaterial.IRON, 4 + ToolMaterial.DIAMOND.getAttackDamage()))
 				.setRepairMaterial(new ItemStack(Items.IRON_INGOT))
 				.setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
 				.setUnlocalizedName("flammpfeil.slashblade")
@@ -227,7 +226,7 @@ public class SlashBlade implements IFuelHandler{
 
         //==================================================================================================================================
 
-        bladeWood = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.WOOD.getDamageVsEntity()))
+        bladeWood = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.WOOD.getAttackDamage()))
                 .setDestructable(true)
                 .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/wood.png"))
                 .setRepairMaterialOreDic("logWood")
@@ -237,7 +236,7 @@ public class SlashBlade implements IFuelHandler{
                 .setRegistryName("slashbladeWood");
         ForgeRegistries.ITEMS.register(bladeWood);
 
-        bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getDamageVsEntity()))
+        bladeBambooLight = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.WOOD, 4 + ToolMaterial.STONE.getAttackDamage()))
                 .setDestructable(true)
                 .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/banboo.png"))
                 .setRepairMaterialOreDic("bamboo")
@@ -247,7 +246,7 @@ public class SlashBlade implements IFuelHandler{
                 .setRegistryName("slashbladeBambooLight");
         ForgeRegistries.ITEMS.register(bladeBambooLight);
 
-        bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getDamageVsEntity()))
+        bladeSilverBambooLight = (ItemSlashBladeBambooLight)(new ItemSlashBladeBambooLight(ToolMaterial.WOOD, 4 + ToolMaterial.IRON.getAttackDamage()))
                 .setDestructable(true)
                 .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/silverbanboo.png"))
                 .setRepairMaterialOreDic("bamboo")
@@ -257,7 +256,7 @@ public class SlashBlade implements IFuelHandler{
                 .setRegistryName("slashbladeSilverBambooLight");
         ForgeRegistries.ITEMS.register(bladeSilverBambooLight);
 
-        bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getDamageVsEntity()))
+        bladeWhiteSheath = (ItemSlashBladeDetune)(new ItemSlashBladeDetune(ToolMaterial.IRON, 4 + ToolMaterial.IRON.getAttackDamage()))
                 .setDestructable(false)
                 .setModelTexture(new ResourceLocationRaw("flammpfeil.slashblade", "model/white.png"))
                 .setRepairMaterial(new ItemStack(Items.IRON_INGOT))

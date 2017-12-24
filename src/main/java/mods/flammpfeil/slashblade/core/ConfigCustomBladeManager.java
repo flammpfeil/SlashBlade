@@ -51,7 +51,7 @@ public class ConfigCustomBladeManager {
 
             ItemSlashBladeNamed.CurrentItemName.set(tag, key);
             ItemSlashBladeNamed.CustomMaxDamage.set(tag, 50);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
             ItemSlashBlade.TextureName.set(tag, "custom/"+line+"/texture");
             ItemSlashBlade.ModelName.set(tag, "custom/"+line+"/model");
             ItemSlashBlade.StandbyRenderType.set(tag, 2);

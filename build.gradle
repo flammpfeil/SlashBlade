@@ -13,18 +13,22 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
-version = "mc1.12-r4"
+version = "mc1.12-r5"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
 minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    //version = "1.12.1-14.22.0.2475"
-    version = "1.12-14.21.1.2443"
+    version = "1.12.2-14.23.0.2552"
     runDir = "run"
 
-    mappings = "snapshot_20170624"
+    // the mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
+    mappings = "snapshot_20171003"
     
     //static final boolean isRelease = /*@IS_RELEASE@*/ false;
     replace '@IS_RELEASE@', '*/true;//'

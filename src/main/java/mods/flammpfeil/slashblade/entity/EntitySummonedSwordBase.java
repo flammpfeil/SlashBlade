@@ -1032,7 +1032,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
     //IProjectile
     @Override
-    public void setThrowableHeading(double v, double v2, double v3, float v4, float v5) {
+    public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
 
     }
 

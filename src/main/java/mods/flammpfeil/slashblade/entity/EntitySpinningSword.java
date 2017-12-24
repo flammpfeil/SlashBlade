@@ -85,7 +85,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
             EntityLivingBase owner = (EntityLivingBase)this.getThrower();
 
             byte command = owner.getEntityData().getByte("SB.MCS");
-            if(2.5 < owner.getDistanceToEntity(this)
+            if(2.5 < owner.getDistance(this)
                     || !owner.onGround
                     || 0 == (command & MessageMoveCommandState.CAMERA)
                     || owner.getHeldItemMainhand() == null

@@ -159,7 +159,7 @@ public class EnemyStep {
             Entity enemy = null;
             float distance = 10.0f;
             for(Entity curEntity : list){
-                float curDist = curEntity.getDistanceToEntity(target);
+                float curDist = curEntity.getDistance(target);
                 if(curDist < distance)
                 {
                     enemy = curEntity;

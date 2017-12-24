@@ -407,7 +407,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                     for(Entity curEntity : list){
                         if (curEntity.canBeCollidedWith())
                         {
-                            double d1 = curEntity.getDistanceToEntity(this);
+                            double d1 = curEntity.getDistance(this);
 
                             if (d1 < d0 || d0 == 0.0D)
                             {

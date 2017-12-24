@@ -48,7 +48,7 @@ public class Doutanuki {
 
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
             ItemSlashBladeNamed.CustomMaxDamage.set(tag, 50);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
             ItemSlashBlade.TextureName.set(tag, "named/muramasa/sabigatana");
             ItemSlashBlade.ModelName.set(tag, "named/muramasa/muramasa");
             ItemSlashBlade.SpecialAttackType.set(tag, 1);
@@ -103,7 +103,7 @@ public class Doutanuki {
 
             ItemSlashBladeNamed.CurrentItemName.set(tag, name);
             ItemSlashBladeNamed.CustomMaxDamage.set(tag, 50);
-            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getDamageVsEntity());
+            ItemSlashBlade.setBaseAttackModifier(tag, 4 + Item.ToolMaterial.IRON.getAttackDamage());
             ItemSlashBlade.TextureName.set(tag, "named/muramasa/doutanuki");
             ItemSlashBlade.ModelName.set(tag, "named/muramasa/muramasa");
             ItemSlashBlade.SpecialAttackType.set(tag, 5);
