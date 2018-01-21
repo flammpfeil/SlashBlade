@@ -135,11 +135,12 @@ public class AnvilEventHandler {
 
         out.setItemDamage(out.getItemDamage() - repair);
 
-        if(StringUtils.isBlank(event.getName()) && out.hasDisplayName()){
-            out.clearCustomName();
-        }else{
+
+        if (StringUtils.isBlank(event.getName()))
+            if (out.hasDisplayName())
+                out.clearCustomName();
+        else if (!event.getName().equals(out.getDisplayName()))
             out.setStackDisplayName(event.getName());
-        }
 
         event.setOutput(out);
     }
