@@ -1,5 +1,8 @@
 package mods.flammpfeil.slashblade.item;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
@@ -10,6 +13,11 @@ import mods.flammpfeil.slashblade.specialeffect.ISpecialEffect;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,6 +30,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +40,7 @@ import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.server.management.UserListOpsEntry;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,6 +51,8 @@ import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ItemProudSoul extends Item {
 
@@ -48,13 +60,70 @@ public class ItemProudSoul extends Item {
         setHasSubtypes(true);
 	}
 
+	public enum EnumSoulType implements IStringSerializable{
+        NONE    (-1, "none"),
+	    SOUL    (0, "soul"),
+        TINY    (3, "tiny"),
+        INGOT   (1, "ingot"),
+        SPHERE  (2, "sphere"),
+        CRYSTAL (4, "crystal"),
+        TRAPEZOHEDRON   (5, "trapezohedron"),
+        STEEL_INGOT     (0x1000 | 1, "steel_ingot"),
+        SILVER_INGOT    (0x1000 | 1, "silver_ingot")
+	    ;
+	    private final int meta;
+	    private final String name;
+
+        private static final Map<Integer, EnumSoulType> metamap = new Supplier<Map<Integer, EnumSoulType>>(){
+            @Override
+            public Map<Integer, EnumSoulType> get() {
+                Map<Integer, EnumSoulType> result = Maps.newHashMap();
+                for(EnumSoulType type : values()){
+                    result.put(type.getMetadata(), type);
+                }
+                return result;
+            }
+        }.get();
+
+        private EnumSoulType(int metaIn, String nameIn)
+        {
+            this.meta = metaIn;
+            this.name = nameIn;
+        }
+
+        public int getMetadata()
+        {
+            return this.meta;
+        }
+
+        @Override
+        public String getName() {
+            return this.name;
+        }
+
+        public static EnumSoulType byMetadata(int meta)
+        {
+            if(metamap.containsKey(meta))
+                return metamap.get(meta);
+            else
+                return NONE;
+        }
+    }
+
+	IBlockState baseState = (new BlockStateContainer(Blocks.STONE, new IProperty[]{SOUL_TYPE})).getBaseState().withProperty(SOUL_TYPE, EnumSoulType.NONE);
+    public static final PropertyEnum<EnumSoulType> SOUL_TYPE = PropertyEnum.<EnumSoulType>create("type", EnumSoulType.class);
+	public IBlockState getStateFromMeta(int meta){
+	    return baseState.withProperty(SOUL_TYPE , EnumSoulType.byMetadata(meta));
+    }
+
     static public final int AchievementIconIdHead = 0x1000;
     static public final int AchievementEffectedIconIdHead = 0x1500;
+
     @Override
 	public boolean hasEffect(ItemStack par1ItemStack) {
 
-        if(AchievementIconIdHead <= par1ItemStack.getItemDamage()){
-            return AchievementEffectedIconIdHead <= par1ItemStack.getItemDamage();
+        if(AchievementIconIdHead <= par1ItemStack.getMetadata()){
+            return AchievementEffectedIconIdHead <= par1ItemStack.getMetadata();
         }
 
 		if(	par1ItemStack.getItem() == SlashBlade.proudSoul){
@@ -66,7 +135,14 @@ public class ItemProudSoul extends Item {
 	@Override
 	public String getUnlocalizedName(ItemStack par1ItemStack) {
 		String s = super.getUnlocalizedName(par1ItemStack);
-		switch(par1ItemStack.getItemDamage()){
+
+		int meta = par1ItemStack.getMetadata();
+		EnumSoulType type = EnumSoulType.byMetadata(meta);
+		if(type != EnumSoulType.NONE)
+            s += "." + type.getName();
+
+        /*
+		switch(par1ItemStack.getMetadata()){
 		case 1:
 			s += ".ingot";
 			break;
@@ -83,6 +159,7 @@ public class ItemProudSoul extends Item {
             s += ".trapezohedron";
             break;
 		}
+		*/
 		return s;
 	}
 
@@ -127,7 +204,7 @@ public class ItemProudSoul extends Item {
 
             world.setBlockToAir(pos);
             EntityBladeStand e = new EntityBladeStand(world);
-            e.setStandType(stack.getItemDamage());
+            e.setStandType(stack.getMetadata());
             e.setPositionAndRotation(pos.getX() + 0.5 ,pos.getY() + 0.5 ,pos.getZ() + 0.5,Math.round(player.rotationYaw / 45.0f) * 45.0f + 180.0f,e.rotationPitch);
             world.spawnEntity(e);
 
@@ -135,7 +212,7 @@ public class ItemProudSoul extends Item {
             //AchievementList.triggerAchievement(player,"bladeStand");
 
             return EnumActionResult.SUCCESS;
-        }else if(stack.getItemDamage() == 4 //crystal
+        }else if(stack.getMetadata() == 4 //crystal
                 && stack.hasTagCompound() && stack.getTagCompound().hasKey("GPX")
                 && Blocks.QUARTZ_BLOCK == block
                 && player.isSneaking()) {
@@ -169,7 +246,7 @@ public class ItemProudSoul extends Item {
             stack.shrink(1);
 
             return EnumActionResult.SUCCESS;
-        }else if(stack.getItemDamage() == 4 //crystal
+        }else if(stack.getMetadata() == 4 //crystal
                 && !world.isRemote
                 && player.isSneaking()){
 
@@ -230,7 +307,7 @@ public class ItemProudSoul extends Item {
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
-        if(stack.getItemDamage() == 3 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
+        if(stack.getMetadata() == 3 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
             if(stand.hasBlade()){
@@ -248,7 +325,7 @@ public class ItemProudSoul extends Item {
             }
         }
 
-        if(stack.getItemDamage() == 5 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
+        if(stack.getMetadata() == 5 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
             if(stand.hasBlade()){
@@ -285,7 +362,7 @@ public class ItemProudSoul extends Item {
         }
 
 
-        if((stack.getItemDamage() == 0 || stack.getItemDamage() == 4) && entity instanceof EntityBladeStand) {
+        if((stack.getMetadata() == 0 || stack.getMetadata() == 4) && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
             if(stand.hasBlade() && stand.isBurning()){
@@ -302,7 +379,7 @@ public class ItemProudSoul extends Item {
                     using = true;
 
                     boolean isLottery = false;
-                    if(stack.isItemEnchanted() && stack.getItemDamage() == 0){
+                    if(stack.isItemEnchanted() && stack.getMetadata() == 0){
                         isLottery = true;
                     }
 
@@ -324,7 +401,7 @@ public class ItemProudSoul extends Item {
                         else
                             AchievementList.triggerAchievement(player, "namedbladeSoul");
                         */
-                    }else if(stack.getItemDamage() == 0) {
+                    }else if(stack.getMetadata() == 0) {
                         bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.CrystalBladeSoulStr, 1);
                         /* todo: advancement
                         AchievementList.triggerAchievement(player, "soulCrystal");
@@ -348,7 +425,7 @@ public class ItemProudSoul extends Item {
             }
         }
 
-        if(!using && stack.getItemDamage() == 2){
+        if(!using && stack.getMetadata() == 2){
             if(ItemSlashBlade.SpecialAttackType.exists(tag))
             {
                 int saType = ItemSlashBlade.SpecialAttackType.get(tag);
@@ -395,7 +472,7 @@ public class ItemProudSoul extends Item {
             }
         }
 
-        if(!using && stack.getItemDamage() == 4 && entity instanceof EntityBladeStand && !entity.isBurning()){
+        if(!using && stack.getMetadata() == 4 && entity instanceof EntityBladeStand && !entity.isBurning()){
             EntityBladeStand stand = (EntityBladeStand)entity;
             NBTTagCompound seTag = ItemSlashBlade.getSpecialEffect(stack);
             if(stand.hasBlade()){
@@ -464,7 +541,7 @@ public class ItemProudSoul extends Item {
             if(stand.hasBlade()){
                 using = true;
 
-                int damage = stack.getItemDamage();
+                int damage = stack.getMetadata();
                 float rate = 0.0f;
                 if(damage == 0){
                     rate = 0.5f;
@@ -552,7 +629,7 @@ public class ItemProudSoul extends Item {
 
         ItemStack stack = entityItem.getItem();
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
-        if(stack.getItemDamage() == 4 || stack.getItemDamage() == 5){
+        if(stack.getMetadata() == 4 || stack.getMetadata() == 5){
             long current = entityItem.getEntityWorld().getTotalWorldTime();
 
             if(entityItem.getEntityData().hasKey("FloatingTimeout")){

@@ -1,21 +1,26 @@
 package mods.flammpfeil.slashblade.core;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.event.ModelRegister;
+import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.network.*;
 import mods.flammpfeil.slashblade.util.KeyBindingEx;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.*;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -33,6 +38,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.lwjgl.input.Keyboard;
 
 import java.util.EnumSet;
+import java.util.Map;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -78,6 +84,21 @@ public class CoreProxyClient extends CoreProxy {
             ModelBakery.registerItemVariants(SlashBlade.proudSoul, variants.toArray(new ResourceLocation[]{}));
         }
         */
+
+        {
+            StateMapperBase propertyStringMapper = new StateMapperBase() {
+                @Override
+                protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                    return new ModelResourceLocation("minecraft:stone");
+                }
+            };
+
+            for(ItemProudSoul.EnumSoulType type : ItemProudSoul.EnumSoulType.values()){
+                ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, type.getMetadata(), new ModelResourceLocation(SlashBlade.modid + ":" + "material", propertyStringMapper.getPropertyString(SlashBlade.proudSoul.getStateFromMeta(type.getMetadata()).getProperties())));
+            }
+        }
+
+
         //ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 0, new ModelResourceLocation(SlashBlade.modid + ":" + "proudsoul"));
         ModelLoader.setCustomModelResourceLocation(SlashBlade.proudSoul, 0, new ModelResourceLocation(SlashBlade.modid + ":" + "soul.obj"));
 

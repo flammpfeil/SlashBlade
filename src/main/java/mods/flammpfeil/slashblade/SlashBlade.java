@@ -74,7 +74,7 @@ public class SlashBlade implements IFuelHandler{
 
     public static ItemSlashBladeWrapper wrapBlade = null;
 
-	public static Item proudSoul;
+	public static ItemProudSoul proudSoul;
 
     public static Configuration mainConfiguration;
     public static File mainConfigurationFile;
@@ -183,7 +183,7 @@ public class SlashBlade implements IFuelHandler{
 		}
 
 
-		proudSoul = (new ItemProudSoul())
+		proudSoul = (ItemProudSoul)(new ItemProudSoul())
 				.setUnlocalizedName("flammpfeil.slashblade.proudsoul")
 				.setCreativeTab(tab)
                 .setRegistryName("proudsoul");
@@ -212,6 +212,12 @@ public class SlashBlade implements IFuelHandler{
         ItemStack itemTrapezohedronBladeSoul = new ItemStack(proudSoul,1,5);
         itemCrystalBladeSoul.setRepairCost(-80);
         registerCustomItemStack(TrapezohedronBladeSoulStr , itemTrapezohedronBladeSoul);
+
+
+        ItemStack steelIngot = new ItemStack(proudSoul,1, ItemProudSoul.EnumSoulType.STEEL_INGOT.getMetadata());
+        OreDictionary.registerOre("ingotSteel", steelIngot);
+        ItemStack ingotSilver = new ItemStack(proudSoul,1, ItemProudSoul.EnumSoulType.SILVER_INGOT.getMetadata());
+        OreDictionary.registerOre("ingotSilver", ingotSilver);
 
         //==================================================================================================================================
 
