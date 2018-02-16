@@ -69,7 +69,7 @@ public class ItemProudSoul extends Item {
         CRYSTAL (4, "crystal"),
         TRAPEZOHEDRON   (5, "trapezohedron"),
         STEEL_INGOT     (0x1000 | 1, "steel_ingot"),
-        SILVER_INGOT    (0x1000 | 1, "silver_ingot")
+        SILVER_INGOT    (0x1000 | 2, "silver_ingot")
 	    ;
 	    private final int meta;
 	    private final String name;

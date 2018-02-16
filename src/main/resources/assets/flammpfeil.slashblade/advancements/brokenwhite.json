@@ -29,6 +29,6 @@
     }
   },
   "rewards": {
-    "function": "flammpfeil.slashblade:rewards/reset"
+    "recipes": ["flammpfeil.slashblade:slashblade"]
   }
 }

@@ -25,8 +25,5 @@
         ]
       }
     }
-  },
-  "rewards": {
-    "function": "flammpfeil.slashblade:rewards/reset"
   }
 }
