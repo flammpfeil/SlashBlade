@@ -3,13 +3,16 @@ package mods.flammpfeil.slashblade.ability;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.network.MessageRankpointSynchronize;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 //import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatisticsManagerServer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -26,10 +29,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by Furia on 14/07/29.*/
@@ -42,7 +42,8 @@ public class StylishRankManager {
 
     public StylishRankManager(){
         try{
-            SlashBlade.mainConfiguration.load();
+            if(!SlashBlade.mainConfiguration.hasCategory(Configuration.CATEGORY_GENERAL))
+                SlashBlade.mainConfiguration.load();
 
             {
                 Property propIgnoreDamageType = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "RankDownIgnoreDamageTypes" ,new String[]{});
@@ -344,6 +345,55 @@ public class StylishRankManager {
             }
         }
         */
+    }
+
+    /**
+     * 空振り
+     */
+    static public boolean whiffsRankDownDisabled = true;
+    static public float whiffsRankDownFactor = 0.2f;
+    static String IS_WHIFFS_STR = "SB.IsWhiffs";
+    static int whiffsPointChangeAmount(){
+        return (int)(RankRange * whiffsRankDownFactor);
+    }
+    private static boolean CheckCancelFireWhiffs(Entity user){
+        if(whiffsRankDownDisabled)
+            return true;
+        if(user == null)
+            return true;
+        if(user.world.isRemote)
+            return true;
+
+        if(user.world.isRemote)
+            return true;
+        if(!(user.world instanceof WorldServer))
+            return true;
+
+        return false;
+    }
+    public static void Whiffs(Entity user, boolean isWhiffs){
+        if(CheckCancelFireWhiffs(user)) return;
+
+        user.getEntityData().setBoolean(IS_WHIFFS_STR,isWhiffs);
+        if(!isWhiffs)
+            return;
+
+        AxisAlignedBB bb = user.getEntityBoundingBox();
+        bb = bb.grow(10, 5, 10);
+        List<Entity> nearbyList = user.world.getEntitiesInAABBexcluding(user, bb, EntitySelectorAttackable.getInstance());
+
+        if(!nearbyList.isEmpty())
+            addRankPoint(user, -whiffsPointChangeAmount());
+    }
+    public static void WhiffsRecover(Entity user){
+        if(CheckCancelFireWhiffs(user)) return;
+
+        if(!user.getEntityData().getBoolean(IS_WHIFFS_STR))
+            return;
+
+        user.getEntityData().setBoolean(IS_WHIFFS_STR,false);
+
+        addRankPoint(user, whiffsPointChangeAmount());
     }
 
     @SubscribeEvent

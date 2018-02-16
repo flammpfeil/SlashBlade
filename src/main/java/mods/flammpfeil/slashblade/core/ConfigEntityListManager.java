@@ -60,7 +60,8 @@ public class ConfigEntityListManager {
     {
     	if(event.side == Side.SERVER && event.phase == Phase.START && event.type ==Type.WORLD){
 			try{
-				SlashBlade.mainConfiguration.load();
+				if(!SlashBlade.mainConfiguration.hasCategory(Configuration.CATEGORY_GENERAL))
+					SlashBlade.mainConfiguration.load();
 
 
 

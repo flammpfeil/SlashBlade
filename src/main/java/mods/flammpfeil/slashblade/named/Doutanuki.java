@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -121,10 +122,11 @@ public class Doutanuki {
         MinecraftForge.EVENT_BUS.register(this);
 
         try{
-            SlashBlade.mainConfiguration.load();
+            if(!SlashBlade.mainConfiguration.hasCategory("rustblade"))
+                SlashBlade.mainConfiguration.load();
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","SpawnRate",(double)spawnRate);
+                prop = SlashBlade.mainConfiguration.get("rustblade","SpawnRate",(double)spawnRate);
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(1.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -136,7 +138,7 @@ public class Doutanuki {
             }
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","IsBrokenRate",(double)isBrokenRate);
+                prop = SlashBlade.mainConfiguration.get("rustblade","IsBrokenRate",(double)isBrokenRate);
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(1.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -148,7 +150,7 @@ public class Doutanuki {
             }
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","NoSheathRate",(double)noSheathRate,"0.0<rate<1");
+                prop = SlashBlade.mainConfiguration.get("rustblade","NoSheathRate",(double)noSheathRate,"0.0<rate<1");
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(1.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -160,7 +162,7 @@ public class Doutanuki {
             }
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","DropRate",(double)dropRate,"0:nodrop , 0<droprate<1 , 2:forceDrop");
+                prop = SlashBlade.mainConfiguration.get("rustblade","DropRate",(double)dropRate,"0:nodrop , 0<droprate<1 , 2:forceDrop");
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(2.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -176,7 +178,7 @@ public class Doutanuki {
             {
                 double directDropRate = -1;
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","DirectDropChance",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
+                prop = SlashBlade.mainConfiguration.get("rustblade","DirectDropChance",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
                 prop.setShowInGui(true);
 
                 directDropRate = prop.getDouble(directDropRate);
@@ -191,13 +193,8 @@ public class Doutanuki {
         }
 
         SlashBlade.addRecipe(name,new RecipeRepairBrokenBlade());
-        RecipeSorter.register("flammpfeil.slashblade:rustsrepairbroken", RecipeRepairBrokenBlade.class, RecipeSorter.Category.SHAPED, "after:forge:shaped");
-
         SlashBlade.addRecipe(name,new RecipeSheath());
-        RecipeSorter.register("flammpfeil.slashblade:rustsheath", RecipeSheath.class, RecipeSorter.Category.SHAPED, "after:forge:shaped");
-
         SlashBlade.addRecipe(namedou,new RecipeDoutanuki());
-        RecipeSorter.register("flammpfeil.slashblade:doutanuki", RecipeDoutanuki.class, RecipeSorter.Category.SHAPED, "after:flammpfeil.slashblade:awake");
 
     }
 
