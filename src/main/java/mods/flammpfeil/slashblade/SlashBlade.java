@@ -170,19 +170,30 @@ public class SlashBlade implements IFuelHandler{
             }
 
             {
-                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange" , 100, "decrement speed factor up 50<def:100<500 down");
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange" , 100);
+                prop.setComment("decrement speed factor up 50<def:100<500 down");
                 int range = Math.max(50, Math.min(500, prop.getInt()));
                 StylishRankManager.setRankRange(range);
             }
             {
-                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRateTaunt" , 150, "percentage 1%<def:150%<200%");
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRateTaunt" , 150);
+                prop.setComment("percentage 1%<def:150%<200%");
                 float range = Math.max(1, Math.min(200, prop.getInt()));
                 StylishRankManager.AttackTypes.registerAttackType(StylishRankManager.AttackTypes.Noutou, range / 100.0f);
             }
             {
-                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRate" , 100, "percentage 1%<def:100%<200%");
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRate" , 100);
+                prop.setComment("percentage 1%<def:100%<200%");
                 float range = Math.max(1, Math.min(200, prop.getInt()));
                 StylishRankManager.setRankRate(range / 100.0f);
+            }
+            {
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "WhiffsRankDownRate" , 10);
+                prop.setComment("rankpoint change factor percentage 0% <= value <= 100% (0% = disable)");
+                int value = prop.getInt();
+                value = Math.max(0, Math.min(100, value));
+                StylishRankManager.whiffsRankDownDisabled = (value == 0);
+                StylishRankManager.whiffsRankDownFactor = value / 100.0f;
             }
 
             MinecraftForge.EVENT_BUS.register(new ConfigManager());

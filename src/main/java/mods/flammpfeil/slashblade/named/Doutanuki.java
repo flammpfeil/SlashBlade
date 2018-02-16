@@ -118,10 +118,11 @@ public class Doutanuki {
         MinecraftForge.EVENT_BUS.register(this);
 
         try{
-            SlashBlade.mainConfiguration.load();
+            if(!SlashBlade.mainConfiguration.hasCategory("rustblade"))
+                SlashBlade.mainConfiguration.load();
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","SpawnRate",(double)spawnRate);
+                prop = SlashBlade.mainConfiguration.get("rustblade","SpawnRate",(double)spawnRate);
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(1.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -133,7 +134,7 @@ public class Doutanuki {
             }
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","IsBrokenRate",(double)isBrokenRate);
+                prop = SlashBlade.mainConfiguration.get("rustblade","IsBrokenRate",(double)isBrokenRate);
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(1.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -145,7 +146,7 @@ public class Doutanuki {
             }
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","NoSheathRate",(double)noSheathRate,"0.0<rate<1");
+                prop = SlashBlade.mainConfiguration.get("rustblade","NoSheathRate",(double)noSheathRate,"0.0<rate<1");
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(1.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -157,7 +158,7 @@ public class Doutanuki {
             }
             {
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","DropRate",(double)dropRate,"0:nodrop , 0<droprate<1 , 2:forceDrop");
+                prop = SlashBlade.mainConfiguration.get("rustblade","DropRate",(double)dropRate,"0:nodrop , 0<droprate<1 , 2:forceDrop");
                 prop.setShowInGui(true)
                         .setMinValue(0.0).setMaxValue(2.0)
                         //.setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class)
@@ -173,7 +174,7 @@ public class Doutanuki {
             {
                 double directDropRate = -1;
                 Property prop;
-                prop = SlashBlade.mainConfiguration.get("RustBlade","DirectDropChance",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
+                prop = SlashBlade.mainConfiguration.get("rustblade","DirectDropChance",directDropRate,"under 0 : no drop , 0.0<droprate<1.0");
                 prop.setShowInGui(true);
 
                 directDropRate = prop.getDouble(directDropRate);
