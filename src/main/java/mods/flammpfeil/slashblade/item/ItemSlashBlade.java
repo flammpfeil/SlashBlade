@@ -1296,6 +1296,9 @@ public class ItemSlashBlade extends ItemSword {
         int rank = StylishRankManager.getStylishRank(player);
 
         List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
+
+        StylishRankManager.Whiffs(player, list.isEmpty());
+
         for(Entity curEntity : list){
 
             switch (comboSeq) {
@@ -2841,6 +2844,9 @@ public class ItemSlashBlade extends ItemSword {
                 }
 
                 StylishRankManager.doAttack(entityLiving);
+
+                StylishRankManager.WhiffsRecover(entityLiving);
+
             }
 
             if(0 < destructedCount){
