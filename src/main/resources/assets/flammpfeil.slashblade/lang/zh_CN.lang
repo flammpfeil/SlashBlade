@@ -1,6 +1,6 @@
 flammpfeil.slashblade=拔刀剑
 Key.SlashBlade.PS=幻影剑
-Key.SlashBlade.SA=特殊行動
+Key.SlashBlade.SA=特殊行动
 Key.SlashBlade.LO=锁定
 Key.SlashBlade.CA=快速转弯
 itemGroup.flammpfeil.slashblade=拔刀剑
@@ -21,13 +21,13 @@ item.flammpfeil.slashblade.white.name=利刀「白鞘」
 item.flammpfeil.slashblade.wrapper.name=鞘
 flammpfeil.slashblade.specialattack.slashdimension=次元斩
 flammpfeil.slashblade.specialattack.drive=幻影刃
-flammpfeil.slashblade.specialattack.vdrive=幻影刃
+flammpfeil.slashblade.specialattack.vdrive=幻影刃-纵
 flammpfeil.slashblade.specialattack.waveedge=波刀龙胆
 flammpfeil.slashblade.specialattack.spear=平突
 flammpfeil.slashblade.specialattack.circleslash=円刃
 flammpfeil.slashblade.specialattack.BlisteringWitherSwords=急袭幻影剑-衰破
 flammpfeil.slashblade.specialattack.sakuraend=终焉樱
-flammpfeil.slashblade.specialattack.maximumbet=幻影刃
+flammpfeil.slashblade.specialattack.maximumbet=幻影刃-重
 
 item.flammpfeil.slashblade.named.name=无铭「无名」
 item.flammpfeil.slashblade.named.yamato.broken.name=折断的阎魔刀
@@ -60,9 +60,9 @@ item.flammpfeil.slashblade.named.koseki.name=枯石太刀
 
 entity.flammpfeil.slashblade.BladeStand.name=刀挂台
 
-death.attack.directMagic=%1$sは%2$sに切裂かれた
+death.attack.directMagic=%1$s 被 %2$s 撕裂了！
 
-slashblade.seffect.name.WitherEdge=WitherEdge
+slashblade.seffect.name.WitherEdge=凋零性
 
 
 achievement.flammpfeil.slashblade.slashWoodenSword=断面之意
