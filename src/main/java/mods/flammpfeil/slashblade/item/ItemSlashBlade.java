@@ -1880,7 +1880,8 @@ public class ItemSlashBlade extends ItemSword {
                         for(;descExp > 0;descExp--){
                             if(((EntityPlayer)el).experienceLevel <= 0) break;
 
-                            ((EntityPlayer)el).addExperience(-1);
+                            if( 0 < ((EntityPlayer)el).experienceTotal)
+                                ((EntityPlayer)el).addExperience(-1);
 
                             if(((EntityPlayer)el).experience < 0){
                                 if(((EntityPlayer)el).experienceLevel <= 0){

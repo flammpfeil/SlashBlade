@@ -360,12 +360,12 @@ public class StylishRankManager {
             return true;
         if(user == null)
             return true;
-        if(user.world.isRemote)
+        if(user.worldObj.isRemote)
             return true;
 
-        if(user.world.isRemote)
+        if(user.worldObj.isRemote)
             return true;
-        if(!(user.world instanceof WorldServer))
+        if(!(user.worldObj instanceof WorldServer))
             return true;
 
         return false;
@@ -378,8 +378,8 @@ public class StylishRankManager {
             return;
 
         AxisAlignedBB bb = user.getEntityBoundingBox();
-        bb = bb.grow(10, 5, 10);
-        List<Entity> nearbyList = user.world.getEntitiesInAABBexcluding(user, bb, EntitySelectorAttackable.getInstance());
+        bb = bb.expand(10, 5, 10);
+        List<Entity> nearbyList = user.worldObj.getEntitiesInAABBexcluding(user, bb, EntitySelectorAttackable.getInstance());
 
         if(!nearbyList.isEmpty())
             addRankPoint(user, -whiffsPointChangeAmount());
