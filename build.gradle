@@ -13,7 +13,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
-version = "mc1.11-r9"
+version = "mc1.11-r11"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 

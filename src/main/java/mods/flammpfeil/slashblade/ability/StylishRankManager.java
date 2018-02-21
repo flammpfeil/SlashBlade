@@ -378,7 +378,7 @@ public class StylishRankManager {
             return;
 
         AxisAlignedBB bb = user.getEntityBoundingBox();
-        bb = bb.grow(10, 5, 10);
+        bb = bb.expand(10, 5, 10);
         List<Entity> nearbyList = user.world.getEntitiesInAABBexcluding(user, bb, EntitySelectorAttackable.getInstance());
 
         if(!nearbyList.isEmpty())
