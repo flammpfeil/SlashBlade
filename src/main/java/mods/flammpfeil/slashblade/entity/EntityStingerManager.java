@@ -205,6 +205,7 @@ public class EntityStingerManager extends Entity implements IThrowableEntity {
                     list.removeAll(alreadyHitEntity);
                     alreadyHitEntity.addAll(list);
                     for(Entity curEntity : list){
+                        if(blade.isEmpty()) break;
                         boolean isDestruction = true;
 
                         if(curEntity instanceof EntityFireball){
@@ -263,6 +264,7 @@ public class EntityStingerManager extends Entity implements IThrowableEntity {
                     if(!blade.isEmpty()){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
+                            if(blade.isEmpty()) break;
                             curEntity.hurtResistantTime = 0;
 
                             if(thrower instanceof EntityPlayer){

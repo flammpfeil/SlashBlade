@@ -206,6 +206,8 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                     list.removeAll(alreadyHitEntity);
                     alreadyHitEntity.addAll(list);
                     for(Entity curEntity : list){
+                        if(blade.isEmpty()) break;
+
                         boolean isDestruction = true;
 
                         if(curEntity instanceof EntityFireball){
@@ -265,6 +267,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                     StylishRankManager.setNextAttackType(this.thrower ,StylishRankManager.AttackTypes.SlashDimMagic);
 
                     for(Entity curEntity : list){
+                        if(blade.isEmpty()) break;
 
                         if(getIsSlashDimension()){
                             if(curEntity instanceof EntityLivingBase){

@@ -332,6 +332,7 @@ public class EntitySummonedSword extends Entity implements IThrowableEntity {
                     list.removeAll(alreadyHitEntity);
                     alreadyHitEntity.addAll(list);
                     for(Entity curEntity : list){
+                        if(blade.isEmpty()) break;
                         boolean isDestruction = true;
 
                         if(curEntity instanceof EntityFireball){

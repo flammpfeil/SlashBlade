@@ -88,7 +88,7 @@ public class UpthrustBlast {
                 DamageSource ds = new EntityDamageSource("directMagic",user).setDamageBypassesArmor().setMagicDamage().setDamageIsAbsolute();
                 target.attackEntityFrom(ds, list.size());
 
-                if(target instanceof EntityLivingBase){
+                if(target instanceof EntityLivingBase && !blade.isEmpty()){
                     StylishRankManager.setNextAttackType(user ,StylishRankManager.AttackTypes.PhantomSword);
                     blade.getItem().hitEntity(blade,(EntityLivingBase)target,user);
 

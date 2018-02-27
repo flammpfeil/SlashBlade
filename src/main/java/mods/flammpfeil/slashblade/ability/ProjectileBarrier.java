@@ -68,6 +68,7 @@ public class ProjectileBarrier {
         AxisAlignedBB bb = player.getEntityBoundingBox().grow(2,2,2);
         List<Entity> list = player.world.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
         for(Entity target : list){
+            if(player.getHeldItemMainhand().isEmpty()) break;
 
             if(target instanceof EntitySummonedSwordBase)
                 continue;

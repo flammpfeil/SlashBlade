@@ -128,6 +128,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             for(Entity curEntity : list){
+                if(stack.isEmpty()) break;
                 StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);
                 blade.attackTargetEntity(stack, curEntity, player, true);
             }
@@ -325,6 +326,7 @@ public class SlashDimension extends SpecialAttackBase implements IJustSpecialAtt
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             for(Entity curEntity : list){
+                if(stack.isEmpty()) break;
                 StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.SlashDim);
                 blade.attackTargetEntity(stack, curEntity, player, true);
                 player.onEnchantmentCritical(curEntity);

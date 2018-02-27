@@ -838,6 +838,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         List<Entity> list = this.world.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());
         list.removeAll(alreadyHitEntity);
         for(Entity target : list){
+            if(blade.isEmpty()) break;
             if(target == null) continue;
             blastAttackEntity(target);
         }

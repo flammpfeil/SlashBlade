@@ -117,6 +117,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
                     StylishRankManager.setNextAttackType(this.thrower, StylishRankManager.AttackTypes.DestructObject);
 
                     for(Entity curEntity : list){
+                        if(blade.isEmpty()) break;
                         boolean isDestruction = true;
 
                         if(curEntity instanceof EntityFireball){
@@ -177,6 +178,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
                     if(blade != null){
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
                         for(Entity curEntity : list){
+                            if(blade.isEmpty()) break;
                             attackEntity(curEntity);
                         }
                     }

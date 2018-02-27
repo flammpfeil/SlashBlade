@@ -52,6 +52,7 @@ public class CircleSlash extends SpecialAttackBase{
                 List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
 
                 for(Entity curEntity : list){
+                    if(stack.isEmpty()) break;
                     StylishRankManager.setNextAttackType(player, StylishRankManager.AttackTypes.CircleSlash);
                     blade.attackTargetEntity(stack, curEntity, player, true);
                     player.onCriticalHit(curEntity);

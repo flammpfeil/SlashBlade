@@ -1307,6 +1307,7 @@ public class ItemSlashBlade extends ItemSword {
         StylishRankManager.Whiffs(player, list.isEmpty());
 
         for(Entity curEntity : list){
+            if(stack.isEmpty()) break;
 
             switch (comboSeq) {
                 case Saya1:
@@ -2759,6 +2760,7 @@ public class ItemSlashBlade extends ItemSword {
 
             List<Entity> list = entityLiving.world.getEntitiesInAABBexcluding(entityLiving, bb, EntitySelectorDestructable.getInstance());
             for(Entity curEntity : list){
+                if(stack.isEmpty()) break;
 
                 boolean isDestruction = true;
 

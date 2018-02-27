@@ -215,6 +215,8 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                     int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, blade);
                     float magicDamage = 1.0f + ItemSlashBlade.AttackAmplifier.get(tag) * (level / 5.0f);
                     for(Entity curEntity : list){
+                        if(blade.isEmpty()) break;
+
                         if(!(this.getThrower() instanceof EntityPlayer)) continue;
 
                         bladeItem.attackTargetEntity(blade, curEntity, (EntityPlayer)this.getThrower(), true);
