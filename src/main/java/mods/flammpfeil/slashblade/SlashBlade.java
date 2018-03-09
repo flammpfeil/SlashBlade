@@ -137,54 +137,84 @@ public class SlashBlade implements IFuelHandler{
 
 
             {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "EnchantVisualEffect" , true);
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "EnchantVisualEffect", true);
                 SlashBlade.RenderEnchantEffect = prop.getBoolean();
                 prop.setShowInGui(true);
             }
             {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "NFCSVisualEffect" , true);
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "NFCSVisualEffect", true);
                 SlashBlade.RenderNFCSEffect = prop.getBoolean();
                 prop.setShowInGui(true);
             }
 
             {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "FastLeavesDecay" , false);
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "FastLeavesDecay", false);
                 EntityLumberManager.BlockHarvestDropsEventHandler.fastLeavesDecay = prop.getBoolean(false);
                 prop.setShowInGui(true);
             }
 
             {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop" , true, "true:bladestand / false:all ways EntityItem drop");
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", true, "true:bladestand / false:all ways EntityItem drop");
                 SafeDrop = prop.getBoolean(true);
                 prop.setShowInGui(true);
             }
 
             {
-                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange" , 100);
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange", 100);
                 prop.setComment("decrement speed factor up 50<def:100<500 down");
                 int range = Math.max(50, Math.min(500, prop.getInt()));
                 StylishRankManager.setRankRange(range);
             }
             {
-                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRateTaunt" , 150);
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRateTaunt", 150);
                 prop.setComment("percentage 1%<def:150%<200%");
                 float range = Math.max(1, Math.min(200, prop.getInt()));
                 StylishRankManager.AttackTypes.registerAttackType(StylishRankManager.AttackTypes.Noutou, range / 100.0f);
             }
             {
-                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRate" , 100);
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointUpRate", 100);
                 prop.setComment("percentage 1%<def:100%<200%");
                 float range = Math.max(1, Math.min(200, prop.getInt()));
                 StylishRankManager.setRankRate(range / 100.0f);
             }
             {
-                Property prop = SlashBlade.mainConfiguration.get("difficulty", "WhiffsRankDownRate" , 10);
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "WhiffsRankDownRate", 10);
                 prop.setComment("rankpoint change factor percentage 0% <= value <= 100% (0% = disable)");
                 int value = prop.getInt();
                 value = Math.max(0, Math.min(100, value));
                 StylishRankManager.whiffsRankDownDisabled = (value == 0);
                 StylishRankManager.whiffsRankDownFactor = value / 100.0f;
             }
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "DamageMultiplier", 100);
+                prop.setComment("blade damage multiplier factor 0% <= value <= 1000% (default=100%, 0%=allways1damage)");
+                float value = prop.getInt();
+                value = Math.max(0, Math.min(value,1000)) / 100.0f;
+                DamageLimitter.setFactor(value);
+            }
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "DamageLimit", -1);
+                prop.setComment("blade damage limit -1:Limitless | 0 <= value <= XX (0=allways1damage)");
+                DamageLimitter.setLimit(prop.getInt());
+            }
+
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "DamageAPMultiplier", 100);
+                prop.setComment("ArmorPiercing damage multiplier factor 0% <= value <= 1000% (default=100%, 0%=allways1damage)");
+                float value = prop.getInt();
+                value = Math.max(0, Math.min(value,1000)) / 100.0f;
+                ArmorPiercing.setFactor(value);
+            }
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get("difficulty", "DamageAPLimit", -1);
+                prop.setComment("ArmorPiercing damage limit -1:Limitless | 0 <= value <= XX (0=allways1damage)");
+                ArmorPiercing.setLimit(prop.getInt());
+            }
+
 
             MinecraftForge.EVENT_BUS.register(new ConfigManager());
 		}
@@ -450,6 +480,9 @@ public class SlashBlade implements IFuelHandler{
         MinecraftForge.EVENT_BUS.register(new ClickCanceller());
 
         MinecraftForge.EVENT_BUS.register(new Taunt());
+
+
+        MinecraftForge.EVENT_BUS.register(new DamageLimitter());
 
         //statManager = new StatManager();
         //MinecraftForge.EVENT_BUS.register(statManager);

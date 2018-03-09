@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.entity;
 
+import mods.flammpfeil.slashblade.ability.ArmorPiercing;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.TeleportCanceller;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
@@ -270,13 +271,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                         if(blade.isEmpty()) break;
 
                         if(getIsSlashDimension()){
-                            if(curEntity instanceof EntityLivingBase){
-                                float health = ((EntityLivingBase) curEntity).getHealth();
-                                if(0 < health){
-                                    health = Math.max(1,health - magicDamage);
-                                    ((EntityLivingBase) curEntity).setHealth(health);
-                                }
-                            }
+                            ArmorPiercing.doAPAttack(curEntity, magicDamage);
                         }
 
                         Vec3d pos = curEntity.getPositionVector();
