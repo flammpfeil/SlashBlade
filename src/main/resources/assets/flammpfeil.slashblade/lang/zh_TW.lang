@@ -1,11 +1,12 @@
-flammpfeil.slashblade=拔刀劍
+﻿flammpfeil.slashblade=拔刀劍
 Key.SlashBlade.PS=幻影劍
 Key.SlashBlade.SA=特殊行動
-Key.SlashBlade.LO=鎖定
-Key.SlashBlade.CA=快速轉身
+Key.SlashBlade.LO=ロックオン
+Key.SlashBlade.CA=クイックターン
 itemGroup.flammpfeil.slashblade=拔刀劍
 item.flammpfeil.slashblade.name=大太刀「」
 item.flammpfeil.slashblade.proudsoul.name=刀魂
+item.flammpfeil.slashblade.proudsoul.soul.name=刀魂
 item.flammpfeil.slashblade.proudsoul.ingot.name=刀魂錠
 item.flammpfeil.slashblade.proudsoul.sphere.name=刀魂珠
 item.flammpfeil.slashblade.proudsoul.tiny.name=刀魂碎片
@@ -38,7 +39,7 @@ item.flammpfeil.slashblade.named.agito.rust.name=顎(銹)
 item.flammpfeil.slashblade.named.agito.name=顎
 item.flammpfeil.slashblade.named.orotiagito.rust.name=顎(銹)
 item.flammpfeil.slashblade.named.orotiagito.seald.name=顎
-item.flammpfeil.slashblade.named.orotiagito.name=大蛇鄂
+item.flammpfeil.slashblade.named.orotiagito.name=大蛇顎
 item.flammpfeil.slashblade.named.sange.name=散華
 item.flammpfeil.slashblade.named.yasha.name=夜叉
 item.flammpfeil.slashblade.named.yashatrue.name=夜叉
@@ -64,7 +65,8 @@ death.attack.directMagic=%1$s 被 %2$s 斬殺
 
 slashblade.seffect.name.WitherEdge=WitherEdge
 
-achievement.flammpfeil.slashblade.slashWoodenSword=斷裂之意
+
+achievement.flammpfeil.slashblade.slashWoodenSword=切斷之意
 achievement.flammpfeil.slashblade.slashWoodenSword.desc=一刀斬裂敵人的木劍<br>拔刀術的最初步<br>§8§l§o了解斬斷的真諦成為真正的刀刃
 achievement.flammpfeil.slashblade.buildWoodenBlade=無銘刀「木偶」
 achievement.flammpfeil.slashblade.buildWoodenBlade.desc=§8§l§o裝上特製刀鞘的木刀<br>初步了解拔刀術的一角
@@ -101,15 +103,15 @@ achievement.flammpfeil.slashblade.thousandKill.desc=千本斬<br>達成後刀之
 achievement.flammpfeil.slashblade.soulEater=§c吸精刃
 achievement.flammpfeil.slashblade.soulEater.desc=藉由吸收經驗值即時修復<br>§8§l§o超越上千的榮耀魂火<br>不知刀刃腐朽為何物
 achievement.flammpfeil.slashblade.rankD=§f穢土之斬
-achievement.flammpfeil.slashblade.rankD.desc=抑制攻擊力<br>§8§l§o如同揮舞棍棒
+achievement.flammpfeil.slashblade.rankD.desc=受限的攻擊力<br>§8§l§o如同揮舞棍棒
 achievement.flammpfeil.slashblade.rankC=§9焦炭之斬
 achievement.flammpfeil.slashblade.rankC.desc=§8§l§o尚無法看見前景
 achievement.flammpfeil.slashblade.rankB=§e根基之斬
-achievement.flammpfeil.slashblade.rankB.desc=解除攻撃力限制<br>§8§l§o獵物是力量的來源
+achievement.flammpfeil.slashblade.rankB.desc=解除攻撃力限制<br>§8§l§o獵物為力量之源
 achievement.flammpfeil.slashblade.rankA=§c破空之斬
-achievement.flammpfeil.slashblade.rankA.desc=§8§l§o精湛的刀法
+achievement.flammpfeil.slashblade.rankA.desc=§8§l§o精湛的揮舞刀法
 achievement.flammpfeil.slashblade.rankS=§c暴雪之斬
-achievement.flammpfeil.slashblade.rankS.desc=千本斬 等級補正<br>§8§l§o意志之刃
+achievement.flammpfeil.slashblade.rankS.desc=千本斬 等級補正<br>§8§l§o心靈意志之刃
 achievement.flammpfeil.slashblade.rankSS=§c靈魂沙之斬
 achievement.flammpfeil.slashblade.rankSS.desc=§8§l§o尚未精湛的拔刀術
 achievement.flammpfeil.slashblade.rankSSS=§c優雅而致命的拔刀術
@@ -160,16 +162,16 @@ achievement.flammpfeil.slashblade.sabigatana.desc=殭屍會有稀少的機會持
 achievement.flammpfeil.slashblade.doutanuki=剛刀「胴田貫」
 achievement.flammpfeil.slashblade.doutanuki.desc=§8§l§o腐朽剛刀的樣貌<br>貫穿刀身<br>連田野都能斬成兩半
 
-achievement.flammpfeil.slashblade.agitoRust=被銹蝕的鄂
-achievement.flammpfeil.slashblade.agitoRust.desc=§8§l§o刀身被鐵銹侵蝕<br>群星的旅人們留傳下的刀<br>名刀「大蛇鄂」誕生以後<br>經過無數次研製打造而成
-achievement.flammpfeil.slashblade.agito=習作「鄂」
+achievement.flammpfeil.slashblade.agitoRust=被銹蝕的顎
+achievement.flammpfeil.slashblade.agitoRust.desc=§8§l§o刀身被鐵銹侵蝕<br>群星的旅人們留傳下的刀<br>名刀「大蛇顎」誕生以後<br>經過無數次研製打造而成
+achievement.flammpfeil.slashblade.agito=習作「顎」
 achievement.flammpfeil.slashblade.agito.desc=§8§l§o經過研磨並且修復<br>畢竟只是一把習作
 
-achievement.flammpfeil.slashblade.orotiagitoRust=銹壞的鄂
+achievement.flammpfeil.slashblade.orotiagitoRust=銹壞的顎
 achievement.flammpfeil.slashblade.orotiagitoRust.desc=§8§l§o刀身被完全銹斑掩蓋<br>群星的旅人們留傳下的刀<br>經過無數次研製才打造出來
-achievement.flammpfeil.slashblade.orotiagitoSealed=「鄂」道雪
+achievement.flammpfeil.slashblade.orotiagitoSealed=「顎」道雪
 achievement.flammpfeil.slashblade.orotiagitoSealed.desc=8§l§o刀刃在多次使用後<br>出現變得更加鋒利的錯覺<br>其銹跡剝落的刀身<br>完全沒有衰敗的感覺
-achievement.flammpfeil.slashblade.orotiagito=名刀「大蛇鄂」道雪
+achievement.flammpfeil.slashblade.orotiagito=名刀「大蛇顎」道雪
 achievement.flammpfeil.slashblade.orotiagito.desc=§8§l§o群星的旅人們留傳下的刀<br>跨越了千古時光<br>從銹蝕中解放展現其真正姿態
 
 achievement.flammpfeil.slashblade.yasha=妖刀「夜叉」
@@ -190,10 +192,10 @@ achievement.flammpfeil.slashblade.phantomSword=幻影劍
 achievement.flammpfeil.slashblade.phantomSword.desc=遠距離射撃<br>§8§l§o具有實質力量劍的幻影
 
 achievement.flammpfeil.slashblade.murasama=HF MURASAMA BLADE
-achievement.flammpfeil.slashblade.murasama.desc=§8§l§o將古代名刀作為素體<br>改造成分子高速震動刃<br>並將表面強化加工而成<br>有一部分的機能被忽略
+achievement.flammpfeil.slashblade.murasama.desc=§8§l§o將古代名刀作為素體<br>改造成分子高速震動刃<br>並將表面強化加工而成<br>有部分機能受限
 
 achievement.flammpfeil.slashblade.nihil=妖刀「似蛭」
-achievement.flammpfeil.slashblade.nihil.desc=§8§l§o這是把妖刀
+achievement.flammpfeil.slashblade.nihil.desc=§8§l§o某妖刀
 achievement.flammpfeil.slashblade.nihilex=血刀「似蛭」
 achievement.flammpfeil.slashblade.nihilex.desc=§8§l§o寄宿著強烈的意志
 achievement.flammpfeil.slashblade.nihilul=獄刀「似蛭」
