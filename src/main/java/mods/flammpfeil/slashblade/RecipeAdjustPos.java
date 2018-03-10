@@ -20,7 +20,7 @@ public class RecipeAdjustPos extends ShapedRecipes
 
     public RecipeAdjustPos()
     {
-        super(SlashBlade.modid + ":adjust" ,3, 3, NonNullList.<Ingredient>from(
+        super(SlashBlade.modid + ":adjust" ,3, 3, NonNullList.<Ingredient>from(Ingredient.EMPTY,
                 Ingredient.EMPTY, dirIS("Up"), dirIS("Front"),
                 dirIS("Left"), Ingredient.fromStacks(new ItemStack(SlashBlade.weapon, 1, 0)), dirIS("Right"),
                 dirIS("Back"), dirIS("Down"), Ingredient.EMPTY)
