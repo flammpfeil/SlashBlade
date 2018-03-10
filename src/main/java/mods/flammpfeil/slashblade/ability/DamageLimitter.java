@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -32,14 +33,14 @@ public class DamageLimitter {
     @SubscribeEvent
     public void onLivingHurtEvent(LivingHurtEvent event) {
 
-        EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
+        Entity attacker = event.getSource().getTrueSource();
 
         if(attacker == null)
             return;
         if (!(attacker instanceof EntityLivingBase))
             return;
 
-        ItemStack stack = attacker.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack stack = ((EntityLivingBase)attacker).getHeldItem(EnumHand.MAIN_HAND);
         if (stack.isEmpty())
             return;
 
