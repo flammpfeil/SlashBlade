@@ -59,6 +59,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -114,10 +115,21 @@ public class ItemSlashBlade extends ItemSword {
     }
 
 
+    public static boolean canUseShield(ItemStack stack){
+        if(stack.isEmpty()) return false;
+        if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
+        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+        return 0 < level;
+    }
 
     @Override
     public EnumAction getItemUseAction(ItemStack par1ItemStack) {
-        return EnumAction.NONE;
+        return canUseShield(par1ItemStack) ? EnumAction.BLOCK : EnumAction.NONE;
+    }
+
+    @Override
+    public boolean isShield(ItemStack stack, @Nullable EntityLivingBase entity) {
+        return false;
     }
 
     public static final String adjustXStr = "adjustX";

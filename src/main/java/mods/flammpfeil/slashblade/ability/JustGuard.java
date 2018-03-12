@@ -1,6 +1,8 @@
 package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -104,8 +106,27 @@ public class JustGuard {
                     el.world.spawnEntity(entityManager);
                 }
             }
+            else
+            {
+                damageShield(el, e.getAmount());
+            }
+
+            /**/
         }
     }
+
+    public void damageShield(EntityLivingBase owner, float damageAmount){
+        ItemStack blade = owner.getHeldItemMainhand();
+        if(!ItemSlashBlade.canUseShield(blade)) return;
+
+        ItemStack shield = owner.getHeldItemOffhand();
+        if(shield.isEmpty()) return;
+        if(!shield.getItem().isShield(shield, owner)) return;
+
+        int itemDamage = Math.max(1, (int)Math.floor(damageAmount));
+        shield.damageItem(itemDamage, owner);
+    }
+
     @SubscribeEvent
     public void LivingUpdateEvent(LivingEvent.LivingUpdateEvent e){
         EntityLivingBase el = e.getEntityLiving();
