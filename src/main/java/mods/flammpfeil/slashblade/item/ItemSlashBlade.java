@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
-import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
@@ -27,7 +26,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
@@ -114,12 +112,38 @@ public class ItemSlashBlade extends ItemSword {
         return ((ItemSlashBlade)par1ItemStack.getItem()).getModel();
     }
 
+    //Shield system ----------------
+
+    static public String HAS_SHIELD = "HasShield";
+    private void updateShieldState(ItemStack stack, Entity entity){
+        if(stack.isEmpty()) return;
+        if(!(stack.getItem() instanceof ItemSlashBlade)) return;
+
+        NBTTagCompound tag = stack.getOrCreateSubCompound("SlashBlade");
+        boolean currentState = tag.getBoolean(HAS_SHIELD);
+
+        boolean updateState = false;
+        if(entity instanceof EntityLivingBase){
+            EntityLivingBase owner = (EntityLivingBase) entity;
+            ItemStack shield = owner.getHeldItemOffhand();
+            if(!shield.isEmpty()){
+                if(shield.getItem().isShield(shield, owner))
+                    updateState = true;
+            }
+        }
+
+        if(currentState != updateState)
+            tag.setBoolean(HAS_SHIELD , updateState);
+    }
 
     public static boolean canUseShield(ItemStack stack){
         if(stack.isEmpty()) return false;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return false;
-        int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
-        return 0 < level;
+
+        NBTTagCompound tag = stack.getOrCreateSubCompound("SlashBlade");
+        boolean currentState = tag.getBoolean(HAS_SHIELD);
+
+        return currentState;
     }
 
     @Override
@@ -1755,6 +1779,7 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
 	public void onUpdate(ItemStack sitem, World par2World,
 			Entity par3Entity, int indexOfMainSlot, boolean isCurrent) {
+        updateShieldState(sitem, par3Entity);
 
         SilentUpdateItem.onUpdate(sitem,par3Entity,isCurrent);
 
