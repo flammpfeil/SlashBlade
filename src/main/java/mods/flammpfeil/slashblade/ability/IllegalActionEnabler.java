@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -16,6 +17,8 @@ public class IllegalActionEnabler {
             return;
 
         EntityPlayerMP playerEntity = (EntityPlayerMP) event.getEntity();
+
+        if(playerEntity instanceof FakePlayer) return;
 
         if(!(playerEntity.getHeldItemMainhand().getItem() instanceof ItemSlashBlade))
             return;
