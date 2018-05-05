@@ -36,7 +36,7 @@ public class SimpleBlade {
         ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
 
         {
-            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD,1/*,1*/);
+            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD,1, OreDictionary.WILDCARD_VALUE/*,1*/);
             NBTTagCompound displayTag = new NBTTagCompound();
             /*
             woodSword.setTagInfo("display",displayTag);
