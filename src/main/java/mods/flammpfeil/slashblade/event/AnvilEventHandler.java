@@ -23,12 +23,12 @@ import java.util.Map;
  */
 public class AnvilEventHandler {
     @SubscribeEvent
-    public void onAnvil(AnvilUpdateEvent event){
-        if(!(event.getLeft().getItem() instanceof ItemSlashBlade))
+    public void onAnvil(AnvilUpdateEvent event) {
+        if (!(event.getLeft().getItem() instanceof ItemSlashBlade))
             return;
-        if(event.getRight() == null)
+        if (event.getRight() == null)
             return;
-        if(!(event.getRight().getItem() instanceof ItemProudSoul))
+        if (!(event.getRight().getItem() instanceof ItemProudSoul))
             return;
 
         event.setMaterialCost(1);
@@ -40,15 +40,13 @@ public class AnvilEventHandler {
         int cost = event.getCost();
 
         Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(event.getLeft());
-        for (Enchantment enchantment1 : map.keySet())
-        {
+        for (Enchantment enchantment1 : map.keySet()) {
             if (enchantment1 == null) continue;
 
             int level = map.get(enchantment1);
 
             int baseCost = 0;
-            switch (enchantment1.getRarity())
-            {
+            switch (enchantment1.getRarity()) {
                 case COMMON:
                     baseCost = 1;
                     break;
@@ -66,7 +64,7 @@ public class AnvilEventHandler {
         }
 
         float repairFactor;
-        switch(event.getRight().getItemDamage()){
+        switch (event.getRight().getItemDamage()) {
             case 0:
                 cost = Math.max(2, cost);
                 repairFactor = 0.4f;
@@ -92,13 +90,13 @@ public class AnvilEventHandler {
 
                 NBTTagCompound matTag = ItemSlashBlade.getItemTagCompound(event.getRight());
 
-                if (ItemSlashBladeNamed.CurrentItemName.exists(matTag)){
-                    ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeNamed",1);
-                    if(out.getUnlocalizedName().equals(targetBlade.getUnlocalizedName())){
+                if (ItemSlashBladeNamed.CurrentItemName.exists(matTag)) {
+                    ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid, "slashbladeNamed", 1);
+                    if (out.getUnlocalizedName().equals(targetBlade.getUnlocalizedName())) {
 
                         ItemSlashBladeNamed.CurrentItemName.set(tag, ItemSlashBladeNamed.CurrentItemName.get(matTag));
 
-                        if(ItemSlashBlade.BaseAttackModifier.exists(matTag))
+                        if (ItemSlashBlade.BaseAttackModifier.exists(matTag))
                             ItemSlashBlade.setBaseAttackModifier(tag, ItemSlashBlade.BaseAttackModifier.get(matTag));
 
                         TagPropertyAccessor[] accessors = {
@@ -114,12 +112,12 @@ public class AnvilEventHandler {
                                 ItemSlashBlade.IsBroken
                         };
 
-                        for(TagPropertyAccessor acc : accessors)
+                        for (TagPropertyAccessor acc : accessors)
                             copyTag(acc, tag, matTag);
                     }
                     repairFactor = 1.0f;
                     ItemSlashBlade.ProudSoul.add(tag, 0);
-                }else{
+                } else {
                     repairFactor = 1.0f;
                     ItemSlashBlade.ProudSoul.add(tag, 500);
                 }
@@ -131,15 +129,14 @@ public class AnvilEventHandler {
 
         ItemSlashBlade.RepairCount.add(tag, 1);
 
-        int repair = Math.min(out.getItemDamage(),(int)(out.getMaxDamage() * repairFactor));
+        int repair = Math.min(out.getItemDamage(), (int) (out.getMaxDamage() * repairFactor));
 
         out.setItemDamage(out.getItemDamage() - repair);
 
-
-        if (StringUtils.isBlank(event.getName()))
-            if (out.hasDisplayName())
+        if (StringUtils.isBlank(event.getName())){
+            if (event.getLeft().hasDisplayName())
                 out.clearCustomName();
-        else if (!event.getName().equals(out.getDisplayName()))
+        }else if (!event.getName().equals(event.getLeft().getDisplayName()))
             out.setStackDisplayName(event.getName());
 
         event.setOutput(out);
