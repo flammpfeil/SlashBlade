@@ -101,11 +101,16 @@ public class StatManager {
             }
 
             {//reset
-                for(Map.Entry<StatCrafting, T> entry : registerdStatsSlotObject.entries()){
-                    int id = registry.getIDForObject(entry.getValue());
-                    StatCrafting stat = entry.getKey();
-                    stats[id] = stat;
-                    registerdStatsSlotIndex.put(stat, id);
+                 for(Map.Entry<StatCrafting, T> entry : registerdStatsSlotObject.entries()){
+                	try {
+                        int id = registry.getIDForObject(entry.getValue());
+                        StatCrafting stat = entry.getKey();
+                        stats[id] = stat;
+                        registerdStatsSlotIndex.put(stat, id);
+                	}catch(ArrayIndexOutOfBoundsException error) {
+                		error.printStackTrace();
+                		continue;
+                	}
                 }
             }
 
