@@ -271,7 +271,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
                 , this.getEntityBoundingBox()
                 .offset(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax)
-                .grow((double) expandFactor, (double) expandFactor, (double) expandFactor));
+                .grow((double) expandFactor + reachMax, (double) expandFactor + reachMax, (double) expandFactor + reachMax));
         list.removeAll(alreadyHitEntity);
 
         double tmpDistance = reachMin;
@@ -290,6 +290,14 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             float borderSize = entity.getCollisionBorderSize() + expandBorder; //視線外10幅まで判定拡張
             AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double) borderSize, (double) borderSize, (double) borderSize);
             RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
+            double counter = reachMax;
+            /*
+            while(0 < counter || 4 < reachVec.lengthSquared() || movingobjectposition != null){
+                counter--;
+                movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
+                reachVec = reachVec.subtract(lookVec);
+            }
+            */
 
             if (axisalignedbb.contains(entityPos)) {
                 if (0.0D < tmpDistance || tmpDistance == 0.0D) {
@@ -520,6 +528,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         Entity entity = null;
 
         AxisAlignedBB bb = this.getEntityBoundingBox().offset(this.motionX, this.motionY, this.motionZ).grow(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB bb2 = this.getEntityBoundingBox().grow(1.0D, 1.0D, 1.0D);
 
         Predicate<Entity>[] selectors = new Predicate[]{EntitySelectorDestructable.getInstance(), EntitySelectorAttackable.getInstance()};
         for(Predicate<Entity> selector : selectors){
@@ -529,7 +538,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             if(selector.equals(EntitySelectorAttackable.getInstance()) && getTargetEntityId() != 0){
                 Entity target = world.getEntityByID(getTargetEntityId());
                 if(target != null){
-                    if(target.getEntityBoundingBox().intersects(bb))
+                    if(target.getEntityBoundingBox().intersects(bb) || target.getEntityBoundingBox().intersects(bb2) )
                         list.add(target);
                 }
             }
