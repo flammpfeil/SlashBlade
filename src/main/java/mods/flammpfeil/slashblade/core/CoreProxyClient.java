@@ -454,8 +454,10 @@ public class CoreProxyClient extends CoreProxy {
             RenderLivingBase rle = (RenderLivingBase) render;
 
 
+            /*
             if(!(rle.getMainModel() instanceof ModelBiped))
                 continue;
+            */
 /*
             if(rle instanceof RenderZombie){
                 List<LayerRenderer> layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle, "villagerLayers","field_177121_n");

@@ -229,7 +229,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             }
 
 
-            ((ModelBiped)render.getMainModel()).bipedBody.postRender(0.0625F);
+            //((ModelBiped)render.getMainModel()).bipedBody.postRender(0.0625F);
             //GlStateManager.translate(-0.0625F, 0.4375F, 0.0625F);
 
             if (player.isSneaking())
@@ -495,13 +495,13 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         if(swordType.contains(ItemSlashBlade.SwordType.NoScabbard)){
             //todo :LayerHeldItem�I��rendering����
-            doHeldItemRenderLayer(entity,swordType,model);
+            //doHeldItemRenderLayer(entity,swordType,model);
             return;
         }
 
         //if(Loader.isModLoaded("SmartMoving"))
         {
-            ((ModelBiped)render.getMainModel()).bipedBody.postRender(0.0625F);
+            //((ModelBiped)render.getMainModel()).bipedBody.postRender(0.0625F);
             //GlStateManager.translate(-0.0625F, 0.4375F, 0.0625F);
         }
 
@@ -1141,7 +1141,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         GL11.glPopAttrib();
         GL11.glPopMatrix();
     }
-
+/*
     public void doHeldItemRenderLayer(EntityLivingBase entitylivingbaseIn, EnumSet<ItemSlashBlade.SwordType> types, WavefrontObject model)
     {
         if(!(render.getMainModel() instanceof ModelBiped))
@@ -1188,8 +1188,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 GL11.glRotatef(-90, 0, 1, 0);
 
                 String renderTargets[];
-                if(/*data[1] instanceof EntityPlayer
-                    || */types.contains(ItemSlashBlade.SwordType.NoScabbard)){
+                if(types.contains(ItemSlashBlade.SwordType.NoScabbard)){
 
                     if(types.contains(ItemSlashBlade.SwordType.Broken)){
                         renderTargets = new String[]{"blade_damaged"};
@@ -1223,4 +1222,5 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             GlStateManager.popMatrix();
         }
     }
+    */
 }

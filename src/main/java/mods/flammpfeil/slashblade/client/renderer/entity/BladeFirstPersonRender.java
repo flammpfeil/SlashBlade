@@ -269,15 +269,30 @@ public class BladeFirstPersonRender {
     }
 
     private void transformFirstPersonItem(float equipProgress, float swingProgress) {
-        GlStateManager.translate(0.56F, -0.52F, -0.71999997F);
-        GlStateManager.translate(0.0F, equipProgress * -0.6F, 0.0F);
-        GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
-        float f = MathHelper.sin(swingProgress * swingProgress * (float) Math.PI);
-        float f1 = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float) Math.PI);
-        GlStateManager.rotate(f * -20.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(f1 * -20.0F, 0.0F, 0.0F, 1.0F);
-        GlStateManager.rotate(f1 * -80.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.scale(0.4F, 0.4F, 0.4F);
+        if(false){
+            GlStateManager.translate(0.56F, -0.52F, -0.71999997F);
+            GlStateManager.translate(0.0F, equipProgress * -0.6F, 0.0F);
+            GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
+            float f = MathHelper.sin(swingProgress * swingProgress * (float) Math.PI);
+            float f1 = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float) Math.PI);
+            GlStateManager.rotate(f * -20.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(f1 * -20.0F, 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(f1 * -80.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.scale(0.4F, 0.4F, 0.4F);
+        }else{
+            GlStateManager.translate(0, -1, -1);
+            GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
+
+            GlStateManager.translate(0.56F, -0.52F, -0.71999997F);
+            GlStateManager.translate(0.0F, equipProgress * -0.6F, 0.0F);
+            GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
+            float f = MathHelper.sin(swingProgress * swingProgress * (float) Math.PI);
+            float f1 = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float) Math.PI);
+            GlStateManager.rotate(f * -20.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(f1 * -20.0F, 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(f1 * -80.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.scale(0.4F, 0.4F, 0.4F);
+        }
     }
 
     void render(EntityLivingBase entity, float partialTicks) {
