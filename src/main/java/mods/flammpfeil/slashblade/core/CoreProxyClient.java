@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
+import mods.flammpfeil.slashblade.client.renderer.entity.layers.EntityLivingRenderHandler;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
@@ -33,6 +34,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.lwjgl.input.Keyboard;
@@ -52,6 +54,8 @@ public class CoreProxyClient extends CoreProxy {
 	public void initializeItemRenderer() {
         //resource reload event
         MinecraftForge.EVENT_BUS.register(BladeModelManager.getInstance());
+
+        MinecraftForge.EVENT_BUS.register(new EntityLivingRenderHandler());
 
         new ModelRegister();
 
