@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -56,6 +57,9 @@ public class Taunt {
             DamageSource ds = DamageSource.causeMobDamage(player);
 
             livingEntity.setRevengeTarget(player);
+            if(livingEntity instanceof EntityLiving){
+                ((EntityLiving)livingEntity).setAttackTarget(player);
+            }
             livingEntity.getCombatTracker().trackDamage(ds, livingEntity.getHealth(), 100);
 
             livingEntity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH,600,1));

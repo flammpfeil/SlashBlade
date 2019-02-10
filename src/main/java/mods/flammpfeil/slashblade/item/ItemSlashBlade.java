@@ -3195,6 +3195,7 @@ public class ItemSlashBlade extends ItemSword {
         saMap.put(6, new BlisteringWitherSwords());
         saMap.put(7, new SakuraEnd());
         saMap.put(8, new MaximumBet());
+        saMap.put(9, new SlashDimensionSpiral());
         return saMap;
     }
 

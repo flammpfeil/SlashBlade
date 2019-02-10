@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.event;
 
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.core.CoreProxyClient;
 import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.network.MessageSpecialAction;
@@ -40,7 +41,9 @@ public class MoveImputHandler {
             message.command += MessageMoveCommandState.LEFT;
         if(player.movementInput.rightKeyDown)
             message.command += MessageMoveCommandState.RIGHT;
-        if(player.movementInput.sneak || CoreProxyClient.lockon.isKeyDown())
+
+        if((player.movementInput.sneak && SlashBlade.SneakForceLockOn)
+                || CoreProxyClient.lockon.isKeyDown())
             message.command += MessageMoveCommandState.SNEAK;
 
         if(CoreProxyClient.camera.isKeyDown())

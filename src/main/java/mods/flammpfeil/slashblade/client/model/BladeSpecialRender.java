@@ -7,12 +7,17 @@ import mods.flammpfeil.slashblade.client.renderer.entity.BladeFirstPersonRender;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.tileentity.DummyTileEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
@@ -90,16 +95,22 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
 
+
+            EnumSet<ItemSlashBlade.SwordType> types = BladeModel.itemBlade.getSwordType(BladeModel.targetStack);
+
             boolean handle = false;
 
-            if(BladeModel.user != null) {
+            if(BladeModel.user != null && !types.contains(ItemSlashBlade.SwordType.NoScabbard)) {
                 handle = BladeModel.user.getPrimaryHand() == EnumHandSide.RIGHT ?
                         BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
                         BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
             }
 
-            if(handle)
+            if(handle) {
                 BladeFirstPersonRender.getInstance().render();
+            }else if(BladeModel.user != null){
+                renderNaked();
+            }
 
             return false;
         }
@@ -214,5 +225,80 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             GlStateManager.disableDepth();
 
         return true;
+    }
+
+    private void renderNaked(){
+        EntityLivingBase entitylivingbaseIn = BladeModel.user ;
+        ItemStack itemstack = BladeModel.targetStack;
+        ItemSlashBlade itemBlade = BladeModel.itemBlade;
+
+        WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(itemstack));
+        EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(itemstack);
+
+        if(!swordType.contains(ItemSlashBlade.SwordType.NoScabbard)) return;
+
+        if (!itemstack.isEmpty())
+        {
+            GlStateManager.pushMatrix();
+
+
+            Item item = itemstack.getItem();
+            Minecraft minecraft = Minecraft.getMinecraft();
+
+            {
+                ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(itemstack);
+                bindTexture(resourceTexture);
+
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
+
+                GL11.glTranslatef(0.5f, 0.3f, 0.55f);
+                float scale = 0.008f;
+                GL11.glScalef(scale,scale,scale);
+                GL11.glTranslatef(0.0f, 0.15f, 0.0f);
+                GL11.glRotatef(90, 0, 1, 0);
+                GL11.glRotatef(-90, 0, 0, 1);
+                /*
+                GL11.glTranslatef(0.0f, 0.15f, 0.0f);
+                float scale = 0.008f;
+                GL11.glScalef(scale,scale,scale);
+                */
+
+                String renderTargets[];
+                if(/*data[1] instanceof EntityPlayer
+                    || */swordType.contains(ItemSlashBlade.SwordType.NoScabbard)){
+
+                    if(swordType.contains(ItemSlashBlade.SwordType.Broken)){
+                        renderTargets = new String[]{"blade_damaged"};
+                    }else{
+                        renderTargets = new String[]{"blade"};
+                    }
+                }else{
+                    renderTargets = new String[]{"sheath", "blade"};
+                }
+
+                model.renderOnly(renderTargets);
+
+                GL11.glDisable(GL11.GL_LIGHTING);
+                GL11.glEnable(GL11.GL_BLEND);
+
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+                float lastx = OpenGlHelper.lastBrightnessX;
+                float lasty = OpenGlHelper.lastBrightnessY;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+
+                for(String renderTarget : renderTargets)
+                    model.renderPart(renderTarget + "_luminous");
+
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+
+                GL11.glEnable(GL11.GL_LIGHTING);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            }
+
+            GlStateManager.popMatrix();
+        }
     }
 }

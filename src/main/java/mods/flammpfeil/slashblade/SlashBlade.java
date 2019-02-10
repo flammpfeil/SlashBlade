@@ -83,6 +83,10 @@ public class SlashBlade implements IFuelHandler{
 
     public static boolean SafeDrop = true;
 
+    public static boolean SneakForceLockOn = false;
+
+    public static boolean UseRenderLivingEvent = false;
+
     public static boolean RenderEnchantEffect = true;
     public static boolean RenderNFCSEffect = true;
 
@@ -136,6 +140,17 @@ public class SlashBlade implements IFuelHandler{
             mainConfiguration.load();
 
 
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "SneakForceLockOn", SlashBlade.SneakForceLockOn);
+                SlashBlade.SneakForceLockOn = prop.getBoolean();
+                prop.setShowInGui(true);
+            }
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "UseRenderLivingEvent", SlashBlade.UseRenderLivingEvent);
+                SlashBlade.UseRenderLivingEvent = prop.getBoolean();
+                prop.setShowInGui(true);
+            }
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "EnchantVisualEffect", true);
                 SlashBlade.RenderEnchantEffect = prop.getBoolean();
