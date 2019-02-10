@@ -19,13 +19,13 @@ import mods.flammpfeil.slashblade.util.*;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.math.*;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
@@ -33,7 +33,6 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager.*;
 import mods.flammpfeil.slashblade.specialattack.*;
-//import mods.flammpfeil.slashblade.stats.AchievementList;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
@@ -72,7 +71,7 @@ public class ItemSlashBlade extends ItemSword {
     static public Map<String,ResourceLocationRaw> textureMap = new HashMap<String, ResourceLocationRaw>();
 
     static public TagPropertyAccessor.TagPropertyString TextureName = new TagPropertyAccessor.TagPropertyString("TextureName");
-    static public ResourceLocationRaw getModelTexture(ItemStack par1ItemStack){
+    public ResourceLocationRaw getModelTexture(ItemStack par1ItemStack){
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(TextureName.exists(tag)){
             String textureName = TextureName.get(tag);
@@ -95,7 +94,7 @@ public class ItemSlashBlade extends ItemSword {
     static public Map<String,ResourceLocationRaw> modelMap = new HashMap<String, ResourceLocationRaw>();
 
     static public TagPropertyAccessor.TagPropertyString ModelName = new TagPropertyAccessor.TagPropertyString("ModelName");
-    static public ResourceLocationRaw getModelLocation(ItemStack par1ItemStack){
+    public ResourceLocationRaw getModelLocation(ItemStack par1ItemStack){
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(ModelName.exists(tag)){
             String modelName = ModelName.get(tag);
@@ -2413,7 +2412,7 @@ public class ItemSlashBlade extends ItemSword {
         if(tag.hasUniqueId("Owner") && par2EntityPlayer != null){
             UUID ownerid = tag.getUniqueId("Owner");
             if(!ownerid.equals(par2EntityPlayer.getUniqueID())) {
-                par3List.add(I18n.translateToLocal("flammpfeil.swaepon.info.notowner.msg"));
+                par3List.add(I18n.format("flammpfeil.swaepon.info.notowner.msg"));
 
                 EntityPlayer owner = par2EntityPlayer.world.getPlayerEntityByUUID(ownerid);
                 if(owner != null)
@@ -2432,14 +2431,14 @@ public class ItemSlashBlade extends ItemSword {
 		if(swordType.contains(SwordType.Enchanted)){
 			if(swordType.contains(SwordType.Bewitched)){
                 if(tag.hasUniqueId("Owner"))
-    				par3List.add(String.format("§6%s", I18n.translateToLocal("flammpfeil.swaepon.info.bewitched")));
+    				par3List.add(String.format("§6%s", I18n.format("flammpfeil.swaepon.info.bewitched")));
                 else
-                    par3List.add(String.format("§5%s", I18n.translateToLocal("flammpfeil.swaepon.info.bewitched")));
+                    par3List.add(String.format("§5%s", I18n.format("flammpfeil.swaepon.info.bewitched")));
 			}else{
-				par3List.add(String.format("§3%s", I18n.translateToLocal("flammpfeil.swaepon.info.magic")));
+				par3List.add(String.format("§3%s", I18n.format("flammpfeil.swaepon.info.magic")));
 			}
 		}else{
-			par3List.add(String.format("§8%s", I18n.translateToLocal("flammpfeil.swaepon.info.noname")));
+			par3List.add(String.format("§8%s", I18n.format("flammpfeil.swaepon.info.noname")));
 		}
     }
 
@@ -2473,7 +2472,7 @@ public class ItemSlashBlade extends ItemSword {
 
             String key = "flammpfeil.slashblade.specialattack." + getSpecialAttack(par1ItemStack).toString();
 
-            par3List.add(String.format("SA:%s",  I18n.translateToLocal(key)));
+            par3List.add(String.format("SA:%s",  I18n.format(key)));
         }
     }
 
@@ -2487,7 +2486,7 @@ public class ItemSlashBlade extends ItemSword {
 
             String key = "slashblade.rangeattack." + Boolean.toString(tag.getBoolean("RangeAttackType")).toLowerCase();
 
-            par3List.add(I18n.translateToLocal(key));
+            par3List.add(I18n.format(key));
         }
     }
 
@@ -2553,7 +2552,7 @@ public class ItemSlashBlade extends ItemSword {
             int reqiredLevel = etag.getInteger(key);
 
             par3List.add(
-                    I18n.translateToLocal("slashblade.seffect.name." + key)
+                    I18n.format("slashblade.seffect.name." + key)
                             + "§r "
                             + (reqiredLevel <= playerLevel ? "§c" : "§8") + reqiredLevel);
         }
@@ -2569,17 +2568,17 @@ public class ItemSlashBlade extends ItemSword {
 
         if (!(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
             lines.add(
-                    "§7" +  I18n.translateToLocal("flammpfeil.sweapon.info.hold") + " " + "§e" + "§o" + I18n.translateToLocal("flammpfeil.sweapon.info.shift") + " " + "§r" + "§7"
-                            + I18n.translateToLocal("flammpfeil.sweapon.info.forDetails") + "§r");
+                    "§7" +  I18n.format("flammpfeil.sweapon.info.hold") + " " + "§e" + "§o" + I18n.format("flammpfeil.sweapon.info.shift") + " " + "§r" + "§7"
+                            + I18n.format("flammpfeil.sweapon.info.forDetails") + "§r");
         }else{
-            lines.add(I18n.translateToLocal("flammpfeil.sweapon.info.energy") + ":" + String.format("%,3.1fK/%,3.1fK",storage.getEnergyStored() / 1000.0,storage.getMaxEnergyStored() / 1000.0));
+            lines.add(I18n.format("flammpfeil.sweapon.info.energy") + ":" + String.format("%,3.1fK/%,3.1fK",storage.getEnergyStored() / 1000.0,storage.getMaxEnergyStored() / 1000.0));
 
             int level = getSpecialEffect(stack).getInteger(SpecialEffects.HFCustom.getEffectKey());
             if (0 < level) {
                 if(HFCustom.isEmpowered(stack)){
-                    lines.add(I18n.translateToLocal("flammpfeil.sweapon.info.hfeffect.trunoff"));
+                    lines.add(I18n.format("flammpfeil.sweapon.info.hfeffect.trunoff"));
                 } else {
-                    lines.add(I18n.translateToLocal("flammpfeil.sweapon.info.hfeffect.trunon"));
+                    lines.add(I18n.format("flammpfeil.sweapon.info.hfeffect.trunon"));
                 }
             }
         }

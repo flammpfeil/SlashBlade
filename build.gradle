@@ -20,7 +20,7 @@ archivesBaseName = "SlashBlade"
 minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    version = "1.12.2-14.23.0.2552"
+    version = "1.12.2-14.23.4.2764"
     runDir = "run"
 
     // the mappings can be changed at any time, and must be in the following format.
@@ -100,4 +100,38 @@ uploadArchives {
             repository(url: uri(mavenRepository))
         }
     }
+}
+repositories {
+
+	maven {
+    // location of the maven that hosts JEI files
+    name = "Progwml6 maven"
+    url = "http://dvs1.progwml6.com/files/maven"
+	}
+
+	maven {
+    // location of a maven mirror for JEI files, as a fallback
+    name = "ModMaven"
+    url = "modmaven.k-4u.nl"
+	}
+
+
+}
+
+dependencies {
+	configurations.all {
+		resolutionStrategy {
+			force 'mezz.jei:jei_1.12.2:4.14.3.242'
+		}
+	}
+	// compile against the JEI API but do not include it at runtime
+    deobfProvided ("mezz.jei:jei_1.12.2:4.14.3.242:api"){
+	force = true
+	}
+    // at runtime, use the full JEI jar
+    runtime ("mezz.jei:jei_1.12.2:4.14.3.242"){
+	force = true
+	}
+	
+
 }

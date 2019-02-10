@@ -1,17 +1,13 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.Maps;
-import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.named.NamedBladeManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Enchantments;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -22,8 +18,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -104,7 +98,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
             ItemStack ps = cInv.getStackInRowAndColumn(2, 0);
             boolean hasProudSuol = (!ps.isEmpty() && ps.isItemEqual(proudSoul));
             ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
-            boolean hasScabbard = (!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc));
+            boolean hasScabbard = (!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !ItemSlashBladeWrapper.hasWrapedItem(sc));
 
             boolean hasTarget = false;
 
@@ -144,11 +138,11 @@ public class RecipeWrapBlade extends ShapedRecipes {
         ItemSlashBladeNamed.BaseAttackModifier.set(tag,wrapableBaseAttackModifiers.get(targetName));
 
         if(target.hasDisplayName()){
-            scabbard.setStackDisplayName(String.format(I18n.translateToLocal("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
+            scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
         }else if(target.isItemEnchanted()){
             scabbard.setStackDisplayName(scabbard.getDisplayName());
         }else{
-            scabbard.setStackDisplayName(String.format(I18n.translateToLocal("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
+            scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
         }
 
         if(target.isItemEnchanted()){

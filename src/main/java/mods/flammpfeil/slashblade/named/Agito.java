@@ -70,7 +70,6 @@ public class Agito {
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
-                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.KillCount.set(reqTag,100);
                     ItemSlashBlade.RepairCount.set(reqTag,1);
@@ -149,7 +148,6 @@ public class Agito {
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
-                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.KillCount.set(reqTag, 1000);
                     ItemSlashBlade.ProudSoul.set(reqTag,1000);
@@ -199,7 +197,6 @@ public class Agito {
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
-                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.KillCount.set(reqTag, 100);
                     ItemSlashBlade.RepairCount.set(reqTag, 1);

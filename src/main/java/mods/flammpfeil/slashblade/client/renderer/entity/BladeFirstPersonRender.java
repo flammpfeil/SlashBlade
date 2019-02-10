@@ -1,13 +1,11 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
-import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.ability.ProjectileBarrier;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
-import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.client.Minecraft;
@@ -15,17 +13,14 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -197,8 +192,8 @@ public class BladeFirstPersonRender {
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
 
-        WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
-        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(stack);
+        WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(stack));
+        ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(stack);
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
 
@@ -327,8 +322,8 @@ public class BladeFirstPersonRender {
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade) stack.getItem());
 
-        WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
-        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(stack);
+        WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(stack));
+        ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(stack);
 
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack);
 
@@ -375,8 +370,8 @@ public class BladeFirstPersonRender {
         if(!offhand.isEmpty() && (offhand.getItem() instanceof ItemSlashBlade)){
 
             ItemSlashBlade offhandItemBlade = ((ItemSlashBlade) offhand.getItem());
-            offhandModel = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(offhand));
-            offHandResourceTexture = ItemSlashBlade.getModelTexture(offhand);
+            offhandModel = BladeModelManager.getInstance().getModel(offhandItemBlade.getModelLocation(offhand));
+            offHandResourceTexture = offhandItemBlade.getModelTexture(offhand);
 
             EnumSet<ItemSlashBlade.SwordType> offHandSwordType = offhandItemBlade.getSwordType(offhand);
             offhandIsBroken = offHandSwordType.contains(ItemSlashBlade.SwordType.Broken);

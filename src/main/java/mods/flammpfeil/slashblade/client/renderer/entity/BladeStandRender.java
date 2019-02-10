@@ -187,12 +187,12 @@ public class BladeStandRender extends Render{
             GL11.glPushMatrix();
             GL11.glShadeModel(GL11.GL_SMOOTH);
 
-            Item item = blade.getItem();
+            ItemSlashBlade item = (ItemSlashBlade)blade.getItem();
 
-            EnumSet<ItemSlashBlade.SwordType> types = ((ItemSlashBlade)item).getSwordType(blade);
+            EnumSet<ItemSlashBlade.SwordType> types = item.getSwordType(blade);
 
-            WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(blade));
-            ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(blade);
+            WavefrontObject model = BladeModelManager.getInstance().getModel(item.getModelLocation(blade));
+            ResourceLocationRaw resourceTexture = item.getModelTexture(blade);
 
             engine().bindTexture(resourceTexture);
 

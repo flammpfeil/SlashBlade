@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.Map;
@@ -31,6 +32,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
         boolean result = super.matches(inv, world);
 
         if(result && !requiredStateBlade.isEmpty()){
+        	requiredStateBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
             for(int idx = 0; idx < inv.getSizeInventory(); idx++){
                 ItemStack curIs = inv.getStackInSlot(idx);
                 if(!curIs.isEmpty()

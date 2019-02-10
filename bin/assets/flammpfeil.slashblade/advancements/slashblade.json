@@ -1,0 +1,28 @@
+{
+  "display": {
+    "title": {
+      "translate": "achievement.flammpfeil.slashblade.buildSlashBlade"
+    },
+    "description": {
+      "translate": "achievement.flammpfeil.slashblade.buildSlashBlade.desc",
+      "with": ["\n"]
+    },
+    "icon": {
+      "item": "flammpfeil.slashblade:slashblade"
+    },
+    "frame": "task"
+  },
+  "parent": "flammpfeil.slashblade:brokenwhite",
+  "criteria": {
+    "crafting": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "flammpfeil.slashblade:slashblade"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,13 +1,11 @@
 package mods.flammpfeil.slashblade.entity;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +20,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import java.util.Map;
@@ -115,11 +112,6 @@ public class EntityBladeStand extends Entity {
         if(!blade.isEmpty() && blade.getItem() instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(blade)){
             if(2 <= getFlip())
                 setFlip(0);
-        }
-
-        if(!blade.isEmpty() && blade.getItem() instanceof ItemSlashBlade){
-            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(blade);
-            //ItemSlashBlade.PrevExp.remove(tag);
         }
 
         this.getDataManager().set(WatchIndexBlade, !blade.isEmpty() ? blade : ItemStack.EMPTY);
@@ -335,7 +327,6 @@ public class EntityBladeStand extends Entity {
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
 
         if(hand == EnumHand.MAIN_HAND){
 

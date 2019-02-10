@@ -48,7 +48,6 @@ public class Tagayasan {
         ItemSlashBladeNamed.NamedBlades.add(name);
         {
             ItemStack reqiredBlade = new ItemStack(SlashBlade.bladeWood);
-            reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
             NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
             ItemSlashBlade.KillCount.set(reqTag,1000);
 
