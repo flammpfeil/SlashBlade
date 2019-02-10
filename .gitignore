@@ -1,15 +1,22 @@
-*.class
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-# Package Files #
-#*.jar
-*.war
-*.ear
-
-maven
-nopublish
-.gradle
-build
-eclipse
-*.iml
+# idea
+out
 *.ipr
 *.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
