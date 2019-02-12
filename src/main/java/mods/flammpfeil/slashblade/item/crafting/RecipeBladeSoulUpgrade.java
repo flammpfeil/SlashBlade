@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.item.crafting;
 
 import com.google.common.collect.Maps;
-import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;

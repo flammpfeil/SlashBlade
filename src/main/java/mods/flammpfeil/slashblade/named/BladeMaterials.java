@@ -2,23 +2,17 @@ package mods.flammpfeil.slashblade.named;
 
 import mods.flammpfeil.slashblade.util.DummyPotionRecipe;
 import net.minecraft.init.PotionTypes;
-import net.minecraft.item.Item;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.brewing.BrewingOreRecipe;
 import net.minecraftforge.common.brewing.BrewingRecipe;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 /**
  * Created by Furia on 15/02/12.

@@ -3,18 +3,15 @@ package mods.flammpfeil.slashblade.named;
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeAwakeBlade;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * Created by Furia on 15/02/12.
@@ -50,7 +47,6 @@ public class Tukumo {
 
             {
                 ItemStack custombladeReqired = new ItemStack(SlashBlade.weapon,1,0);
-                custombladeReqired.setItemDamage(OreDictionary.WILDCARD_VALUE);
 
                 NBTTagCompound tagReqired = new NBTTagCompound();
                 custombladeReqired.setTagCompound(tagReqired);

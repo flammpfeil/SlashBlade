@@ -1,0 +1,34 @@
+{
+  "display": {
+    "title": {
+      "translate": "achievement.flammpfeil.slashblade.brokenWhiteSheath"
+    },
+    "description": {
+      "translate": "achievement.flammpfeil.slashblade.brokenWhiteSheath.desc",
+      "with": ["\n"]
+    },
+    "icon": {
+      "item": "flammpfeil.slashblade:slashbladeWhite",
+      "data": 70,
+      "nbt": "{isBroken: 1}"
+    },
+    "frame": "task"
+  },
+  "parent": "flammpfeil.slashblade:white",
+  "criteria": {
+    "brokeitem": {
+      "trigger": "minecraft:item_durability_changed",
+      "conditions": {
+        "item": {
+          "item": "flammpfeil.slashblade:slashbladeWhite"
+        },
+        "durability": {
+          "max": 1
+        }
+      }
+    }
+  },
+  "rewards": {
+    "recipes": ["flammpfeil.slashblade:slashblade"]
+  }
+}

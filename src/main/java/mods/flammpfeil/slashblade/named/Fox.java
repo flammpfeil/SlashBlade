@@ -160,7 +160,6 @@ public class Fox {
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
 
             reqiredBlade = reqiredBlade.copy();
-            reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
 
             IRecipe recipe = new RecipeAwakeBladeFox(new ResourceLocation(SlashBlade.modid,"fox_white"),
                     blade,reqiredBlade,
@@ -197,7 +196,6 @@ public class Fox {
             ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
 
             reqiredBlade = reqiredBlade.copy();
-            reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
 
             IRecipe recipe = new RecipeAwakeBladeFox(new ResourceLocation(SlashBlade.modid,"fox_black"),
                     blade,reqiredBlade,

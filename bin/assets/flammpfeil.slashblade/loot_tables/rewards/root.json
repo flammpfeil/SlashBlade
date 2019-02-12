@@ -1,0 +1,27 @@
+{
+  "pools": [
+    {
+      "name": "root",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "flammpfeil.slashblade:proudsoul",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_data",
+              "data": 2
+            },
+            {
+              "function": "minecraft:enchant_randomly",
+              "enchantments": [
+                "minecraft:power"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

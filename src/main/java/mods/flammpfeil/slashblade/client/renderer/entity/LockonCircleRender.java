@@ -35,6 +35,7 @@ public class LockonCircleRender {
         ItemStack stack = player.getHeldItemMainhand();
         if(stack.isEmpty()) return;
         if(!(stack.getItem() instanceof ItemSlashBlade)) return;
+        ItemSlashBlade blade = (ItemSlashBlade) stack.getItem();
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
 
@@ -90,7 +91,7 @@ public class LockonCircleRender {
 
         boolean useCustom = false;
 
-        WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
+        WavefrontObject model = BladeModelManager.getInstance().getModel(blade.getModelLocation(stack));
         ResourceLocationRaw resourceTexture;
 
         for(GroupObject group : model.groupObjects){
@@ -100,7 +101,7 @@ public class LockonCircleRender {
             }
         }
         if(useCustom) {
-            resourceTexture = ItemSlashBlade.getModelTexture(stack);
+            resourceTexture = blade.getModelTexture(stack);
             color = 0xFFFFFF;
         }else {
             model = BladeModelManager.getInstance().getModel(modelLoc);

@@ -1,2 +1,2 @@
-call gradlew.bat build
+call gradlew.bat build --offline
 pause

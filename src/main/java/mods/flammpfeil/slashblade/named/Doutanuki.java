@@ -6,10 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.entity.monster.EntityZombie;
@@ -22,7 +19,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.Random;
@@ -249,14 +245,11 @@ public class Doutanuki {
                     " S ",
                     "B  ",
                     'P', SlashBlade.findItemStack(SlashBlade.modid, SlashBlade.ProudSoulStr, 1),
-                    'S', setDamageWildCard(SlashBlade.findItemStack(SlashBlade.modid, "slashbladeWrapper", 1)),
-                    'B', setDamageWildCard(getNoSeathBlade()));
+                    'S', SlashBlade.findItemStack(SlashBlade.modid, "slashbladeWrapper", 1),
+                    'B', getNoSeathBlade());
         }
 
-        static ItemStack setDamageWildCard(ItemStack stack){
-            stack.setItemDamage(OreDictionary.WILDCARD_VALUE);
-            return stack;
-        }
+
 
         static ItemStack getNoSeathBlade(){
             ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid , name);
@@ -276,13 +269,13 @@ public class Doutanuki {
                 return false;
 
             ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
-            if(!(!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
+            if(!(!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !ItemSlashBladeWrapper.hasWrapedItem(sc)))
                 return false;
-
+            sc.setItemDamage(OreDictionary.WILDCARD_VALUE);
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
             if(target.isEmpty())
                 return false;
-
+            target.setItemDamage(OreDictionary.WILDCARD_VALUE);
             if(!(target.getItem() instanceof ItemSlashBlade))
                 return false;
 

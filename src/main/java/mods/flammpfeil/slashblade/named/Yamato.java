@@ -6,14 +6,11 @@ import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * Created by Furia on 15/02/12.
@@ -78,7 +75,6 @@ public class Yamato {
 
                 {
                     ItemStack reqiredBlade = customblade.copy();
-                    reqiredBlade.setItemDamage(OreDictionary.WILDCARD_VALUE);
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.ProudSoul.set(reqTag, 1000);
 

@@ -246,7 +246,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             Minecraft minecraft = Minecraft.getMinecraft();
 
             {
-                ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(itemstack);
+                ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(itemstack);
                 bindTexture(resourceTexture);
 
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);

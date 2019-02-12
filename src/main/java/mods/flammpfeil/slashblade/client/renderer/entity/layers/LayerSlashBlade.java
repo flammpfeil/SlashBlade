@@ -165,9 +165,9 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         ItemSlashBlade iSlashBlade = ((ItemSlashBlade) item.getItem());
 
 
-        WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(item));
+        WavefrontObject model = BladeModelManager.getInstance().getModel(iSlashBlade.getModelLocation(item));
 
-        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(item);
+        ResourceLocationRaw resourceTexture = iSlashBlade.getModelTexture(item);
 
         EnumSet<ItemSlashBlade.SwordType> swordType = iSlashBlade.getSwordType(item);
 
@@ -488,8 +488,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         ItemSlashBlade itemBlade = ((ItemSlashBlade)stack.getItem());
 
-        WavefrontObject model = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(stack));
-        ResourceLocationRaw resourceTexture = ItemSlashBlade.getModelTexture(stack);
+        WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(stack));
+        ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(stack);
 
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack);
 
@@ -551,8 +551,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             renderBack(offhand,entity,true, combo.mainHandCombo != null);
 
             ItemSlashBlade offhandItemBlade = ((ItemSlashBlade) offhand.getItem());
-            offhandModel = BladeModelManager.getInstance().getModel(ItemSlashBlade.getModelLocation(offhand));
-            offHandResourceTexture = ItemSlashBlade.getModelTexture(offhand);
+            offhandModel = BladeModelManager.getInstance().getModel(offhandItemBlade.getModelLocation(offhand));
+            offHandResourceTexture = offhandItemBlade.getModelTexture(offhand);
 
             EnumSet<ItemSlashBlade.SwordType> offHandSwordType = offhandItemBlade.getSwordType(offhand);
             offhandIsBroken = offHandSwordType.contains(ItemSlashBlade.SwordType.Broken);

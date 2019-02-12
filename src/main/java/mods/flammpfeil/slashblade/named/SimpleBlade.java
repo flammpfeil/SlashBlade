@@ -7,11 +7,9 @@ import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.RecipeUpgradeBlade;
@@ -21,8 +19,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -36,16 +32,8 @@ public class SimpleBlade {
         ItemStack itemSphereBladeSoul = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.SphereBladeSoulStr,1);
 
         {
-            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD,1, OreDictionary.WILDCARD_VALUE/*,1*/);
-            NBTTagCompound displayTag = new NBTTagCompound();
-            /*
-            woodSword.setTagInfo("display",displayTag);
-            NBTTagList loreList = new NBTTagList();
-            loreList.appendTag(new NBTTagString("required 1 damage"));
-            loreList.appendTag(new NBTTagString("bad : break block 2damage"));
-            loreList.appendTag(new NBTTagString("good : attack mob 1damage﻿"));
-            displayTag.setTag("Lore", loreList);
-            */
+            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD,1,OreDictionary.WILDCARD_VALUE/*,1*/);
+            
 
             SlashBlade.addRecipe("slashbladeWood",
                     new ShapedOreRecipe(new ResourceLocation(SlashBlade.modid,"recipexes"), new ItemStack(SlashBlade.bladeWood) ,
