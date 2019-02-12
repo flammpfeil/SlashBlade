@@ -35,7 +35,14 @@ public class EntityLivingRenderHandler {
         layer = getLayer(event.getRenderer());
 
         GlStateManager.pushMatrix();
+        GlStateManager.translate(event.getX(),event.getY(),event.getZ());
+
         EntityLivingBase entity = event.getEntityLiving();
+
+        if (entity.isSneaking())
+        {
+            GlStateManager.translate(0.0F, -0.125F, 0.0F);
+        }
 
         if(entity instanceof AbstractClientPlayer){
             AbstractClientPlayer player = (AbstractClientPlayer)entity;
