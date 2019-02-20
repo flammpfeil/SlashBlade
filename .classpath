@@ -4,6 +4,7 @@
 	<classpathentry path="src/main/java" kind="src"/>
 	<classpathentry path="src/main/resources" kind="src"/>
 	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/" kind="con"/>
+	<classpathentry path="C:/Users/acer/.gradle/caches/minecraft/deobfedDeps/deobf/reforged/Reforged/0.7.5/Reforged-0.7.5.jar" kind="lib"/>
 	<classpathentry path="C:/Users/acer/.gradle/caches/modules-2/files-2.1/mezz.jei/jei_1.12.2/4.14.3.242/7e3ba888e8d8b7b6d48a9f6d30d992e390ff4b8e/jei_1.12.2-4.14.3.242.jar" kind="lib" sourcepath="C:/Users/acer/.gradle/caches/modules-2/files-2.1/mezz.jei/jei_1.12.2/4.14.3.242/d8e57150b4f73d4d8f2aa8a92f49c30c8b37e5e6/jei_1.12.2-4.14.3.242-sources.jar"/>
 	<classpathentry path="C:/Users/acer/.gradle/caches/minecraft/net/minecraftforge/forge/1.12.2-14.23.4.2764/snapshot/20171003/forgeSrc-1.12.2-14.23.4.2764.jar" kind="lib" sourcepath="C:/Users/acer/.gradle/caches/minecraft/net/minecraftforge/forge/1.12.2-14.23.4.2764/snapshot/20171003/forgeSrc-1.12.2-14.23.4.2764-sources.jar"/>
 	<classpathentry path="C:/Users/acer/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.1/f7be08ec23c21485b9b5a1cf1654c2ec8c58168d/jsr305-3.0.1.jar" kind="lib" sourcepath="C:/Users/acer/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.1/a2926c057ca3b662b9db194c869bdbe7d3bb8aef/jsr305-3.0.1-sources.jar"/>

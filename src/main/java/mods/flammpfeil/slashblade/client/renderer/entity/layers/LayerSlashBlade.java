@@ -70,10 +70,6 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         GlStateManager.pushMatrix();
 
         GL11.glScalef(1.0F, 1.0F, 1.0F);
-
-        float f5 = 0.0625F;
-        //GL11.glTranslatef(0.0F, -24.0F * f5 - 0.0078125F, 0.0F);
-
         render(entitylivingbaseIn, partialTicks);
 
         GlStateManager.popMatrix();
@@ -130,13 +126,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
-            float lastx = OpenGlHelper.lastBrightnessX;
-            float lasty = OpenGlHelper.lastBrightnessY;
-            //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-
             ringModel.renderAll();
-
-            //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
 
             GL11.glEnable(GL11.GL_LIGHTING);
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
@@ -348,7 +338,6 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                     this.render.bindTexture(RES_ITEM_GLINT);
                     GL11.glEnable(GL11.GL_BLEND);
                     GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
-                    float f7 = 0.76F;
 
                     Face.setColor(0xFF8040CC);
 
@@ -418,7 +407,6 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                     this.render.bindTexture(RES_ITEM_GLINT);
                     GL11.glEnable(GL11.GL_BLEND);
                     GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
-                    float f7 = 0.76F;
 
                     Face.setColor(0xFF8040CC);
 
@@ -494,14 +482,9 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             return;
         }
 
-        //if(Loader.isModLoaded("SmartMoving"))
-        {
-            //((ModelBiped)render.getMainModel()).bipedBody.postRender(0.0625F);
-            //GlStateManager.translate(-0.0625F, 0.4375F, 0.0625F);
-        }
+        
 
         boolean isEnchanted = swordType.contains(ItemSlashBlade.SwordType.Enchanted);
-        boolean isBewitched = swordType.contains(ItemSlashBlade.SwordType.Bewitched);
 
 
         int charge;
@@ -678,7 +661,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                     color = offhandColor;
                     stack = offhand;
 
-                }else if (handsLoopIdx == 1) {
+                }
+                else if (handsLoopIdx == 1) {
                     combo = comboSequenceTmp.mainHandCombo;
                     progress = 1.0f;
 
@@ -923,7 +907,6 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                         this.render.bindTexture(RES_ITEM_GLINT);
                         GL11.glEnable(GL11.GL_BLEND);
                         GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
-                        float f7 = 0.76F;
 
                         Face.setColor(0xFF8040CC);
 
@@ -1041,7 +1024,6 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 render.bindTexture(RES_ITEM_GLINT);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
-                float f7 = 0.76F;
 
                 Face.setColor(0xFF8040CC);
 
