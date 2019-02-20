@@ -2,22 +2,16 @@ package mods.flammpfeil.slashblade.named;
 
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.NonNullList;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
+import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -107,7 +101,7 @@ public class BambooMod {
                     return false;
 
                 ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
-                if(!(!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !SlashBlade.wrapBlade.hasWrapedItem(sc)))
+                if(!(!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !ItemSlashBladeWrapper.hasWrapedItem(sc)))
                     return false;
 
 
@@ -131,9 +125,6 @@ public class BambooMod {
             target = target.copy();
 
 
-            ResourceLocation targetName = Item.REGISTRY.getNameForObject(target.getItem());
-
-
             SlashBlade.wrapBlade.removeWrapItem(scabbard);
 
             SlashBlade.wrapBlade.setWrapItem(scabbard,target);
@@ -144,11 +135,11 @@ public class BambooMod {
             ItemSlashBladeNamed.BaseAttackModifier.set(tag,attackModif);
 
             if(target.hasDisplayName()){
-                scabbard.setStackDisplayName(String.format(I18n.translateToLocal("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
+                scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
             }else if(target.isItemEnchanted()){
                 scabbard.setStackDisplayName(scabbard.getDisplayName());
             }else{
-                scabbard.setStackDisplayName(String.format(I18n.translateToLocal("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
+                scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
             }
 
             if(target.isItemEnchanted()){

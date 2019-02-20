@@ -8,21 +8,16 @@ import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
-import net.minecraftforge.client.model.obj.OBJModel;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -527,7 +522,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         if(stack.hasTagCompound()){
             NBTTagCompound tag = stack.getTagCompound();
 
-            combo = itemBlade.getComboSequence(tag);
+            combo = ItemSlashBlade.getComboSequence(tag);
 
             if(adjust){
                 ax = tag.getFloat(ItemSlashBlade.adjustXStr)/10.0f;
