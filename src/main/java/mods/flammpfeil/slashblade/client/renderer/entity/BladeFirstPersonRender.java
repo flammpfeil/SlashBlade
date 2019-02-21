@@ -5,16 +5,12 @@ import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Created by Furia on 2016/02/07.
@@ -45,31 +41,23 @@ public class BladeFirstPersonRender {
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         Face.resetColor();
-        GL11.glTranslatef(-0.25F, 0.2f, -0.5f);
         if(ProjectileBarrier.isAvailable(player, stack, player.getItemInUseCount())){
-            GL11.glTranslatef(0.25F, 0, -0.5f);
-            GL11.glRotatef(-25.0F, 1.0F, 0.0F, 0.0f);
+            GlStateManager.translate(0, 0.2f, -1.0f);
+            GlStateManager.rotate(-25.0F, 1.0F, 0.0F, 0.0f);
         }else{
-            GL11.glRotatef(-10.0F, 1.0F, 0.0F, 0.0f);
+            GlStateManager.translate(-0.25F, 0.2f, -0.5f);
+            GlStateManager.rotate(-10.0F, 1.0F, 0.0F, 0.0f);
         }
-        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0f);
-        GL11.glTranslatef(0.0f, 0.25f, 0);
-        GL11.glRotatef(-25.0F, 0.9F, 0.1F, 0.0F);
-        GL11.glScalef(1.2F, 1.0F, 1.0F);
+        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0f);
+        GlStateManager.translate(0.0f, 0.25f, 0);
+        GlStateManager.rotate(-25.0F, 0.9F, 0.1F, 0.0F);
+        GlStateManager.scale(1.2F, 1.0F, 1.0F);
         float partialTicks = mc.getRenderPartialTicks();
         layer.disableOffhandRendering();
         layer.doRenderLayer(mc.player, 0, 0, partialTicks, 0, 0, 0, 0);
         layer.enableOffhandRendering();
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
-    }
-    private void lightSetup(AbstractClientPlayer clientPlayer)
-    {
-        int i = Minecraft.getMinecraft().world.getCombinedLight(new BlockPos(clientPlayer.posX, clientPlayer.posY + (double)clientPlayer.getEyeHeight(), clientPlayer.posZ), 0);
-        float f = (float)(i & 65535);
-        float f1 = (float)(i >> 16);
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
-
     }
 
 }
