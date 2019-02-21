@@ -64,9 +64,26 @@ public class BladeFirstPersonRender {
         GlStateManager.rotate(-25.0F, 0.9F, 0.1F, 0.0F);
         GlStateManager.scale(1.2F, 1.0F, 1.0F);
 
+<<<<<<< HEAD
+=======
+        GL11.glTranslatef(-0.25F, 0.2f, -0.5f);
+        if(ProjectileBarrier.isAvailable(player, stack, player.getItemInUseCount())){
+            GL11.glTranslatef(0.25F, 0, -0.5f);
+            GL11.glRotatef(-25.0F, 1.0F, 0.0F, 0.0f);
+        }else{
+            GL11.glRotatef(-10.0F, 1.0F, 0.0F, 0.0f);
+        }
+        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0f);
+
+        GL11.glTranslatef(0.0f, 0.25f, 0);
+        GL11.glRotatef(-25.0F, 0.9F, 0.1F, 0.0F);
+        GL11.glScalef(1.2F, 1.0F, 1.0F);
+>>>>>>> 26b12ef4c765bd9361e40ad42719e3ceef4e55ba
 
         float partialTicks = mc.getRenderPartialTicks();
+        layer.disableOffhandRendering();
         layer.doRenderLayer(mc.player, 0, 0, partialTicks, 0, 0, 0, 0);
+        layer.enableOffhandRendering();
 
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();

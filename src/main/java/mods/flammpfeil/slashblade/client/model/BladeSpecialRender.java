@@ -84,6 +84,22 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         GlStateManager.depthMask(true);
     }
 
+    boolean checkRenderNaked(){
+        boolean result = true;
+
+        ItemStack mainHand = BladeModel.user.getHeldItemMainhand();
+        if(mainHand.getItem() instanceof ItemSlashBlade){
+            EnumSet<ItemSlashBlade.SwordType> type = BladeModel.itemBlade.getSwordType(mainHand);
+            if(type.contains(ItemSlashBlade.SwordType.NoScabbard)){
+                result = true;
+            }else{
+                result = false;
+            }
+        }
+
+        return result;
+    };
+
     private boolean render(){
 
         boolean depthState = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
@@ -108,7 +124,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
             if(handle) {
                 BladeFirstPersonRender.getInstance().render();
-            }else if(BladeModel.user != null){
+            }else if(BladeModel.user != null && checkRenderNaked()){
                 renderNaked();
             }
 
@@ -235,7 +251,6 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(itemstack));
         EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(itemstack);
 
-        if(!swordType.contains(ItemSlashBlade.SwordType.NoScabbard)) return;
 
         if (!itemstack.isEmpty())
         {
@@ -266,16 +281,16 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 */
 
                 String renderTargets[];
-                if(/*data[1] instanceof EntityPlayer
-                    || */swordType.contains(ItemSlashBlade.SwordType.NoScabbard)){
 
+
+                if(swordType.contains(ItemSlashBlade.SwordType.Cursed)){
+                    renderTargets = new String[]{"sheath", "blade"};
+                }else{
                     if(swordType.contains(ItemSlashBlade.SwordType.Broken)){
                         renderTargets = new String[]{"blade_damaged"};
                     }else{
                         renderTargets = new String[]{"blade"};
                     }
-                }else{
-                    renderTargets = new String[]{"sheath", "blade"};
                 }
 
                 model.renderOnly(renderTargets);

@@ -40,6 +40,15 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
     private final RenderLivingBase<?> render;
 
+    static private boolean enabledOffhandRendering = true;
+
+    static public void enableOffhandRendering(){
+        enabledOffhandRendering = true;
+    }
+    static public void disableOffhandRendering(){
+        enabledOffhandRendering = false;
+    }
+
     public LayerSlashBlade(RenderLivingBase<?> livingEntityRendererIn)
     {
         this.render = livingEntityRendererIn;
@@ -526,7 +535,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
         int offhandColor = 0x3333FF;
         if(!offhand.isEmpty() && (offhand.getItem() instanceof ItemSlashBlade)){
 
-            renderBack(offhand,entity,true, combo.mainHandCombo != null);
+            if(enabledOffhandRendering)
+                renderBack(offhand,entity,true, combo.mainHandCombo != null);
 
             ItemSlashBlade offhandItemBlade = ((ItemSlashBlade) offhand.getItem());
             offhandModel = BladeModelManager.getInstance().getModel(offhandItemBlade.getModelLocation(offhand));
@@ -789,7 +799,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
                             GL11.glRotatef(90.0f, 0, -1, 0);
                             GL11.glRotatef(-20.0f, 0, 0, -1);
-                            GL11.glRotatef(60.0f, -1, 0, 0);
+                            GL11.glRotatef(40.0f, -1, 0, 0);
+                            //GL11.glRotatef(60.0f, -1, 0, 0);
 
                             if (entity.isSneaking())
                                 GL11.glRotatef(30.0f, -1, 0, 0);

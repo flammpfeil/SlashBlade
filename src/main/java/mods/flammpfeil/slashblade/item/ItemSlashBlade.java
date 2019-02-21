@@ -1677,6 +1677,7 @@ public class ItemSlashBlade extends ItemSword {
     	FiercerEdge,
         NoScabbard,
         Sealed,
+        Cursed,
     	;
 
     	public static final EnumSet<SwordType> BewitchedSoulEater = EnumSet.of(SwordType.SoulEeater,SwordType.Bewitched);
