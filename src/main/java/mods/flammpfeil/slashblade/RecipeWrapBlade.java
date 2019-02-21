@@ -39,11 +39,11 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
         //RegisterWrapable("BambooMod:katana", "BambooKatana", 4.0f);
 
-        RegisterWrapable("weaponmod:katana.wood",  "BalkonWood", 2.0f);
-        RegisterWrapable("weaponmod:katana.stone", "BalkonStone", 4.0f);
-        RegisterWrapable("weaponmod:katana.iron",  "BalkonIron", 6.0f);
-        RegisterWrapable("weaponmod:katana.diamond", "BalkonDiamond", 8.0f);
-        RegisterWrapable("weaponmod:katana.gold",  "BalkonGold", 2.0f);
+        RegisterWrapable("reforged:wooden_katana", "BalkonWood", 2.0f); 
+        RegisterWrapable("reforged:stone_katana", "BalkonStone", 4.0f); 
+        RegisterWrapable("reforged:iron_katana", "BalkonIron", 6.0f); 
+        RegisterWrapable("reforged:diamond_katana", "BalkonDiamond", 8.0f); 
+        RegisterWrapable("reforged:golden_katana",  "BalkonGold", 2.0f); 
 
         //RegisterWrapable("Minecraft:wooden_sword", "BambooKatana", 4.0f);
     }
@@ -104,8 +104,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
             if(!target.isEmpty()){
-                ResourceLocation targetName = Item.REGISTRY.getNameForObject(target.getItem());
-
+                ResourceLocation targetName = target.getItem().getRegistryName();
                 hasTarget = wrapableTextureNames.containsKey(targetName.toString());
             }
 
@@ -125,7 +124,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
         target = target.copy();
 
 
-        ResourceLocation targetName = Item.REGISTRY.getNameForObject(target.getItem());
+        ResourceLocation targetName = target.getItem().getRegistryName();
 
 
         SlashBlade.wrapBlade.removeWrapItem(scabbard);
@@ -134,15 +133,15 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
         NBTTagCompound tag = scabbard.getTagCompound();
         ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + targetName.toString().replace(':','.'));
-        ItemSlashBladeNamed.TextureName.set(tag,wrapableTextureNames.get(targetName));
-        ItemSlashBladeNamed.BaseAttackModifier.set(tag,wrapableBaseAttackModifiers.get(targetName));
+        ItemSlashBladeNamed.TextureName.set(tag,wrapableTextureNames.get(targetName.toString()));
+        ItemSlashBladeNamed.BaseAttackModifier.set(tag,wrapableBaseAttackModifiers.get(targetName.toString()));
 
         if(target.hasDisplayName()){
-            scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
+            scabbard.setStackDisplayName(I18n.format("item.flammpfeil.slashblade.wrapformat", target.getDisplayName()));
         }else if(target.isItemEnchanted()){
             scabbard.setStackDisplayName(scabbard.getDisplayName());
         }else{
-            scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
+            scabbard.setStackDisplayName(I18n.format("item.flammpfeil.slashblade.wrapformat.low",target.getDisplayName()));
         }
 
         if(target.isItemEnchanted()){
