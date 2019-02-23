@@ -109,7 +109,8 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         if(BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND
-                || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
+                || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
+                || BladeModel.type == ItemCameraTransforms.TransformType.NONE) {
 
 
             EnumSet<ItemSlashBlade.SwordType> types = BladeModel.itemBlade.getSwordType(BladeModel.targetStack);
@@ -121,8 +122,14 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                         BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
                         BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
             }
-
-            if(handle) {
+            if(BladeModel.type == ItemCameraTransforms.TransformType.NONE) {
+                if(checkRenderNaked()){
+                    renderNaked(true);
+                }
+                else if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand()){
+                    BladeFirstPersonRender.getInstance().renderVR();
+                }
+            }else if(handle) {
                 BladeFirstPersonRender.getInstance().render();
             }else if(BladeModel.user != null && checkRenderNaked()){
                 renderNaked();
@@ -244,6 +251,9 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
     }
 
     private void renderNaked(){
+        renderNaked(false);
+    }
+    private void renderNaked(boolean isVR){
         EntityLivingBase entitylivingbaseIn = BladeModel.user ;
         ItemStack itemstack = BladeModel.targetStack;
         ItemSlashBlade itemBlade = BladeModel.itemBlade;
@@ -268,12 +278,25 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
                 GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
 
+                if(isVR) {
+                    GL11.glTranslatef(-0.4f, -0.1f, -0.05f);
+                }
+
                 GL11.glTranslatef(0.5f, 0.3f, 0.55f);
                 float scale = 0.008f;
                 GL11.glScalef(scale,scale,scale);
                 GL11.glTranslatef(0.0f, 0.15f, 0.0f);
+
+                if(isVR) {
+                    GL11.glRotatef(-90, 0, 1, 0);
+                }
+
                 GL11.glRotatef(90, 0, 1, 0);
                 GL11.glRotatef(-90, 0, 0, 1);
+
+                if(isVR) {
+                    GL11.glRotatef(-43, 0, 0, 1);
+                }
                 /*
                 GL11.glTranslatef(0.0f, 0.15f, 0.0f);
                 float scale = 0.008f;
