@@ -152,7 +152,10 @@ public class ItemSlashBlade extends ItemSword {
 
     @Override
     public boolean isShield(ItemStack stack, @Nullable EntityLivingBase entity) {
-        return false;
+        if(canUseShield(stack) && hasScabbardInOffhand(entity))
+            return true;
+        else
+            return false;
     }
 
     public static final String adjustXStr = "adjustX";
@@ -812,11 +815,26 @@ public class ItemSlashBlade extends ItemSword {
         return hasOffhandSword && !IsThrownOffhand.get(tag);
     }
 
-	public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player) {
+    static public boolean hasScabbardInOffhand(EntityLivingBase owner){
+        ItemStack stack = owner.getHeldItemOffhand();
+        if(stack.isEmpty())
+            return false;
+        if(!(stack.getItem() instanceof ItemSlashBladeWrapper))
+            return false;
+        if(ItemSlashBladeWrapper.hasWrapedItem(stack))
+            return false;
+
+        return true;
+    }
+
+    public ComboSequence getNextComboSeq(ItemStack itemStack, ComboSequence current, boolean isRightClick, EntityPlayer player) {
         ComboSequence result = ComboSequence.None;
 
         EnumSet<SwordType> types = getSwordType(itemStack);
-        if (types.contains(SwordType.NoScabbard)) {
+
+        if(hasScabbardInOffhand(player)) {
+            result = ComboSequence.None;
+        }else if (types.contains(SwordType.NoScabbard)) {
             result = ComboSequence.None;
         } else if (!player.onGround) {
 

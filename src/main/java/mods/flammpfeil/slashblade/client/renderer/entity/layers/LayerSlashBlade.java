@@ -491,6 +491,9 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             return;
         }
 
+        if(ItemSlashBlade.hasScabbardInOffhand(entity)){
+            return;
+        }
         
 
         boolean isEnchanted = swordType.contains(ItemSlashBlade.SwordType.Enchanted);

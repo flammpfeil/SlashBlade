@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.client.model;
 
+import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
@@ -85,20 +87,19 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
     }
 
     boolean checkRenderNaked(){
-        boolean result = true;
-
         ItemStack mainHand = BladeModel.user.getHeldItemMainhand();
-        if(mainHand.getItem() instanceof ItemSlashBlade){
-            EnumSet<ItemSlashBlade.SwordType> type = BladeModel.itemBlade.getSwordType(mainHand);
-            if(type.contains(ItemSlashBlade.SwordType.NoScabbard)){
-                result = true;
-            }else{
-                result = false;
-            }
-        }
+        if(!(mainHand.getItem() instanceof ItemSlashBlade))
+            return true;
 
-        return result;
-    };
+        if(ItemSlashBlade.hasScabbardInOffhand(BladeModel.user))
+            return true;
+
+        EnumSet<ItemSlashBlade.SwordType> type = BladeModel.itemBlade.getSwordType(mainHand);
+        if(type.contains(ItemSlashBlade.SwordType.NoScabbard))
+            return true;
+
+        return false;
+    }
 
     private boolean render(){
 
@@ -112,16 +113,20 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 || BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.NONE) {
 
+            if(BladeModel.user == null)
+                return false;
 
             EnumSet<ItemSlashBlade.SwordType> types = BladeModel.itemBlade.getSwordType(BladeModel.targetStack);
 
             boolean handle = false;
 
-            if(BladeModel.user != null && !types.contains(ItemSlashBlade.SwordType.NoScabbard)) {
+            if(!types.contains(ItemSlashBlade.SwordType.NoScabbard)) {
                 handle = BladeModel.user.getPrimaryHand() == EnumHandSide.RIGHT ?
                         BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
                         BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
             }
+
+
             if(BladeModel.type == ItemCameraTransforms.TransformType.NONE) {
                 if(checkRenderNaked()){
                     renderNaked(true);
@@ -129,10 +134,12 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 else if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand()){
                     BladeFirstPersonRender.getInstance().renderVR();
                 }
-            }else if(handle) {
-                BladeFirstPersonRender.getInstance().render();
-            }else if(BladeModel.user != null && checkRenderNaked()){
-                renderNaked();
+            }else {
+                if(checkRenderNaked()){
+                    renderNaked();
+                }else if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand()){
+                    BladeFirstPersonRender.getInstance().render();
+                }
             }
 
             return false;
@@ -206,7 +213,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
             GlStateManager.translate(0.0F, 0.0F, 0.1f);
 
-            Color4f aCol = new Color4f(0.25f,0.25f,0.25f,1.0f);
+            Color4f aCol = new Color4f(new Color(0.25f,0.25f,0.25f,1.0f));
             Color4f bCol = new Color4f(new Color(0xA52C63));
             aCol.interpolate(bCol,(float)par);
 
@@ -258,19 +265,32 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         ItemStack itemstack = BladeModel.targetStack;
         ItemSlashBlade itemBlade = BladeModel.itemBlade;
 
-        WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(itemstack));
-        EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(itemstack);
-
 
         if (!itemstack.isEmpty())
         {
-            GlStateManager.pushMatrix();
-
 
             Item item = itemstack.getItem();
-            Minecraft minecraft = Minecraft.getMinecraft();
+
+            boolean isScabbard = (item instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(itemstack));
+
+            if(isScabbard) {
+                ItemStack mainHnad = entitylivingbaseIn.getHeldItemMainhand();
+                if (mainHnad.getItem() instanceof ItemSlashBlade) {
+                    EnumSet<ItemSlashBlade.SwordType> mainhandtypes = ((ItemSlashBlade) (mainHnad.getItem())).getSwordType(mainHnad);
+                    if (!mainhandtypes.contains(ItemSlashBlade.SwordType.NoScabbard)) {
+                        itemstack = mainHnad;
+                    }else{
+                        return;
+                    }
+                }
+            }
+
+            GlStateManager.pushMatrix();
+
+            EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(itemstack);
 
             {
+                WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(itemstack));
                 ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(itemstack);
                 bindTexture(resourceTexture);
 
@@ -303,10 +323,17 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 GL11.glScalef(scale,scale,scale);
                 */
 
+                if(isScabbard){
+                    //GL11.glRotatef(180, 0, 0, 1);
+                    GL11.glRotatef(180, 0, 1, 0);
+                    GL11.glTranslatef(75.0f, 0.0f, 0.0f);
+                }
+
                 String renderTargets[];
 
-
-                if(swordType.contains(ItemSlashBlade.SwordType.Cursed)){
+                if(isScabbard){
+                    renderTargets = new String[]{"sheath"};
+                }else if(swordType.contains(ItemSlashBlade.SwordType.Cursed)){
                     renderTargets = new String[]{"sheath", "blade"};
                 }else{
                     if(swordType.contains(ItemSlashBlade.SwordType.Broken)){

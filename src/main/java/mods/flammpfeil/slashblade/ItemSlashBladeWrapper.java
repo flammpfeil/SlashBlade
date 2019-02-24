@@ -16,6 +16,7 @@ import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.oredict.OreDictionary;
 import org.omg.CORBA.Current;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -179,5 +180,11 @@ public class ItemSlashBladeWrapper extends ItemSlashBladeNamed {
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         if (!this.isInCreativeTab(tab)) return;
         subItems.add(new ItemStack(this, 1, 0));
+    }
+
+
+    @Override
+    public boolean isShield(ItemStack stack, @Nullable EntityLivingBase entity) {
+        return !hasWrapedItem(stack);
     }
 }
