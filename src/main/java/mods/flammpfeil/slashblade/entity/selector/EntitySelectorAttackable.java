@@ -3,9 +3,7 @@ package mods.flammpfeil.slashblade.entity.selector;
 import com.google.common.base.Predicate;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.IEntityMultiPart;
+import net.minecraft.entity.*;
 
 public final class EntitySelectorAttackable implements Predicate<Entity>{
 
@@ -23,10 +21,18 @@ public final class EntitySelectorAttackable implements Predicate<Entity>{
     public boolean apply(Entity input) {
         boolean result = false;
 
+        if(input instanceof MultiPartEntityPart){
+            IEntityMultiPart ientitymultipart = ((MultiPartEntityPart)input).parent;
+
+            if (ientitymultipart instanceof EntityLivingBase)
+            {
+                input = (EntityLivingBase)ientitymultipart;
+            }
+        }
+
         String entityStr = EntityList.getEntityString(input);
 
         if (((entityStr != null && SlashBlade.manager.attackableTargets.containsKey(entityStr) && SlashBlade.manager.attackableTargets.get(entityStr))
-                || input instanceof IEntityMultiPart
                 || input instanceof EntityGrimGrip
         ))
             result = input.isEntityAlive();
