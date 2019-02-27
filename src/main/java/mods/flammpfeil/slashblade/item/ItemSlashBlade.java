@@ -816,6 +816,8 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     static public boolean hasScabbardInOffhand(EntityLivingBase owner){
+        if(owner == null)
+            return false;
         ItemStack stack = owner.getHeldItemOffhand();
         if(stack.isEmpty())
             return false;
