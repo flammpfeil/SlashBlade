@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class GroupObject
 {
@@ -30,7 +30,7 @@ public class GroupObject
         this.glDrawingMode = glDrawingMode;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void render()
     {
         if (faces.size() > 0)
@@ -42,7 +42,7 @@ public class GroupObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void render(Tessellator tessellator)
     {
         if (faces.size() > 0)

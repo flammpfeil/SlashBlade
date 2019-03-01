@@ -2,7 +2,7 @@ package mods.flammpfeil.slashblade.entity;
 
 import com.google.common.base.Optional;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
+import mods.flammpfeil.slashblade.network.C2SMoveCommandState;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,13 +12,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * Created by Furia on 2016/05/30.
@@ -42,7 +39,7 @@ public class EntityGrimGripKey extends Entity {
     private static final DataParameter<Boolean> INVISIBLE = EntityDataManager.<Boolean>createKey(EntityGrimGripKey.class, DataSerializers.BOOLEAN);
 
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //lifetime
         this.getDataManager().register(LIFETIME, 60);
         //pos
@@ -81,13 +78,13 @@ public class EntityGrimGripKey extends Entity {
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {
+    protected void readAdditional(NBTTagCompound compound) {
 
         if (compound.hasKey("GPX"))
         {
-            int i = compound.getInteger("GPX");
-            int j = compound.getInteger("GPY");
-            int k = compound.getInteger("GPZ");
+            int i = compound.getInt("GPX");
+            int j = compound.getInt("GPY");
+            int k = compound.getInt("GPZ");
             setGrimGripPos(new BlockPos(i, j, k));
         }
         else
@@ -97,14 +94,14 @@ public class EntityGrimGripKey extends Entity {
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {
+    protected void writeAdditional(NBTTagCompound compound) {
         BlockPos blockpos = this.getGrimGripPos();
 
         if (blockpos != null)
         {
-            compound.setInteger("GPX", blockpos.getX());
-            compound.setInteger("GPY", blockpos.getY());
-            compound.setInteger("GPZ", blockpos.getZ());
+            compound.setInt("GPX", blockpos.getX());
+            compound.setInt("GPY", blockpos.getY());
+            compound.setInt("GPZ", blockpos.getZ());
         }
     }
 
@@ -124,7 +121,7 @@ public class EntityGrimGripKey extends Entity {
         }
 
         /*
-        List<EntityLivingBase> list = this.world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox());
+        List<EntityLivingBase> list = this.world.getEntitiesWithinAABB(EntityLivingBase.class, this.getBoundingBox());
 
         if (!list.isEmpty())
         {
@@ -165,7 +162,7 @@ public class EntityGrimGripKey extends Entity {
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBox(Entity entityIn) {
-        return entityIn instanceof EntityLivingBase ? this.getEntityBoundingBox() : super.getCollisionBox(entityIn);
+        return entityIn instanceof EntityLivingBase ? this.getBoundingBox() : super.getCollisionBox(entityIn);
     }
 
     @Override
@@ -206,7 +203,7 @@ public class EntityGrimGripKey extends Entity {
             }
         }
 
-        if(grip != null && entityIn instanceof EntityLivingBase && 0 < (entityIn.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK)){
+        if(grip != null && entityIn instanceof EntityLivingBase && 0 < (entityIn.getEntityData().getByte("SB.MCS") & C2SMoveCommandState.SNEAK)){
             ItemStack stack = ((EntityLivingBase)entityIn).getHeldItemMainhand();
             if(stack != null && stack.getItem() instanceof ItemSlashBlade){
                 NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);

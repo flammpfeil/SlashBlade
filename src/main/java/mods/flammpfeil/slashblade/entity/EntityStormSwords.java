@@ -57,8 +57,8 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
     private static final DataParameter<Float> ROT_OFFSET = EntityDataManager.<Float>createKey(EntityStormSwords.class, DataSerializers.FLOAT);
 
     @Override
-    protected void entityInit() {
-        super.entityInit();
+    protected void registerData() {
+        super.registerData();
 
         this.getDataManager().register(HAS_FIRED, false);
 
@@ -165,7 +165,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
             for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.world.spawnParticle(EnumParticleTypes.PORTAL
+                this.world.spawnParticle(Particles.PORTAL
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength
@@ -196,7 +196,7 @@ public class EntityStormSwords extends EntitySummonedSwordBase {
         }else{
             if(this.ticksExisted < getInterval())
                 return false;
-            if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!world.getCollisionBoxes(this,this.getBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);

@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 public abstract class KeyBindingEx extends KeyBinding {
     private void register(){
-        if(!Arrays.asList(Minecraft.getMinecraft().gameSettings.keyBindings).contains(this)){
+        if(!Arrays.asList(Minecraft.getInstance().gameSettings.keyBindings).contains(this)){
             ClientRegistry.registerKeyBinding(this);
             MinecraftForge.EVENT_BUS.register(this);
         }

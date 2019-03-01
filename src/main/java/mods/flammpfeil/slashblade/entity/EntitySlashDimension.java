@@ -31,8 +31,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
         super(par1World);
         ticksExisted = 0;
 
-        getEntityData().setInteger("seed", rand.nextInt(50));
+        getEntityData().setInt("seed", rand.nextInt(50));
     }
 
     public EntitySlashDimension(World par1World, EntityLivingBase entityLiving, float AttackLevel, boolean multiHit){
@@ -116,7 +116,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
      * ■イニシャライズ
      */
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //lifetime
         this.getDataManager().register(LIFETIME, 20);
 
@@ -196,7 +196,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
             }
 
             if(this.getThrower() != null){
-                AxisAlignedBB bb = this.getEntityBoundingBox();
+                AxisAlignedBB bb = this.getBoundingBox();
 
                 if(this.getThrower() instanceof EntityLivingBase){
                     EntityLivingBase entityLiving = (EntityLivingBase)this.getThrower();
@@ -244,7 +244,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(Particles.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -325,7 +325,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
 
             //地形衝突で消失
             /*
-            if(!world.getCollisionBoxes(this, this.getEntityBoundingBox()).isEmpty()) {
+            if(!world.getCollisionBoxes(this, this.getBoundingBox()).isEmpty()) {
                 this.setDead();
             }
             */
@@ -404,7 +404,7 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
     /**
      * ■環境光による暗さの描画（？）
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public int getBrightnessForRender()
     {
@@ -451,19 +451,19 @@ public class EntitySlashDimension extends Entity implements IThrowableEntity {
      * ■NBTの読込
      */
     @Override
-    protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+    protected void readAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■NBTの書出
      */
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
+    protected void writeAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
      * posY, posZ, yaw, pitch
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {}
 
     /**

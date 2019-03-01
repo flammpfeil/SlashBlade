@@ -3,8 +3,8 @@ package mods.flammpfeil.slashblade.client.model.obj;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class Face
 {
@@ -23,13 +23,13 @@ public class Face
     public Vertex faceNormal;
     public TextureCoordinate[] textureCoordinates;
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void addFaceForRender(Tessellator tessellator)
     {
         addFaceForRender(tessellator, 0.0005F);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void addFaceForRender(Tessellator tessellator, float textureOffset)
     {
         if (faceNormal == null)

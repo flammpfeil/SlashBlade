@@ -13,8 +13,8 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.*;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import net.minecraft.block.material.Material;
@@ -137,7 +137,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      * ■イニシャライズ
      */
     @Override
-    protected void entityInit() {
+    protected void registerData() {
 
         //EntityId
         this.getDataManager().register(THROWER_ENTITY_ID, 0);
@@ -269,7 +269,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         Vec3d reachVec = entityPos.addVector(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax);
         pointedEntity = null;
         List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
-                , this.getEntityBoundingBox()
+                , this.getBoundingBox()
                 .offset(lookVec.x * reachMax, lookVec.y * reachMax, lookVec.z * reachMax)
                 .grow((double) expandFactor + reachMax, (double) expandFactor + reachMax, (double) expandFactor + reachMax));
         list.removeAll(alreadyHitEntity);
@@ -288,7 +288,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 continue;
 
             float borderSize = entity.getCollisionBorderSize() + expandBorder; //視線外10幅まで判定拡張
-            AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double) borderSize, (double) borderSize, (double) borderSize);
+            AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow((double) borderSize, (double) borderSize, (double) borderSize);
             RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(entityPos, reachVec);
             double counter = reachMax;
             /*
@@ -374,7 +374,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }
         else
         {
-            AxisAlignedBB boundingBox = target.getEntityBoundingBox();
+            AxisAlignedBB boundingBox = target.getBoundingBox();
             d2 = (boundingBox.minY + boundingBox.maxY) / 2.0D - (viewer.posY + (double)viewer.getEyeHeight());
         }
 
@@ -527,8 +527,8 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         Entity entity = null;
 
-        AxisAlignedBB bb = this.getEntityBoundingBox().offset(this.motionX, this.motionY, this.motionZ).grow(1.0D, 1.0D, 1.0D);
-        AxisAlignedBB bb2 = this.getEntityBoundingBox().grow(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB bb = this.getBoundingBox().offset(this.motionX, this.motionY, this.motionZ).grow(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB bb2 = this.getBoundingBox().grow(1.0D, 1.0D, 1.0D);
 
         Predicate<Entity>[] selectors = new Predicate[]{EntitySelectorDestructable.getInstance(), EntitySelectorAttackable.getInstance()};
         for(Predicate<Entity> selector : selectors){
@@ -538,7 +538,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             if(selector.equals(EntitySelectorAttackable.getInstance()) && getTargetEntityId() != 0){
                 Entity target = world.getEntityByID(getTargetEntityId());
                 if(target != null){
-                    if(target.getEntityBoundingBox().intersects(bb) || target.getEntityBoundingBox().intersects(bb2) )
+                    if(target.getBoundingBox().intersects(bb) || target.getBoundingBox().intersects(bb2) )
                         list.add(target);
                 }
             }
@@ -558,7 +558,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 if (entity1.canBeCollidedWith())
                 {
                     f1 = 0.3F;
-                    AxisAlignedBB axisalignedbb1 = entity1.getEntityBoundingBox().grow((double) f1, (double) f1, (double) f1);
+                    AxisAlignedBB axisalignedbb1 = entity1.getBoundingBox().grow((double) f1, (double) f1, (double) f1);
                     RayTraceResult movingobjectposition1 = axisalignedbb1.calculateIntercept(Vec3d1, Vec3d);
 
                     if (movingobjectposition1 != null)
@@ -669,7 +669,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
                 double var4 = rand.nextGaussian() * 0.02D;
                 double var6 = rand.nextGaussian() * 0.02D;
                 double var8 = 10.0D;
-                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                this.world.spawnParticle(Particles.EXPLOSION_NORMAL
                         , target.posX + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width - var2 * var8
                         , target.posY + (double)(rand.nextFloat() * target.height) - var4 * var8
                         , target.posZ + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width - var6 * var8
@@ -685,7 +685,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
     protected void attackEntity(Entity target){
 
         if(this.thrower != null)
-            this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
+            this.thrower.getEntityData().setInt("LastHitSummonedSwords",this.getEntityId());
 
         mountEntity(target);
 
@@ -749,7 +749,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
         }else{
 
 
-            if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!world.getCollisionBoxes(this,this.getBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -768,7 +768,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
             for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE
+                this.world.spawnParticle(Particles.WATER_BUBBLE
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength
@@ -843,7 +843,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
 
         this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.NEUTRAL, 0.25F, 1.6F);
 
-        AxisAlignedBB bb = this.getEntityBoundingBox().grow(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB bb = this.getBoundingBox().grow(1.0D, 1.0D, 1.0D);
         List<Entity> list = this.world.getEntitiesInAABBexcluding(this, bb, EntitySelectorAttackable.getInstance());
         list.removeAll(alreadyHitEntity);
         for(Entity target : list){
@@ -923,7 +923,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      * ■環境光による暗さの描画（？）
      *    EntityXPOrbのぱくり
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public int getBrightnessForRender()
     {
@@ -970,13 +970,13 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      * ■NBTの読込
      */
     @Override
-    protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+    protected void readAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■NBTの書出
      */
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
+    protected void writeAdditional(NBTTagCompound nbttagcompound) {}
 
     double hitX;
     double hitY;
@@ -1011,7 +1011,7 @@ public class EntitySummonedSwordBase extends Entity implements IProjectile,IThro
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
      * posY, posZ, yaw, pitch
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {}
 
     @Override

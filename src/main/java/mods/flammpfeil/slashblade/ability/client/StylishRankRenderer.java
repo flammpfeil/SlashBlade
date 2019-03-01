@@ -28,10 +28,10 @@ public class StylishRankRenderer {
 
         mc = FMLClientHandler.instance().getClient();
         World world = mc.world;
-        if (event.phase == TickEvent.Phase.START || !(Minecraft.getMinecraft().getRenderViewEntity() instanceof EntityPlayer))
+        if (event.phase == TickEvent.Phase.START || !(Minecraft.getInstance().getRenderViewEntity() instanceof EntityPlayer))
             return;
 
-        player = (EntityPlayer) Minecraft.getMinecraft().getRenderViewEntity();
+        player = (EntityPlayer) Minecraft.getInstance().getRenderViewEntity();
         time = System.currentTimeMillis();
 
         if (player != null && mc.inGameHasFocus) {
@@ -43,7 +43,7 @@ public class StylishRankRenderer {
     }
 
     private void renderRankHud(Float partialTicks, EntityPlayer player, long time) {
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
         int rank = StylishRankManager.getStylishRank(player);
 
         //rank = 2;
@@ -51,12 +51,12 @@ public class StylishRankRenderer {
         if(rank <= 0)
             return;
 
-        GL11.glPushMatrix(); //1 store
+        GL11.glPushMatrix(); //1 pushMatrix
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         //ScaledResolution sr = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         GL11.glClear(256);
         GL11.glMatrixMode(5889);
-        GL11.glPushMatrix(); //2 store
+        GL11.glPushMatrix(); //2 pushMatrix
         GL11.glLoadIdentity();
         GL11.glOrtho(0.0D, mc.displayWidth, mc.displayHeight, 0.0D, 1000D, 3000D);
         //GL11.glOrtho(0.0D, sr.getScaledWidth_double(), sr.getScaledHeight_double(), 0.0D, 1000D, 3000D);
@@ -69,18 +69,18 @@ public class StylishRankRenderer {
         GL11.glTranslatef(k * 2 / 3, l / 5, -2000F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(3042);
-        GL11.glBlendFunc(770, 771);
+        OpenGlHelper.glBlendFuncSeparate(770, 771, GL11.GL_ONE, GL11.GL_ZERO);
 
         mc.renderEngine.bindTexture(RankImg);
 
         long lastUpdate = StylishRankManager.LastRankPointUpdate.get(player.getEntityData());
-        long now = player.world.getTotalWorldTime();
+        long now = player.world.getGameTime();
 
         boolean showTextRank = false;
         if(now < lastUpdate + 20*3)
             showTextRank = true;
 
-        GL11.glPushMatrix(); //3 store
+        GL11.glPushMatrix(); //3 pushMatrix
         if(now < (lastUpdate+120)){
             int rankOffset = 32 * (rank - 1);
             int textOffset = showTextRank ? 128 : 0;

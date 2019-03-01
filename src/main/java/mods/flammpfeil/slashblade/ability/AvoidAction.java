@@ -3,13 +3,12 @@ package mods.flammpfeil.slashblade.ability;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import mods.flammpfeil.slashblade.network.MessageSpecialAction;
+import mods.flammpfeil.slashblade.network.C2SSpecialAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -32,12 +31,12 @@ public class AvoidAction {
         UntouchableTime.setUntouchableTime(target,2,true);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void doAvoid() {
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
         EntityPlayerSP player = mc.player;
 
-        long now = mc.player.world.getTotalWorldTime();
+        long now = mc.player.world.getGameTime();
 
         long interval = 2;
 
@@ -51,7 +50,7 @@ public class AvoidAction {
                 int comboLimit = 3;
 
 
-                int combo = mc.player.getEntityData().getInteger("SB.AvoidCombo");
+                int combo = mc.player.getEntityData().getInt("SB.AvoidCombo");
                 long comboTimeout = mc.player.getEntityData().getLong("SB.AvoidComboTimeout");
 
                 if(comboInterval < Math.abs(comboTimeout - now)){
@@ -62,7 +61,7 @@ public class AvoidAction {
                     return;
                 }else{
                     combo++;
-                    mc.player.getEntityData().setInteger("SB.AvoidCombo",combo);
+                    mc.player.getEntityData().setInt("SB.AvoidCombo",combo);
                     mc.player.getEntityData().setLong("SB.AvoidComboTimeout",now+comboInterval);
                 }
             }
@@ -78,7 +77,7 @@ public class AvoidAction {
             player.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.7F, 1.6F + (player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.4F);
             mc.player.moveRelative(mc.player.moveStrafing,0, mc.player.moveForward,speedFactor);
             mc.playerController.updateController();
-            NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 2));
+            NetworkManager.channel.sendToServer(new C2SSpecialAction((byte) 2));
         }
     }
 }

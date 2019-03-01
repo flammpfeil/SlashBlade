@@ -50,7 +50,7 @@ public class EntityBladeStand extends Entity {
             = EntityDataManager.<Integer>createKey(EntityBladeStand.class, DataSerializers.VARINT);
     
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //this.getDataManager().register(WatchIndexBlade, SlashBlade.getCustomBlade(SlashBlade.modid,"flammpfeil.slashblade.named.muramasa"));
         this.getDataManager().register(WatchIndexBlade, ItemStack.EMPTY); //ItemStack
         this.getDataManager().register(WatchIndexFlipState, 0);
@@ -126,10 +126,10 @@ public class EntityBladeStand extends Entity {
     static final String SaveKeyStandType = "StandType";
     static final String SaveKeyFlip = "Flip";
     @Override
-    protected void readEntityFromNBT(NBTTagCompound p_70037_1_) {
+    protected void readAdditional(NBTTagCompound p_70037_1_) {
 
         if(p_70037_1_.hasKey(SaveKeyStandType)){
-            int type = p_70037_1_.getInteger(SaveKeyStandType);
+            int type = p_70037_1_.getInt(SaveKeyStandType);
             this.setStandType(type);
         }
 
@@ -141,13 +141,13 @@ public class EntityBladeStand extends Entity {
         }
 
         if(p_70037_1_.hasKey(SaveKeyFlip)){
-            int flip = p_70037_1_.getInteger(SaveKeyFlip);
+            int flip = p_70037_1_.getInt(SaveKeyFlip);
             this.setFlip(flip);
         }
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound p_70014_1_) {
+    protected void writeAdditional(NBTTagCompound p_70014_1_) {
 
         ItemStack blade = getBlade();
         if(!blade.isEmpty()){
@@ -159,12 +159,12 @@ public class EntityBladeStand extends Entity {
 
         {
             int type = this.getStandType();
-            p_70014_1_.setInteger(SaveKeyStandType,type);
+            p_70014_1_.setInt(SaveKeyStandType,type);
         }
 
         {
             int flip = this.getFlip();
-            p_70014_1_.setInteger(SaveKeyFlip,flip);
+            p_70014_1_.setInt(SaveKeyFlip,flip);
         }
     }
 
@@ -274,7 +274,7 @@ public class EntityBladeStand extends Entity {
 
                 if(SpecialEffects.isEffective(p,blade, SpecialEffects.Limitter) == SpecialEffects.State.NonEffective
                         && !p.isCreative()){
-                    int level = ItemSlashBlade.getSpecialEffect(blade).getInteger(SpecialEffects.Limitter.getEffectKey());
+                    int level = ItemSlashBlade.getSpecialEffect(blade).getInt(SpecialEffects.Limitter.getEffectKey());
                     p.sendMessage(new TextComponentTranslation("flammpfeil.swaepon.info.needlevel.msg",Integer.toString(level)));
                     return false;
                 }

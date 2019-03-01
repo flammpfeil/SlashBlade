@@ -1,27 +1,23 @@
 package mods.flammpfeil.slashblade.client.model;
 
 import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
-import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.client.util.LightSetup;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.client.renderer.entity.BladeFirstPersonRender;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.tileentity.DummyTileEntity;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Color4f;
@@ -31,34 +27,28 @@ import java.util.EnumSet;
 /**
  * Created by Furia on 2016/06/21.
  */
-public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntity> {
+public class BladeSpecialRender extends TileEntityItemStackRenderer {
     private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
 
-    @Override
-    public void render(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if(te != null) return;
+    private void bindTexture(ResourceLocation res){
+        Minecraft.getInstance().getTextureManager().bindTexture(res);
+    }
 
-        if(BladeModel.targetStack.isEmpty())
-            return;
+    @Override
+    public void renderByItem(ItemStack itemStackIn) {
+        if(!(itemStackIn.getItem() instanceof ItemSlashBlade)) return;
+        ItemSlashBlade item = (ItemSlashBlade)itemStackIn.getItem();
 
         ResourceLocationRaw resourceTexture = BladeModel.itemBlade.getModelTexture(BladeModel.targetStack);
         bindTexture(resourceTexture);
 
-        //GlStateManager.pushAttrib();
-        //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-
-        if(render() && BladeModel.targetStack.hasEffect()){
+        if(render() && itemStackIn.hasEffect()){
             renderEffect();
         }
-
-        //GlStateManager.popAttrib();
     }
 
     private void renderEffect()
     {
-        if(!SlashBlade.RenderEnchantEffect)
-            return;
-
         GlStateManager.depthMask(false);
         GlStateManager.depthFunc(514);
         GlStateManager.disableLighting();
@@ -66,17 +56,17 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         bindTexture(RES_ITEM_GLINT);
         GlStateManager.matrixMode(5890);
         GlStateManager.pushMatrix();
-        GlStateManager.scale(8.0F, 8.0F, 8.0F);
-        float f = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
-        GlStateManager.translate(f, 0.0F, 0.0F);
-        GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.scalef(8.0F, 8.0F, 8.0F);
+        float f = (float)(Util.milliTime() % 3000L) / 3000.0F / 8.0F;
+        GlStateManager.translatef(f, 0.0F, 0.0F);
+        GlStateManager.rotatef(-50.0F, 0.0F, 0.0F, 1.0F);
         this.render();
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
-        GlStateManager.scale(8.0F, 8.0F, 8.0F);
-        float f1 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
-        GlStateManager.translate(-f1, 0.0F, 0.0F);
-        GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.scalef(8.0F, 8.0F, 8.0F);
+        float f1 = (float)(Util.milliTime() % 4873L) / 4873.0F / 8.0F;
+        GlStateManager.translatef(-f1, 0.0F, 0.0F);
+        GlStateManager.rotatef(10.0F, 0.0F, 0.0F, 1.0F);
         this.render();
         GlStateManager.popMatrix();
         GlStateManager.matrixMode(5888);
@@ -105,7 +95,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
         boolean depthState = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
         if(!depthState)
-            GlStateManager.enableDepth();
+            GlStateManager.enableDepthTest();
 
         if(BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
                 || BladeModel.type == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND
@@ -151,17 +141,17 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         if(BladeModel.renderPath++ >= 1) {
             Face.setColor(0xFF8040CC);
             GL11.glMatrixMode(GL11.GL_TEXTURE);
-            GlStateManager.scale(0.1F, 0.1F, 0.1F);
+            GlStateManager.scalef(0.1F, 0.1F, 0.1F);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
         }else{
             Face.resetColor();
 
             GL11.glEnable(GL11.GL_BLEND);
-            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GL11.glDisable(GL11.GL_CULL_FACE);
 
 
-            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
+            GlStateManager.disableLighting(); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
             GL11.glEnable(GL11.GL_ALPHA_TEST);
 
             GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
@@ -192,17 +182,14 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
 
         GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
 
-        float lastx = OpenGlHelper.lastBrightnessX;
-        float lasty = OpenGlHelper.lastBrightnessY;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+        //RenderHelper.enableStandardItemLighting();
+        try(LightSetup ls = LightSetup.setup()){
+            model.renderPart(renderTarget + "_luminous");
+        }
 
-        model.renderPart(renderTarget + "_luminous");
-
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
-
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         if(BladeModel.renderPath == 1 && BladeModel.type == ItemCameraTransforms.TransformType.GUI){
             model = BladeModelManager.getInstance().getModel(BladeModelManager.resourceDurabilityModel);
@@ -211,7 +198,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             double par = BladeModel.itemBlade.getDurabilityForDisplay(BladeModel.targetStack);
             par = Math.min(Math.max(par, 0.0),1.0);
 
-            GlStateManager.translate(0.0F, 0.0F, 0.1f);
+            GlStateManager.translatef(0.0F, 0.0F, 0.1f);
 
             Color4f aCol = new Color4f(new Color(0.25f,0.25f,0.25f,1.0f));
             Color4f bCol = new Color4f(new Color(0xA52C63));
@@ -225,11 +212,11 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
             if(isBroken){
                 GL11.glMatrixMode(GL11.GL_TEXTURE);
-                GlStateManager.translate(0.0F, 0.5F, 0.0f);
+                GlStateManager.translatef(0.0F, 0.5F, 0.0f);
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
             }
 
-            GlStateManager.translate(0.0F, 0.0F, -2.0f * BladeModel.itemBlade.getDurabilityForDisplay(BladeModel.targetStack));
+            GlStateManager.translated(0.0F, 0.0F, -2.0f * BladeModel.itemBlade.getDurabilityForDisplay(BladeModel.targetStack));
             model.renderPart("color");
 
             if(isBroken){
@@ -240,7 +227,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         }
 
         GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_LIGHTING);
+        GlStateManager.enableLighting();
 
         GL11.glEnable(GL11.GL_CULL_FACE);
 
@@ -252,7 +239,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         Face.resetColor();
 
         if(!depthState)
-            GlStateManager.disableDepth();
+            GlStateManager.disableDepthTest();
 
         return true;
     }
@@ -345,22 +332,13 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
                 model.renderOnly(renderTargets);
 
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glEnable(GL11.GL_BLEND);
+                GlStateManager.disableLighting();
+                try(LightSetup ls = LightSetup.setupAdd()){
+                    for(String renderTarget : renderTargets)
+                        model.renderPart(renderTarget + "_luminous");
+                }
 
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-
-                float lastx = OpenGlHelper.lastBrightnessX;
-                float lasty = OpenGlHelper.lastBrightnessY;
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-
-                for(String renderTarget : renderTargets)
-                    model.renderPart(renderTarget + "_luminous");
-
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
-
-                GL11.glEnable(GL11.GL_LIGHTING);
-                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+                GlStateManager.enableLighting();
             }
 
             GlStateManager.popMatrix();

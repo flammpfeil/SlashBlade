@@ -1,5 +1,14 @@
 package mods.flammpfeil.slashblade.client.model.obj;
 
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.resources.IResource;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.opengl.GL11;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,16 +16,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.IResource;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 /**
  *  Wavefront Object importer
@@ -50,7 +49,7 @@ public class WavefrontObject
 
         try
         {
-            IResource res = Minecraft.getMinecraft().getResourceManager().getResource(resource);
+            IResource res = Minecraft.getInstance().getResourceManager().getResource(resource);
             loadObjModel(res.getInputStream());
         }
         catch (IOException e)
@@ -168,7 +167,7 @@ public class WavefrontObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void renderAll()
     {
         Tessellator tessellator = Tessellator.getInstance();
@@ -186,7 +185,7 @@ public class WavefrontObject
         tessellator.draw();
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void tessellateAll(Tessellator tessellator)
     {
         for (GroupObject groupObject : groupObjects)
@@ -195,7 +194,7 @@ public class WavefrontObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void renderOnly(String... groupNames)
     {
         for (GroupObject groupObject : groupObjects)
@@ -210,7 +209,7 @@ public class WavefrontObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void tessellateOnly(Tessellator tessellator, String... groupNames) {
         for (GroupObject groupObject : groupObjects)
         {
@@ -224,7 +223,7 @@ public class WavefrontObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void renderPart(String partName)
     {
         for (GroupObject groupObject : groupObjects)
@@ -236,7 +235,7 @@ public class WavefrontObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void tessellatePart(Tessellator tessellator, String partName) {
         for (GroupObject groupObject : groupObjects)
         {
@@ -247,7 +246,7 @@ public class WavefrontObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void renderAllExcept(String... excludedGroupNames)
     {
         for (GroupObject groupObject : groupObjects)
@@ -267,7 +266,7 @@ public class WavefrontObject
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void tessellateAllExcept(Tessellator tessellator, String... excludedGroupNames)
     {
         boolean exclude;

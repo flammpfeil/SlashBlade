@@ -6,7 +6,7 @@ import com.google.common.cache.LoadingCache;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;

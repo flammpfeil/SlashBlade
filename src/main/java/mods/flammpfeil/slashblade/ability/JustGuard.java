@@ -46,7 +46,7 @@ public class JustGuard {
 
         long last = ChargeStart.get(e.getEntityData());
         if(!atJustGuard(e))
-            ChargeStart.set(e.getEntityData(), e.world.getTotalWorldTime() + hurtTicks);
+            ChargeStart.set(e.getEntityData(), e.world.getGameTime() + hurtTicks);
     }
 
     @SubscribeEvent
@@ -68,14 +68,14 @@ public class JustGuard {
             if(!guardable && e.getSource().isUnblockable()) return;
 
             long cs = ChargeStart.get(el.getEntityData());
-            if(0 < cs && el.world.getTotalWorldTime() - cs < activeTicks){
+            if(0 < cs && el.world.getGameTime() - cs < activeTicks){
 
                 e.setCanceled(true);
                 e.setAmount(0);
                 UntouchableTime.setUntouchableTime(el,20);
 
 
-                NBTTagCompound tag = stack.getTagCompound();
+                NBTTagCompound tag = stack.getTag();
 
                 el.setArrowCountInEntity(-1);
 

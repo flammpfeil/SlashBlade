@@ -1,23 +1,32 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
 
+import mods.flammpfeil.slashblade.client.util.MSAutoCloser;
 import mods.flammpfeil.slashblade.entity.EntitySummonedBlade;
-import net.minecraft.client.renderer.Tessellator;
+import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 
 /**
  * Created by Furia on 14/05/08.
  */
-@SideOnly(Side.CLIENT)
-public class RenderSummonedBlade extends Render {
+@OnlyIn(Dist.CLIENT)
+public class RenderSummonedBlade extends RenderPhantomSwordBase {
+
+    @Override
+    protected double[][] getVec() {
+        return dVec;
+    }
     private static double[][] dVec = {
             {-3.2303,0.0000,-16.7280},
             {3.2303,0.0000,16.7280},
@@ -46,6 +55,10 @@ public class RenderSummonedBlade extends Render {
             {-28.3044,-2.6732,4.6256},
             {-52.8217,-1.4490,3.0955}};
 
+    @Override
+    protected int[][] getFace() {
+        return nVecPos;
+    }
     private static int[][] nVecPos = {
             {2,3,1},
             {2,0,4},
@@ -101,87 +114,17 @@ public class RenderSummonedBlade extends Render {
     }
 
     @Override
-    public void doRender(Entity entity, double d0, double d1, double d2, float f, float f1)
-    {
-        if (entity instanceof EntitySummonedBlade)
-        {
-            doDriveRender((EntitySummonedBlade) entity, d0, d1, d2, f, f1);
-        }
-    }
+    protected void transform(EntitySummonedSwordBase entity, double dX, double dY, double dZ, float f, float f1){
+        super.transform(entity, dX, dY, dZ, f, f1);
 
-    @Override
-    protected ResourceLocationRaw getEntityTexture(Entity var1) {
-        return null;
-    }
+        GlStateManager.scalef(2.0f, 2.0f, 1.0f);
+        float scale = 2.2f;
+        GlStateManager.scalef(2.2f, scale, scale);
 
-    private void doDriveRender(EntitySummonedBlade entitySummonedBlade, double dX, double dY, double dZ, float f, float f1)
-    {
-        Tessellator tessellator = Tessellator.getInstance();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_BLEND);
-
-        int color = entitySummonedBlade.getColor();
-
-        boolean inverse = color < 0;
-
-        color = Math.abs(color);
-
-        if(!inverse){
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        }
-        else{
-            GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
-        }
-        //GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        GL11.glPushMatrix();
-
-        GL11.glTranslatef((float)dX, (float)dY+0.5f, (float)dZ);
-        GL11.glRotatef(entitySummonedBlade.rotationYaw, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-entitySummonedBlade.rotationPitch, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(entitySummonedBlade.getRoll(),0,0,1);
-
+        EntitySummonedBlade entitySummonedBlade = (EntitySummonedBlade) entity;
         float time = entitySummonedBlade.hitTime != 0
                 ? entitySummonedBlade.hitTime % 6 + entitySummonedBlade.hitStopFactor
-                : entitySummonedBlade.getEntityWorld().getWorldTime() % 6 + f1;
-        GL11.glRotatef(time * 60.0f ,0,1,0);
-
-        //GL11.glRotatef(fRot, 0.0F, 1.0F, 0.0F);
-
-        float scale = 0.01f;
-        GL11.glScalef(scale, scale, scale);
-        //GL11.glScalef(0.5f, 0.5f, 1.0f);
-
-        //■スタート
-        float lifetime = entitySummonedBlade.getLifeTime();
-        float ticks = entitySummonedBlade.ticksExisted;
-        BufferBuilder wr = tessellator.getBuffer();
-        wr.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
-
-        int r = color >> 16 & 255;
-        int g = color >> 8 & 255;
-        int b = color & 255;
-
-        //◆頂点登録 開始
-        double dScale = 1.0;
-        for(int idx = 0; idx < nVecPos.length; idx++)
-        {
-            //tessellator.setColorRGBA_F(fScale, 1.0F, 1.0F, 0.2F + (float)idx*0.02F);
-            wr.pos(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale).color(r,g,b,255).endVertex();
-            wr.pos(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale).color(r,g,b,255).endVertex();
-            wr.pos(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale).color(r,g,b,255).endVertex();
-        }
-
-        //◆頂点登録 終了
-
-        tessellator.draw();
-
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+                : entitySummonedBlade.getEntityWorld().getGameTime() % 6 + f1;
+        GL11.glRotatef(time * 60.0f, 0, 1, 0);
     }
-
 }

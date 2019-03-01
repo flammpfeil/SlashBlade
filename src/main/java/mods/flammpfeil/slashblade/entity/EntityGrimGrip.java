@@ -22,7 +22,7 @@ public class EntityGrimGrip extends Entity {
     private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntityGrimGrip.class, DataSerializers.VARINT);
 
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //lifetime
         this.getDataManager().register(LIFETIME, 20);
 
@@ -36,12 +36,12 @@ public class EntityGrimGrip extends Entity {
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {
+    protected void readAdditional(NBTTagCompound compound) {
 
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {
+    protected void writeAdditional(NBTTagCompound compound) {
 
     }
 

@@ -50,7 +50,7 @@ public class Tizuru {
                 ItemSlashBlade.ProudSoul.set(tag, 10000);
                 ItemSlashBlade.RepairCount.set(tag,20);
 
-                reqiredBlade.setStackDisplayName("syoukan muramasa");
+                reqiredBlade.setDisplayName("syoukan muramasa");
             }
             String reqiredStr = name + ".reqired";
             SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);

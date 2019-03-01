@@ -30,8 +30,8 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
     @Override
     public String getUnlocalizedName(ItemStack par1ItemStack) {
         String result = super.getUnlocalizedName(par1ItemStack);
-        if(par1ItemStack.hasTagCompound()){
-            NBTTagCompound tag = par1ItemStack.getTagCompound();
+        if(par1ItemStack.hasTag()){
+            NBTTagCompound tag = par1ItemStack.getTag();
             if(CurrentItemName.exists(tag)){
                 result = "item." + CurrentItemName.get(tag);
             }

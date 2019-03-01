@@ -49,8 +49,8 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
     private static final DataParameter<Boolean> IS_JUDGMENT = EntityDataManager.<Boolean>createKey(EntityBlisteringSwords.class, DataSerializers.BOOLEAN);
 
     @Override
-    protected void entityInit() {
-        super.entityInit();
+    protected void registerData() {
+        super.registerData();
 
         this.getDataManager().register(HAS_FIRED, false);
         this.getDataManager().register(IS_JUDGMENT, false);
@@ -101,7 +101,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
 
         if(!getEntityWorld().isRemote){
             long holdlimit = ridingEntity.getEntityData().getLong("SB.BSHOLDLIMIT") + getInterval();
-            long currentTime = getEntityWorld().getTotalWorldTime();
+            long currentTime = getEntityWorld().getGameTime();
             if(holdlimit < currentTime) {
                 setHasFired(true);
 
@@ -139,7 +139,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
             for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.world.spawnParticle(EnumParticleTypes.PORTAL
+                this.world.spawnParticle(Particles.PORTAL
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength
@@ -170,7 +170,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         }else{
             if(ticksExisted < 10)
                 return false;
-            if(!world.getCollisionBoxes(this,this.getEntityBoundingBox()).isEmpty())
+            if(!world.getCollisionBoxes(this,this.getBoundingBox()).isEmpty())
             {
                 if(this.getThrower() != null && this.getThrower() instanceof EntityPlayer)
                     ((EntityPlayer)this.getThrower()).onCriticalHit(this);
@@ -293,7 +293,7 @@ public class EntityBlisteringSwords extends EntitySummonedSwordBase {
         }
         else
         {
-            AxisAlignedBB boundingBox = target.getEntityBoundingBox();
+            AxisAlignedBB boundingBox = target.getBoundingBox();
             d2 = (boundingBox.minY + boundingBox.maxY) / 2.0D - (viewer.posY + (double)viewer.getEyeHeight());
         }
         */

@@ -73,20 +73,20 @@ public class BladeCapabilityProvider implements ICapabilityProvider, INBTSeriali
             NBTTagCompound tag = new NBTTagCompound();
             parentTag.setTag(tagEnergyStorage, tag);
 
-            tag.setInteger(tagCapacity, this.storage.getMaxEnergyStored());
+            tag.setInt(tagCapacity, this.storage.getMaxEnergyStored());
             tag.setTag(tagEnergy, ENERGY.writeNBT(this.storage, null));
         }
         return parentTag;
     }
 
     @Override
-    public void deserializeNBT(NBTBase nbt) {
+    public void readAdditional(NBTBase nbt) {
         NBTTagCompound parentTag = (NBTTagCompound)nbt;
 
         if(parentTag.hasKey(tagEnergyStorage)){
             NBTTagCompound tag = parentTag.getCompoundTag(tagEnergyStorage);
 
-            int capacity = tag.getInteger(tagCapacity);
+            int capacity = tag.getInt(tagCapacity);
             this.storage = new EnergyStorage(capacity);
             ENERGY.readNBT(this.storage, null, tag.getTag("Energy"));
         }
@@ -95,7 +95,7 @@ public class BladeCapabilityProvider implements ICapabilityProvider, INBTSeriali
 
     private void updateStorage(){
         NBTTagCompound tag = ItemSlashBlade.getSpecialEffect(this.container);
-        int level = tag.getInteger(SpecialEffects.HFCustom.getEffectKey());
+        int level = tag.getInt(SpecialEffects.HFCustom.getEffectKey());
 
         if(0 < level){
             int newCapacity = getDefaultCapacity(container);
@@ -121,7 +121,7 @@ public class BladeCapabilityProvider implements ICapabilityProvider, INBTSeriali
         this.put(4, 1000000);
     }};
     private static int getDefaultCapacity(ItemStack stack){
-        int effectLevel = ItemSlashBlade.getSpecialEffect(stack).getInteger(SpecialEffects.HFCustom.getEffectKey());
+        int effectLevel = ItemSlashBlade.getSpecialEffect(stack).getInt(SpecialEffects.HFCustom.getEffectKey());
 
         if(defaultCapacityMap.containsKey(effectLevel))
             return defaultCapacityMap.get(effectLevel);

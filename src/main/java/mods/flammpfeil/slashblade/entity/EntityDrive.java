@@ -31,8 +31,8 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Created by Furia on 14/05/08.
@@ -122,12 +122,13 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     private static final DataParameter<Integer> LIFETIME = EntityDataManager.<Integer>createKey(EntityDrive.class, DataSerializers.VARINT);
     private static final DataParameter<Boolean> IS_MULTI_HIT = EntityDataManager.<Boolean>createKey(EntityDrive.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> IS_SLASH_DIMENSION = EntityDataManager.<Boolean>createKey(EntityDrive.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Integer> COLOR = EntityDataManager.<Integer>createKey(EntityDrive.class, DataSerializers.VARINT);
 
     /**
      * ■イニシャライズ
      */
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //Roll
         this.getDataManager().register(ROLL, 0.0f);
 
@@ -140,6 +141,8 @@ public class EntityDrive extends Entity implements IThrowableEntity {
         //lifetime
         this.getDataManager().register(IS_SLASH_DIMENSION, false);
 
+        //color
+        this.getDataManager().register(COLOR, 0x3333FF);
     }
 
     public boolean getIsMultiHit(){
@@ -168,6 +171,13 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     }
     public void setIsSlashDimension(boolean isSlashDimension){
         this.getDataManager().set(IS_SLASH_DIMENSION, isSlashDimension);
+    }
+
+    public int getColor(){
+        return this.getDataManager().get(COLOR);
+    }
+    public void setColor(int value){
+        this.getDataManager().set(COLOR,value);
     }
 
     public void setInitialSpeed(float f){
@@ -269,7 +279,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(Particles.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -340,7 +350,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
             */
 
             //地形衝突で消失
-            if(!world.getCollisionBoxes(this, this.getEntityBoundingBox()).isEmpty()) {
+            if(!world.getCollisionBoxes(this, this.getBoundingBox()).isEmpty()) {
                 //todo: 突き刺し一定時間保持（DummyEntityに刺して止めるなど
                 this.setDead();
             }
@@ -428,7 +438,7 @@ public class EntityDrive extends Entity implements IThrowableEntity {
     /**
      * ■環境光による暗さの描画（？）
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public int getBrightnessForRender()
     {
@@ -475,19 +485,19 @@ public class EntityDrive extends Entity implements IThrowableEntity {
      * ■NBTの読込
      */
     @Override
-    protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+    protected void readAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■NBTの書出
      */
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
+    protected void writeAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
      * posY, posZ, yaw, pitch
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {}
 
     /**

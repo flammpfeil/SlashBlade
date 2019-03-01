@@ -47,7 +47,7 @@ public class EntityLumberManager extends Entity {
     private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.<Optional<UUID>>createKey(EntityLumberManager.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //lifetime
         this.getDataManager().register(LIFETIME, 20);
 
@@ -77,15 +77,15 @@ public class EntityLumberManager extends Entity {
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {
-        this.ticksExisted = compound.getInteger("ticksExisted");
-        this.setLifeTime(compound.getInteger("lifetime"));
+    protected void readAdditional(NBTTagCompound compound) {
+        this.ticksExisted = compound.getInt("ticksExisted");
+        this.setLifeTime(compound.getInt("lifetime"));
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {
-        compound.setInteger("ticksExisted",this.ticksExisted);
-        compound.setInteger("lifetime",this.getLifeTime());
+    protected void writeAdditional(NBTTagCompound compound) {
+        compound.setInt("ticksExisted",this.ticksExisted);
+        compound.setInt("lifetime",this.getLifeTime());
     }
 
     @Override

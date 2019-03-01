@@ -165,7 +165,7 @@ public class SlashDimensionSpiral extends SpecialAttackBase implements IJustSpec
                 ItemSlashBlade.damageItem(stack, 10, player);
             }
 
-            AxisAlignedBB bb = target.getEntityBoundingBox();
+            AxisAlignedBB bb = target.getBoundingBox();
             bb = bb.grow(2.0f, 0.25f, 2.0f);
 
             List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
@@ -253,7 +253,7 @@ public class SlashDimensionSpiral extends SpecialAttackBase implements IJustSpec
         World world = player.world;
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
-            AxisAlignedBB bb = player.getEntityBoundingBox();
+            AxisAlignedBB bb = player.getBoundingBox();
             Vec3d vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.grow(2.0f, 0.25f, 2.0f);
@@ -277,17 +277,17 @@ public class SlashDimensionSpiral extends SpecialAttackBase implements IJustSpec
 
     private void spawnParticle(World world, Entity target){
         //target.spawnExplosionParticle();
-        world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+        world.spawnParticle(Particles.EXPLOSION_LARGE,
                 target.posX,
                 target.posY + target.height,
                 target.posZ,
                 3.0, 3.0, 3.0);
-        world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+        world.spawnParticle(Particles.EXPLOSION_LARGE,
                 target.posX + 1.0,
                 target.posY + target.height + 1.0,
                 target.posZ,
                 3.0, 3.0, 3.0);
-        world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+        world.spawnParticle(Particles.EXPLOSION_LARGE,
                 target.posX,
                 target.posY + target.height + 0.5,
                 target.posZ + 1.0,
@@ -428,7 +428,7 @@ public class SlashDimensionSpiral extends SpecialAttackBase implements IJustSpec
                 ItemSlashBlade.damageItem(stack, 10, player);
             }
 
-            AxisAlignedBB bb = target.getEntityBoundingBox();
+            AxisAlignedBB bb = target.getBoundingBox();
             bb = bb.grow(2.0f, 0.25f, 2.0f);
 
             List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());

@@ -5,9 +5,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.ObfuscationReflectionHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,7 +29,7 @@ public class EnemyStep {
     static final String WallKick = "SB.WallKick";
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event){
         EntityLivingBase target = event.getEntityLiving();
         if(target == null) return;
@@ -77,7 +77,7 @@ public class EnemyStep {
             if(hasCollidWallBlocks(target, target.getPositionVector())){
                 resetJump(target);
 
-                target.getEntityData().setInteger(WallKick, 1);
+                target.getEntityData().setInt(WallKick, 1);
                 if(target instanceof EntityPlayer)
                     ((EntityPlayer) target).onCriticalHit(target);
             }
@@ -88,14 +88,14 @@ public class EnemyStep {
 
 
     public boolean canCycleJump(EntityLivingBase target){
-        boolean isJumping = ReflectionHelper.getPrivateValue(EntityLivingBase.class,target,"isJumping","field_70703_bu");
+        boolean isJumping = ObfuscationReflectionHelper.getPrivateValue(EntityLivingBase.class,target,"isJumping","field_70703_bu");
 
-        int jumpState = target.getEntityData().getInteger(DoJumping);
+        int jumpState = target.getEntityData().getInt(DoJumping);
 
         if(isJumping){
             switch (jumpState){
                 case 0: //firstJump
-                    target.getEntityData().setInteger(DoJumping,1);
+                    target.getEntityData().setInt(DoJumping,1);
                     if(target.fallDistance == 0){
                         return false;
                     }else{ //no jump falling
@@ -105,7 +105,7 @@ public class EnemyStep {
                     return false;
 
                 case 2: //special jump
-                    target.getEntityData().setInteger(DoJumping,1);
+                    target.getEntityData().setInt(DoJumping,1);
                     return true;
 
                 default:
@@ -115,7 +115,7 @@ public class EnemyStep {
 
             switch (jumpState){
                 case 1: //set can special jump
-                    target.getEntityData().setInteger(DoJumping,2);
+                    target.getEntityData().setInt(DoJumping,2);
                     return false;
 
                 default:
@@ -128,7 +128,7 @@ public class EnemyStep {
     }
     private void resetJump(EntityLivingBase target){
         target.onGround = true;
-        ReflectionHelper.setPrivateValue(EntityLivingBase.class, target, 0, "jumpTicks", "field_70773_bE");
+        ObfuscationReflectionHelper.setPrivateValue(EntityLivingBase.class, target, 0, "jumpTicks", "field_70773_bE");
     }
 
     public boolean hasCollidWallBlocks(Entity target, Vec3d pos)
@@ -151,7 +151,7 @@ public class EnemyStep {
     }
 
     private Entity getStepEntity(EntityLivingBase target){
-        AxisAlignedBB bb = target.getEntityBoundingBox();
+        AxisAlignedBB bb = target.getBoundingBox();
         bb = bb.grow(2.0, 1.5, 2.0);
         bb = bb.offset(0,0.5,0);
         List<Entity> list = target.world.getEntitiesInAABBexcluding(target, bb, EntitySelectorAttackable.getInstance());

@@ -9,8 +9,8 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -53,7 +53,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
     private static final DataParameter<Integer> ThrowerEntityID = EntityDataManager.<Integer>createKey(EntityJustGuardManager.class, DataSerializers.VARINT);
 
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //entityid
         this.getDataManager().register(ThrowerEntityID, 0);
     }
@@ -198,7 +198,7 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
      * ■環境光による暗さの描画（？）
      *    EntityXPOrbのぱくり
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public int getBrightnessForRender()
     {
@@ -245,19 +245,19 @@ public class EntityJustGuardManager extends Entity implements IThrowableEntity {
      * ■NBTの読込
      */
     @Override
-    protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+    protected void readAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■NBTの書出
      */
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
+    protected void writeAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
      * posY, posZ, yaw, pitch
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {}
 
     @Override

@@ -69,7 +69,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
             SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
             reqiredBlade.addEnchantment(Enchantments.LOOTING,1);
-            NBTTagCompound tag = reqiredBlade.getTagCompound();
+            NBTTagCompound tag = reqiredBlade.getTag();
             ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + name.replace(':', '.'));
             ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
             ItemSlashBlade.TextureName.set(tag,texture);
@@ -81,7 +81,7 @@ public class RecipeWrapBlade extends ShapedRecipes {
             loreList.appendTag(new NBTTagString("true performance : please crafting"));
             displayTag.setTag("Lore", loreList);
 
-            reqiredBlade.setStackDisplayName(reqiredBlade.getDisplayName());
+            reqiredBlade.setDisplayName(reqiredBlade.getDisplayName());
         }
         String reqiredStr = "wrap." + name.replace(':', '.') + ".sample";
         SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
@@ -131,21 +131,21 @@ public class RecipeWrapBlade extends ShapedRecipes {
 
         SlashBlade.wrapBlade.setWrapItem(scabbard,target);
 
-        NBTTagCompound tag = scabbard.getTagCompound();
+        NBTTagCompound tag = scabbard.getTag();
         ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap." + targetName.toString().replace(':','.'));
         ItemSlashBladeNamed.TextureName.set(tag,wrapableTextureNames.get(targetName.toString()));
         ItemSlashBladeNamed.BaseAttackModifier.set(tag,wrapableBaseAttackModifiers.get(targetName.toString()));
 
         if(target.hasDisplayName()){
-            scabbard.setStackDisplayName(I18n.format("item.flammpfeil.slashblade.wrapformat", target.getDisplayName()));
+            scabbard.setDisplayName(I18n.format("item.flammpfeil.slashblade.wrapformat", target.getDisplayName()));
         }else if(target.isItemEnchanted()){
-            scabbard.setStackDisplayName(scabbard.getDisplayName());
+            scabbard.setDisplayName(scabbard.getDisplayName());
         }else{
-            scabbard.setStackDisplayName(I18n.format("item.flammpfeil.slashblade.wrapformat.low",target.getDisplayName()));
+            scabbard.setDisplayName(I18n.format("item.flammpfeil.slashblade.wrapformat.low",target.getDisplayName()));
         }
 
         if(target.isItemEnchanted()){
-            tag.setTag("ench",target.getTagCompound().getTag("ench"));
+            tag.setTag("ench",target.getTag().getTag("ench"));
         }
 
         return scabbard;

@@ -1,24 +1,29 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import mods.flammpfeil.slashblade.client.util.MSAutoCloser;
 import mods.flammpfeil.slashblade.entity.EntitySummonedSwordBase;
+import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 
 /**
  * Created by Furia on 14/05/08.
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class RenderPhantomSwordBase extends Render {
+    protected double[][] getVec() {
+        return dVec;
+    }
     private static double[][] dVec = {
             {0.0000,0.0000,417.7431},
             {0.0000,-44.6113,-30.0000},
@@ -31,6 +36,9 @@ public class RenderPhantomSwordBase extends Render {
             {159.1439,0.0000,-30.0000},
             {-159.1439,0.0000,-30.0000}}; // 頂点13
 
+    protected int[][] getFace() {
+        return nVecPos;
+    }
     private static int[][] nVecPos = {
             {0,2,1},
             {0,3,2},
@@ -67,70 +75,65 @@ public class RenderPhantomSwordBase extends Render {
         return null;
     }
 
-    private void doDriveRender(EntitySummonedSwordBase entityPhantomSword, double dX, double dY, double dZ, float f, float f1)
-    {
-        Tessellator tessellator = Tessellator.getInstance();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_BLEND);
-
-        int color = entityPhantomSword.getColor();
-
-        boolean inverse = color < 0;
-
-        color = Math.abs(color);
-
-        if(!inverse){
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        }
-        else{
-            GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
-        }
-        //GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        GL11.glPushMatrix();
-
-        GL11.glTranslatef((float)dX, (float)dY+0.5f, (float)dZ);
+    protected void transform(EntitySummonedSwordBase entity, double dX, double dY, double dZ, float f, float f1){
+        GlStateManager.translatef((float) dX, (float) dY + 0.5f, (float) dZ);
 
         //f
-        GL11.glRotatef(lerpDegrees(entityPhantomSword.prevRotationYaw, entityPhantomSword.rotationYaw, f1), 0.0F, 1.0F, 0.0F); //yaw
-        GL11.glRotatef(-lerpDegrees(entityPhantomSword.prevRotationPitch, entityPhantomSword.rotationPitch, f1), 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(entityPhantomSword.getRoll(),0,0,1);
-        //GL11.glRotatef(fRot, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotatef(lerpDegrees(entity.prevRotationYaw, entity.rotationYaw, f1), 0.0F, 1.0F, 0.0F); //yaw
+        GlStateManager.rotatef(-lerpDegrees(entity.prevRotationPitch, entity.rotationPitch, f1), 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotatef(entity.getRoll(), 0, 0, 1);
 
         float scale = 0.0045f;
-        GL11.glScalef(scale, scale, scale);
-        GL11.glScalef(0.5f, 0.5f, 1.0f);
+        GlStateManager.scalef(scale, scale, scale);
+        GlStateManager.scalef(0.5f, 0.5f, 1.0f);
+    }
 
-        //■スタート
-        float lifetime = entityPhantomSword.getLifeTime();
-        float ticks = entityPhantomSword.ticksExisted;
-        BufferBuilder wr = tessellator.getBuffer();
-        wr.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
+    protected void doDriveRender(EntitySummonedSwordBase entityPhantomSword, double dX, double dY, double dZ, float f, float f1)
+    {
+        Tessellator tessellator = Tessellator.getInstance();
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
 
-        int r = color >> 16 & 255;
-        int g = color >> 8 & 255;
-        int b = color & 255;
-
-        //◆頂点登録 開始
-        double dScale = 1.0;
-        for(int idx = 0; idx < nVecPos.length; idx++)
-        {
-            //tessellator.setColorRGBA_F(fScale, 1.0F, 1.0F, 0.2F + (float)idx*0.02F);
-            wr.pos(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale).color(r,g,b,255).endVertex();
-            wr.pos(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale).color(r,g,b,255).endVertex();
-            wr.pos(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale).color(r,g,b,255).endVertex();
+        int color = entityPhantomSword.getColor();
+        boolean inverse = color < 0;
+        color = Math.abs(color);
+        if(!inverse){
+            OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+        }
+        else{
+            OpenGlHelper.glBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO, GL11.GL_ONE, GL11.GL_ZERO);
         }
 
-        //◆頂点登録 終了
+        try(MSAutoCloser msac = MSAutoCloser.pushMatrix()) {
+            transform(entityPhantomSword, dX, dY, dZ, f, f1);
 
-        tessellator.draw();
+            //■スタート
+            float lifetime = entityPhantomSword.getLifeTime();
+            float ticks = entityPhantomSword.ticksExisted;
+            BufferBuilder wr = tessellator.getBuffer();
+            wr.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+            int r = color >> 16 & 255;
+            int g = color >> 8 & 255;
+            int b = color & 255;
+
+            //◆頂点登録 開始
+            double dScale = 1.0;
+            for (int idx = 0; idx < nVecPos.length; idx++) {
+                //tessellator.setColorRGBA_F(fScale, 1.0F, 1.0F, 0.2F + (float)idx*0.02F);
+                wr.pos(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale).color(r, g, b, 255).endVertex();
+                wr.pos(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale).color(r, g, b, 255).endVertex();
+                wr.pos(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale).color(r, g, b, 255).endVertex();
+            }
+
+            //◆頂点登録 終了
+
+            tessellator.draw();
+        }
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.enableTexture2D();
     }
 
     float lerp(float start, float end, float percent){

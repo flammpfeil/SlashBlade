@@ -74,7 +74,7 @@ public class Agito {
                     ItemSlashBlade.KillCount.set(reqTag,100);
                     ItemSlashBlade.RepairCount.set(reqTag,1);
 
-                    reqiredBlade.setStackDisplayName("agito rust");
+                    reqiredBlade.setDisplayName("agito rust");
 
                     SlashBlade.registerCustomItemStack(nameAgitoReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameAgitoReqired);
@@ -153,7 +153,7 @@ public class Agito {
                     ItemSlashBlade.ProudSoul.set(reqTag,1000);
                     ItemSlashBlade.RepairCount.set(reqTag, 10);
 
-                    reqiredBlade.setStackDisplayName("orotiagito seald");
+                    reqiredBlade.setDisplayName("orotiagito seald");
 
                     SlashBlade.registerCustomItemStack(nameOrotiagitoReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoReqired);
@@ -201,7 +201,7 @@ public class Agito {
                     ItemSlashBlade.KillCount.set(reqTag, 100);
                     ItemSlashBlade.RepairCount.set(reqTag, 1);
 
-                    reqiredBlade.setStackDisplayName("agito rust");
+                    reqiredBlade.setDisplayName("agito rust");
 
                     SlashBlade.registerCustomItemStack(nameOrotiagitoSealdReqired, reqiredBlade);
                     ItemSlashBladeNamed.NamedBlades.add(nameOrotiagitoSealdReqired);

@@ -4,21 +4,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
-import mods.flammpfeil.slashblade.network.MessageRankpointSynchronize;
+import mods.flammpfeil.slashblade.network.S2CRankpointSynchronize;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 //import net.minecraft.stats.Achievement;
-import net.minecraft.stats.StatisticsManagerServer;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import net.minecraft.entity.Entity;
@@ -190,7 +184,7 @@ public class StylishRankManager {
         NBTTagCompound tag = getTag(e);
         int rank = RankPoint.get(tag);
 
-        long now = e.world.getTotalWorldTime();
+        long now = e.world.getGameTime();
         long lastUpdate = LastRankPointUpdate.get(tag);
 
         float factor = 1.0f;
@@ -277,7 +271,7 @@ public class StylishRankManager {
             //get last use AttackTypeTime stylePoint calcFactor
             String timerKey = "SBAttackTime" + attackType;
             long last = tag.getLong(timerKey);
-            long now = e.world.getTotalWorldTime();
+            long now = e.world.getGameTime();
 
             if(last < now){
                 tag.setLong(timerKey,now + initCooltime);
@@ -320,7 +314,7 @@ public class StylishRankManager {
 
         rankPoint += amount;
         RankPoint.set(tag, rankPoint);
-        LastRankPointUpdate.set(tag,e.world.getTotalWorldTime());
+        LastRankPointUpdate.set(tag,e.world.getGameTime());
 
         int postRank = getStylishRank(rankPoint);
 
@@ -378,7 +372,7 @@ public class StylishRankManager {
         if(!isWhiffs)
             return;
 
-        AxisAlignedBB bb = user.getEntityBoundingBox();
+        AxisAlignedBB bb = user.getBoundingBox();
         bb = bb.grow(10, 5, 10);
         List<Entity> nearbyList = user.world.getEntitiesInAABBexcluding(user, bb, EntitySelectorAttackable.getInstance());
 
@@ -410,7 +404,7 @@ public class StylishRankManager {
 
         if(lastUpdate != lastSync){
             LastRankPointSynchronize.set(tag,lastUpdate);
-            NetworkManager.INSTANCE.sendTo(new MessageRankpointSynchronize(RankPoint.get(tag)), (EntityPlayerMP) event.getEntityLiving());
+            NetworkManager.channel.sendTo(new S2CRankpointSynchronize(RankPoint.get(tag)), (EntityPlayerMP) event.getEntityLiving());
         }
     }
 
@@ -439,7 +433,7 @@ public class StylishRankManager {
         NBTTagCompound tag = getTag(e.getEntity());
 
         long lastUpdate = LastRankPointUpdate.get(tag);
-        long now = e.getEntity().world.getTotalWorldTime();
+        long now = e.getEntity().world.getGameTime();
 
         if(RankRange * 2 < now - lastUpdate){
             RankPoint.set(tag, 0);
@@ -452,6 +446,6 @@ public class StylishRankManager {
     public static void setRankPoint(EntityLivingBase user, int rankPoint){
         NBTTagCompound tag = getTag(user);
         RankPoint.set(tag,rankPoint);
-        LastRankPointUpdate.set(tag,user.world.getTotalWorldTime());
+        LastRankPointUpdate.set(tag,user.world.getGameTime());
     }
 }

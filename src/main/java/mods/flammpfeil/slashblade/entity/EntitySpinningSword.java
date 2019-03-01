@@ -2,35 +2,29 @@ package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.ability.Taunt;
-import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
+import mods.flammpfeil.slashblade.network.C2SMoveCommandState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -87,7 +81,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
             byte command = owner.getEntityData().getByte("SB.MCS");
             if(2.5 < owner.getDistance(this)
                     || !owner.onGround
-                    || 0 == (command & MessageMoveCommandState.CAMERA)
+                    || 0 == (command & C2SMoveCommandState.CAMERA)
                     || owner.getHeldItemMainhand() == null
                     || !(owner.getHeldItemMainhand().getItem() instanceof ItemSlashBlade)) {
                 setDead();
@@ -155,7 +149,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
                                 double var4 = rand.nextGaussian() * 0.02D;
                                 double var6 = rand.nextGaussian() * 0.02D;
                                 double var8 = 10.0D;
-                                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+                                this.world.spawnParticle(Particles.EXPLOSION_NORMAL
                                         , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
                                         , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
                                         , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
@@ -192,7 +186,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
         }else if(getLifeTime() < ticksExisted) {
             Taunt.fire(blade, (EntityLivingBase)getThrower());
 
-            AxisAlignedBB bb = getThrower().getEntityBoundingBox();
+            AxisAlignedBB bb = getThrower().getBoundingBox();
             bb = bb.grow(10, 5, 10);
             List<Entity> list = world.getEntitiesInAABBexcluding(getThrower(), bb, EntitySelectorAttackable.getInstance());
 
@@ -244,7 +238,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
      * ■環境光による暗さの描画（？）
      *    EntityXPOrbのぱくり
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public int getBrightnessForRender()
     {
@@ -288,12 +282,12 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+    protected void readAdditional(NBTTagCompound nbttagcompound) {}
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
+    protected void writeAdditional(NBTTagCompound nbttagcompound) {}
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {}
 
     @Override
@@ -369,7 +363,7 @@ public class EntitySpinningSword extends EntitySummonedSwordBase {
     protected void attackEntity(Entity target){
 
         if(this.thrower != null)
-            this.thrower.getEntityData().setInteger("LastHitSummonedSwords",this.getEntityId());
+            this.thrower.getEntityData().setInt("LastHitSummonedSwords",this.getEntityId());
 
         if(!this.world.isRemote){
             float magicDamage = 1;

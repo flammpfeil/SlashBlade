@@ -51,7 +51,7 @@ public class Tagayasan {
             NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
             ItemSlashBlade.KillCount.set(reqTag,1000);
 
-            reqiredBlade.setStackDisplayName("thousandkill woodblade");
+            reqiredBlade.setDisplayName("thousandkill woodblade");
 
             name = "flammpfeil.slashblade.tagayasan.reqired";
             SlashBlade.registerCustomItemStack(name, reqiredBlade);

@@ -105,7 +105,7 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
             }
 
 
-            hitTime = this.getEntityWorld().getTotalWorldTime();
+            hitTime = this.getEntityWorld().getGameTime();
         }else{
             result = false;
         }
@@ -126,7 +126,7 @@ public class EntitySummonedBlade extends EntitySummonedSwordBase {
         if(targetid == 0){
             double expandFactor = 15;
             List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this
-                    , this.getEntityBoundingBox()
+                    , this.getBoundingBox()
                             .grow(expandFactor, expandFactor, expandFactor));
             list.removeAll(alreadyHitEntity);
 

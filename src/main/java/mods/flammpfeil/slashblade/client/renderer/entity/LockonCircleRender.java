@@ -8,15 +8,13 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -29,7 +27,7 @@ public class LockonCircleRender {
 
     @SubscribeEvent
     public void onRenderLiving(RenderWorldLastEvent event){
-        EntityLivingBase player = Minecraft.getMinecraft().player;
+        EntityLivingBase player = Minecraft.getInstance().player;
         if(player == null) return;
 
         ItemStack stack = player.getHeldItemMainhand();
@@ -46,13 +44,13 @@ public class LockonCircleRender {
         if(target == null) return;
         if(!(target instanceof EntityLivingBase)) return;
 
-        if(!target.isEntityAlive()) return;
+        if(!target.isAlive()) return;
 
         float health = 1.0f - ((EntityLivingBase)target).getHealth() / ((EntityLivingBase)target).getMaxHealth();
 
         float partialTicks = event.getPartialTicks();
 
-        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+        Entity entity = Minecraft.getInstance().getRenderViewEntity();
         double d3 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
         double d4 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)partialTicks;
         double d5 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)partialTicks;
@@ -67,8 +65,8 @@ public class LockonCircleRender {
         GL11.glPushMatrix();
 
         Vec3d pos = lerp(new Vec3d(target.prevPosX, target.prevPosY, target.prevPosZ),target.getPositionVector(), partialTicks)
-                .addVector(0,target.height / 2.0, 0)
-                .addVector(-d3,-d4,-d5);
+                .add(0,target.height / 2.0, 0)
+                .add(-d3,-d4,-d5);
         GL11.glTranslated(pos.x, pos.y, pos.z);
         float scale = 0.00625f;
         GL11.glScalef(scale, scale, scale);
@@ -80,11 +78,11 @@ public class LockonCircleRender {
 
         GlStateManager.disableCull();
 
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.alphaFunc(GL11.GL_ALWAYS, 0.05F);
         GlStateManager.enableBlend();
         GlStateManager.depthMask(true);
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepthTest();
         GlStateManager.depthFunc(GL11.GL_ALWAYS);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
@@ -108,7 +106,7 @@ public class LockonCircleRender {
             resourceTexture = textureLoc;
         }
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceTexture);
+        Minecraft.getInstance().getTextureManager().bindTexture(resourceTexture);
 
         Face.setColor(0xAA000000 | color);
         model.renderPart("lockonBase");

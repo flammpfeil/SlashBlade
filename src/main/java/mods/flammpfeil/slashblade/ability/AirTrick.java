@@ -27,7 +27,7 @@ public class AirTrick {
 
     static public boolean doAirTrick(EntityPlayerMP entityPlayer){
 
-        int entityId = entityPlayer.getEntityData().getInteger("LastHitSummonedSwords");
+        int entityId = entityPlayer.getEntityData().getInt("LastHitSummonedSwords");
 
         if(entityId == 0) return false;
 
@@ -37,7 +37,7 @@ public class AirTrick {
         if(!(lastHitSS instanceof EntitySummonedSwordBase)) return false;
         if(lastHitSS.isDead) return false;
 
-        if(lastHitSS.world.getTotalWorldTime() < lastHitSS.getEntityData().getLong(NextAirTrick))
+        if(lastHitSS.world.getGameTime() < lastHitSS.getEntityData().getLong(NextAirTrick))
             return false;
 
         Entity target = ((EntitySummonedSwordBase) lastHitSS).getRidingEntity();
@@ -91,7 +91,7 @@ public class AirTrick {
 
         if(teleported){
             //lastHitSS.setDead();
-            lastHitSS.getEntityData().setLong(NextAirTrick,lastHitSS.world.getTotalWorldTime() + AirHikeInterval);
+            lastHitSS.getEntityData().setLong(NextAirTrick,lastHitSS.world.getGameTime() + AirHikeInterval);
             //entityPlayer.world.playSoundEffect(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, "mob.endermen.portal", 1.0F, 1.0F);
 
             entityPlayer.world.playSound((EntityPlayer)null, entityPlayer.prevPosX, entityPlayer.prevPosY, entityPlayer.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, entityPlayer.getSoundCategory(), 1.0F, 1.0F);
@@ -115,7 +115,7 @@ public class AirTrick {
     {
         AxisAlignedBB bb = setPosition(target, pos.x, pos.y, pos.z);
 
-        return /*!target.world.isAnyLiquid(target.getEntityBoundingBox()) && */target.world.getCollisionBoxes(target, bb).isEmpty() /*&& target.world.checkNoEntityCollision(bb, target)*/;
+        return /*!target.world.isAnyLiquid(target.getBoundingBox()) && */target.world.getCollisionBoxes(target, bb).isEmpty() /*&& target.world.checkNoEntityCollision(bb, target)*/;
 
         //List blockCollidList = target.world.getCollidingBoundingBoxes(target, bb);
 

@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.util;
 
 import com.google.common.collect.Lists;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -57,5 +58,10 @@ public class InventoryUtility {
         }
 
         return result;
+    }
+
+
+    public static ItemStack getStackInRowAndColumn(InventoryCrafting craftingInventory, int row, int column){
+        return craftingInventory.getStackInSlot(row + column * craftingInventory.getWidth());
     }
 }

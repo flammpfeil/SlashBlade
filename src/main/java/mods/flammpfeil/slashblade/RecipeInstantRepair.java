@@ -67,8 +67,8 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 	            if(!target.isEmpty() && target.getItem() instanceof ItemSlashBlade){
 
 	            	if(0 < target.getItemDamage()){
-	            		if(target.hasTagCompound()){
-	            			NBTTagCompound tag = target.getTagCompound();
+	            		if(target.hasTag()){
+	            			NBTTagCompound tag = target.getTag();
 	            			int proudSoul = ItemSlashBlade.ProudSoul.get(tag);
 
 	            			if(RepairProudSoulCount < proudSoul){
@@ -98,8 +98,8 @@ public class RecipeInstantRepair extends ShapedOreRecipe
         if(!target.isEmpty() && target.getItem() instanceof ItemSlashBlade){
 
         	if(0 < itemstack.getItemDamage()){
-        		if(itemstack.hasTagCompound()){
-        			NBTTagCompound tag = itemstack.getTagCompound();
+        		if(itemstack.hasTag()){
+        			NBTTagCompound tag = itemstack.getTag();
         			int proudSoul = ItemSlashBlade.ProudSoul.get(tag);
         			int repairPoints = proudSoul / RepairProudSoulCount;
 
@@ -113,7 +113,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 
                         ItemSlashBlade.ProudSoul.set(tag, proudSoul);
 
-        				tag.setInteger(RepairCountStr, repair);
+        				tag.setInt(RepairCountStr, repair);
         			}
         		}
         	}
@@ -131,11 +131,11 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 		if(!item.isEmpty()){
 	        if(item.getItem() instanceof ItemSlashBlade){
 
-	        	if(item.hasTagCompound()){
+	        	if(item.hasTag()){
 
-	        		NBTTagCompound tag = item.getTagCompound();
+	        		NBTTagCompound tag = item.getTag();
 	        		if(tag.hasKey(RepairCountStr)){
-	            		int repair = tag.getInteger(RepairCountStr);
+	            		int repair = tag.getInt(RepairCountStr);
 	            		tag.removeTag(RepairCountStr);
 
 	            		try{

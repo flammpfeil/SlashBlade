@@ -1,12 +1,12 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
+import mods.flammpfeil.slashblade.client.util.LightSetup;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.entity.EntityGrimGripKey;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -32,18 +32,13 @@ public class GrimGripKeyRender extends Render{
     }
 
     private TextureManager engine(){
-        return this.renderManager.renderEngine;
+        return this.renderManager.textureManager;
     }
 
     @Override
     public void doRender(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
 
         if(renderOutlines){
-            GlStateManager.disableLighting();
-            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.disableTexture2D();
-            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-
             GlStateManager.enableColorMaterial();
             float cycleTicks = 40.0f;
             float b = Math.abs((entity.ticksExisted % cycleTicks) / cycleTicks - 0.5f) + 0.5f;
@@ -56,11 +51,6 @@ public class GrimGripKeyRender extends Render{
         if(renderOutlines){
             GlStateManager.disableOutlineMode();
             GlStateManager.disableColorMaterial();
-
-            GlStateManager.enableLighting();
-            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.enableTexture2D();
-            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
         }
 
     }
@@ -71,10 +61,10 @@ public class GrimGripKeyRender extends Render{
 
         if(entity.isHide()) {
             boolean invisible = true;
-            for(ItemStack stack : Minecraft.getMinecraft().player.getHeldEquipment()){
+            for(ItemStack stack : Minecraft.getInstance().player.getHeldEquipment()){
                 if(!stack.isEmpty()
                     && (stack.getItem() instanceof ItemProudSoul)
-                    && stack.getItemDamage() == 4) {
+                    && stack.getDamage() == 4) {
                     invisible = false;
                     break;
                 }
@@ -89,7 +79,7 @@ public class GrimGripKeyRender extends Render{
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
         //GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_LIGHTING);
+        GlStateManager.disableLighting();
         GL11.glEnable(GL11.GL_BLEND);
 
         boolean isActive = 0 < entity.active;
@@ -123,26 +113,17 @@ public class GrimGripKeyRender extends Render{
         float scale = 0.005f;
         GL11.glScalef(scale, scale, scale);
 
+        try(LightSetup ls = isActive ? LightSetup.setup() : null){
+            Face.setColor(color);
 
-        float lastx = OpenGlHelper.lastBrightnessX;
-        float lasty = OpenGlHelper.lastBrightnessY;
-        if(isActive) {
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-        }
+            model.renderAll();
 
-        Face.setColor(color);
-
-        model.renderAll();
-
-        Face.resetColor();
-
-        if(isActive) {
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+            Face.resetColor();
         }
 
 
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_LIGHTING);
+        GlStateManager.enableLighting();
         //GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         GL11.glPopAttrib();

@@ -21,9 +21,9 @@ public class RecipeUpgradeBlade extends ShapedOreRecipe {
 			ItemStack curIs = var1.getStackInSlot(idx);
 			if(!curIs.isEmpty()
 					&& curIs.getItem() instanceof ItemSlashBlade
-					&& curIs.hasTagCompound()){
+					&& curIs.hasTag()){
 
-				NBTTagCompound tag = curIs.getTagCompound();
+				NBTTagCompound tag = curIs.getTag();
 				tag = (NBTTagCompound)tag.copy();
 
                 ItemSlashBlade.IsBroken.remove(tag);

@@ -23,7 +23,7 @@ public class IllegalActionEnabler {
         if(!(playerEntity.getHeldItemMainhand().getItem() instanceof ItemSlashBlade))
             return;
 
-        if(event.getAabb().equals(playerEntity.getEntityBoundingBox().grow(0.0625D)))
+        if(event.getAabb().equals(playerEntity.getBoundingBox().grow(0.0625D)))
             event.getCollisionBoxesList().add(event.getAabb().offset(0, playerEntity.height * 2, 0));
     }
 }

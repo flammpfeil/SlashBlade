@@ -137,7 +137,7 @@ public class AnvilEventHandler {
             if (event.getLeft().hasDisplayName())
                 out.clearCustomName();
         }else if (!event.getName().equals(event.getLeft().getDisplayName()))
-            out.setStackDisplayName(event.getName());
+            out.setDisplayName(event.getName());
 
         event.setOutput(out);
     }

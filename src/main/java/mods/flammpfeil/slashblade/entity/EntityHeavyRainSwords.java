@@ -52,8 +52,8 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
     private static final DataParameter<Float> INI_YAW = EntityDataManager.<Float>createKey(EntityHeavyRainSwords.class, DataSerializers.FLOAT);
 
     @Override
-    protected void entityInit() {
-        super.entityInit();
+    protected void registerData() {
+        super.registerData();
 
         this.getDataManager().register(INI_PITCH, -90.0f);
         this.getDataManager().register(INI_YAW, 0.0f);
@@ -93,7 +93,7 @@ public class EntityHeavyRainSwords extends EntitySummonedSwordBase {
             //for (int l = 0; l < 4; ++l)
             {
                 trailLength = 0.25F;
-                this.world.spawnParticle(EnumParticleTypes.PORTAL
+                this.world.spawnParticle(Particles.PORTAL
                         , this.posX - this.motionX * (double)trailLength
                         , this.posY - this.motionY * (double)trailLength
                         , this.posZ - this.motionZ * (double)trailLength

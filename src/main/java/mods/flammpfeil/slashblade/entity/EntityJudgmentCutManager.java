@@ -15,8 +15,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
@@ -65,7 +65,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
     private static final DataParameter<Integer> ThrowerEntityID = EntityDataManager.<Integer>createKey(EntityJudgmentCutManager.class, DataSerializers.VARINT);
 
     @Override
-    protected void entityInit() {
+    protected void registerData() {
         //entityid
         this.getDataManager().register(ThrowerEntityID, 0);
     }
@@ -146,7 +146,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
                         double d1 = player.getRNG().nextGaussian() * 0.2D;
                         double d2 = player.getRNG().nextGaussian() * 0.2D;
                         double d3 = 16.0D;
-                        this.world.spawnParticle(EnumParticleTypes.SPELL_WITCH
+                        this.world.spawnParticle(Particles.SPELL_WITCH
                                 , player.posX + (double)(player.getRNG().nextFloat() * player.width * 2.0F) - (double)player.width - d0 * d3
                                 , player.posY // + (double)(this.itemRand.nextFloat() * par3Entity.height) - d1 * d3
                                 , player.posZ + (double)(player.getRNG().nextFloat() * player.width * 2.0F) - (double)player.width - d2 * d3, d0, d1, d2);
@@ -167,7 +167,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
         if(!world.isRemote)
         {
 
-            AxisAlignedBB bb = this.getEntityBoundingBox().offset(0, -this.height / 2, 0);
+            AxisAlignedBB bb = this.getBoundingBox().offset(0, -this.height / 2, 0);
 
             //足止め
             if(this.ticksExisted == 2 && this.getThrower() != null){
@@ -189,7 +189,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
 
 
                             for(int i = 0; i<5; i++)
-                                this.world.spawnParticle(EnumParticleTypes.PORTAL,
+                                this.world.spawnParticle(Particles.PORTAL,
                                     curEntity.posX + (this.rand.nextDouble() - 0.5D) * (double)curEntity.width,
                                     curEntity.posY + this.rand.nextDouble() * (double)curEntity.height - 0.25D,
                                     curEntity.posZ + (this.rand.nextDouble() - 0.5D) * (double)curEntity.width,
@@ -365,7 +365,7 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
      * ■環境光による暗さの描画（？）
      *    EntityXPOrbのぱくり
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public int getBrightnessForRender()
     {
@@ -412,20 +412,20 @@ public class EntityJudgmentCutManager extends Entity implements IThrowableEntity
      * ■NBTの読込
      */
     @Override
-    protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+    protected void readAdditional(NBTTagCompound nbttagcompound) {}
 
     /**
      * ■NBTの書出
      */
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
+    protected void writeAdditional(NBTTagCompound nbttagcompound) {}
 
 
     /**
      * ■Sets the position and rotation. Only difference from the other one is no bounding on the rotation. Args: posX,
      * posY, posZ, yaw, pitch
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {}
 
     /**

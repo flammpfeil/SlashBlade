@@ -1,6 +1,8 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
 import com.google.common.collect.Maps;
+import mods.flammpfeil.slashblade.client.util.LightSetup;
+import mods.flammpfeil.slashblade.client.util.MSAutoCloser;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.GroupObject;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
@@ -19,7 +21,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
@@ -43,7 +44,7 @@ public class BladeStandRender extends Render{
     }
 
     private TextureManager engine(){
-        return this.renderManager.renderEngine;
+        return this.renderManager.textureManager;
     }
 
     public static Map<EntityBladeStand.StandType,String> nameMap = createNameMap();
@@ -66,45 +67,9 @@ public class BladeStandRender extends Render{
         return (Map<K, V>)StandTypeName;
     }
 
-    /*
-    * �|��p���f�������K��
-
-    stand_[dual|single|upright|wall][_damaged][_ns][_r|_l][_u|_d]
-
-
-    dual
-        ��E����2�i
-    single
-        ����蓁��1�i
-    upright
-        �c�|��
-    wall
-        ����蓁��1�i�Ǘp
-
-
-    _damaged
-        �܂ꂽ���
-
-    _ns
-        �△���p
-
-    ���ȉ��͖����Ă��悢
-
-    _r or _l
-        �����]�@���c�ƕK���Z�b�g�Ŏw��
-    _u or _d
-        �c���]�@�����ƕK���Z�b�g�Ŏw��
-
-    * */
-
     @Override
     public void doRender(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
         if(renderOutlines){
-            GlStateManager.disableLighting();
-            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.disableTexture2D();
-            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-
             GlStateManager.enableColorMaterial();
             float h = (entity.ticksExisted % 80) / 80.0f;
             GlStateManager.enableOutlineMode(Color.getHSBColor(h,0.5f,1.0f).getRGB());
@@ -115,11 +80,6 @@ public class BladeStandRender extends Render{
         if(renderOutlines){
             GlStateManager.disableOutlineMode();
             GlStateManager.disableColorMaterial();
-
-            GlStateManager.enableLighting();
-            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.enableTexture2D();
-            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
         }
 
         if(entity.isBurning())
@@ -134,338 +94,311 @@ public class BladeStandRender extends Render{
 
         EntityBladeStand e = (EntityBladeStand)entity;
 
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        try(MSAutoCloser mac = MSAutoCloser.pushMatrix()) {
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-        float scale = 0.00675f;
-        //=================stand init==========
+            float scale = 0.00675f;
+            //=================stand init==========
 
-        EntityBladeStand.StandType type = EntityBladeStand.getType(e);
+            EntityBladeStand.StandType type = EntityBladeStand.getType(e);
 
-        boolean HFlip = false;
-        boolean VFlip = false;
+            boolean HFlip = false;
+            boolean VFlip = false;
 
-        switch (e.getFlip()){
-            case 1:
-                HFlip = false;
-                VFlip = true;
-                break;
-            case 2:
-                HFlip = true;
-                VFlip = false;
-                break;
-            case 3:
-                VFlip = true;
-                HFlip = true;
-                break;
-            default:
-                HFlip = false;
-                VFlip = false;
-                break;
-        }
+            switch (e.getFlip()) {
+                case 1:
+                    HFlip = false;
+                    VFlip = true;
+                    break;
+                case 2:
+                    HFlip = true;
+                    VFlip = false;
+                    break;
+                case 3:
+                    VFlip = true;
+                    HFlip = true;
+                    break;
+                default:
+                    HFlip = false;
+                    VFlip = false;
+                    break;
+            }
 
-        GL11.glTranslatef((float) x, (float) y + 0.5f, (float) z);
-        GL11.glRotatef(yaw,0,-1,0);
+            GL11.glTranslatef((float) x, (float) y + 0.5f, (float) z);
+            GL11.glRotatef(yaw, 0, -1, 0);
 
-        if(type != EntityBladeStand.StandType.Naked){
-            GL11.glPushMatrix();
+            if (type != EntityBladeStand.StandType.Naked) {
+                try (MSAutoCloser msac = MSAutoCloser.pushMatrix()) {
+                    if (type == EntityBladeStand.StandType.Wall)
+                        GL11.glTranslatef(0, -0.5f, 0);
 
-            if(type== EntityBladeStand.StandType.Wall)
-                GL11.glTranslatef(0,-0.5f,0);
+                    GL11.glScalef(scale, scale, scale);
+                    String renderTarget = nameMap.get(type);
+                    standModel.renderPart(renderTarget);
+                }
+            }
 
-            GL11.glScalef(scale, scale, scale);
-            String renderTarget = nameMap.get(type);
-            standModel.renderPart(renderTarget);
+            ItemStack blade = e.getBlade();
+            if (!blade.isEmpty()) try (MSAutoCloser msacc = MSAutoCloser.pushMatrix()) {
+                GL11.glShadeModel(GL11.GL_SMOOTH);
 
-            GL11.glPopMatrix();
-        }
+                ItemSlashBlade item = (ItemSlashBlade) blade.getItem();
 
-        ItemStack blade = e.getBlade();
-        if(!blade.isEmpty()){
-            GL11.glPushMatrix();
-            GL11.glShadeModel(GL11.GL_SMOOTH);
+                EnumSet<ItemSlashBlade.SwordType> types = item.getSwordType(blade);
 
-            ItemSlashBlade item = (ItemSlashBlade)blade.getItem();
+                WavefrontObject model = BladeModelManager.getInstance().getModel(item.getModelLocation(blade));
+                ResourceLocationRaw resourceTexture = item.getModelTexture(blade);
 
-            EnumSet<ItemSlashBlade.SwordType> types = item.getSwordType(blade);
+                engine().bindTexture(resourceTexture);
 
-            WavefrontObject model = BladeModelManager.getInstance().getModel(item.getModelLocation(blade));
-            ResourceLocationRaw resourceTexture = item.getModelTexture(blade);
-
-            engine().bindTexture(resourceTexture);
-
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-            GL11.glAlphaFunc(GL11.GL_GEQUAL,0.05f);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.05f);
 
 
-            boolean isProcessed = false;
+                boolean isProcessed = false;
 
-            if(model instanceof WavefrontObject){
-                WavefrontObject obj = (WavefrontObject) model;
+                if (model instanceof WavefrontObject) {
+                    WavefrontObject obj = (WavefrontObject) model;
 
-                StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder();
 
-                sb.append("stand_");
-                sb.append(StandTypeName.get(type));
-                if(types.contains(ItemSlashBlade.SwordType.Broken))
-                    sb.append("_damaged");
-                if(types.contains(ItemSlashBlade.SwordType.NoScabbard))
-                    sb.append("_ns");
+                    sb.append("stand_");
+                    sb.append(StandTypeName.get(type));
+                    if (types.contains(ItemSlashBlade.SwordType.Broken))
+                        sb.append("_damaged");
+                    if (types.contains(ItemSlashBlade.SwordType.NoScabbard))
+                        sb.append("_ns");
 
-                String targetBase = sb.toString();
+                    String targetBase = sb.toString();
 
-                sb.append(HFlip ? "_r" : "_l");
-                sb.append(VFlip ? "_u" : "_d");
+                    sb.append(HFlip ? "_r" : "_l");
+                    sb.append(VFlip ? "_u" : "_d");
 
-                String targetFull = sb.toString();
+                    String targetFull = sb.toString();
 
 
-                String renderTarget = null;
+                    String renderTarget = null;
 
-                for(GroupObject go : obj.groupObjects){
-                    if(go.name.toLowerCase().equals(targetBase) || go.name.toLowerCase().equals(targetFull)) {
-                        renderTarget = go.name;
-                        break;
+                    for (GroupObject go : obj.groupObjects) {
+                        if (go.name.toLowerCase().equals(targetBase) || go.name.toLowerCase().equals(targetFull)) {
+                            renderTarget = go.name;
+                            break;
+                        }
+                    }
+
+                    if (renderTarget != null) {
+                        try (MSAutoCloser msac = MSAutoCloser.pushMatrix()) {
+                            GL11.glScalef(scale, scale, scale);
+
+                            model.renderPart(renderTarget);
+
+                            GlStateManager.disableLighting();
+                            try(LightSetup ls = LightSetup.setupAdd()){
+                                model.renderPart(renderTarget + "_luminous");
+                            }
+                            GlStateManager.enableLighting();
+                        }
+                        isProcessed = true;
+                    }
+
+                }
+
+                //================== render edge ==============
+                if (!isProcessed && (!(item instanceof ItemSlashBladeWrapper) || ItemSlashBladeWrapper.hasWrapedItem(blade))) {
+                    try (MSAutoCloser msac = MSAutoCloser.pushMatrix()) {
+                        //==================init================
+
+                        float hFlipFactor = HFlip ? -1f : 1f;
+
+                        switch (type) {
+                            case Naked:
+
+                                GL11.glScalef(scale, scale, scale);
+
+                                if (!types.contains(ItemSlashBlade.SwordType.Broken))
+                                    GL11.glTranslatef(0, 200.0f, 0);
+                                else
+                                    GL11.glTranslatef(0, 20.0f, 0);
+
+                                GL11.glRotatef(96.0f, 0, 0, 1);
+
+                                if (VFlip) {
+                                    GL11.glTranslatef(0, 15f, 0);
+                                    GL11.glRotatef(7.0f, 0, 0, 1);
+                                    GL11.glRotatef(180.0f, 1, 0, 0);
+                                }
+
+                                break;
+
+                            case Dual:
+                                GL11.glTranslatef(0.8f * hFlipFactor, 0.125f, 0);
+                                GL11.glScalef(scale, scale, scale);
+                                GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
+
+                                if (HFlip)
+                                    GL11.glRotatef(180.0f, 0, 1, 0);
+
+                                break;
+
+                            case Wall:
+                                GL11.glTranslatef(0, -0.5f, -0.375f);
+                            case Single:
+                                GL11.glTranslatef(0.8f * hFlipFactor, 0.0f, 0);
+                                GL11.glScalef(scale, scale, scale);
+                                GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
+
+                                if (HFlip)
+                                    GL11.glRotatef(180.0f, 0, 1, 0);
+
+                                if (VFlip) {
+                                    GL11.glTranslatef(0, 15f, 0);
+                                    GL11.glRotatef(7.0f, 0, 0, 1);
+                                    GL11.glRotatef(180.0f, 1, 0, 0);
+                                }
+
+                                break;
+
+                            case Upright:
+                                if (VFlip) {
+                                    GL11.glRotatef(2f, 0, 0, 1);
+                                    GL11.glTranslatef(0.05f, 0, 0);
+                                }
+
+                                if (!HFlip) {
+                                    GL11.glScalef(scale, scale, scale);
+                                    GL11.glTranslatef(-17.277f, 235.960f, 0);
+                                    GL11.glRotatef(96.0f, 0, 0, 1);
+                                } else {
+                                    GL11.glScalef(scale, scale, scale);
+                                    GL11.glTranslatef(27.597f, -21.674f, 0);
+                                    GL11.glRotatef(103.35f, 0, 0, 1);
+                                }
+
+                                if (HFlip)
+                                    GL11.glRotatef(180.0f, 0, 1, 0);
+
+                                if (VFlip) {
+                                    GL11.glTranslatef(0, 15f, 0);
+                                    GL11.glRotatef(7.0f, 0, 0, 1);
+                                    GL11.glRotatef(180.0f, 1, 0, 0);
+                                }
+
+                                break;
+                        }
+
+                        //===========render==========
+
+                        String renderTarget;
+                        if (types.contains(ItemSlashBlade.SwordType.Broken))
+                            renderTarget = "blade_damaged";
+                        else
+                            renderTarget = "blade";
+
+                        model.renderPart(renderTarget);
+
+                        GlStateManager.disableLighting();
+                        GL11.glEnable(GL11.GL_BLEND);
+
+                        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+                        try (LightSetup ls = LightSetup.setup()) {
+                            model.renderPart(renderTarget + "_luminous");
+                        }
+                        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+                        GlStateManager.enableLighting();
                     }
                 }
 
-                if(renderTarget != null){
-                    GL11.glPushMatrix();
 
-                    GL11.glScalef(scale, scale, scale);
+                //================= render scabbard =================
+                if (!isProcessed && (!types.contains(ItemSlashBlade.SwordType.NoScabbard))) {
 
-                    model.renderPart(renderTarget);
+                    try (MSAutoCloser msac = MSAutoCloser.pushMatrix()) {
 
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    GL11.glEnable(GL11.GL_BLEND);
+                        //==================init================
 
-                    float lastx = OpenGlHelper.lastBrightnessX;
-                    float lasty = OpenGlHelper.lastBrightnessY;
-                    OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+                        float hFlipFactor = HFlip ? -1f : 1f;
+                        float vFlipFactor = VFlip ? -1f : 1f;
 
-                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-                    model.renderPart(renderTarget + "_luminous");
+                        switch (type) {
+                            case Naked:
+                                if (HFlip) {
+                                    GL11.glScalef(0, 0, 0);
+                                }
+                                GL11.glTranslatef(1.5f, -0.45f, 0.5f);
+                                GL11.glScalef(scale, scale, scale);
+                                GL11.glRotatef(90.0f, 1, 0, 0);
 
-                    OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
+                                if (HFlip) {
+                                    GL11.glRotatef(180.0f, 0, 1, 0);
+                                }
+                                break;
+                            case Dual:
+                                GL11.glTranslatef(1.1f * hFlipFactor, -0.17722f, 0);
+                                GL11.glScalef(scale, scale, scale);
+                                GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
+                                break;
+                            case Wall:
+                                GL11.glTranslatef(0, -0.5f, -0.375f);
+                            case Single:
+                                GL11.glTranslatef(0.8f * hFlipFactor, 0.0f, 0);
+                                GL11.glScalef(scale, scale, scale);
+                                GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
+                                break;
+                            case Upright:
 
-                    OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-                    GL11.glEnable(GL11.GL_LIGHTING);
+                                if (VFlip) {
+                                    GL11.glRotatef(2f, 0, 0, 1);
+                                    GL11.glTranslatef(0.05f, 0, 0);
+                                }
 
-                    GL11.glPopMatrix();
-                    isProcessed = true;
-                }
+                                if (!HFlip) {
+                                    GL11.glScalef(scale, scale, scale);
+                                    GL11.glTranslatef(-17.277f, 235.960f, 0);
+                                    GL11.glRotatef(96.0f, 0, 0, 1);
+                                } else {
+                                    GL11.glScalef(scale, scale, scale);
+                                    GL11.glTranslatef(27.597f, -21.674f, 0);
+                                    GL11.glRotatef(103.35f, 0, 0, 1);
+                                }
 
-            }
+                                break;
+                        }
 
-            //================== render edge ==============
-            if(!isProcessed && (!(item instanceof ItemSlashBladeWrapper) || ItemSlashBladeWrapper.hasWrapedItem(blade))){
-                GL11.glPushMatrix();
+                        if (HFlip)
+                            GL11.glRotatef(180.0f, 0, 1, 0);
 
-                //==================init================
-
-                float hFlipFactor = HFlip ? -1f : 1f;
-
-                switch (type){
-                    case Naked:
-
-                        GL11.glScalef(scale, scale, scale);
-
-                        if(!types.contains(ItemSlashBlade.SwordType.Broken))
-                            GL11.glTranslatef(0, 200.0f, 0);
-                        else
-                            GL11.glTranslatef(0, 20.0f, 0);
-
-                        GL11.glRotatef(96.0f, 0, 0, 1);
-
-                        if(VFlip){
+                        if (VFlip) {
                             GL11.glTranslatef(0, 15f, 0);
                             GL11.glRotatef(7.0f, 0, 0, 1);
-                            GL11.glRotatef(180.0f,1,0,0);
+                            GL11.glRotatef(180.0f, 1, 0, 0);
                         }
 
-                        break;
+                        //===========render==========
 
-                    case Dual:
-                        GL11.glTranslatef(0.8f * hFlipFactor, 0.125f, 0);
-                        GL11.glScalef(scale, scale, scale);
-                        GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
+                        String renderTarget = "sheath";
+                        model.renderPart(renderTarget);
 
-                        if(HFlip)
-                            GL11.glRotatef(180.0f,0,1,0);
+                        GlStateManager.disableLighting();
+                        GL11.glEnable(GL11.GL_BLEND);
 
-                        break;
-
-                    case Wall:
-                        GL11.glTranslatef(0, -0.5f, -0.375f);
-                    case Single:
-                        GL11.glTranslatef(0.8f * hFlipFactor, 0.0f, 0);
-                        GL11.glScalef(scale, scale, scale);
-                        GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
-
-                        if(HFlip)
-                            GL11.glRotatef(180.0f,0,1,0);
-
-                        if(VFlip){
-                            GL11.glTranslatef(0, 15f, 0);
-                            GL11.glRotatef(7.0f,0,0,1);
-                            GL11.glRotatef(180.0f,1,0,0);
+                        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+                        try (LightSetup ls = LightSetup.setup()) {
+                            model.renderPart(renderTarget + "_luminous");
                         }
-
-                        break;
-
-                    case Upright:
-                        if(VFlip){
-                            GL11.glRotatef(2f, 0, 0, 1);
-                            GL11.glTranslatef(0.05f, 0, 0);
-                        }
-
-                        if(!HFlip){
-                            GL11.glScalef(scale, scale, scale);
-                            GL11.glTranslatef(-17.277f, 235.960f, 0);
-                            GL11.glRotatef(96.0f, 0, 0, 1);
-                        }else{
-                            GL11.glScalef(scale, scale, scale);
-                            GL11.glTranslatef(27.597f, -21.674f, 0);
-                            GL11.glRotatef(103.35f, 0, 0, 1);
-                        }
-
-                        if(HFlip)
-                            GL11.glRotatef(180.0f,0,1,0);
-
-                        if(VFlip){
-                            GL11.glTranslatef(0, 15f, 0);
-                            GL11.glRotatef(7.0f, 0, 0, 1);
-                            GL11.glRotatef(180.0f,1,0,0);
-                        }
-
-                        break;
+                        OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+                        GlStateManager.enableLighting();
+                    }
                 }
 
-                //===========render==========
-
-                String renderTarget;
-                if(types.contains(ItemSlashBlade.SwordType.Broken))
-                    renderTarget = "blade_damaged";
-                else
-                    renderTarget = "blade";
-
-                model.renderPart(renderTarget);
-
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glEnable(GL11.GL_BLEND);
-
-                float lastx = OpenGlHelper.lastBrightnessX;
-                float lasty = OpenGlHelper.lastBrightnessY;
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-                model.renderPart(renderTarget + "_luminous");
-
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
-
-                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-                GL11.glEnable(GL11.GL_LIGHTING);
-
-                GL11.glPopMatrix();
+                GL11.glShadeModel(GL11.GL_FLAT);
             }
 
 
-            //================= render scabbard =================
-            if(!isProcessed && (!types.contains(ItemSlashBlade.SwordType.NoScabbard))){
-                GL11.glPushMatrix();
-
-                //==================init================
-
-                float hFlipFactor = HFlip ? -1f : 1f;
-                float vFlipFactor = VFlip ? -1f : 1f;
-
-                switch (type){
-                    case Naked:
-                        if(HFlip){
-                            GL11.glScalef(0, 0, 0);
-                        }
-                        GL11.glTranslatef(1.5f, -0.45f, 0.5f);
-                        GL11.glScalef(scale, scale, scale);
-                        GL11.glRotatef(90.0f, 1, 0, 0);
-
-                        if(HFlip){
-                            GL11.glRotatef(180.0f,0,1,0);
-                        }
-                        break;
-                    case Dual:
-                        GL11.glTranslatef(1.1f * hFlipFactor,-0.17722f,0);
-                        GL11.glScalef(scale, scale, scale);
-                        GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
-                        break;
-                    case Wall:
-                        GL11.glTranslatef(0, -0.5f, -0.375f);
-                    case Single:
-                        GL11.glTranslatef(0.8f * hFlipFactor,0.0f,0);
-                        GL11.glScalef(scale, scale, scale);
-                        GL11.glRotatef(-3.5f * hFlipFactor, 0, 0, 1);
-                        break;
-                    case Upright:
-
-                        if(VFlip){
-                            GL11.glRotatef(2f, 0, 0, 1);
-                            GL11.glTranslatef(0.05f, 0, 0);
-                        }
-
-                        if(!HFlip){
-                            GL11.glScalef(scale, scale, scale);
-                            GL11.glTranslatef(-17.277f,235.960f,0);
-                            GL11.glRotatef(96.0f, 0, 0, 1);
-                        }else{
-                            GL11.glScalef(scale, scale, scale);
-                            GL11.glTranslatef(27.597f, -21.674f, 0);
-                            GL11.glRotatef(103.35f, 0, 0, 1);
-                        }
-
-                        break;
-                }
-
-                if(HFlip)
-                    GL11.glRotatef(180.0f,0,1,0);
-
-                if(VFlip){
-                    GL11.glTranslatef(0, 15f, 0);
-                    GL11.glRotatef(7.0f,0,0,1);
-                    GL11.glRotatef(180.0f,1,0,0);
-                }
-
-                //===========render==========
-
-                String renderTarget = "sheath";
-                model.renderPart(renderTarget);
-
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glEnable(GL11.GL_BLEND);
-
-                float lastx = OpenGlHelper.lastBrightnessX;
-                float lasty = OpenGlHelper.lastBrightnessY;
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) 240.0f / 1.0F, (float) 240.0f / 1.0F);
-
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-                model.renderPart(renderTarget + "_luminous");
-
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
-
-                GL11.glEnable(GL11.GL_LIGHTING);
-                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-                GL11.glPopMatrix();
-            }
-
-            GL11.glShadeModel(GL11.GL_FLAT);
-            GL11.glPopMatrix();
+            GL11.glPopAttrib();
         }
-
-
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
     }
 
     @Override
@@ -475,41 +408,41 @@ public class BladeStandRender extends Render{
 
 
     private void renderEntityOnFire(Entity entity, double x, double y, double z, float partialTicks) {
-        GlStateManager.pushAttrib();
+        GlStateManager.pushLightingAttrib();
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
 
         GlStateManager.depthMask(false);
 
-        TextureMap texturemap = Minecraft.getMinecraft().getTextureMapBlocks();
+        TextureMap texturemap = Minecraft.getInstance().getTextureMap();
         TextureAtlasSprite textureatlassprite = texturemap.getAtlasSprite("minecraft:blocks/fire_layer_0");
         TextureAtlasSprite textureatlassprite1 = texturemap.getAtlasSprite("minecraft:blocks/fire_layer_1");
         int i = 0;
         for(int re = 0; re < 3; re++){
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float) x, (float) y, (float) z);
+            GlStateManager.translatef((float) x, (float) y, (float) z);
             float f = entity.width * 1.4F;
-            GlStateManager.scale(f, f, f);
+            GlStateManager.scalef(f, f, f);
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder BufferBuilder = tessellator.getBuffer();
             float f1 = 0.5F;
             float f2 = 0.0F;
             float f3 = entity.height / f;
-            float f4 = (float) (entity.posY - entity.getEntityBoundingBox().minY);
-            GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-            GlStateManager.translate(0.0F, 0.0f, -0.3F + (float) ((int) f3) * 0.02F - re * 0.2f);
+            float f4 = (float) (entity.posY - entity.getBoundingBox().minY);
+            GlStateManager.rotatef(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+            GlStateManager.translatef(0.0F, 0.0f, -0.3F + (float) ((int) f3) * 0.02F - re * 0.2f);
 
             if(0 < re) {
                 float reScale = 1.0f / (re + 0.25f);
-                GlStateManager.scale(reScale, 0.75, reScale);
+                GlStateManager.scalef(reScale, 0.75f, reScale);
             }
 
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             //GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ZERO);
 
-            GlStateManager.color(0.1F, 0.0F, 1.0F, 1.0F);
+            GlStateManager.color4f(0.1F, 0.0F, 1.0F, 1.0F);
 
             float f5 = 0.0F;
             BufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);

@@ -23,20 +23,20 @@ public class SoulEater {
         exp = Math.max(0,exp);
 
         if(!player.world.isRemote){
-            int count = player.getEntityData().getInteger(tag2);
+            int count = player.getEntityData().getInt(tag2);
             count += 1;
-            player.getEntityData().setInteger(tag2, count);
+            player.getEntityData().setInt(tag2, count);
         }
 
-        int sumexp = player.getEntityData().getInteger(tag3);
+        int sumexp = player.getEntityData().getInt(tag3);
         sumexp += exp;
-        player.getEntityData().setInteger(tag3, sumexp);
+        player.getEntityData().setInt(tag3, sumexp);
     }
 
     public static void fire(ItemStack stack ,EntityLivingBase player){
         if(!player.getEntityData().hasKey(tag3)) return;
 
-        int exp = player.getEntityData().getInteger(tag3);
+        int exp = player.getEntityData().getInt(tag3);
         player.getEntityData().removeTag(tag3);
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
@@ -54,7 +54,7 @@ public class SoulEater {
 
         if(player.getHealth() != player.getMaxHealth()){
             if(!player.world.isRemote) {
-                float count = player.getEntityData().getInteger(tag2);
+                float count = player.getEntityData().getInt(tag2);
                 count = Math.min(count, player.getMaxHealth() / 10.0f);
                 player.getEntityData().removeTag(tag2);
 
@@ -75,7 +75,7 @@ public class SoulEater {
     }
 
     public static boolean isNoMove(EntityLivingBase player){
-        int posHash = player.getEntityData().getInteger(tag);
+        int posHash = player.getEntityData().getInt(tag);
         int nowHash = getPosHash(player);
 
         return posHash == nowHash;

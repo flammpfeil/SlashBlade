@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
  * Created by Furia on 2016/11/17.
  */
 public class ResourceLocationRaw extends ResourceLocation {
-    protected final String resourcePathRaw;
+    protected String resourcePathRaw;
 
     public ResourceLocationRaw(String resourceDomainIn, String resourcePathIn) {
         super(resourceDomainIn, resourcePathIn);
@@ -18,17 +18,17 @@ public class ResourceLocationRaw extends ResourceLocation {
         this(resourceName[0],resourceName[1]);
     }
     public ResourceLocationRaw(String resourceName) {
-        this(splitObjectName(resourceName));
+        this(decompose(resourceName, ':'));
     }
 
     @Override
-    public String getResourcePath() {
+    public String getPath() {
         return resourcePathRaw;
     }
 
     @Override
     public String toString()
     {
-        return this.resourceDomain + ':' + this.resourcePath;
+        return this.namespace + ':' + this.path;
     }
 }

@@ -56,7 +56,7 @@ public class NamedBladeManager {
 
         crystal.setTagCompound(newTag);
 
-        crystal.setStackDisplayName(name + " soul");
+        crystal.setDisplayName(name + " soul");
 
         String keyName = ItemSlashBladeNamed.CurrentItemName.get(tag);
         keyList.add(keyName);
@@ -82,7 +82,7 @@ public class NamedBladeManager {
 
             if(icon.isEmpty()) {
                 ItemStack soul = entry.getValue();
-                NBTTagCompound matTag = soul.getTagCompound();
+                NBTTagCompound matTag = soul.getTag();
 
                 ItemStack targetBlade = SlashBlade.findItemStack(SlashBlade.modid, "slashbladeNamed", 1);
 

@@ -5,8 +5,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.config.ConfigManager;
+import mods.flammpfeil.slashblade.config.SlashBladeConfig;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
+import mods.flammpfeil.slashblade.core.CoreProxyClient;
+import mods.flammpfeil.slashblade.core.InitClient;
 import mods.flammpfeil.slashblade.event.*;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -15,13 +18,17 @@ import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.minecraft.command.FunctionObject;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 import mods.flammpfeil.slashblade.util.DummyRecipeBase;
+import net.minecraft.world.storage.loot.functions.Smelt;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -39,24 +46,46 @@ import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 
-@Mod(name = SlashBlade.modname, modid = SlashBlade.modid, version = SlashBlade.version,
-    guiFactory = "mods.flammpfeil.slashblade.gui.config.ConfigGuiFactory")
-public class SlashBlade implements IFuelHandler{
+@Mod(SlashBlade.modid)
+public class SlashBlade{
+
+    public SlashBlade() {
+        // Register the setup method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
+        // Register the enqueueIMC method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInitClient);
+        // Register the processIMC method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+        // Register the doClientStuff method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        */
+        FMLJavaModLoadingContext.get().getModEventBus().register(this);
+
+        // Register ourselves for server and other game events we are interested in
+        MinecraftForge.EVENT_BUS.register(this);
+
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SlashBladeConfig.clientSpec);
+    }
 
 
 	public static final String modname = "SlashBlade";
@@ -87,9 +116,6 @@ public class SlashBlade implements IFuelHandler{
 
     public static boolean UseRenderLivingEvent = false;
 
-    public static boolean RenderEnchantEffect = true;
-    public static boolean RenderNFCSEffect = true;
-
 	public static final String ProudSoulStr = "proudsoul";
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
     public static final String SphereBladeSoulStr = "sphere_bladesoul";
@@ -116,10 +142,6 @@ public class SlashBlade implements IFuelHandler{
 
     public static Multimap<String,IRecipe> recipeMultimap = HashMultimap.create();
 
-    public static void addSmelting(String key, ItemStack input, ItemStack output, float xp){
-        GameRegistry.addSmelting(input,output,xp);
-        recipeMultimap.put(key,new DummySmeltingRecipe(input,output));
-    }
     public static void addRecipe(String key, IRecipe value) {
         addRecipe(key, value, value instanceof DummyRecipeBase);
     }
@@ -132,8 +154,12 @@ public class SlashBlade implements IFuelHandler{
         recipeMultimap.put(key, value);
     }
 
-    @EventHandler
-	public void preInit(FMLPreInitializationEvent evt){
+    public void doClientStuff(final FMLClientSetupEvent event) {
+        CoreProxy.proxy = new CoreProxyClient();
+    }
+
+	public void preInit(final FMLCommonSetupEvent evt){
+
 		mainConfiguration = new Configuration(this.mainConfigurationFile = evt.getSuggestedConfigurationFile());
 
 		try {
@@ -149,16 +175,6 @@ public class SlashBlade implements IFuelHandler{
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "UseRenderLivingEvent", SlashBlade.UseRenderLivingEvent);
                 SlashBlade.UseRenderLivingEvent = prop.getBoolean();
-                prop.setShowInGui(true);
-            }
-            {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "EnchantVisualEffect", true);
-                SlashBlade.RenderEnchantEffect = prop.getBoolean();
-                prop.setShowInGui(true);
-            }
-            {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "NFCSVisualEffect", true);
-                SlashBlade.RenderNFCSEffect = prop.getBoolean();
                 prop.setShowInGui(true);
             }
 
@@ -277,6 +293,7 @@ public class SlashBlade implements IFuelHandler{
 
         //==================================================================================================================================
 
+        (new Item.Properties()).setTEISR(() -> () -> )
 		weapon = (ItemSlashBlade)(new ItemSlashBlade(ToolMaterial.IRON, 4 + ToolMaterial.DIAMOND.getAttackDamage()))
 				.setRepairMaterial(new ItemStack(Items.IRON_INGOT))
 				.setRepairMaterialOreDic("ingotSteel", "nuggetSteel")
@@ -350,9 +367,6 @@ public class SlashBlade implements IFuelHandler{
                 .setRegistryName("slashbladeNamed");
         ForgeRegistries.ITEMS.register(bladeNamed);
 
-
-		GameRegistry.registerFuelHandler(this);
-
 		CoreProxy.proxy.initializeItemRenderer();
 
 		manager = new ConfigEntityListManager();
@@ -384,8 +398,6 @@ public class SlashBlade implements IFuelHandler{
         InitEventBus.register(ccb);
     }
 
-    //StatManager statManager;
-
     @EventHandler
     public void init(FMLInitializationEvent evt){
 
@@ -400,8 +412,10 @@ public class SlashBlade implements IFuelHandler{
 
 
         int entityId = 1;
+        //ForgeRegistries.ENTITIES
+        EntityType.register(createId("Drive"), EntityType.Builder.create(EntityDrive.class, EntityDrive::new));
+
         EntityRegistry.registerModEntity(new ResourceLocation(modid,"Drive"), EntityDrive.class, "Drive", entityId++, this, 250, 10, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(modid,"SummonedSword"), EntitySummonedSword.class, "PhantomSword", entityId++, this, 250, 10, true);
         EntityRegistry.registerModEntity(new ResourceLocation(modid,"SpearManager"), EntitySpearManager.class, "DirectAttackDummy", entityId++, this, 250, 10, true);
 
         EntityRegistry.registerModEntity(new ResourceLocation(modid,"SummonedSwordBase"), EntitySummonedSwordBase.class, "SummonedSwordBase", entityId++, this, 250, 10, true);
@@ -517,6 +531,10 @@ public class SlashBlade implements IFuelHandler{
         FMLInterModComms.sendMessage("BetterAchievements", SlashBlade.modname, SlashBlade.getCustomBlade("flammpfeil.slashblade.named.yamato"));
     }
 
+    private String createId(String name) {
+        return modid + ":" + name;
+    }
+
     @EventHandler
     public void modsLoaded(FMLPostInitializationEvent evt)
     {
@@ -551,23 +569,6 @@ public class SlashBlade implements IFuelHandler{
 
         FMLCommonHandler.instance().resetClientRecipeBook();
     }
-
-
-	@Override
-	public int getBurnTime(ItemStack fuel) {
-		return (fuel.getItem() == this.proudSoul && fuel.getItemDamage() == 0) ? 10000 : 0;
-	}
-
-
-/*
-    ICommand command;
-    @EventHandler
-    public void serverStarting(FMLServerStartingEvent evt)
-    {
-        command = new CommandHandler();
-        evt.registerServerCommand(command);
-    }
-*/
 
     static public Map<ResourceLocationRaw, ItemStack> BladeRegistry = Maps.newHashMap();
 

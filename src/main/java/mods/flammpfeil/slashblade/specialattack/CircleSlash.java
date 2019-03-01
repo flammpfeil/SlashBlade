@@ -46,7 +46,7 @@ public class CircleSlash extends SpecialAttackBase{
             ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             {
-                AxisAlignedBB bb = player.getEntityBoundingBox();
+                AxisAlignedBB bb = player.getBoundingBox();
                 bb = bb.grow(5.0f, 0.25f, 5.0f);
 
                 List<Entity> list = world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());

@@ -2,7 +2,7 @@ package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
+import mods.flammpfeil.slashblade.network.C2SMoveCommandState;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -20,8 +20,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class Taunt {
         if(!(player.world instanceof WorldServer))
             return;
 
-        AxisAlignedBB bb = player.getEntityBoundingBox();
+        AxisAlignedBB bb = player.getBoundingBox();
         bb = bb.grow(10, 5, 10);
         List<Entity> list = player.world.getEntitiesInAABBexcluding(player, bb, EntitySelectorAttackable.getInstance());
 
@@ -70,7 +70,7 @@ public class Taunt {
                 level = Math.max(level ,effect.getAmplifier() - 1);
             livingEntity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE,600, level));
 
-            ((WorldServer)livingEntity.world).spawnParticle(EnumParticleTypes.VILLAGER_ANGRY,
+            ((WorldServer)livingEntity.world).spawnParticle(Particles.VILLAGER_ANGRY,
                     livingEntity.posX,
                     livingEntity.posY,
                     livingEntity.posZ,
@@ -78,9 +78,9 @@ public class Taunt {
                     livingEntity.width * 2.0F, livingEntity.height, livingEntity.width * 2.0F,
                     0.02d, new int[0]);
 
-            int tLv = livingEntity.getEntityData().getInteger(TauntLevel);
+            int tLv = livingEntity.getEntityData().getInt(TauntLevel);
             tLv = Math.min(tLv + 1, maxTauntLevel);
-            livingEntity.getEntityData().setInteger(TauntLevel, tLv);
+            livingEntity.getEntityData().setInt(TauntLevel, tLv);
 
             if(tLv <= 2)
                 StunManager.setStun(livingEntity, 10);
@@ -97,12 +97,12 @@ public class Taunt {
 
         int dropExp = event.getDroppedExperience();
 
-        int tLv = event.getEntityLiving().getEntityData().getInteger(TauntLevel);
+        int tLv = event.getEntityLiving().getEntityData().getInt(TauntLevel);
         if( 0 < tLv)
             event.setDroppedExperience(dropExp + tLv * expBase);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onRenderLivingPre(RenderLivingEvent.Pre<EntityPlayer> event){
 
@@ -115,7 +115,7 @@ public class Taunt {
 
         //クイックターン押下状態で射撃攻撃で発動
         byte command = event.getEntity().getEntityData().getByte("SB.MCS");
-        if(0 == (command & MessageMoveCommandState.CAMERA))
+        if(0 == (command & C2SMoveCommandState.CAMERA))
             return;
 
         if(!(event.getRenderer().getMainModel() instanceof ModelBiped))

@@ -22,7 +22,7 @@ public class SilentUpdateItem {
         ItemStack stack = slot.getStack();
         if(stack.isEmpty()) return;
 
-        stack.getTagCompound().setInteger("markdirty", player.ticksExisted);
+        stack.getTag().setInt("markdirty", player.ticksExisted);
 
         int idx = player.inventoryContainer.inventorySlots.indexOf(slot);
         if(idx < 0) return;
@@ -36,7 +36,7 @@ public class SilentUpdateItem {
         if(!owner.world.isRemote
                 && (!isCurrent
                 || (((EntityPlayer) owner).getActiveItemStack().isEmpty() && !((EntityPlayer) owner).isSwingInProgress))
-                && stack.hasTagCompound() && stack.getTagCompound().hasKey("markdirty")) {
+                && stack.hasTag() && stack.getTag().hasKey("markdirty")) {
 
             for(Object objSlot : ((EntityPlayer) owner).inventoryContainer.inventorySlots){
                 Slot slot = (Slot)objSlot;
@@ -47,7 +47,7 @@ public class SilentUpdateItem {
                 }
             }
 
-            stack.getTagCompound().removeTag("markdirty");
+            stack.getTag().removeTag("markdirty");
 
 
         }
@@ -56,7 +56,7 @@ public class SilentUpdateItem {
         if(!(owner instanceof EntityPlayer)) return;
 
         if(!owner.world.isRemote
-                && stack.hasTagCompound() && stack.getTagCompound().hasKey("markdirty")) {
+                && stack.hasTag() && stack.getTag().hasKey("markdirty")) {
 
             for(Object objSlot : ((EntityPlayer) owner).inventoryContainer.inventorySlots){
                 Slot slot = (Slot)objSlot;
@@ -67,7 +67,7 @@ public class SilentUpdateItem {
                 }
             }
 
-            stack.getTagCompound().removeTag("markdirty");
+            stack.getTag().removeTag("markdirty");
         }
     }
 }

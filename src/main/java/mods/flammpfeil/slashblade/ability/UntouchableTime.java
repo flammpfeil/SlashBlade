@@ -3,7 +3,7 @@ package mods.flammpfeil.slashblade.ability;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.ObfuscationReflectionHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,7 +30,7 @@ public class UntouchableTime {
         setUntouchableTime(target,ticks,false);
     }
     static public void setUntouchableTime(Entity target, int ticks,boolean isAvoid){
-        target.getEntityData().setLong(UntouchableTimeOut, target.world.getTotalWorldTime() + ticks);
+        target.getEntityData().setLong(UntouchableTimeOut, target.world.getGameTime() + ticks);
 
         setIsAvoid(target, isAvoid);
 
@@ -62,7 +62,7 @@ public class UntouchableTime {
         if (!tag.hasKey(UntouchableTimeOut)) return false;
 
         long timeOut = tag.getLong(UntouchableTimeOut);
-        long now = target.world.getTotalWorldTime();
+        long now = target.world.getGameTime();
 
         if (timeOut < now) {
             removeUntouchableTag(target);

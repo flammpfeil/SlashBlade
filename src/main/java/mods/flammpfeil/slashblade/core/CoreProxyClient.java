@@ -1,48 +1,44 @@
 package mods.flammpfeil.slashblade.core;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import mods.flammpfeil.slashblade.*;
+import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.ability.AvoidAction;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
+import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.EntityLivingRenderHandler;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
+import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.network.*;
 import mods.flammpfeil.slashblade.util.KeyBindingEx;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.client.renderer.entity.*;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.*;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Particles;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import mods.flammpfeil.slashblade.ability.AvoidAction;
-import mods.flammpfeil.slashblade.ability.client.StylishRankRenderer;
-import mods.flammpfeil.slashblade.entity.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.*;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.lwjgl.input.Keyboard;
 
 import java.util.EnumSet;
-import java.util.Map;
 
-public class CoreProxyClient extends CoreProxy {
+public class CoreProxyClient extends CoreProxy  {
 
     static public KeyBindingEx lockon = null;
     static public KeyBindingEx camera = null;
@@ -50,7 +46,6 @@ public class CoreProxyClient extends CoreProxy {
     static public KeyBindingEx summonedsword = null;
     static public KeyBindingEx styleaction = null;
 
-	@Override
 	public void initializeItemRenderer() {
         //resource reload event
         MinecraftForge.EVENT_BUS.register(BladeModelManager.getInstance());
@@ -134,13 +129,6 @@ public class CoreProxyClient extends CoreProxy {
             @Override
             public Render<? super EntityDrive> createRenderFor(RenderManager manager) {
                 return new RenderDrive(manager);
-            }
-        });
-
-        RenderingRegistry.registerEntityRenderingHandler(EntitySummonedSword.class, new IRenderFactory<EntitySummonedSword>() {
-            @Override
-            public Render<? super EntitySummonedSword> createRenderFor(RenderManager manager) {
-                return new RenderPhantomSword(manager);
             }
         });
 
@@ -292,7 +280,7 @@ public class CoreProxyClient extends CoreProxy {
             @Override
             public void upkey(int count) {
                 charged = false;
-                Minecraft mc = Minecraft.getMinecraft();
+                Minecraft mc = Minecraft.getInstance();
                 EntityPlayerSP player = mc.player;
                 if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                     ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -300,7 +288,7 @@ public class CoreProxyClient extends CoreProxy {
 
                         mc.playerController.updateController();
 
-                        ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, MessageRangeAttack.RangeAttackState.UPKEY);
+                        ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, C2SRangeAttack.RangeAttackState.UPKEY);
                     }
                 }
             }
@@ -321,7 +309,7 @@ public class CoreProxyClient extends CoreProxy {
                 final int ChargeTime = 7;
                 if(ChargeTime < count && !charged){
                     charged = true;
-                    Minecraft mc = Minecraft.getMinecraft();
+                    Minecraft mc = Minecraft.getInstance();
                     EntityPlayerSP player = mc.player;
                     if(player != null && !mc.isGamePaused() && mc.inGameHasFocus && mc.currentScreen == null){
                         ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -329,21 +317,21 @@ public class CoreProxyClient extends CoreProxy {
 
                             mc.playerController.updateController();
 
-                            long currentTime = player.getEntityWorld().getTotalWorldTime();
+                            long currentTime = player.getEntityWorld().getGameTime();
 
                             long backKeyLastActiveTime = player.getEntityData().getLong("SB.MCS.B");
                             final int TypeAheadBuffer = 7;
 
-                            MessageRangeAttack.RangeAttackState command;
+                            C2SRangeAttack.RangeAttackState command;
                             if((currentTime - backKeyLastActiveTime) <= (ChargeTime + TypeAheadBuffer)
-                                && player.movementInput.forwardKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
-                                command = MessageRangeAttack.RangeAttackState.HEAVY_RAIN;
-                            }else if(player.movementInput.forwardKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
-                                command = MessageRangeAttack.RangeAttackState.BLISTERING;
-                            }else if(player.movementInput.backKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
-                                command = MessageRangeAttack.RangeAttackState.STORM;
+                                && player.movementInput.forwardKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & C2SMoveCommandState.SNEAK))){
+                                command = C2SRangeAttack.RangeAttackState.HEAVY_RAIN;
+                            }else if(player.movementInput.forwardKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & C2SMoveCommandState.SNEAK))){
+                                command = C2SRangeAttack.RangeAttackState.BLISTERING;
+                            }else if(player.movementInput.backKeyDown && (0 < (player.getEntityData().getByte("SB.MCS") & C2SMoveCommandState.SNEAK))){
+                                command = C2SRangeAttack.RangeAttackState.STORM;
                             }else{
-                                command = MessageRangeAttack.RangeAttackState.SPIRAL;
+                                command = C2SRangeAttack.RangeAttackState.SPIRAL;
                             }
                             ((ItemSlashBlade)item.getItem()).doRangeAttack(item, player, command);
                         }
@@ -355,7 +343,7 @@ public class CoreProxyClient extends CoreProxy {
         styleaction = new KeyBindingEx("Key.SlashBlade.SA", Keyboard.KEY_V,"flammpfeil.slashblade"){
             @Override
             public void downkey() {
-                Minecraft mc = Minecraft.getMinecraft();
+                Minecraft mc = Minecraft.getInstance();
                 EntityPlayerSP player = mc.player;
                 if(player == null) return;
                 if(mc.isGamePaused()) return;
@@ -366,11 +354,11 @@ public class CoreProxyClient extends CoreProxy {
                 if(item.isEmpty()) return;
                 if(!(item.getItem() instanceof ItemSlashBlade)) return;
 
-                if(GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward)
-                        && (0 < (player.getEntityData().getByte("SB.MCS") & MessageMoveCommandState.SNEAK))){
+                if(GameSettings.isKeyDown(Minecraft.getInstance().gameSettings.keyBindForward)
+                        && (0 < (player.getEntityData().getByte("SB.MCS") & C2SMoveCommandState.SNEAK))){
 
                     mc.playerController.updateController();
-                    NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 1));
+                    NetworkManager.channel.sendToServer(new C2SSpecialAction((byte) 1));
 
                 }else
                 if(mc.player.moveStrafing != 0.0f || mc.player.moveForward != 0.0f){
@@ -382,7 +370,7 @@ public class CoreProxyClient extends CoreProxy {
             public void presskey(int count) {
                 super.presskey(count);
 
-                Minecraft mc = Minecraft.getMinecraft();
+                Minecraft mc = Minecraft.getInstance();
                 EntityPlayerSP player = mc.player;
                 if(player == null) return;
                 if(mc.isGamePaused()) return;
@@ -401,7 +389,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(!types.contains(ItemSlashBlade.SwordType.FiercerEdge)) return;
 
 
-                player.world.spawnParticle(EnumParticleTypes.PORTAL,
+                player.world.spawnParticle(Particles.PORTAL,
                         player.posX + (player.getRNG().nextDouble() - 0.5D) * (double)player.width,
                         player.posY + player.getRNG().nextDouble() * (double)player.height - 0.25D,
                         player.posZ + (player.getRNG().nextDouble() - 0.5D) * (double)player.width,
@@ -412,11 +400,11 @@ public class CoreProxyClient extends CoreProxy {
             public void upkey(int count) {
                 super.upkey(count);
 
-                Minecraft mc = Minecraft.getMinecraft();
+                Minecraft mc = Minecraft.getInstance();
                 EntityPlayerSP player = mc.player;
                 if(player == null) return;
                 if(mc.isGamePaused()) return;
-                if(!mc.inGameHasFocus) return;
+                if(!mc.isGameFocused()) return;
                 if(mc.currentScreen != null) return;
 
                 ItemStack item = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -433,7 +421,7 @@ public class CoreProxyClient extends CoreProxy {
                 if(20 > count) return;
 
                 mc.playerController.updateController();
-                NetworkManager.INSTANCE.sendToServer(new MessageSpecialAction((byte) 3));
+                NetworkManager.channel.sendToServer(new C2SSpecialAction((byte) 3));
 
 
             }
@@ -449,7 +437,7 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void postInit() {
-        RenderManager rm = Minecraft.getMinecraft().getRenderManager();
+        RenderManager rm = Minecraft.getInstance().getRenderManager();
 
         for(Render render : Iterables.concat(rm.getSkinMap().values(), rm.entityRenderMap.values())){
             if(!(render instanceof RenderLivingBase))
@@ -464,17 +452,17 @@ public class CoreProxyClient extends CoreProxy {
             */
 /*
             if(rle instanceof RenderZombie){
-                List<LayerRenderer> layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle, "villagerLayers","field_177121_n");
+                List<LayerRenderer> layers = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle, "villagerLayers","field_177121_n");
                 layers.add(new LayerSlashBlade(rle));
 
-                layers = ReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle,"defaultLayers", "field_177122_o");
+                layers = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, (RenderZombie)rle,"defaultLayers", "field_177122_o");
                 layers.add(new LayerSlashBlade(rle));
             }*/
 
             rle.addLayer(new LayerSlashBlade(rle));
 
             /*
-            Method addLayer = ReflectionHelper.findMethod(RenderLivingBase.class, (RenderLivingBase)rle, new String[]{"addLayer","func_177094_a"}, LayerRenderer.class);
+            Method addLayer = ObfuscationReflectionHelper.findMethod(RenderLivingBase.class, (RenderLivingBase)rle, new String[]{"addLayer","func_177094_a"}, LayerRenderer.class);
 
             try {
                 addLayer.setAccessible(true);
@@ -489,7 +477,7 @@ public class CoreProxyClient extends CoreProxy {
 
 
 
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
+        Minecraft.getInstance().getItemColors().registerItemColorHandler(new IItemColor() {
             @Override
             public int colorMultiplier(ItemStack stack, int tintIndex) {
                 return stack.getItemDamage() != 4 ? -1 : 0xCCC0FF;
@@ -497,111 +485,8 @@ public class CoreProxyClient extends CoreProxy {
         }, SlashBlade.proudSoul);
     }
 
-    /*
-    @Override
-    public void getMouseOver(double len)
-    {
-        Minecraft mc = Minecraft.getMinecraft();
-
-        float partialTicks = ReflectionAccessHelper.getPartialTicks();
-
-        EntityRenderer er = mc.entityRenderer;
-        Entity entity = mc.getRenderViewEntity();
-        if (entity != null)
-        {
-            if (mc.theWorld != null)
-            {
-                mc.pointedEntity = null;
-                double d0 = len;;
-                mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
-                double d1 = d0;
-                Vec3d vec3 = entity.getPositionEyes(partialTicks);
-
-
-                if (mc.objectMouseOver != null)
-                {
-                    d1 = mc.objectMouseOver.hitVec.distanceTo(vec3);
-                }
-
-                Vec3d vec31 = entity.getLook(partialTicks);
-                Vec3d vec32 = vec3.addVector(vec31.x * d0, vec31.y * d0, vec31.z * d0);
-                Entity pointedEntity = null;
-                Vec3d vec33 = null;
-                float f = 1.0F;
-                List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().offset(vec31.x * d0, vec31.y * d0, vec31.z * d0).grow((double) f, (double) f, (double) f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
-                    public boolean apply(Entity p_apply_1_) {
-                        return p_apply_1_.canBeCollidedWith();
-                    }
-                }));
-                double d2 = d1;
-
-                for (int i = 0; i < list.size(); ++i)
-                {
-                    Entity entity1 = (Entity)list.get(i);
-
-                    if (entity1.canBeCollidedWith())
-                    {
-                        float f2 = entity1.getCollisionBorderSize();
-                        AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double) f2, (double) f2, (double)f2);
-                        RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
-
-                        if (axisalignedbb.contains(vec3))
-                        {
-                            if (0.0D <= d2)
-                            {
-                                pointedEntity = entity1;
-                                vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
-                                d2 = 0.0D;
-                            }
-                        }
-                        else if (movingobjectposition != null)
-                        {
-                            double d3 = vec3.distanceTo(movingobjectposition.hitVec);
-
-                            if (d3 < d2 || d2 == 0.0D)
-                            {
-                                if (entity1 == entity.getRidingEntity() && !entity1.canRiderInteract())
-                                {
-                                    if (d2 == 0.0D)
-                                    {
-                                        pointedEntity = entity1;
-                                        vec33 = movingobjectposition.hitVec;
-                                    }
-                                }
-                                else
-                                {
-                                    pointedEntity = entity1;
-                                    vec33 = movingobjectposition.hitVec;
-                                    d2 = d3;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (pointedEntity != null && (d2 < d1 || mc.objectMouseOver == null))
-                {
-                    mc.objectMouseOver = new RayTraceResult(pointedEntity, vec33);
-
-                    if (pointedEntity instanceof EntityLivingBase || pointedEntity instanceof EntityItemFrame)
-                    {
-                        mc.pointedEntity = pointedEntity;
-                    }
-                }
-            }
-        }
-    }*/
-
-    @Override
-    public IMessage onMessage(MessageRankpointSynchronize message, MessageContext ctx) {
-
-        if(ctx.getClientHandler() == null) return null;
-
-        EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
-        if(entityPlayer == null) return null;
-
-        StylishRankManager.setRankPoint(entityPlayer, message.rankpoint);
-
-        return null;
+    public void onMessage(S2CRankpointSynchronize message, EntityPlayerMP sender) {
+        if(sender == null) return;
+        StylishRankManager.setRankPoint(sender, message.rankpoint);
     }
 }

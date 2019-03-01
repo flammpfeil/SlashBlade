@@ -61,7 +61,7 @@ public class AnvilRecipe{
             if(this.meta != event.getRight().getMetadata()) return false;
 
             NBTTagCompound tag = ItemSlashBlade.getSpecialEffect(event.getLeft());
-            int level = tag.getInteger(SpecialEffects.HFCustom.getEffectKey());
+            int level = tag.getInt(SpecialEffects.HFCustom.getEffectKey());
             if(this.targetLevel != level) return false;
 
             return true;

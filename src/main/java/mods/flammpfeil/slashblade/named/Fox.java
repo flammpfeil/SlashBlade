@@ -41,7 +41,7 @@ public class Fox {
             customblade.addEnchantment(Enchantments.LOOTING,3);
             customblade.addEnchantment(Enchantments.FIRE_ASPECT,2);
 
-            NBTTagCompound tag = customblade.getTagCompound();
+            NBTTagCompound tag = customblade.getTag();
 
             ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
@@ -85,7 +85,7 @@ public class Fox {
             customblade.addEnchantment(Enchantments.KNOCKBACK,2);
             customblade.addEnchantment(Enchantments.FIRE_ASPECT, 2);
 
-            NBTTagCompound tag = customblade.getTagCompound();
+            NBTTagCompound tag = customblade.getTag();
 
             ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
 
@@ -145,7 +145,7 @@ public class Fox {
                 SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
                 reqiredBlade.addEnchantment(Enchantments.LOOTING,1);
-                NBTTagCompound tag = reqiredBlade.getTagCompound();
+                NBTTagCompound tag = reqiredBlade.getTag();
                 ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
                 ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
                 ItemSlashBlade.TextureName.set(tag,"BambooKatana");
@@ -153,7 +153,7 @@ public class Fox {
                 ItemSlashBlade.ProudSoul.set(tag,1000);
                 ItemSlashBlade.RepairCount.set(tag,1);
 
-                reqiredBlade.setStackDisplayName("BambooMod katana");
+                reqiredBlade.setDisplayName("BambooMod katana");
             }
             String reqiredStr = nameWhite + ".reqired";
             SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
@@ -181,7 +181,7 @@ public class Fox {
                 SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
                 reqiredBlade.addEnchantment(Enchantments.SMITE,1);
-                NBTTagCompound tag = reqiredBlade.getTagCompound();
+                NBTTagCompound tag = reqiredBlade.getTag();
                 ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
                 ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
                 ItemSlashBlade.TextureName.set(tag,"BambooKatana");
@@ -189,7 +189,7 @@ public class Fox {
                 ItemSlashBlade.ProudSoul.set(tag,1000);
                 ItemSlashBlade.RepairCount.set(tag,1);
 
-                reqiredBlade.setStackDisplayName("BambooMod katana");
+                reqiredBlade.setDisplayName("BambooMod katana");
             }
             String reqiredStr = nameBlack + ".reqired";
             SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);

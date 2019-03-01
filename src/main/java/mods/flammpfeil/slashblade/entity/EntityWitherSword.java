@@ -33,8 +33,8 @@ public class EntityWitherSword extends EntitySummonedSwordBase {
 
     private static final DataParameter<Boolean> Burst = EntityDataManager.<Boolean>createKey(EntityWitherSword.class, DataSerializers.BOOLEAN);
     @Override
-    protected void entityInit() {
-        super.entityInit();
+    protected void registerData() {
+        super.registerData();
 
 
         //burst

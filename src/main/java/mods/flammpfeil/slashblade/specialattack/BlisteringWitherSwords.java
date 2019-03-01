@@ -112,7 +112,7 @@ public class BlisteringWitherSwords extends SpecialAttackBase {
         World world = player.world;
         Entity target = null;
         for(int dist = 2; dist < 20; dist+=2){
-            AxisAlignedBB bb = player.getEntityBoundingBox();
+            AxisAlignedBB bb = player.getBoundingBox();
             Vec3d vec = player.getLookVec();
             vec = vec.normalize();
             bb = bb.grow(2.0f, 0.25f, 2.0f);

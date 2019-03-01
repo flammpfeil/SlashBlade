@@ -37,7 +37,7 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
                 ItemStack curIs = inv.getStackInSlot(idx);
                 if(!curIs.isEmpty()
                         && curIs.getItem() instanceof ItemSlashBlade
-                        && curIs.hasTagCompound()){
+                        && curIs.hasTag()){
 
 
 
@@ -81,9 +81,9 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
 			ItemStack curIs = var1.getStackInSlot(idx);
 			if(!curIs.isEmpty()
 					&& curIs.getItem() instanceof ItemSlashBlade
-					&& curIs.hasTagCompound()){
+					&& curIs.hasTag()){
 
-                NBTTagCompound oldTag = curIs.getTagCompound();
+                NBTTagCompound oldTag = curIs.getTag();
 				oldTag = (NBTTagCompound)oldTag.copy();
 
                 {

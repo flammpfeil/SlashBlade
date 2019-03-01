@@ -31,7 +31,7 @@ public class StunManager {
 
         long timeout = target.getEntityData().getLong(EntityAIStun.StunTimeout);
         if(timeout == 0) return;
-        timeout = timeout - target.world.getTotalWorldTime();
+        timeout = timeout - target.world.getGameTime();
         if(timeout <= 0 || EntityAIStun.timeoutLimit < timeout){
             target.getEntityData().removeTag(EntityAIStun.StunTimeout);
             return;
@@ -47,7 +47,7 @@ public class StunManager {
         if(duration <= 0) return;
 
         duration = Math.min(duration, EntityAIStun.timeoutLimit);
-        target.getEntityData().setLong(EntityAIStun.StunTimeout,target.world.getTotalWorldTime() + duration);
+        target.getEntityData().setLong(EntityAIStun.StunTimeout,target.world.getGameTime() + duration);
     }
 
     public static void removeStun(EntityLivingBase target){
@@ -70,7 +70,7 @@ public class StunManager {
         long timeout = target.getEntityData().getLong(FreezeTimeout);
         if(timeout == 0) return;
 
-        long timeLeft = timeout - target.world.getTotalWorldTime();
+        long timeLeft = timeout - target.world.getGameTime();
         if(timeLeft <= 0 || freezeLimit < timeLeft){
             target.getEntityData().removeTag(FreezeTimeout);
             return;
@@ -86,7 +86,7 @@ public class StunManager {
 
         duration = Math.min(duration, freezeLimit);
         long oldTimeout = target.getEntityData().getLong(FreezeTimeout);
-        long timeout = target.world.getTotalWorldTime() + duration;
+        long timeout = target.world.getGameTime() + duration;
 
         timeout = Math.max(oldTimeout, timeout);
 

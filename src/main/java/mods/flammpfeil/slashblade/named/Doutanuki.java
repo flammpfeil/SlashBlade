@@ -279,10 +279,10 @@ public class Doutanuki {
             if(!(target.getItem() instanceof ItemSlashBlade))
                 return false;
 
-            if(!target.hasTagCompound())
+            if(!target.hasTag())
                 return false;
 
-            NBTTagCompound tag = target.getTagCompound();
+            NBTTagCompound tag = target.getTag();
             if(!ItemSlashBlade.IsNoScabbard.get(tag))
                 return false;
 
@@ -345,10 +345,10 @@ public class Doutanuki {
             if(!(target.getItem() instanceof ItemSlashBlade))
                 return false;
 
-            if(!target.hasTagCompound())
+            if(!target.hasTag())
                 return false;
 
-            NBTTagCompound tag = target.getTagCompound();
+            NBTTagCompound tag = target.getTag();
             if(!ItemSlashBlade.IsBroken.get(tag))
                 return false;
 
@@ -415,10 +415,10 @@ public class Doutanuki {
             if(!(target.getItem() instanceof ItemSlashBlade))
                 return false;
 
-            if(!target.hasTagCompound())
+            if(!target.hasTag())
                 return false;
 
-            NBTTagCompound tag = target.getTagCompound();
+            NBTTagCompound tag = target.getTag();
             if(ItemSlashBlade.IsBroken.get(tag))
                 return false;
 

@@ -65,7 +65,7 @@ public class ProjectileBarrier {
                     , SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS,0.45f,0.5f);
 
 
-        AxisAlignedBB bb = player.getEntityBoundingBox().grow(2,2,2);
+        AxisAlignedBB bb = player.getBoundingBox().grow(2,2,2);
         List<Entity> list = player.world.getEntitiesInAABBexcluding(player,bb, EntitySelectorDestructable.getInstance());
         for(Entity target : list){
             if(player.getHeldItemMainhand().isEmpty()) break;
@@ -83,7 +83,7 @@ public class ProjectileBarrier {
     }
 
     private void destructEntity(EntityLivingBase player, Entity target){
-        //EnumParticleTypes.CRIT_MAGIC
+        //Particles.CRIT_MAGIC
         if(player.world instanceof WorldServer) {
             ((WorldServer) player.world).getEntityTracker().sendToTrackingAndSelf(player, new SPacketAnimation(target, 5));
             player.world.playSound(null, player.posX, player.posY, player.posZ

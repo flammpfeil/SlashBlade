@@ -44,7 +44,7 @@ public class SpecialEffects {
 
     public static ItemStack addEffect(ItemStack blade, String key, int requiredLevel){
         NBTTagCompound etag = ItemSlashBlade.getSpecialEffect(blade);
-        etag.setInteger(key,requiredLevel);
+        etag.setInt(key,requiredLevel);
         return blade;
     }
 
@@ -77,7 +77,7 @@ public class SpecialEffects {
 
         NBTTagCompound tag = ItemSlashBlade.getSpecialEffect(blade);
 
-        int requiredLevel = tag.getInteger(EffectKey);
+        int requiredLevel = tag.getInt(EffectKey);
         if(0 == requiredLevel) return State.None;
         if(requiredLevel<= player.experienceLevel)
             return State.Effective;

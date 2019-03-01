@@ -1,140 +1,162 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'maven'
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
 
-version = "mc1.12-r19"
+version = "1.13.2.1"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
 minecraft {
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
-    version = "1.12.2-14.23.4.2764"
-    runDir = "run"
-
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20171003"
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: 'snapshot', version: '20180921-1.13'
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
-    //static final boolean isRelease = /*@IS_RELEASE@*/ false;
-    replace '@IS_RELEASE@', '*/true;//'
+    // accessTransformer = file('build/resources/main/META-INF/accesstransformer.cfg')
+    
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
 
-    replace '@VERSION@', project.version
-    replace '@MC_VERSION@', version
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
-processResources
-{
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
 
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modname':project.archivesBaseName, 'modid':project.group
-    }
+processResources {
 
-    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+
+        // トークンを置換する
+        filter(
+                org.apache.tools.ant.filters.ReplaceTokens,
+                tokens: [
+                        'IS_RELEASE': '*/true;//',
+                        'VERSION': project.version,
+                        'MC_VERSION': '1.13'
+                ]
+        )
+        
+        expand([
+                jarVersion: version
+        ])
     }
+}
+
+task prepareSources(type: Copy) {
+    from('src/main/java')
+    into('build/src/main/java')
+
+    // トークンを置換する
+    filter(
+            org.apache.tools.ant.filters.ReplaceTokens,
+            tokens: [
+                    'IS_RELEASE': '*/true;//',
+                    'VERSION': project.version,
+                    'MC_VERSION': '1.13'
+            ]
+    )
+}
+
+// Prepare sources, before compile
+compileJava {
+    sourceSets.main.java.srcDirs = ['build/src/main/java']
+    dependsOn prepareSources
 }
 
 dependencies {
-    runtime fileTree(dir: 'libs', include: '*.jar')
+    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.59'
+
+    // You may put jars on which you depend on in ./libs or you may define them like so..
+    // compile "some.group:artifact:version:classifier"
+    // compile "some.group:artifact:version"
+
+    // Real examples
+    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
+    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // These dependencies get remapped to your current MCP mappings
+    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // For more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
 }
+
 
 def defaultEncoding = 'UTF-8'
 tasks.withType(AbstractCompile) each {
     it.options.encoding = defaultEncoding
-    it.options.compilerArgs += ['-source', '1.8', '-target', '1.8']
 }
 
 compileTestJava {
     options.encoding = defaultEncoding
-    options.compilerArgs += ['-source', '1.8', '-target', '1.8']
 }
 
 
+// Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
-        //attributes 'FMLCorePlugin': 'mods.flammpfeil.slashblade.asm.CorePlugin'
-        attributes 'FMLCorePluginContainsFMLMod': true
+        attributes([
+            "Specification-Title": "examplemod",
+            "Specification-Vendor": "examplemodsareus",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"examplemodsareus",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
     }
-}
-
-
-task sourceZip(type: Zip) {
-    from sourceSets.main.allSource
-    classifier = 'src'
-}
-
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    from sourceSets.main.allSource
-    classifier = 'deobf'
-}
-
-artifacts {
-    archives sourceZip
-    archives deobfJar
-}
-
-def mavenRepository = '/maven'
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: uri(mavenRepository))
-        }
-    }
-}
-repositories {
-
-	maven {
-    // location of the maven that hosts JEI files
-    name = "Progwml6 maven"
-    url = "http://dvs1.progwml6.com/files/maven"
-	}
-
-	maven {
-    // location of a maven mirror for JEI files, as a fallback
-    name = "ModMaven"
-    url = "modmaven.k-4u.nl"
-	}
-	 maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-
-}
-
-dependencies {
-	configurations.all {
-		resolutionStrategy {
-			force 'mezz.jei:jei_1.12.2:4.14.3.242'
-		}
-	}
-	// compile against the JEI API but do not include it at runtime
-    deobfProvided ("mezz.jei:jei_1.12.2:4.14.3.242:api"){
-	force = true
-	}
-    // at runtime, use the full JEI jar
-    runtime ("mezz.jei:jei_1.12.2:4.14.3.242"){
-	force = true
-	}
-	deobfCompile "reforged:Reforged:0.7.5:1.12+"
-
 }

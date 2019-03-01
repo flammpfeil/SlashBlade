@@ -1,7 +1,10 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
 
+import mods.flammpfeil.slashblade.client.util.MSAutoCloser;
 import mods.flammpfeil.slashblade.entity.EntityDrive;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.Render;
@@ -12,12 +15,12 @@ import net.minecraft.entity.Entity;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * Created by Furia on 14/05/08.
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class RenderDrive extends Render {
     private static double[][] dVec = {{     0,     1,  -0.5},  // 頂点0
         {     0,  0.75,     0},  // 頂点1
@@ -65,53 +68,61 @@ public class RenderDrive extends Render {
         return null;
     }
 
-    private void doDriveRender(EntityDrive entityDrive, double dX, double dY, double dZ, float f, float f1)
-    {
+    private void doDriveRender(EntityDrive entityDrive, double dX, double dY, double dZ, float f, float f1) {
         Tessellator tessellator = Tessellator.getInstance();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        //GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
 
-        GL11.glPushMatrix();
-
-        GL11.glTranslatef((float)dX, (float)dY+0.5f, (float)dZ);
-        GL11.glRotatef(entityDrive.rotationYaw, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-entityDrive.rotationPitch, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(entityDrive.getRoll(),0,0,1);
-        //GL11.glRotatef(fRot, 0.0F, 1.0F, 0.0F);
-
-        GL11.glScalef(0.25f, 1, 1);
-
-        //■スタート
-        float lifetime = entityDrive.getLifeTime();
-        float ticks = entityDrive.ticksExisted;
-        BufferBuilder wr = tessellator.getBuffer();
-        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-
-        float alpha = (float)Math.pow((lifetime - Math.min(lifetime,ticks)) / lifetime,2.0f);
-
-
-        //◆頂点登録 開始
-        double dScale = 1.0;
-        for(int idx = 0; idx < nVecPos.length; idx++)
-        {
-            wr.pos(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale).color(0.2f,0.2f,1.0f,alpha).endVertex();
-            wr.pos(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale).color(0.2f,0.2f,1.0f,alpha).endVertex();
-            wr.pos(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale).color(0.2f,0.2f,1.0f,alpha).endVertex();
-            wr.pos(dVec[nVecPos[idx][3]][0] * dScale, dVec[nVecPos[idx][3]][1] * dScale, dVec[nVecPos[idx][3]][2] * dScale).color(0.2f,0.2f,1.0f,alpha).endVertex();
+        int color = entityDrive.getColor();
+        boolean inverse = color < 0;
+        color = Math.abs(color);
+        if(!inverse){
+            OpenGlHelper.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+        }
+        else{
+            OpenGlHelper.glBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO, GL11.GL_ONE, GL11.GL_ZERO);
         }
 
-        //◆頂点登録 終了
+        try (MSAutoCloser msac = MSAutoCloser.pushMatrix()) {
 
-        tessellator.draw();
 
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glTranslatef((float) dX, (float) dY + 0.5f, (float) dZ);
+            GL11.glRotatef(entityDrive.rotationYaw, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(-entityDrive.rotationPitch, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(entityDrive.getRoll(), 0, 0, 1);
+
+            GL11.glScalef(0.25f, 1, 1);
+
+            //■スタート
+            float lifetime = entityDrive.getLifeTime();
+            float ticks = entityDrive.ticksExisted;
+            BufferBuilder wr = tessellator.getBuffer();
+            wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+
+            float alpha = (float) Math.pow((lifetime - Math.min(lifetime, ticks)) / lifetime, 2.0f);
+
+            int r = color >> 16 & 255;
+            int g = color >> 8 & 255;
+            int b = color & 255;
+
+            //◆頂点登録 開始
+            double dScale = 1.0;
+            for (int idx = 0; idx < nVecPos.length; idx++) {
+                wr.pos(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale).color(r, g, b, alpha).endVertex();
+                wr.pos(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale).color(r, g, b, alpha).endVertex();
+                wr.pos(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale).color(r, g, b, alpha).endVertex();
+                wr.pos(dVec[nVecPos[idx][3]][0] * dScale, dVec[nVecPos[idx][3]][1] * dScale, dVec[nVecPos[idx][3]][2] * dScale).color(r, g, b, alpha).endVertex();
+            }
+
+            //◆頂点登録 終了
+
+            tessellator.draw();
+        }
+
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.enableTexture2D();
     }
 
 }

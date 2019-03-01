@@ -1,24 +1,50 @@
 package mods.flammpfeil.slashblade.network;
 
-import mods.flammpfeil.slashblade.network.MessageRangeAttack;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
-import mods.flammpfeil.slashblade.network.MessageSpecialAction;
-import mods.flammpfeil.slashblade.network.MessageSpecialActionHandler;
+import mods.flammpfeil.slashblade.SlashBlade;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 /**
  * Created by Furia on 14/06/09.
  */
 public class NetworkManager {
-    //public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(SlashBlade.modid);
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("flammpfeil.sb");
+    public static final ResourceLocation SLASHBLADE_MESSAGE_RESOURCE = new ResourceLocation(SlashBlade.modname, "flammpfeil.sb");
+    public static final String NETVERSION = "SB1";
 
+    //public static final SimpleNetworkWrapper channel = NetworkRegistry.channel.newSimpleChannel(SlashBlade.modid);
+    public static SimpleChannel channel;
 
     public static void init() {
-        INSTANCE.registerMessage(MessageRangeAttackHandler.class, MessageRangeAttack.class, 0, Side.SERVER);
-        INSTANCE.registerMessage(MessageSpecialActionHandler.class, MessageSpecialAction.class, 1, Side.SERVER);
-        INSTANCE.registerMessage(MessageMoveCommandStateHandler.class, MessageMoveCommandState.class, 2, Side.SERVER);
-        INSTANCE.registerMessage(MessageRankpointSynchronizeHandler.class, MessageRankpointSynchronize.class, 3, Side.CLIENT);
+        channel = NetworkRegistry.ChannelBuilder.named(SLASHBLADE_MESSAGE_RESOURCE).
+                clientAcceptedVersions(a -> true).
+                serverAcceptedVersions(a -> true).
+                networkProtocolVersion(() -> NetworkManager.NETVERSION).
+                simpleChannel();
+
+        channel.messageBuilder(C2SRangeAttack.class, 0).
+                decoder(C2SRangeAttack::decoder).
+                encoder(C2SRangeAttack::encoder).
+                consumer(new C2SRangeAttackHandler()).
+                add();
+
+        channel.messageBuilder(C2SSpecialAction.class, 1).
+                decoder(C2SSpecialAction::decoder).
+                encoder(C2SSpecialAction::encoder).
+                consumer(new C2SSpecialActionHandler()).
+                add();
+
+        channel.messageBuilder(C2SMoveCommandState.class, 2).
+                decoder(C2SMoveCommandState::decoder).
+                encoder(C2SMoveCommandState::encoder).
+                consumer(new C2SMoveCommandStateHandler()).
+                add();
+
+        channel.messageBuilder(S2CRankpointSynchronize.class, 3).
+                decoder(S2CRankpointSynchronize::decoder).
+                encoder(S2CRankpointSynchronize::encoder).
+                consumer(new S2CRankpointSynchronizeHandler()).
+                add();
+
     }
 }

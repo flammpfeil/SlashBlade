@@ -78,7 +78,7 @@ public class Yamato {
                     NBTTagCompound reqTag = ItemSlashBlade.getItemTagCompound(reqiredBlade);
                     ItemSlashBlade.ProudSoul.set(reqTag, 1000);
 
-                    reqiredBlade.setStackDisplayName("thousandProudSouls");
+                    reqiredBlade.setDisplayName("thousandProudSouls");
 
                     String nameReqired = nameTrue + ".reqired";
                     SlashBlade.registerCustomItemStack(nameReqired, reqiredBlade);

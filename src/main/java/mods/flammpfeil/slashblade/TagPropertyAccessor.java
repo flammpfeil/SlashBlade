@@ -94,12 +94,12 @@ public abstract class TagPropertyAccessor<T extends Comparable> {
 
         @Override
         public Integer get(NBTTagCompound tag){
-            return tag.getInteger(this.tagName);
+            return tag.getInt(this.tagName);
         }
 
         @Override
         public Integer set(NBTTagCompound tag, Integer value) {
-            tag.setInteger(this.tagName, value);
+            tag.setInt(this.tagName, value);
             return value;
         }
 

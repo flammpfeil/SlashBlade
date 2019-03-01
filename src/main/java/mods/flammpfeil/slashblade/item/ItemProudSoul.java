@@ -1,11 +1,8 @@
 package mods.flammpfeil.slashblade.item;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
 import mods.flammpfeil.slashblade.entity.EntityGrimGripKey;
 import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import mods.flammpfeil.slashblade.specialeffect.IRemovable;
@@ -14,11 +11,11 @@ import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -28,36 +25,35 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.server.management.UserListOpsEntry;
+import net.minecraft.state.EnumProperty;
+import net.minecraft.state.IProperty;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.chunk.BlockStateContainer;
+import net.minecraft.world.chunk.BlockStatePaletteRegistry;
+import net.minecraft.world.chunk.IBlockStatePalette;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ItemProudSoul extends Item {
 
 	public ItemProudSoul() {
-        setHasSubtypes(true);
+	    super(new Properties().defaultMaxDamage(5));
 	}
 
 	public enum EnumSoulType implements IStringSerializable{
@@ -110,10 +106,12 @@ public class ItemProudSoul extends Item {
         }
     }
 
-	IBlockState baseState = (new BlockStateContainer(Blocks.STONE, new IProperty[]{SOUL_TYPE})).getBaseState().withProperty(SOUL_TYPE, EnumSoulType.NONE);
-    public static final PropertyEnum<EnumSoulType> SOUL_TYPE = PropertyEnum.<EnumSoulType>create("type", EnumSoulType.class);
+    private static final IBlockStatePalette<IBlockState> field_205512_a = new BlockStatePaletteRegistry<>(Block.BLOCK_STATE_IDS, Blocks.AIR.getDefaultState());
+	IBlockState baseState = (new BlockStateContainer<IBlockState>(field_205512_a, Block.BLOCK_STATE_IDS, NBTUtil::readBlockState, NBTUtil::writeBlockState, Blocks.AIR.getDefaultState()).get(0, 0, 0).with(SOUL_TYPE, EnumSoulType.NONE));
+
+    public static final EnumProperty<EnumSoulType> SOUL_TYPE = EnumProperty.<EnumSoulType>create("type", EnumSoulType.class);
 	public IBlockState getStateFromMeta(int meta){
-	    return baseState.withProperty(SOUL_TYPE , EnumSoulType.byMetadata(meta));
+	    return baseState.with(SOUL_TYPE , EnumSoulType.byMetadata(meta));
     }
 
     static public final int AchievementIconIdHead = 0x1000;
@@ -213,14 +211,14 @@ public class ItemProudSoul extends Item {
 
             return EnumActionResult.SUCCESS;
         }else if(stack.getMetadata() == 4 //crystal
-                && stack.hasTagCompound() && stack.getTagCompound().hasKey("GPX")
+                && stack.hasTag() && stack.getTag().hasKey("GPX")
                 && Blocks.QUARTZ_BLOCK == block
                 && player.isSneaking()) {
 
-            NBTTagCompound tag = stack.getTagCompound();
-            int x = tag.getInteger("GPX");
-            int y = tag.getInteger("GPY");
-            int z = tag.getInteger("GPZ");
+            NBTTagCompound tag = stack.getTag();
+            int x = tag.getInt("GPX");
+            int y = tag.getInt("GPY");
+            int z = tag.getInt("GPZ");
 
             BlockPos gripPos = new BlockPos(x, y, z);
 
@@ -262,9 +260,9 @@ public class ItemProudSoul extends Item {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack par1ItemStack, World world, List par3List, ITooltipFlag flagIn) {
-        EntityPlayer p_77624_2_ = Minecraft.getMinecraft().player;
+        EntityPlayer p_77624_2_ = Minecraft.getInstance().player;
         boolean p_77624_4_ = flagIn.isAdvanced();
         super.addInformation(par1ItemStack, world, par3List, flagIn);
 
@@ -281,19 +279,19 @@ public class ItemProudSoul extends Item {
             Set<String> tagKeys = etag.getKeySet();
 
             for(String key : tagKeys){
-                int reqiredLevel = etag.getInteger(key);
+                int reqiredLevel = etag.getInt(key);
 
                 par3List.add(
-                        I18n.translateToLocal("slashblade.seffect.name." + key)
+                        I18n.format("slashblade.seffect.name." + key)
                                 + reqiredLevel);
             }
         }
 
         if(tag.hasKey("GPX")){
             par3List.add(String.format("GrimGrip pos x:%d y:%d z:%d",
-                    tag.getInteger("GPX"),
-                    tag.getInteger("GPY"),
-                    tag.getInteger("GPZ")));
+                    tag.getInt("GPX"),
+                    tag.getInt("GPY"),
+                    tag.getInt("GPZ")));
         }
 
     }
@@ -385,10 +383,10 @@ public class ItemProudSoul extends Item {
 
                     if(isLottery) {
                         if(stand.getType(stand) == EntityBladeStand.StandType.Dual){
-                            int lotNum = stand.getEntityData().getInteger("LastLotNumber");
+                            int lotNum = stand.getEntityData().getInt("LastLotNumber");
                             lotNum++;
                             lotNum %= NamedBladeManager.namedbladeSouls.size();
-                            stand.getEntityData().setInteger("LastLotNumber",lotNum);
+                            stand.getEntityData().setInt("LastLotNumber",lotNum);
 
                             bladeSoulCrystal = NamedBladeManager.getNamedSoulSequential(lotNum);
                         }else{
@@ -414,7 +412,7 @@ public class ItemProudSoul extends Item {
                     }
                     stand.extinguish();
 
-                    bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.world.getTotalWorldTime()));
+                    bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.world.getGameTime()));
 
                     EntityItem entityitem = new EntityItem(stand.world, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
                     entityitem.setDefaultPickupDelay();
@@ -483,7 +481,7 @@ public class ItemProudSoul extends Item {
                     for(String key : seTag.getKeySet()){
                         NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
 
-                        int level = seTag.getInteger(key);
+                        int level = seTag.getInt(key);
 
                         SpecialEffects.addEffect(blade, key, level);
 
@@ -499,7 +497,7 @@ public class ItemProudSoul extends Item {
                     NBTTagCompound effects = ItemSlashBlade.getSpecialEffect(blade);
 
                     for(String key : effects.getKeySet()){
-                        int level = effects.getInteger(key);
+                        int level = effects.getInt(key);
                         if(playerLevel < level) continue; //削除者のLevelが満たない場合解除できない
 
                         boolean canRemoval = true;
@@ -518,7 +516,7 @@ public class ItemProudSoul extends Item {
                             ItemStack bladeSoulCrystal = SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.CrystalBladeSoulStr,1);
                             SpecialEffects.addEffect(bladeSoulCrystal, key , level);
 
-                            bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.world.getTotalWorldTime()));
+                            bladeSoulCrystal.setTagInfo("BIRTH", new NBTTagLong(stand.world.getGameTime()));
 
                             EntityItem entityitem = new EntityItem(stand.world, stand.posX, stand.posY + 2.0, stand.posZ, bladeSoulCrystal);
                             entityitem.setDefaultPickupDelay();
@@ -630,7 +628,7 @@ public class ItemProudSoul extends Item {
         ItemStack stack = entityItem.getItem();
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
         if(stack.getMetadata() == 4 || stack.getMetadata() == 5){
-            long current = entityItem.getEntityWorld().getTotalWorldTime();
+            long current = entityItem.getEntityWorld().getGameTime();
 
             if(entityItem.getEntityData().hasKey("FloatingTimeout")){
                 long timeout = entityItem.getEntityData().getLong("FloatingTimeout");
@@ -650,7 +648,7 @@ public class ItemProudSoul extends Item {
                         double d3 = (double)(Item.itemRand.nextFloat() * (float)j);
                         double d4 = ((double)Item.itemRand.nextFloat() - 0.5D) * 0.125D;
                         double d5 = (double)(Item.itemRand.nextFloat() * (float)k);
-                        entityItem.world.spawnParticle(EnumParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5, new int[0]);
+                        entityItem.world.spawnParticle(Particles.PORTAL, d0, d1, d2, d3, d4, d5, new int[0]);
                     }
 
                     if(entityItem.getEntityData().hasKey("LPX")) {
@@ -689,5 +687,17 @@ public class ItemProudSoul extends Item {
         }
 
         return super.onEntityItemUpdate(entityItem);
+    }
+
+    @Override
+    public int getBurnTime(ItemStack itemStack) {
+        switch(itemStack.getDamage()){
+            case 0:
+                return 1000;
+            case 3:
+                return 500;
+            default:
+                return 0;
+        }
     }
 }

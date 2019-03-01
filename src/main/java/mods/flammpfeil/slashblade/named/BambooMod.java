@@ -39,7 +39,7 @@ public class BambooMod {
             SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
 
             reqiredBlade.addEnchantment(Enchantments.LOOTING,1);
-            NBTTagCompound tag = reqiredBlade.getTagCompound();
+            NBTTagCompound tag = reqiredBlade.getTag();
             ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
             ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
             ItemSlashBlade.TextureName.set(tag,"BambooKatana");
@@ -53,7 +53,7 @@ public class BambooMod {
             loreList.appendTag(new NBTTagString("true performance : please crafting"));
             displayTag.setTag("Lore", loreList);
 
-            reqiredBlade.setStackDisplayName(reqiredBlade.getDisplayName());
+            reqiredBlade.setDisplayName(reqiredBlade.getDisplayName());
         }
         String reqiredStr = "wrap.BambooMod.katana.sample";
         SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
@@ -129,21 +129,21 @@ public class BambooMod {
 
             SlashBlade.wrapBlade.setWrapItem(scabbard,target);
 
-            NBTTagCompound tag = scabbard.getTagCompound();
+            NBTTagCompound tag = scabbard.getTag();
             ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
             ItemSlashBladeNamed.TextureName.set(tag,"BambooKatana");
             ItemSlashBladeNamed.BaseAttackModifier.set(tag,attackModif);
 
             if(target.hasDisplayName()){
-                scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
+                scabbard.setDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat").trim(), target.getDisplayName()));
             }else if(target.isItemEnchanted()){
-                scabbard.setStackDisplayName(scabbard.getDisplayName());
+                scabbard.setDisplayName(scabbard.getDisplayName());
             }else{
-                scabbard.setStackDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
+                scabbard.setDisplayName(String.format(I18n.format("item.flammpfeil.slashblade.wrapformat.low").trim(),target.getDisplayName()));
             }
 
             if(target.isItemEnchanted()){
-                tag.setTag("ench",target.getTagCompound().getTag("ench"));
+                tag.setTag("ench",target.getTag().getTag("ench"));
             }
 
             return scabbard;

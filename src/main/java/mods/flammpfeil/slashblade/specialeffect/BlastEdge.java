@@ -69,7 +69,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
                 double d0 = rand.nextGaussian() * 0.5D;
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d2 = rand.nextGaussian() * 0.5D;
-                ((WorldServer)target.world).spawnParticle(EnumParticleTypes.REDSTONE,
+                ((WorldServer)target.world).spawnParticle(Particles.REDSTONE,
                         false,
                         target.posX,
                         target.posY + target.getEyeHeight(),
@@ -148,7 +148,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
             double d0 = rand.nextGaussian() * 0.02D;
             double d1 = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
-            target.world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK,
+            target.world.spawnParticle(Particles.FIREWORKS_SPARK,
                     target.posX + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width,
                     target.posY + 1.0D + (double)(rand.nextFloat() * target.height),
                     target.posZ + (double)(rand.nextFloat() * target.width * 2.0F) - (double)target.width, d0, d1, d2, new int[0]);

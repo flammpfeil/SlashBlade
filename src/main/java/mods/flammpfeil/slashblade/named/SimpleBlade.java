@@ -144,8 +144,8 @@ public class SimpleBlade {
 
         ItemStack brokenBladeWhite = new ItemStack(SlashBlade.bladeWhiteSheath,1,0);
         brokenBladeWhite.setItemDamage(brokenBladeWhite.getMaxDamage());
-        brokenBladeWhite.setStackDisplayName("BrokenBladeWhite");
-        ItemSlashBlade.IsBroken.set(brokenBladeWhite.getTagCompound(), true);
+        brokenBladeWhite.setDisplayName("BrokenBladeWhite");
+        ItemSlashBlade.IsBroken.set(brokenBladeWhite.getTag(), true);
         SlashBlade.registerCustomItemStack(SlashBlade.BrokenBladeWhiteStr, brokenBladeWhite);
         ItemSlashBladeNamed.NamedBlades.add(SlashBlade.BrokenBladeWhiteStr);
 
@@ -171,7 +171,7 @@ public class SimpleBlade {
 
             SpecialEffects.addEffect(customblade,SpecialEffects.BlastEdge);
 
-            customblade.setStackDisplayName("TestBlastEdge");
+            customblade.setDisplayName("TestBlastEdge");
 
             String key = "TestBlastEdge";
             SlashBlade.registerCustomItemStack(key, customblade);
@@ -185,7 +185,7 @@ public class SimpleBlade {
 
             SpecialEffects.addEffect(customblade,SpecialEffects.HFCustom);
 
-            customblade.setStackDisplayName("TestHFCustom");
+            customblade.setDisplayName("TestHFCustom");
 
             String key = "TestHFCustom";
             SlashBlade.registerCustomItemStack(key, customblade);
@@ -198,7 +198,7 @@ public class SimpleBlade {
 
             SpecialEffects.addEffect(customblade,SpecialEffects.HFCustom);
 
-            customblade.setStackDisplayName("TestHFCustom");
+            customblade.setDisplayName("TestHFCustom");
 
             IEnergyStorage storage = customblade.getCapability(BladeCapabilityProvider.ENERGY, null);
             storage.receiveEnergy(storage.getMaxEnergyStored(),false);

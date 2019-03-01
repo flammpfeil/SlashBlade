@@ -29,7 +29,7 @@ public class EntityAIStun extends EntityAIBase {
         if(this.owner.world == null) return false;
         long timeout = this.owner.getEntityData().getLong(StunTimeout);
         if(timeout == 0) return false;
-        timeout = timeout - this.owner.world.getTotalWorldTime();
+        timeout = timeout - this.owner.world.getGameTime();
         if(timeout <= 0 || timeoutLimit < timeout){
             this.owner.getEntityData().removeTag(StunTimeout);
             return false;

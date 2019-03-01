@@ -1,18 +1,14 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
-import mods.flammpfeil.slashblade.SlashBlade;
-import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
+import mods.flammpfeil.slashblade.network.C2SMoveCommandState;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -20,16 +16,9 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.Random;
@@ -90,7 +79,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
         EntityLivingBase target = event.target;
 
         //effected
-        int effectLevel = ItemSlashBlade.getSpecialEffect(blade).getInteger(this.getEffectKey());
+        int effectLevel = ItemSlashBlade.getSpecialEffect(blade).getInt(this.getEffectKey());
         int rank = StylishRankManager.getStylishRank(player);
 
         float damage = 0.5f * (1 + rank + effectLevel);
@@ -130,7 +119,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
         IEnergyStorage storage = blade.getCapability(BladeCapabilityProvider.ENERGY, null);
         if(storage == null) return;
 
-        if(player.world instanceof WorldServer && player.world.getTotalWorldTime() % 10 == 0 &&
+        if(player.world instanceof WorldServer && player.world.getGameTime() % 10 == 0 &&
                 (player.getHeldItemMainhand() != blade
                         || !ItemSlashBlade.OnClick.get(tag)
                         || (!player.isSwingInProgress && player.getActiveItemStack() != null))){
@@ -146,7 +135,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
             double d0 = rand.nextGaussian() * 0.02D;
             double d1 = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
-            ((WorldServer)player.world).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK,
+            ((WorldServer)player.world).spawnParticle(Particles.FIREWORKS_SPARK,
                     false,
                     player.posX,
                     player.posY + player.height / 2.0f,
@@ -252,10 +241,10 @@ public class HFCustom implements ISpecialEffect, IRemovable{
 
             if(player.getHeldItemMainhand() == blade){
                 int imputState = player.getEntityData().getByte("SB.MCS");
-                final int imputStateMask = MessageMoveCommandState.CAMERA + MessageMoveCommandState.STYLE;
+                final int imputStateMask = C2SMoveCommandState.CAMERA + C2SMoveCommandState.STYLE;
 
                 if(imputStateMask == (imputState & imputStateMask))
-                    newState = MessageMoveCommandState.SNEAK != (imputState & MessageMoveCommandState.SNEAK);
+                    newState = C2SMoveCommandState.SNEAK != (imputState & C2SMoveCommandState.SNEAK);
             }
 
         }else{

@@ -1,27 +1,17 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
-import com.google.common.collect.Maps;
-import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
-import mods.flammpfeil.slashblade.client.model.BladeModelManager;
+import mods.flammpfeil.slashblade.client.util.LightSetup;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
-import mods.flammpfeil.slashblade.client.model.obj.GroupObject;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.EnumSet;
-import java.util.Map;
 
 /**
  * Created by Furia on 14/08/15.
@@ -38,16 +28,12 @@ public class GrimGripRender extends Render{
     }
 
     private TextureManager engine(){
-        return this.renderManager.renderEngine;
+        return this.renderManager.textureManager;
     }
 
     @Override
     public void doRender(Entity entity, double x, double y, double z, float yaw, float partialRenderTick) {
         if(renderOutlines){
-            GlStateManager.disableLighting();
-            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.disableTexture2D();
-            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 
             GlStateManager.enableColorMaterial();
             float cycleTicks = 40.0f;
@@ -60,11 +46,6 @@ public class GrimGripRender extends Render{
         if(renderOutlines){
             GlStateManager.disableOutlineMode();
             GlStateManager.disableColorMaterial();
-
-            GlStateManager.enableLighting();
-            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.enableTexture2D();
-            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
         }
 
     }
@@ -79,7 +60,7 @@ public class GrimGripRender extends Render{
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
         //GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_LIGHTING);
+        GlStateManager.disableLighting();
         GL11.glEnable(GL11.GL_BLEND);
 
 
@@ -106,22 +87,14 @@ public class GrimGripRender extends Render{
         float scale = 0.005f;
         GL11.glScalef(scale, scale, scale);
 
-
-        float lastx = OpenGlHelper.lastBrightnessX;
-        float lasty = OpenGlHelper.lastBrightnessY;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-
         Face.setColor(color);
-
-        model.renderAll();
-
+        try(LightSetup sl = LightSetup.setup()){
+            model.renderAll();
+        }
         Face.resetColor();
 
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastx, lasty);
-
-
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_LIGHTING);
+        GlStateManager.enableLighting();
         //GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         GL11.glPopAttrib();
