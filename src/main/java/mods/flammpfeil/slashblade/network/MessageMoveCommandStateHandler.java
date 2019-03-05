@@ -20,16 +20,16 @@ public class MessageMoveCommandStateHandler implements IMessageHandler<MessageMo
     @Override
     public IMessage onMessage(MessageMoveCommandState message, MessageContext ctx) {
         if(ctx.getServerHandler() == null) return null;
-
         EntityPlayerMP entityPlayer = ctx.getServerHandler().player;
-
         if(entityPlayer == null) return null;
 
-        ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if(stack.isEmpty()) return null;
-        if(!(stack.getItem() instanceof ItemSlashBlade)) return null;
+        entityPlayer.getServerWorld().addScheduledTask(() -> {
+            ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+            if(stack.isEmpty()) return ;
+            if(!(stack.getItem() instanceof ItemSlashBlade)) return ;
 
-        entityPlayer.getEntityData().setByte("SB.MCS",message.command);
+            entityPlayer.getEntityData().setByte("SB.MCS",message.command);
+        });
 
         return null;
     }

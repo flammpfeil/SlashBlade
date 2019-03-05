@@ -600,7 +600,10 @@ public class CoreProxyClient extends CoreProxy {
         EntityPlayer entityPlayer = Minecraft.getMinecraft().player;
         if(entityPlayer == null) return null;
 
-        StylishRankManager.setRankPoint(entityPlayer, message.rankpoint);
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+
+            StylishRankManager.setRankPoint(entityPlayer, message.rankpoint);
+        });
 
         return null;
     }

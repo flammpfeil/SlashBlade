@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.network;
 import io.netty.buffer.ByteBuf;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -16,12 +17,18 @@ public class MessageRangeAttackHandler implements IMessageHandler<MessageRangeAt
 
     @Override
     public IMessage onMessage(MessageRangeAttack message, MessageContext ctx) {
-        EntityPlayer entityPlayer = ctx.getServerHandler().player;
 
-        ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemSlashBlade) {
-            ((ItemSlashBlade) stack.getItem()).doRangeAttack(stack, entityPlayer, message.mode);
-        }
+        if(ctx.getServerHandler() == null) return null;
+        EntityPlayerMP entityPlayer = ctx.getServerHandler().player;
+        if(entityPlayer == null) return null;
+
+        entityPlayer.getServerWorld().addScheduledTask(() -> {
+            ItemStack stack = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+            if (!stack.isEmpty() && stack.getItem() instanceof ItemSlashBlade) {
+                ((ItemSlashBlade) stack.getItem()).doRangeAttack(stack, entityPlayer, message.mode);
+            }
+        });
+
         return null;
     }
 }
