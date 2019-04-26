@@ -271,11 +271,11 @@ public class Doutanuki {
             ItemStack sc = cInv.getStackInRowAndColumn(1, 1);
             if(!(!sc.isEmpty() && sc.getItem() == SlashBlade.wrapBlade && !ItemSlashBladeWrapper.hasWrapedItem(sc)))
                 return false;
-            sc.setItemDamage(OreDictionary.WILDCARD_VALUE);
+            //sc.setItemDamage(OreDictionary.WILDCARD_VALUE);
             ItemStack target = cInv.getStackInRowAndColumn(0, 2);
             if(target.isEmpty())
                 return false;
-            target.setItemDamage(OreDictionary.WILDCARD_VALUE);
+            //target.setItemDamage(OreDictionary.WILDCARD_VALUE);
             if(!(target.getItem() instanceof ItemSlashBlade))
                 return false;
 
