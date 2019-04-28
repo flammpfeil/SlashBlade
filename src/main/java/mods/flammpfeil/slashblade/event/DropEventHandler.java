@@ -88,7 +88,7 @@ public class DropEventHandler {
                     if(dropitem.getItem() instanceof ItemSlashBlade){
 
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(dropitem);
-                        if(!tag.getBoolean("IsNoStandDrop")){
+                        if(!tag.getBoolean("IsNoStandDrop")||!SlashBlade.SafeDrop){
                             EntityBladeStand e = new EntityBladeStand(event.getEntityLiving().world
                                     ,event.getEntityLiving().posX
                                     ,event.getEntityLiving().posY
