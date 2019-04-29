@@ -4,6 +4,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import mods.flammpfeil.slashblade.capability.MobEffect.CapabilityMobEffectHandler;
+import mods.flammpfeil.slashblade.capability.MobEffect.CapabilityMobEffectRegister;
+import mods.flammpfeil.slashblade.capability.MobEffect.MobEffect;
+import mods.flammpfeil.slashblade.capability.MobEffect.MobEffectCapabilityProvider;
 import mods.flammpfeil.slashblade.config.ConfigManager;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
@@ -382,6 +386,9 @@ public class SlashBlade implements IFuelHandler{
         ConfigCustomBladeManager ccb = new ConfigCustomBladeManager();
         ccb.loadConfig(mainConfiguration);
         InitEventBus.register(ccb);
+
+
+        CapabilityMobEffectHandler.register();
     }
 
     //StatManager statManager;
@@ -616,5 +623,11 @@ public class SlashBlade implements IFuelHandler{
         }
 
         return getCustomBlade(modid,name);
+    }
+
+
+    @EventHandler
+    public void instanced(FMLConstructionEvent event){
+        MinecraftForge.EVENT_BUS.register(new CapabilityMobEffectRegister());
     }
 }

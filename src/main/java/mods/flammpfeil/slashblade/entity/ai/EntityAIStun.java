@@ -1,5 +1,7 @@
 package mods.flammpfeil.slashblade.entity.ai;
 
+import mods.flammpfeil.slashblade.capability.MobEffect.CapabilityMobEffectHandler;
+import mods.flammpfeil.slashblade.capability.MobEffect.IMobEffectHandler;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 
@@ -27,6 +29,17 @@ public class EntityAIStun extends EntityAIBase {
     public boolean shouldExecute() {
         if(this.owner == null) return false;
         if(this.owner.world == null) return false;
+
+        IMobEffectHandler mobEffect = this.owner.getCapability(CapabilityMobEffectHandler.MOB_EFFECT, null);
+        if(mobEffect == null) return false;
+
+        if(mobEffect.isStun(this.owner.world.getTotalWorldTime(), timeoutLimit)){
+            return true;
+        }else{
+            return false;
+        }
+
+        /*
         long timeout = this.owner.getEntityData().getLong(StunTimeout);
         if(timeout == 0) return false;
         timeout = timeout - this.owner.world.getTotalWorldTime();
@@ -36,6 +49,8 @@ public class EntityAIStun extends EntityAIBase {
         }
 
         return true;
+
+        */
     }
 
     @Override
