@@ -38,6 +38,8 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
     public void render(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if(te != null) return;
 
+        ItemSlashBlade.isRenderThread.set(false);
+
         if(BladeModel.targetStack.isEmpty())
             return;
 

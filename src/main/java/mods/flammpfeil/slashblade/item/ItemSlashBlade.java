@@ -3680,15 +3680,19 @@ public class ItemSlashBlade extends ItemSword {
             return super.getDurabilityForDisplay(stack);
     }
 
+
+    public static ThreadLocal<Boolean> isRenderThread = new ThreadLocal<Boolean>()
+    {
+        @Override protected Boolean initialValue() { return false; }
+    };
+
     @Override
     public int getMetadata(ItemStack stack) {
-        NBTTagCompound tag = getItemTagCompound(stack);
-        if(tag.getBoolean("IsRender")){
-            tag.removeTag("IsRender");
+
+        if(isRenderThread.get())
             return 0;
-        }else {
+        else
             return super.getMetadata(stack);
-        }
     }
 
     @Override

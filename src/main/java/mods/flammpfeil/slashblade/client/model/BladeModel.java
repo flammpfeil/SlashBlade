@@ -79,7 +79,8 @@ public class BladeModel implements IBakedModel {
 
                 if(stack != null && stack.getItem() instanceof ItemSlashBlade) {
                     targetStack = stack;
-                    ItemSlashBlade.getItemTagCompound(targetStack).setBoolean("IsRender",true);
+                    ItemSlashBlade.isRenderThread.set(true);
+                    //ItemSlashBlade.getItemTagCompound(targetStack).setBoolean("IsRender",true);
                     itemBlade = (ItemSlashBlade) stack.getItem();
                     user = entity == null ? user : entity;
                 }else{
