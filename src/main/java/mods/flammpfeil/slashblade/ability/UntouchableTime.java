@@ -1,6 +1,9 @@
 package mods.flammpfeil.slashblade.ability;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
+import net.minecraft.potion.Potion;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -144,7 +147,8 @@ public class UntouchableTime {
 
         if(!entity.getEntityData().hasKey(LastEffects)) return;
 
-        entity.clearActivePotions();
+        for(Potion potion : Sets.newHashSet(entity.getActivePotionMap().keySet()))
+           entity.removePotionEffect(potion);
 
         NBTTagList nbttaglist = entity.getEntityData().getTagList(LastEffects, 10);
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
