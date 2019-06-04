@@ -71,7 +71,10 @@ public class WavefrontObject
 
         String currentLine = null;
         int lineCount = 0;
-
+        Vertex vertex;
+        TextureCoordinate textureCoordinate;
+        Face face;
+        GroupObject group;
         try
         {
             reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -87,7 +90,7 @@ public class WavefrontObject
                 }
                 else if (currentLine.startsWith("v "))
                 {
-                    Vertex vertex = parseVertex(currentLine, lineCount);
+                	vertex = parseVertex(currentLine, lineCount);
                     if (vertex != null)
                     {
                         vertices.add(vertex);
@@ -95,7 +98,7 @@ public class WavefrontObject
                 }
                 else if (currentLine.startsWith("vn "))
                 {
-                    Vertex vertex = parseVertexNormal(currentLine, lineCount);
+                    vertex = parseVertexNormal(currentLine, lineCount);
                     if (vertex != null)
                     {
                         vertexNormals.add(vertex);
@@ -103,7 +106,7 @@ public class WavefrontObject
                 }
                 else if (currentLine.startsWith("vt "))
                 {
-                    TextureCoordinate textureCoordinate = parseTextureCoordinate(currentLine, lineCount);
+                	textureCoordinate = parseTextureCoordinate(currentLine, lineCount);
                     if (textureCoordinate != null)
                     {
                         textureCoordinates.add(textureCoordinate);
@@ -117,7 +120,7 @@ public class WavefrontObject
                         currentGroupObject = new GroupObject("Default");
                     }
 
-                    Face face = parseFace(currentLine, lineCount);
+                    face = parseFace(currentLine, lineCount);
 
                     if (face != null)
                     {
@@ -126,7 +129,7 @@ public class WavefrontObject
                 }
                 else if (currentLine.startsWith("g ") | currentLine.startsWith("o "))
                 {
-                    GroupObject group = parseGroupObject(currentLine, lineCount);
+                	group = parseGroupObject(currentLine, lineCount);
 
                     if (group != null)
                     {
