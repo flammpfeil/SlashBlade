@@ -54,10 +54,3 @@ public class GroupObject
         }
     }
 }
-            for (Face face : faces)
-            {
-                face.addFaceForRender(tessellator);
-            }
-        }
-    }
-}
