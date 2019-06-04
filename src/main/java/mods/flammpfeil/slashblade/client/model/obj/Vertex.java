@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.client.model.obj;
 
-public class Vertex
+public final class Vertex
 {
     public float x, y, z;
 
