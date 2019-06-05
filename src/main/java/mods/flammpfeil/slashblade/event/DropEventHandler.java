@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.event;
 
 import com.google.common.collect.*;
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -88,7 +89,7 @@ public class DropEventHandler {
                     if(dropitem.getItem() instanceof ItemSlashBlade){
 
                         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(dropitem);
-                        if(!tag.getBoolean("IsNoStandDrop")){
+                        if(!tag.getBoolean("IsNoStandDrop") || SlashBlade.MobSafeDrop){
                             EntityBladeStand e = new EntityBladeStand(event.getEntityLiving().world
                                     ,event.getEntityLiving().posX
                                     ,event.getEntityLiving().posY

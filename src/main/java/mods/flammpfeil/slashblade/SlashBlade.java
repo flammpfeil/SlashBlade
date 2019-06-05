@@ -86,6 +86,7 @@ public class SlashBlade implements IFuelHandler{
 	public static ConfigEntityListManager manager;
 
     public static boolean SafeDrop = true;
+    public static boolean MobSafeDrop = false;
 
     public static boolean SneakForceLockOn = false;
 
@@ -175,6 +176,18 @@ public class SlashBlade implements IFuelHandler{
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", true, "true:bladestand / false:all ways EntityItem drop");
                 SafeDrop = prop.getBoolean(true);
+                prop.setShowInGui(true);
+            }
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", true, "true:bladestand / false:all ways EntityItem drop");
+                SafeDrop = prop.getBoolean(true);
+                prop.setShowInGui(true);
+            }
+
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", MobSafeDrop, "true:bladestand / false:all ways EntityItem drop");
+                MobSafeDrop = prop.getBoolean(MobSafeDrop);
                 prop.setShowInGui(true);
             }
 

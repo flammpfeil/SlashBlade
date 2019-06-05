@@ -230,6 +230,8 @@ public class Doutanuki {
                     blade.addEnchantment(Enchantments.UNBREAKING, 5);
                 }
 
+                tag.setBoolean("IsNoStandDrop", true);
+
                 entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, blade);
                 ((EntityZombie)entity).setDropChance(EntityEquipmentSlot.MAINHAND,dropRate);
             }
