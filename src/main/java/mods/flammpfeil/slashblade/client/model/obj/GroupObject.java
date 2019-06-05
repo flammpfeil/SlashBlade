@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -45,12 +44,13 @@ public class GroupObject
     @SideOnly(Side.CLIENT)
     public void render(Tessellator tessellator)
     {
+    	Face face;
         if (faces.size() > 0)
         {
-            for (Face face : faces)
-            {
-                face.addFaceForRender(tessellator);
-            }
+        	for(int i = 0,j=faces.size();i<j;i++){
+        	face=faces.get(i);
+            face.addFaceForRender(tessellator,glDrawingMode);
+        	}
         }
     }
 }
