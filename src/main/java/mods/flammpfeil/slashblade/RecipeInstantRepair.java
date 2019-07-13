@@ -80,9 +80,9 @@ public class RecipeInstantRepair extends ShapedOreRecipe
         	}
         	boolean hasOthers = false;
         	if(hasBlade && hasGrindstone){
-           	 for (int i = 0; i <= cInv.getWidth() - this.getRecipeWidth(); ++i)
+           	 for (int i = 0; i <= cInv.getWidth(); ++i)
              {
-                 for (int j = 0; j <= cInv.getHeight() - this.getRecipeHeight(); ++j)
+                 for (int j = 0; j <= cInv.getHeight(); ++j)
                  {
                 	 if((i==1&&j==0)||(i==0&&j==1))continue;
                 	 ItemStack slot = cInv.getStackInRowAndColumn(i, j);
