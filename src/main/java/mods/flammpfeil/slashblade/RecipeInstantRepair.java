@@ -84,7 +84,7 @@ public class RecipeInstantRepair extends ShapedOreRecipe
              {
                  for (int j = 0; j <= cInv.getHeight() - this.getRecipeHeight(); ++j)
                  {
-                	 if((i==0&&j==0)||(i==0&&j==1))continue;
+                	 if((i==1&&j==0)||(i==0&&j==1))continue;
                 	 ItemStack slot = cInv.getStackInRowAndColumn(i, j);
                 	 if(!slot.isEmpty()) hasOthers=true;
                  }
