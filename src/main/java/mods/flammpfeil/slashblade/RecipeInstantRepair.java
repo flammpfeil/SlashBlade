@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade;
 
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -51,7 +52,19 @@ public class RecipeInstantRepair extends ShapedOreRecipe
         	boolean hasBlade = false;
         	boolean hasGrindstone = false;
 
-        	ItemStack stone = cInv.getStackInRowAndColumn(1, 0);
+        	if(cInv.getWidth() != 2 && cInv.getHeight() != 2){
+        	    return false;
+            }
+
+            ItemStack emptySlot = cInv.getStackInRowAndColumn(0, 0);
+            if(!emptySlot.isEmpty())
+                return false;
+            ItemStack emptySlot2 = cInv.getStackInRowAndColumn(1, 1);
+            if(!emptySlot2.isEmpty())
+                return false;
+
+
+            ItemStack stone = cInv.getStackInRowAndColumn(1, 0);
 
             if(stone.isEmpty())
                 return false;
@@ -122,7 +135,12 @@ public class RecipeInstantRepair extends ShapedOreRecipe
         return itemstack;
     }
 
-	@SubscribeEvent
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting p_getRemainingItems_1_) {
+        return null;
+    }
+
+    @SubscribeEvent
 	public void onCrafting(PlayerEvent.ItemCraftedEvent event){
         EntityPlayer player = event.player;
         ItemStack item = event.crafting;
