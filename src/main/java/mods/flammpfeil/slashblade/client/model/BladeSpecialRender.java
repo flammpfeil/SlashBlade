@@ -139,7 +139,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             }else {
                 if(checkRenderNaked()){
                     renderNaked();
-                }else if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand()){
+                }else /*if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand())*/{
                     BladeFirstPersonRender.getInstance().render();
                 }
             }
