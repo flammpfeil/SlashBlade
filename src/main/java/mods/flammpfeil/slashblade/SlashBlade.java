@@ -416,7 +416,7 @@ public class SlashBlade implements IFuelHandler{
         RecipeInstantRepair recipeRepair = new RecipeInstantRepair();
         SlashBlade.addRecipe("repair", recipeRepair);
 
-        MinecraftForge.EVENT_BUS.register(recipeRepair);
+        //MinecraftForge.EVENT_BUS.register(recipeRepair);
 
 
         int entityId = 1;

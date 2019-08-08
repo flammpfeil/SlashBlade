@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;
@@ -136,10 +137,44 @@ public class RecipeInstantRepair extends ShapedOreRecipe
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting p_getRemainingItems_1_) {
-        return null;
-    }
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        NonNullList<ItemStack> ret = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 
+        ItemStack stone = inv.getStackInRowAndColumn(1, 0);
+
+        ItemStack target = inv.getStackInRowAndColumn(0, 1);
+
+        ItemStack itemstack = target.copy();
+
+        int repair = 0;
+
+        if(!target.isEmpty() && target.getItem() instanceof ItemSlashBlade){
+
+            if(0 < itemstack.getItemDamage()){
+                if(itemstack.hasTagCompound()){
+                    NBTTagCompound tag = itemstack.getTagCompound();
+                    int proudSoul = ItemSlashBlade.ProudSoul.get(tag);
+                    int repairPoints = proudSoul / RepairProudSoulCount;
+
+                    if(0 < proudSoul){
+                        int damage = itemstack.getItemDamage();
+                        repair = Math.min(stone.getCount(), Math.min(repairPoints,damage));
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < ret.size(); ++i) {
+            if(1 < repair && stone == inv.getStackInSlot(i)){
+                stone.shrink(repair - 1);
+            }else {
+                ret.set(i, ForgeHooks.getContainerItem(inv.getStackInSlot(i)));
+            }
+        }
+
+        return ret;
+    }
+/*
     @SubscribeEvent
 	public void onCrafting(PlayerEvent.ItemCraftedEvent event){
         EntityPlayer player = event.player;
@@ -182,6 +217,6 @@ public class RecipeInstantRepair extends ShapedOreRecipe
 		}
 
 	}
-
+*/
 }
 
