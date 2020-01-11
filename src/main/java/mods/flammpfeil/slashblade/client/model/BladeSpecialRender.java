@@ -90,8 +90,10 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
     boolean checkRenderNaked(){
         ItemStack mainHand = BladeModel.user.getHeldItemMainhand();
+        /*
         if(!(mainHand.getItem() instanceof ItemSlashBlade))
             return true;
+        */
 
         if(ItemSlashBlade.hasScabbardInOffhand(BladeModel.user))
             return true;
@@ -139,7 +141,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             }else {
                 if(checkRenderNaked()){
                     renderNaked();
-                }else /*if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand())*/{
+                }else if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand()){
                     BladeFirstPersonRender.getInstance().render();
                 }
             }
