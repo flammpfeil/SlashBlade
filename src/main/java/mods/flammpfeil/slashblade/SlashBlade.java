@@ -180,13 +180,7 @@ public class SlashBlade implements IFuelHandler{
             }
 
             {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", true, "true:bladestand / false:all ways EntityItem drop");
-                SafeDrop = prop.getBoolean(true);
-                prop.setShowInGui(true);
-            }
-
-            {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", MobSafeDrop, "true:bladestand / false:all ways EntityItem drop");
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "MobSafeDrop", MobSafeDrop, "true:bladestand / false:all ways EntityItem drop");
                 MobSafeDrop = prop.getBoolean(MobSafeDrop);
                 prop.setShowInGui(true);
             }
