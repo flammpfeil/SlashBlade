@@ -1,26 +1,19 @@
 package mods.flammpfeil.slashblade.named;
 
 import net.minecraft.init.Enchantments;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
-import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
-import mods.flammpfeil.slashblade.util.SlashBladeHooks;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 /**
  * Created by Furia on 15/06/22.
@@ -54,7 +47,7 @@ public class Koseki {
 
     @SubscribeEvent
     public void postinit(LoadEvent.PostInitEvent event){
-        SlashBladeHooks.EventBus.register(this);
+       MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent

@@ -1,6 +1,5 @@
 package mods.flammpfeil.slashblade.ability;
 
-import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
 import net.minecraft.entity.EntityLivingBase;

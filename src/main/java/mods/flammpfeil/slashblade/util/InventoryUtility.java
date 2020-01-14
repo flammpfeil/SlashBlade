@@ -2,7 +2,6 @@ package mods.flammpfeil.slashblade.util;
 
 import com.google.common.collect.Lists;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -18,28 +17,27 @@ public class InventoryUtility {
         if (indexList.size() == 0){
             return false;
 
-        }else{
-            int count = 0;
-            for(int index : indexList){
-                ItemStack tmp = inventory.getStackInSlot(index);
-                count += tmp.getCount();
-            }
-
-            if(count < stack.getCount()) return false;
-
-            if(!isVirtual){
-                int usage = stack.getCount();
-
-                for(int index : indexList){
-                    ItemStack tmp = inventory.decrStackSize(index, usage);
-                    usage -= tmp.getCount();
-
-                    if(usage <= 0) break;
-                }
-            }
-
-            return true;
         }
+		int count = 0;
+		for(int index : indexList){
+		    ItemStack tmp = inventory.getStackInSlot(index);
+		    count += tmp.getCount();
+		}
+
+		if(count < stack.getCount()) return false;
+
+		if(!isVirtual){
+		    int usage = stack.getCount();
+
+		    for(int index : indexList){
+		        ItemStack tmp = inventory.decrStackSize(index, usage);
+		        usage -= tmp.getCount();
+
+		        if(usage <= 0) break;
+		    }
+		}
+
+		return true;
     }
 
 

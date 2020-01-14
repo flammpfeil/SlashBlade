@@ -106,9 +106,8 @@ public class AirTrick {
             }
 
             return true;
-        }else{
-            return false;
         }
+		return false;
     }
 
     static private boolean getCanSpawnHere(Entity target,Vec3d pos,Entity... ignore)

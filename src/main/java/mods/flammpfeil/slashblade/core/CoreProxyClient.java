@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.core;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
@@ -15,13 +14,11 @@ import mods.flammpfeil.slashblade.network.*;
 import mods.flammpfeil.slashblade.util.KeyBindingEx;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.*;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -34,13 +31,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.lwjgl.input.Keyboard;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 public class CoreProxyClient extends CoreProxy {
 

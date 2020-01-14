@@ -22,7 +22,8 @@ public class RecipeAwakeBlade extends ShapedOreRecipe {
         this.requiredStateBlade = requiredStateBlade;
     }
 
-    int tagValueCompare(TagPropertyAccessor access, NBTTagCompound reqTag, NBTTagCompound srcTag){
+    @SuppressWarnings("unchecked")
+	int tagValueCompare(TagPropertyAccessor<?> access, NBTTagCompound reqTag, NBTTagCompound srcTag){
         return access.get(reqTag).compareTo(access.get(srcTag));
     }
 

@@ -1,9 +1,7 @@
 package mods.flammpfeil.slashblade.specialattack;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 /**
  * Created by Furia on 14/05/27.

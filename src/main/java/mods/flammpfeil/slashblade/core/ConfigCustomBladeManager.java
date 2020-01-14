@@ -1,35 +1,23 @@
 package mods.flammpfeil.slashblade.core;
 
-import com.google.common.collect.Lists;
 import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
-//import mods.flammpfeil.slashblade.stats.AchievementList;
-import mods.flammpfeil.slashblade.util.SlashBladeAchievementCreateEvent;
+import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-//import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.List;
 
 /**
  * Created by Furia on 2016/02/10.
  */
 public class ConfigCustomBladeManager {
     String[] lines = {};
-
-    static private String escape(String source){
-        return String.format("\"%s\"", source.replace("\\","\\\\").replace("\"","\\quot;").replace("\r", "\\r;").replace("\n", "\\n;"));
-    }
-    static private String unescape(String source){
-        return source.replace("\"", "").replace("\\quot;", "\"").replace("\\r;","\r").replace("\\n;","\n").replace("\\\\", "\\");
-    }
 
     public void loadConfig(Configuration config){
         Property propCustomBlade = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "CustomBlade" ,new String[]{"dios"});
@@ -38,10 +26,10 @@ public class ConfigCustomBladeManager {
     }
 
     @SubscribeEvent
-    public void onSlashBladeAchievementCreateEvent(SlashBladeAchievementCreateEvent event){
-        int x = 1;
-        int y = 13;
-        for(String line : lines){
+    public void init(LoadEvent.InitEvent event){
+    	String line;int i;
+        for(i=0;i<lines.length;i++){
+        	line = lines[i];
             String key = "custom_"+line;
 
             ItemStack customBlade = new ItemStack(SlashBlade.bladeNamed,1,0);
@@ -57,12 +45,12 @@ public class ConfigCustomBladeManager {
             ItemSlashBlade.StandbyRenderType.set(tag, 2);
 
             ItemStack tiny = SlashBlade.getCustomBlade(SlashBlade.TinyBladeSoulStr);
-            tiny.setCount(x);
+            tiny.setCount(i+1);
 
             IRecipe recipe = new RecipeCustomBlade(customBlade,
-                    "P##",
-                    "#B#",
-                    "##S",
+                    "P  ",
+                    " B ",
+                    "  S",
                     'S', SlashBlade.getCustomBlade(SlashBlade.SphereBladeSoulStr),
                     'B', new ItemStack(SlashBlade.bladeNamed,1,0),
                     'P', tiny
@@ -70,12 +58,6 @@ public class ConfigCustomBladeManager {
 
             SlashBlade.addRecipe(key,recipe);
             SlashBlade.registerCustomItemStack(key, customBlade);
-/* todo: advancement
-            Achievement achievement = AchievementList.registerCraftingAchievement(
-                    key, -3 + x++, y, SlashBlade.getCustomBlade(key), AchievementList.getAchievement("noname"));
-
-            AchievementList.setContent(achievement, key);
-*/
             ItemSlashBladeNamed.NamedBlades.add(key);
         }
     }

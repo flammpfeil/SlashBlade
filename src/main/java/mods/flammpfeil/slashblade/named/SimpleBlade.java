@@ -181,7 +181,6 @@ public class SimpleBlade {
 
         {
             ItemStack customblade = new ItemStack(SlashBlade.weapon);
-            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(customblade);
 
             SpecialEffects.addEffect(customblade,SpecialEffects.HFCustom);
 
@@ -194,7 +193,6 @@ public class SimpleBlade {
         }
         {
             ItemStack customblade = new ItemStack(SlashBlade.weapon);
-            NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(customblade);
 
             SpecialEffects.addEffect(customblade,SpecialEffects.HFCustom);
 

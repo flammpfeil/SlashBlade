@@ -1,29 +1,19 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
-import com.google.common.collect.Maps;
-import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
-import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
-import mods.flammpfeil.slashblade.client.model.obj.GroupObject;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
 import mods.flammpfeil.slashblade.entity.EntitySlashDimension;
-import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.EnumSet;
-import java.util.Map;
 
 /**
  * Created by Furia on 14/08/15.
@@ -37,10 +27,6 @@ public class RenderSlashDimension extends Render{
 
     public RenderSlashDimension(RenderManager renderManager) {
         super(renderManager);
-    }
-
-    private TextureManager engine(){
-        return this.renderManager.renderEngine;
     }
 
     @Override
@@ -95,8 +81,6 @@ public class RenderSlashDimension extends Render{
             lifetime = ((EntitySlashDimension)entity).getLifeTime();
         }
 
-        boolean inverse = color < 0;
-
         double deathTime = lifetime;
         double baseAlpha = Math.sin(Math.PI * 0.5 * (Math.min(deathTime, (lifetime - (entity.ticksExisted) - partialRenderTick)) / deathTime));
         int seed = entity.getEntityData().getInteger("seed");
@@ -110,9 +94,6 @@ public class RenderSlashDimension extends Render{
         baseColor = baseColor | (int)(0x66 * baseAlpha) << 24;
 
         GL11.glTranslatef((float) x, (float) y, (float) z);
-
-        float rotParTicks = 40.0f;
-        float rot = ((entity.ticksExisted % rotParTicks) / rotParTicks) * 360.f + partialRenderTick * (360.0f / rotParTicks);
 
         //GL11.glRotatef(rot, 0, 1, 0);
 

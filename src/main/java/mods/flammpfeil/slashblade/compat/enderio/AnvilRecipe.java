@@ -1,31 +1,16 @@
 package mods.flammpfeil.slashblade.compat.enderio;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import mods.flammpfeil.slashblade.ItemSlashBladeNamed;
-import mods.flammpfeil.slashblade.SlashBlade;
-import mods.flammpfeil.slashblade.TagPropertyAccessor;
-import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Set;
 
 /**

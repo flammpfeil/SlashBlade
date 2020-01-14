@@ -20,7 +20,6 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
-import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -333,8 +332,6 @@ public class SlashDimensionSpiral extends SpecialAttackBase implements IJustSpec
                 pos = pos.scale(5);
                 pos = pos.add(player.getPositionVector());
                 pos = pos.addVector(0, player.getEyeHeight(), 0);
-
-                ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
                 Vec3d offset = player.getPositionVector().addVector(0,player.getEyeHeight(),0);
                 Vec3d offsettedLook = offset.add(player.getLookVec().scale(5));

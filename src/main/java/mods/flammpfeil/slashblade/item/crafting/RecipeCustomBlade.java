@@ -24,7 +24,6 @@ public class RecipeCustomBlade extends ShapedOreRecipe {
         ItemStack stack = inv.getStackInSlot(0);
         if(stack.isEmpty()) return false;
 
-
         if(this.getIngredients().size() == 0) return false;
 
         Ingredient ingradient = this.getIngredients().get(0);

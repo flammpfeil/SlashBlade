@@ -6,14 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mods.flammpfeil.slashblade.SlashBlade;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.IMerchant;
@@ -25,7 +21,6 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -66,7 +61,7 @@ public class ConfigEntityListManager {
 
 
 				for(EntityEntry entry : net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES){
-					Class cls = entry.getEntityClass();
+					Class<? extends Entity> cls = entry.getEntityClass();
 
 					String name = entry.getName();//(String)EntityList.func_191302_a(key);
 					if(name == null || name.length() == 0)
@@ -75,7 +70,7 @@ public class ConfigEntityListManager {
 					Entity instance = null;
 
 					try{
-                        Constructor<Entity> constructor = cls.getConstructor(World.class);
+                        Constructor<? extends Entity> constructor = cls.getConstructor(World.class);
                         if(constructor != null){
                             instance = constructor.newInstance((Object)event.world);
                         }

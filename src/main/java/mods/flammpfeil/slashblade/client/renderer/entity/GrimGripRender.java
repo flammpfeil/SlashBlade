@@ -1,27 +1,16 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
-import com.google.common.collect.Maps;
-import mods.flammpfeil.slashblade.ItemSlashBladeWrapper;
-import mods.flammpfeil.slashblade.client.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.model.obj.Face;
-import mods.flammpfeil.slashblade.client.model.obj.GroupObject;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.EnumSet;
-import java.util.Map;
 
 /**
  * Created by Furia on 14/08/15.
@@ -35,10 +24,6 @@ public class GrimGripRender extends Render{
 
     public GrimGripRender(RenderManager renderManager) {
         super(renderManager);
-    }
-
-    private TextureManager engine(){
-        return this.renderManager.renderEngine;
     }
 
     @Override

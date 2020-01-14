@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
@@ -29,10 +28,6 @@ public class GrimGripKeyRender extends Render{
 
     public GrimGripKeyRender(RenderManager renderManager) {
         super(renderManager);
-    }
-
-    private TextureManager engine(){
-        return this.renderManager.renderEngine;
     }
 
     @Override

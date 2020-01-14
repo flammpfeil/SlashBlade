@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * Created by Furia on 14/05/26.
  */
+@SuppressWarnings("rawtypes")
 public abstract class TagPropertyAccessor<T extends Comparable> {
     protected final String tagName;
     public TagPropertyAccessor(String tagName){

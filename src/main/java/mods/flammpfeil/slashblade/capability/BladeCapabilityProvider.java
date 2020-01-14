@@ -1,8 +1,6 @@
 package mods.flammpfeil.slashblade.capability;
 
-import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.specialeffect.HFCustom;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -10,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.energy.EnergyStorage;
@@ -56,7 +53,8 @@ public class BladeCapabilityProvider implements ICapabilityProvider, INBTSeriali
         return false;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         updateStorage();
         if(capability == ENERGY) return (T)this.storage;

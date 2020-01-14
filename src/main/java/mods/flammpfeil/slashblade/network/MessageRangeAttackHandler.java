@@ -1,8 +1,6 @@
 package mods.flammpfeil.slashblade.network;
 
-import io.netty.buffer.ByteBuf;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;

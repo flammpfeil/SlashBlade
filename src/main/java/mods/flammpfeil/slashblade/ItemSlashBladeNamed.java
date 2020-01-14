@@ -41,7 +41,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        NBTTagCompound tag = this.getItemTagCompound(stack);
+        NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
         return CustomMaxDamage.get(tag,super.getMaxDamage(stack));
     }
 
@@ -88,8 +88,7 @@ public class ItemSlashBladeNamed extends ItemSlashBlade {
             }
         }
 
-        if(!result && tag.hasKey(RepairMaterialNameStr))
-        {
+        if(!result && tag.hasKey(RepairMaterialNameStr)){
             String matName = tag.getString(RepairMaterialNameStr);
             Item material = (Item)Item.REGISTRY.getObject(new ResourceLocationRaw(matName));
             if(material != null)

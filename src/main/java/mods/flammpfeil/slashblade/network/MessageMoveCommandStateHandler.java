@@ -1,10 +1,6 @@
 package mods.flammpfeil.slashblade.network;
 
-import mods.flammpfeil.slashblade.ability.AirTrick;
-import mods.flammpfeil.slashblade.ability.UntouchableTime;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.specialattack.ISuperSpecialAttack;
-import mods.flammpfeil.slashblade.specialattack.SpecialAttackBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;

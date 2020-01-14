@@ -3,7 +3,6 @@ package mods.flammpfeil.slashblade.ability;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -60,11 +59,10 @@ public class AvoidAction {
 
                 if(comboLimit <= combo){
                     return;
-                }else{
-                    combo++;
-                    mc.player.getEntityData().setInteger("SB.AvoidCombo",combo);
-                    mc.player.getEntityData().setLong("SB.AvoidComboTimeout",now+comboInterval);
                 }
+				combo++;
+				mc.player.getEntityData().setInteger("SB.AvoidCombo",combo);
+				mc.player.getEntityData().setLong("SB.AvoidComboTimeout",now+comboInterval);
             }
 
             float speedFactor;

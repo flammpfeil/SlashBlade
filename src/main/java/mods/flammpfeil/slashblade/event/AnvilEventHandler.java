@@ -5,11 +5,8 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.named.Doutanuki;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -112,7 +109,7 @@ public class AnvilEventHandler {
                                 ItemSlashBlade.IsBroken
                         };
 
-                        for (TagPropertyAccessor acc : accessors)
+                        for (TagPropertyAccessor<?> acc : accessors)
                             copyTag(acc, tag, matTag);
                     }
                     repairFactor = 1.0f;

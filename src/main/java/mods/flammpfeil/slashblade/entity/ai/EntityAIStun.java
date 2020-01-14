@@ -35,9 +35,8 @@ public class EntityAIStun extends EntityAIBase {
 
         if(mobEffect.isStun(this.owner.world.getTotalWorldTime(), timeoutLimit)){
             return true;
-        }else{
-            return false;
         }
+		return false;
 
         /*
         long timeout = this.owner.getEntityData().getLong(StunTimeout);

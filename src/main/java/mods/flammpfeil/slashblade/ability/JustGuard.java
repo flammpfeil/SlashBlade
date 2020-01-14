@@ -1,11 +1,8 @@
 package mods.flammpfeil.slashblade.ability;
 
 import mods.flammpfeil.slashblade.util.ReflectionAccessHelper;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
@@ -44,15 +41,12 @@ public class JustGuard {
                         0,
                         e.hurtResistantTime - (int) (e.maxHurtResistantTime / 2.0F)));
 
-        long last = ChargeStart.get(e.getEntityData());
         if(!atJustGuard(e))
             ChargeStart.set(e.getEntityData(), e.world.getTotalWorldTime() + hurtTicks);
     }
 
     @SubscribeEvent
     public void LivingHurtEvent(LivingHurtEvent e){
-        String type = e.getSource().getDamageType();
-
         if(e.isCanceled()) return;
         if(e.getEntity() == null) return;
         if(!(e.getEntity() instanceof EntityPlayer)) return;
@@ -156,11 +150,11 @@ public class JustGuard {
 
 
     void storePotionEffect(EntityLivingBase entity){
-        Collection effects = entity.getActivePotionEffects();
+        Collection<?> effects = entity.getActivePotionEffects();
         if (!effects.isEmpty())
         {
             NBTTagList nbttaglist = new NBTTagList();
-            Iterator iterator = effects.iterator();
+            Iterator<?> iterator = effects.iterator();
 
             while (iterator.hasNext())
             {

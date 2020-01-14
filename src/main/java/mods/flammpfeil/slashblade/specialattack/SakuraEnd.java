@@ -28,9 +28,7 @@ public class SakuraEnd extends SpecialAttackBase {
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag,cost,false)){
                 ItemSlashBlade.damageItem(stack, 10, player);
             }
-
-            ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
-
+            
             EntitySakuraEndManager entityDA = new EntitySakuraEndManager(world, player);
             if (entityDA != null) {
                 world.spawnEntity(entityDA);

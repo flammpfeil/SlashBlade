@@ -98,9 +98,9 @@ public class EnemyStep {
                     target.getEntityData().setInteger(DoJumping,1);
                     if(target.fallDistance == 0){
                         return false;
-                    }else{ //no jump falling
-                        return true;
-                    }
+                    } 
+                    //no jump falling
+                    return true;
                 case 1: //now first jumping
                     return false;
 
@@ -111,20 +111,18 @@ public class EnemyStep {
                 default:
                     return false;
             }
-        }else{
-
-            switch (jumpState){
-                case 1: //set can special jump
-                    target.getEntityData().setInteger(DoJumping,2);
-                    return false;
-
-                default:
-                    if(target.onGround)
-                        target.getEntityData().removeTag(DoJumping);
-
-                    return false;
-            }
         }
+		switch (jumpState){
+		    case 1: //set can special jump
+		        target.getEntityData().setInteger(DoJumping,2);
+		        return false;
+
+		    default:
+		        if(target.onGround)
+		            target.getEntityData().removeTag(DoJumping);
+
+		        return false;
+		}
     }
     private void resetJump(EntityLivingBase target){
         target.onGround = true;

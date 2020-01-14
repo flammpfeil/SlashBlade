@@ -2,14 +2,11 @@ package mods.flammpfeil.slashblade.event;
 
 import com.google.common.collect.Queues;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by Furia on 2016/02/08.

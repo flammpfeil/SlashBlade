@@ -1,16 +1,11 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
-import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.SlashBlade;
-import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.event.DropEventHandler;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.util.EnchantHelper;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
@@ -30,7 +25,6 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -105,8 +99,6 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
 
         if(!SpecialEffects.isPlayer(event.user)) return;
         EntityPlayer player = (EntityPlayer) event.user;
-
-        int effectLevel = 0;
 
         switch (SpecialEffects.isEffective(player, event.blade, this)){
             case None:
@@ -195,9 +187,7 @@ public class BlastEdge implements ISpecialEffect, IRemovable{
 
     @Override
     public void register() {
-        SlashBladeHooks.EventBus.register(this);
         MinecraftForge.EVENT_BUS.register(this);
-
     }
 
     @Override

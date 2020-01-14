@@ -1,18 +1,12 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
-import mods.flammpfeil.slashblade.SlashBlade;
-import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.network.MessageMoveCommandState;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
-import mods.flammpfeil.slashblade.util.SlashBladeHooks;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -20,16 +14,9 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.Random;
@@ -49,10 +36,10 @@ public class HFCustom implements ISpecialEffect, IRemovable{
     }
 
 
-    public static int startupCost = 1000;
-    public static int runningCost = 100;
+    public static final int startupCost = 1000;
+    public static final int runningCost = 100;
 
-    public static int energyCostBase = 200;
+    public static final int energyCostBase = 200;
 
     @SubscribeEvent
     public void onImpactEffectEvent(SlashBladeEvent.ImpactEffectEvent event){
@@ -135,7 +122,7 @@ public class HFCustom implements ISpecialEffect, IRemovable{
                         || !ItemSlashBlade.OnClick.get(tag)
                         || (!player.isSwingInProgress && player.getActiveItemStack() != null))){
 
-            storage.extractEnergy(this.runningCost, false);
+            storage.extractEnergy(HFCustom.runningCost, false);
             if(storage.getEnergyStored() <= 0) {
                 setEmpoweredState(player, blade, false);
                 return;
@@ -167,7 +154,6 @@ public class HFCustom implements ISpecialEffect, IRemovable{
 
     @Override
     public void register() {
-        SlashBladeHooks.EventBus.register(this);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

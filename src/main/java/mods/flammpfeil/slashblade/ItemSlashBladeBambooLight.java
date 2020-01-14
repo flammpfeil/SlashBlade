@@ -18,7 +18,6 @@ public class ItemSlashBladeBambooLight extends ItemSlashBladeDetune {
         int killCount = ItemSlashBlade.KillCount.get(tag);
         if(100 <= killCount)
             return false;
-        else
-            return super.isDestructable(stack);
+		return super.isDestructable(stack);
     }
 }

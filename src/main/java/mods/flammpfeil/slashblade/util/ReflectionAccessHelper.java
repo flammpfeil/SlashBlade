@@ -1,10 +1,7 @@
 package mods.flammpfeil.slashblade.util;
 
-import mods.flammpfeil.slashblade.ability.IllegalActionEnabler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Timer;

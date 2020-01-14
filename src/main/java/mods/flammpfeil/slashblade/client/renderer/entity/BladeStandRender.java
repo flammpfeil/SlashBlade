@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
@@ -47,7 +46,8 @@ public class BladeStandRender extends Render{
     }
 
     public static Map<EntityBladeStand.StandType,String> nameMap = createNameMap();
-    private static <K, V> Map<K, V> createNameMap(){
+    @SuppressWarnings("unchecked")
+	private static <K, V> Map<K, V> createNameMap(){
         nameMap = Maps.newHashMap();
         nameMap.put(EntityBladeStand.StandType.Dual, "A");
         nameMap.put(EntityBladeStand.StandType.Single, "B");
@@ -57,7 +57,8 @@ public class BladeStandRender extends Render{
     }
 
     public static Map<EntityBladeStand.StandType,String> StandTypeName = createStandTypeNameMap();
-    private static <K, V> Map<K, V> createStandTypeNameMap(){
+    @SuppressWarnings("unchecked")
+	private static <K, V> Map<K, V> createStandTypeNameMap(){
         StandTypeName = Maps.newHashMap();
         StandTypeName.put(EntityBladeStand.StandType.Dual, "dual");
         StandTypeName.put(EntityBladeStand.StandType.Single, "single");
@@ -380,7 +381,6 @@ public class BladeStandRender extends Render{
                 //==================init================
 
                 float hFlipFactor = HFlip ? -1f : 1f;
-                float vFlipFactor = VFlip ? -1f : 1f;
 
                 switch (type){
                     case Naked:

@@ -1,13 +1,10 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.capability.MobEffect.CapabilityMobEffectHandler;
 import mods.flammpfeil.slashblade.capability.MobEffect.CapabilityMobEffectRegister;
-import mods.flammpfeil.slashblade.capability.MobEffect.MobEffect;
-import mods.flammpfeil.slashblade.capability.MobEffect.MobEffectCapabilityProvider;
 import mods.flammpfeil.slashblade.config.ConfigManager;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
@@ -15,15 +12,11 @@ import mods.flammpfeil.slashblade.event.*;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
-import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
-import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import net.minecraft.command.FunctionObject;
 import net.minecraft.util.ResourceLocation;
 import mods.flammpfeil.slashblade.util.DummyRecipeBase;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
@@ -46,7 +39,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -56,13 +48,9 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import java.io.File;
 import java.util.*;
 
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
-
 @Mod(name = SlashBlade.modname, modid = SlashBlade.modid, version = SlashBlade.version,
-    guiFactory = "mods.flammpfeil.slashblade.gui.config.ConfigGuiFactory")
-public class SlashBlade implements IFuelHandler{
-
-
+ guiFactory = "mods.flammpfeil.slashblade.gui.config.ConfigGuiFactory")
+public class SlashBlade {
 	public static final String modname = "SlashBlade";
     public static final String modid = "flammpfeil.slashblade";
     public static final String version = "@VERSION@";
@@ -82,8 +70,6 @@ public class SlashBlade implements IFuelHandler{
 
     public static Configuration mainConfiguration;
     public static File mainConfigurationFile;
-
-	public static ConfigEntityListManager manager;
 
     public static boolean SafeDrop = true;
     public static boolean MobSafeDrop = false;
@@ -131,7 +117,7 @@ public class SlashBlade implements IFuelHandler{
     public static void addRecipe(String key, IRecipe value, boolean isDummy) {
         if(!isDummy) {
             if(value.getRegistryName() == null)
-                value.setRegistryName(new ResourceLocation(value.getGroup()));
+                value.setRegistryName(new ResourceLocation(modid,key));
             ForgeRegistries.RECIPES.register(value);
         }
         recipeMultimap.put(key, value);
@@ -139,18 +125,15 @@ public class SlashBlade implements IFuelHandler{
 
     @EventHandler
 	public void preInit(FMLPreInitializationEvent evt){
-		mainConfiguration = new Configuration(this.mainConfigurationFile = evt.getSuggestedConfigurationFile());
+		mainConfiguration = new Configuration(SlashBlade.mainConfigurationFile = evt.getSuggestedConfigurationFile());
 
 		try {
             mainConfiguration.load();
-
-
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "SneakForceLockOn", SlashBlade.SneakForceLockOn);
                 SlashBlade.SneakForceLockOn = prop.getBoolean();
                 prop.setShowInGui(true);
             }
-
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "UseRenderLivingEvent", SlashBlade.UseRenderLivingEvent);
                 SlashBlade.UseRenderLivingEvent = prop.getBoolean();
@@ -166,31 +149,21 @@ public class SlashBlade implements IFuelHandler{
                 SlashBlade.RenderNFCSEffect = prop.getBoolean();
                 prop.setShowInGui(true);
             }
-
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "FastLeavesDecay", false);
                 EntityLumberManager.BlockHarvestDropsEventHandler.fastLeavesDecay = prop.getBoolean(false);
                 prop.setShowInGui(true);
             }
-
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", true, "true:bladestand / false:all ways EntityItem drop");
                 SafeDrop = prop.getBoolean(true);
                 prop.setShowInGui(true);
             }
-
             {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", true, "true:bladestand / false:all ways EntityItem drop");
-                SafeDrop = prop.getBoolean(true);
-                prop.setShowInGui(true);
-            }
-
-            {
-                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", MobSafeDrop, "true:bladestand / false:all ways EntityItem drop");
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "MobSafeDrop", MobSafeDrop, "true:bladestand / false:all ways EntityItem drop");
                 MobSafeDrop = prop.getBoolean(MobSafeDrop);
                 prop.setShowInGui(true);
             }
-
             {
                 Property prop = SlashBlade.mainConfiguration.get("difficulty", "RankpointRange", 100);
                 prop.setComment("decrement speed factor up 50<def:100<500 down");
@@ -231,8 +204,6 @@ public class SlashBlade implements IFuelHandler{
                 prop.setComment("blade damage limit -1:Limitless | 0 <= value <= XX (0=allways1damage)");
                 DamageLimitter.setLimit(prop.getInt());
             }
-
-
             {
                 Property prop = SlashBlade.mainConfiguration.get("difficulty", "DamageAPMultiplier", 100);
                 prop.setComment("ArmorPiercing damage multiplier factor 0% <= value <= 1000% (default=100%, 0%=allways1damage)");
@@ -240,13 +211,11 @@ public class SlashBlade implements IFuelHandler{
                 value = Math.max(0, Math.min(value,1000)) / 100.0f;
                 ArmorPiercing.setFactor(value);
             }
-
             {
                 Property prop = SlashBlade.mainConfiguration.get("difficulty", "DamageAPLimit", -1);
                 prop.setComment("ArmorPiercing damage limit -1:Limitless | 0 <= value <= XX (0=allways1damage)");
                 ArmorPiercing.setLimit(prop.getInt());
             }
-
 
             MinecraftForge.EVENT_BUS.register(new ConfigManager());
 		}
@@ -367,14 +336,11 @@ public class SlashBlade implements IFuelHandler{
                 .setRegistryName("slashbladeNamed");
         ForgeRegistries.ITEMS.register(bladeNamed);
 
-
-		GameRegistry.registerFuelHandler(this);
-
 		CoreProxy.proxy.initializeItemRenderer();
 
-		manager = new ConfigEntityListManager();
+		
 
-        MinecraftForge.EVENT_BUS.register(manager);
+        MinecraftForge.EVENT_BUS.register(new ConfigEntityListManager());
 
         NetworkManager.init();
 
@@ -571,13 +537,6 @@ public class SlashBlade implements IFuelHandler{
 
         FMLCommonHandler.instance().resetClientRecipeBook();
     }
-
-
-	@Override
-	public int getBurnTime(ItemStack fuel) {
-		return (fuel.getItem() == this.proudSoul && fuel.getItemDamage() == 0) ? 10000 : 0;
-	}
-
 
 /*
     ICommand command;

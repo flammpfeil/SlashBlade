@@ -1,16 +1,8 @@
 package mods.flammpfeil.slashblade.network;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
-import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
 import java.util.Map;
 
 /**

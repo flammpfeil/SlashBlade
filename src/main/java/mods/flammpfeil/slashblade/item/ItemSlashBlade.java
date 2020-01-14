@@ -154,8 +154,7 @@ public class ItemSlashBlade extends ItemSword {
     public boolean isShield(ItemStack stack, @Nullable EntityLivingBase entity) {
         if(canUseShield(stack) && hasScabbardInOffhand(entity))
             return true;
-        else
-            return false;
+		return false;
     }
 
     public static final String adjustXStr = "adjustX";
@@ -209,8 +208,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
 	private static ArrayList<ComboSequence> Seqs = new ArrayList<ItemSlashBlade.ComboSequence>();
-    public enum ComboSequence
-	{
+    public enum ComboSequence {
     	None(true,0.0f,0.0f,false,0),
     	Saya1(true,200.0f,5.0f,false,20),
     	Saya2(true,-200.0f,5.0f,false,20),
@@ -423,7 +421,7 @@ public class ItemSlashBlade extends ItemSword {
     public static void updateKillCount(ItemStack stack, EntityLivingBase target,EntityLivingBase player){
         NBTTagCompound tag = getItemTagCompound(stack);
         if(!target.isEntityAlive() && target.deathTime == 0){
-            int count = KillCount.add(tag, 1);
+            KillCount.add(tag, 1);
 
             incrementProudSoul(stack, target, player);
 
@@ -840,7 +838,7 @@ public class ItemSlashBlade extends ItemSword {
             result = ComboSequence.None;
         } else if (!player.onGround) {
 
-            int rank = StylishRankManager.getStylishRank(player);
+//            int rank = StylishRankManager.getStylishRank(player);
 
             int helmBrakerState = MessageMoveCommandState.FORWARD + MessageMoveCommandState.SNEAK;
 
@@ -1234,8 +1232,8 @@ public class ItemSlashBlade extends ItemSword {
             }
 
             {
-                double d0 = (double)(-MathHelper.sin(player.rotationYaw * 0.017453292F));
-                double d1 = (double)MathHelper.cos(player.rotationYaw * 0.017453292F);
+//                double d0 = (double)(-MathHelper.sin(player.rotationYaw * 0.017453292F));
+//                double d1 = (double)MathHelper.cos(player.rotationYaw * 0.017453292F);
 
                 player.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
                 /*
@@ -1274,7 +1272,6 @@ public class ItemSlashBlade extends ItemSword {
 	            	}
 
 		        	ComboSequence comboSec = getComboSequence(tag);
-
 		        	comboSec = getNextComboSeq(stack, comboSec, false, player);
                     setPlayerEffect(stack,comboSec,player);
 		        	setComboSequence(tag, comboSec);
@@ -1297,10 +1294,10 @@ public class ItemSlashBlade extends ItemSword {
         ItemStack itemStackIn = playerIn.getHeldItem(hand);
 
         if(hand == EnumHand.OFF_HAND){
-            return new ActionResult(EnumActionResult.FAIL, itemStackIn);
+            return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStackIn);
         }
 
-        SlashBlade.abilityJustGuard.setJustGuardState(playerIn);
+        JustGuard.setJustGuardState(playerIn);
 
         /*
         if(!par3EntityPlayer.isUsingItem()){
@@ -1314,19 +1311,18 @@ public class ItemSlashBlade extends ItemSword {
 
         //sitem.setItemDamage(1320);
         NBTTagCompound tag = getItemTagCompound(itemStackIn);
-        long prevAttackTime = LastActionTime.get(tag);
-        long currentTime = playerIn.world.getTotalWorldTime();
+//        long prevAttackTime = LastActionTime.get(tag);
+//        long currentTime = playerIn.world.getTotalWorldTime();
         ComboSequence comboSeq = getComboSequence(tag);
-        //if(prevAttackTime + ComboInterval < currentTime)
+        if(!SlashBladeHooks.onDoAttack(playerIn, itemStackIn, comboSeq))
         {
             nextAttackSequence(itemStackIn, comboSeq, playerIn);
-
             SilentUpdateItem.silentUpdateItem(playerIn, hand);
         }
 
         playerIn.setActiveHand(hand);
 
-        return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
     }
 
     public void nextAttackSequence(ItemStack stack, ComboSequence prevComboSeq, EntityPlayer player) {
@@ -1494,7 +1490,8 @@ public class ItemSlashBlade extends ItemSword {
         //AchievementList.triggerAchievement(par3EntityPlayer, "enchanted");
 
         SpecialAttackBase sa = getSpecialAttack(stack);
-        if(isJust && sa instanceof IJustSpecialAttack){
+    	if(SlashBladeHooks.onDoSpacialAttack(isJust, par3EntityPlayer, stack, sa))	return;
+    	if(isJust && sa instanceof IJustSpecialAttack){
             ((IJustSpecialAttack)sa).doJustSpacialAttack(stack,par3EntityPlayer);
         }else {
             sa.doSpacialAttack(stack, par3EntityPlayer);
@@ -1605,8 +1602,6 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public AxisAlignedBB getBBofCombo(ItemStack itemStack, ComboSequence combo, EntityLivingBase user){
-
-    	NBTTagCompound tag = getItemTagCompound(itemStack);
     	EnumSet<SwordType> swordType = getSwordType(itemStack);
 
     	AxisAlignedBB bb = user.getEntityBoundingBox();
@@ -1748,7 +1743,7 @@ public class ItemSlashBlade extends ItemSword {
 
 
     public void updateAttackAmplifier(EnumSet<SwordType> swordType,NBTTagCompound tag,EntityLivingBase el,ItemStack sitem){
-        float tagAttackAmplifier = this.AttackAmplifier.get(tag);
+        float tagAttackAmplifier = ItemSlashBlade.AttackAmplifier.get(tag);
 
 
         float baseModif = getBaseAttackModifiers(tag);
@@ -1772,7 +1767,7 @@ public class ItemSlashBlade extends ItemSword {
 
         if(tagAttackAmplifier != attackAmplifier)
         {
-            this.AttackAmplifier.set(tag, attackAmplifier);
+            ItemSlashBlade.AttackAmplifier.set(tag, attackAmplifier);
 
             NBTTagList attrTag = null;
 
@@ -1837,7 +1832,7 @@ public class ItemSlashBlade extends ItemSword {
 		{
 			int cost = sitem.getRepairCost();
 			if(cost != 0){
-				Map map = EnchantmentHelper.getEnchantments(sitem);
+				Map<?, ?> map = EnchantmentHelper.getEnchantments(sitem);
 
 				cost = map.size() + 1;
 				cost *= AnvilRepairBonus;
@@ -1886,11 +1881,11 @@ public class ItemSlashBlade extends ItemSword {
 
 				int idx = 0; //Arrays.asList(el.inventory.mainInventory).indexOf(sitem);
 
-				for(ItemStack tmp : ((EntityPlayer)el).inventory.mainInventory)
-				    if(ItemStack.areItemStacksEqual(tmp, sitem))
+				for(ItemStack tmp : ((EntityPlayer)el).inventory.mainInventory) {
+					if(ItemStack.areItemStacksEqual(tmp, sitem))
 				        break;
-				    else
-                        idx++;
+					idx++;
+				}
 
                 boolean doMaterialRepair = false;
 
@@ -2288,7 +2283,7 @@ public class ItemSlashBlade extends ItemSword {
 	}
 
     Map<ComboSequence, String> attackTypeMap = crateAttackTypeMap();
-    public Map crateAttackTypeMap(){
+    public Map<ComboSequence, String> crateAttackTypeMap(){
         attackTypeMap = Maps.newHashMap();
 
         attackTypeMap.put(ComboSequence.Kiriage,AttackTypes.Kiriage);
@@ -2428,7 +2423,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationOwner(ItemStack par1ItemStack,
-                                         EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                         EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         if(tag.hasUniqueId("Owner") && par2EntityPlayer != null){
             UUID ownerid = tag.getUniqueId("Owner");
@@ -2444,7 +2439,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationSwordClass(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+			EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
 
 		EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
@@ -2465,7 +2460,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationKillCount(ItemStack par1ItemStack,
-    		EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+    		EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
     	EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 		NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
@@ -2475,7 +2470,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationProudSoul(ItemStack par1ItemStack,
-                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                        EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
 
@@ -2485,21 +2480,18 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationSpecialAttack(ItemStack par1ItemStack,
-                                            EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                            EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
         if(swordType.contains(SwordType.Bewitched)){
-            NBTTagCompound tag = getItemTagCompound(par1ItemStack);
-
             String key = "flammpfeil.slashblade.specialattack." + getSpecialAttack(par1ItemStack).toString();
-
             par3List.add(String.format("SA:%s",  I18n.format(key)));
         }
     }
 
     @SideOnly(Side.CLIENT)
     public void addInformationRangeAttack(ItemStack par1ItemStack,
-                                            EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                            EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
         EnumSet<SwordType> swordType = getSwordType(par1ItemStack);
 
         if(swordType.contains(SwordType.Bewitched) && 0 < EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER,par1ItemStack)){
@@ -2513,7 +2505,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationRepairCount(ItemStack par1ItemStack,
-                                          EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                          EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
 
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         int repair = RepairCount.get(tag);
@@ -2524,7 +2516,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationMaxAttack(ItemStack par1ItemStack,
-                                        EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                        EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
 
         NBTTagCompound tag = getItemTagCompound(par1ItemStack);
         float repair = RepairCount.get(tag);
@@ -2557,7 +2549,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationSpecialEffec(ItemStack par1ItemStack,
-                                           EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+                                           EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
 
         NBTTagCompound etag = getSpecialEffect(par1ItemStack);
 
@@ -2581,7 +2573,7 @@ public class ItemSlashBlade extends ItemSword {
 
     @SideOnly(Side.CLIENT)
     public void addInformationEnergy(ItemStack stack,
-                                           EntityPlayer player, List lines, boolean advanced) {
+                                           EntityPlayer player, List<String> lines, boolean advanced) {
 
         if(!stack.hasCapability(BladeCapabilityProvider.ENERGY, null)) return;
         IEnergyStorage storage = stack.getCapability(BladeCapabilityProvider.ENERGY,null);
@@ -2609,7 +2601,7 @@ public class ItemSlashBlade extends ItemSword {
 	@Override
     @SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack par1ItemStack,
-			World world, List par3List, ITooltipFlag inFlag) {
+			World world, List<String> par3List, ITooltipFlag inFlag) {
 
         EntityPlayer par2EntityPlayer = Minecraft.getMinecraft().player;
         boolean par4 = inFlag.isAdvanced();
@@ -2648,8 +2640,7 @@ public class ItemSlashBlade extends ItemSword {
 	}
 
 
-    public Vec3d getEntityToEntityVec(Entity root, Entity target, float yawLimit, float pitchLimit)
-    {
+    public Vec3d getEntityToEntityVec(Entity root, Entity target, float yawLimit, float pitchLimit) {
         double d0 = (target.posX + target.motionX) - root.posX;
         double d1 = (target.posZ + target.motionZ) - root.posZ;
         double d2;
@@ -2665,14 +2656,10 @@ public class ItemSlashBlade extends ItemSword {
         }
 
         double d3 = (double)MathHelper.sqrt(d0 * d0 + d1 * d1);
-        float f2 = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
-        float f3 = (float)(-(Math.atan2(d2, d3) * 180.0D / Math.PI));
-
-
-        double x,y,z;
-
         double yaw = Math.atan2(d1, d0) - Math.PI / 2.0f;
         double pitch = Math.atan2(d2, d3);
+        
+        double x,y,z;
 
         y = Math.sin(pitch);
         x = -Math.sin(yaw);
@@ -2708,13 +2695,8 @@ public class ItemSlashBlade extends ItemSword {
 		InductionProjecTile(projecTile,user,user.getLookVec());
 	}
 	public void InductionProjecTile(Entity projecTile,EntityLivingBase user,Vec3d dir){
-
-        if (dir != null)
-        {
+        if (dir != null) {
         	//projecTile.velocityChanged = true;
-
-        	Vec3d vector = new Vec3d(projecTile.motionX,projecTile.motionY,projecTile.motionZ);
-
         	projecTile.motionX = dir.x;
         	projecTile.motionY = dir.y;
         	projecTile.motionZ = dir.z;
@@ -2897,26 +2879,24 @@ public class ItemSlashBlade extends ItemSword {
 
                 if(!isDestruction)
                     continue;
-                else{
-                    ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
-                    curEntity.setDead();
+				ReflectionAccessHelper.setVelocity(curEntity, 0, 0, 0);
+				curEntity.setDead();
 
-                    for (int var1 = 0; var1 < 10; ++var1)
-                    {
-                        Random rand = entityLiving.getRNG();
-                        double var2 = rand.nextGaussian() * 0.02D;
-                        double var4 = rand.nextGaussian() * 0.02D;
-                        double var6 = rand.nextGaussian() * 0.02D;
-                        double var8 = 10.0D;
-                        entityLiving.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
-                                , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
-                                , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
-                                , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
-                                , var2, var4, var6);
-                    }
+				for (int var1 = 0; var1 < 10; ++var1)
+				{
+				    Random rand = entityLiving.getRNG();
+				    double var2 = rand.nextGaussian() * 0.02D;
+				    double var4 = rand.nextGaussian() * 0.02D;
+				    double var6 = rand.nextGaussian() * 0.02D;
+				    double var8 = 10.0D;
+				    entityLiving.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL
+				            , curEntity.posX + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var2 * var8
+				            , curEntity.posY + (double)(rand.nextFloat() * curEntity.height) - var4 * var8
+				            , curEntity.posZ + (double)(rand.nextFloat() * curEntity.width * 2.0F) - (double)curEntity.width - var6 * var8
+				            , var2, var4, var6);
+				}
 
-                    destructedCount++;
-                }
+				destructedCount++;
 
                 StylishRankManager.doAttack(entityLiving);
 
@@ -3056,9 +3036,6 @@ public class ItemSlashBlade extends ItemSword {
     }
 
     public void doSwingItem(ItemStack stack, EntityLivingBase entity){
-
-
-
         if(entity.world.isRemote){
             entity.swingingHand = EnumHand.MAIN_HAND;
             entity.isSwingInProgress = true;
@@ -3076,9 +3053,8 @@ public class ItemSlashBlade extends ItemSword {
     public float getBaseAttackModifiers(NBTTagCompound tag){
         if(BaseAttackModifier.exists(tag)){
             return BaseAttackModifier.get(tag);
-        }else{
-            return defaultBaseAttackModifier;
         }
+		return defaultBaseAttackModifier;
     }
 
     public boolean isDestructable(ItemStack stack){
@@ -3138,7 +3114,7 @@ public class ItemSlashBlade extends ItemSword {
 
                     if (blade instanceof ItemSlashBladeWrapper) {
 
-                        doDrop = ((ItemSlashBladeWrapper) blade).hasWrapedItem(stack);
+                        doDrop = ItemSlashBladeWrapper.hasWrapedItem(stack);
                         if (!ItemSlashBladeWrapper.TrueItemName.exists(tag)) {
                             ((ItemSlashBladeWrapper) blade).removeWrapItem(stack);
                             setBroken = false;
@@ -3230,7 +3206,6 @@ public class ItemSlashBlade extends ItemSword {
         NBTTagCompound tag = getItemTagCompound(item);
         EnumSet<SwordType> types = getSwordType(item);
 
-
         if (!types.contains(SwordType.Bewitched)) return;
         if(types.contains(SwordType.Broken)) return;
 
@@ -3242,6 +3217,8 @@ public class ItemSlashBlade extends ItemSword {
             NetworkManager.INSTANCE.sendToServer(new MessageRangeAttack(mode));
             return;
         }
+        if(entity instanceof EntityPlayer)
+        if(SlashBladeHooks.onPlayerDoRangeAttack((EntityPlayer)entity, item, mode)) return;
         int rank = StylishRankManager.getStylishRank(entity);
 
         switch(mode) {
@@ -3544,17 +3521,13 @@ public class ItemSlashBlade extends ItemSword {
             if(types.contains(SwordType.Bewitched) || types.contains(SwordType.FiercerEdge)){
                 if(tag.getBoolean("isDefaultBewitched"))
                     return EnumRarity.EPIC;
-                else
-                    return EnumRarity.RARE;
-            }else{
-                return EnumRarity.UNCOMMON;
+				return EnumRarity.RARE;
             }
-        }else{
-            if(tag.getBoolean("isDefaultBewitched"))
-                return EnumRarity.UNCOMMON;
-            else
-                return EnumRarity.COMMON;
+			return EnumRarity.UNCOMMON;
         }
+		if(tag.getBoolean("isDefaultBewitched"))
+		    return EnumRarity.UNCOMMON;
+		return EnumRarity.COMMON;
     }
 
     @Override
@@ -3612,9 +3585,8 @@ public class ItemSlashBlade extends ItemSword {
 
             entityItem.setDead();
             return true;
-        }else{
-            return false;
         }
+		return false;
     }
 
     public static NBTTagCompound getSpecialEffect(ItemStack stack){
@@ -3662,8 +3634,8 @@ public class ItemSlashBlade extends ItemSword {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             return true;
-        }else
-            return false;
+        }
+		return false;
     }
 
     @Override
@@ -3676,8 +3648,8 @@ public class ItemSlashBlade extends ItemSword {
         if(viewEnergyBar(stack)) {
             IEnergyStorage storage = stack.getCapability(BladeCapabilityProvider.ENERGY,null);
             return 1.0 - (double)storage.getEnergyStored() / (double)storage.getMaxEnergyStored();
-        }else
-            return super.getDurabilityForDisplay(stack);
+        }
+		return super.getDurabilityForDisplay(stack);
     }
 
 
@@ -3691,8 +3663,7 @@ public class ItemSlashBlade extends ItemSword {
 
         if(isRenderThread.get())
             return 0;
-        else
-            return super.getMetadata(stack);
+		return super.getMetadata(stack);
     }
 
     @Override

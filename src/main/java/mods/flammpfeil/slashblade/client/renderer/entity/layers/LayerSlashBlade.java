@@ -31,21 +31,19 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
     private static final ResourceLocationRaw armoredCreeperTextures = new ResourceLocationRaw("textures/entity/creeper/creeper_armor.png");
     private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
+    public WavefrontObject trailModel = null;
 
-
-    static public WavefrontObject trailModel = null;
-
-    static public ResourceLocationRaw modelLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.obj");
-    static public ResourceLocationRaw textureLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.png");
+    public ResourceLocationRaw modelLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.obj");
+    public ResourceLocationRaw textureLocation = new ResourceLocationRaw("flammpfeil.slashblade","model/util/trail.png");
 
     private final RenderLivingBase<?> render;
 
-    static private boolean enabledOffhandRendering = true;
+    private boolean enabledOffhandRendering = true;
 
-    static public void enableOffhandRendering(){
+    public void enableOffhandRendering(){
         enabledOffhandRendering = true;
     }
-    static public void disableOffhandRendering(){
+    public void disableOffhandRendering(){
         enabledOffhandRendering = false;
     }
 
@@ -157,15 +155,9 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
     void renderBack(ItemStack item, EntityLivingBase player, boolean forceNinja, boolean noBlade) {
         ItemSlashBlade iSlashBlade = ((ItemSlashBlade) item.getItem());
-
-
         WavefrontObject model = BladeModelManager.getInstance().getModel(iSlashBlade.getModelLocation(item));
-
         ResourceLocationRaw resourceTexture = iSlashBlade.getModelTexture(item);
-
         EnumSet<ItemSlashBlade.SwordType> swordType = iSlashBlade.getSwordType(item);
-
-
         boolean isNoScabbard = swordType.contains(ItemSlashBlade.SwordType.NoScabbard);
 
         float ax = 0;
@@ -174,15 +166,12 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         boolean isBroken = swordType.contains(ItemSlashBlade.SwordType.Broken);
 
-
         int renderType = 0;
 
         if (item.hasTagCompound()) {
             NBTTagCompound tag = item.getTagCompound();
             ay = -tag.getFloat(ItemSlashBlade.adjustYStr) / 10.0f;
-
             renderType = ItemSlashBlade.StandbyRenderType.get(tag);
-
             if (isNoScabbard)
                 renderType = 0;
         }
@@ -196,8 +185,6 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         if (item.hasTagCompound()) {
             NBTTagCompound tag = item.getTagCompound();
-
-
             ax = tag.getFloat(ItemSlashBlade.adjustXStr) / 10.0f;
             ay = -tag.getFloat(ItemSlashBlade.adjustYStr) / 10.0f;
             az = -tag.getFloat(ItemSlashBlade.adjustZStr) / 10.0f;
@@ -458,9 +445,6 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         if(entity == null)
             return;
-
-
-
 
         ItemStack stack = entity.getHeldItem(EnumHand.MAIN_HAND);
         ItemStack offhand = entity.getHeldItem(EnumHand.OFF_HAND);

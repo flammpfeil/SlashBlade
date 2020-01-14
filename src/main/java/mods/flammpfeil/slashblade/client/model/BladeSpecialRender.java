@@ -6,21 +6,15 @@ import mods.flammpfeil.slashblade.client.model.obj.Face;
 import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.client.renderer.entity.BladeFirstPersonRender;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.tileentity.DummyTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.ResourceLocation;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import org.lwjgl.opengl.GL11;
 
@@ -31,32 +25,35 @@ import java.util.EnumSet;
 /**
  * Created by Furia on 2016/06/21.
  */
-public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntity> {
+public class BladeSpecialRender extends TileEntityItemStackRenderer{
     private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
 
-    @Override
-    public void render(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if(te != null) return;
-
-        ItemSlashBlade.isRenderThread.set(false);
-
-        if(BladeModel.targetStack.isEmpty())
-            return;
-
-        ResourceLocationRaw resourceTexture = BladeModel.itemBlade.getModelTexture(BladeModel.targetStack);
-        bindTexture(resourceTexture);
-
-        //GlStateManager.pushAttrib();
-        //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-
-        if(render() && BladeModel.targetStack.hasEffect()){
-            renderEffect();
+    protected void bindTexture(ResourceLocation location){
+       final TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
+        if (texturemanager != null){
+            texturemanager.bindTexture(location);
         }
+    }    
+	@Override
+	public void renderByItem(ItemStack itemStackIn) {
+      ItemSlashBlade.isRenderThread.set(false);
 
-        //GlStateManager.popAttrib();
-    }
+      if(!(itemStackIn.getItem() instanceof ItemSlashBlade))
+          return;
+      
+      ResourceLocationRaw resourceTexture = ((ItemSlashBlade)itemStackIn.getItem()).getModelTexture(itemStackIn);
+      bindTexture(resourceTexture);
 
-    private void renderEffect()
+      //GlStateManager.pushAttrib();
+      //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+      if(render(itemStackIn) && itemStackIn.hasEffect()){
+          renderEffect(itemStackIn);
+      }
+
+      //GlStateManager.popAttrib();
+	}
+    private void renderEffect(ItemStack itemStackIn)
     {
         if(!SlashBlade.RenderEnchantEffect)
             return;
@@ -72,14 +69,14 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         float f = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
         GlStateManager.translate(f, 0.0F, 0.0F);
         GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
-        this.render();
+        this.render(itemStackIn);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         GlStateManager.scale(8.0F, 8.0F, 8.0F);
         float f1 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
         GlStateManager.translate(-f1, 0.0F, 0.0F);
         GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);
-        this.render();
+        this.render(itemStackIn);
         GlStateManager.popMatrix();
         GlStateManager.matrixMode(5888);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -88,22 +85,24 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         GlStateManager.depthMask(true);
     }
 
-    boolean checkRenderNaked(){
+    boolean checkRenderNaked(ItemStack itemStackIn){
         ItemStack mainHand = BladeModel.user.getHeldItemMainhand();
+        /*
         if(!(mainHand.getItem() instanceof ItemSlashBlade))
             return true;
+        */
 
         if(ItemSlashBlade.hasScabbardInOffhand(BladeModel.user))
             return true;
 
-        EnumSet<ItemSlashBlade.SwordType> type = BladeModel.itemBlade.getSwordType(mainHand);
+        EnumSet<ItemSlashBlade.SwordType> type = ((ItemSlashBlade)itemStackIn.getItem()).getSwordType(mainHand);
         if(type.contains(ItemSlashBlade.SwordType.NoScabbard))
             return true;
 
         return false;
     }
 
-    private boolean render(){
+    private boolean render(ItemStack stackIn){
 
         boolean depthState = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
         if(!depthState)
@@ -118,28 +117,17 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             if(BladeModel.user == null)
                 return false;
 
-            EnumSet<ItemSlashBlade.SwordType> types = BladeModel.itemBlade.getSwordType(BladeModel.targetStack);
-
-            boolean handle = false;
-
-            if(!types.contains(ItemSlashBlade.SwordType.NoScabbard)) {
-                handle = BladeModel.user.getPrimaryHand() == EnumHandSide.RIGHT ?
-                        BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
-                        BladeModel.type == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
-            }
-
-
             if(BladeModel.type == ItemCameraTransforms.TransformType.NONE) {
-                if(checkRenderNaked()){
-                    renderNaked(true);
+                if(checkRenderNaked(stackIn)){
+                    renderNaked(stackIn,true);
                 }
-                else if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand()){
+                else if(stackIn.isItemEqualIgnoreDurability(BladeModel.user.getHeldItemMainhand())){
                     BladeFirstPersonRender.getInstance().renderVR();
                 }
             }else {
-                if(checkRenderNaked()){
-                    renderNaked();
-                }else /*if(BladeModel.targetStack == BladeModel.user.getHeldItemMainhand())*/{
+                if(checkRenderNaked(stackIn)){
+                    renderNaked(stackIn,false);
+                }else if(stackIn.isItemEqualIgnoreDurability(BladeModel.user.getHeldItemMainhand())){
                     BladeFirstPersonRender.getInstance().render();
                 }
             }
@@ -178,8 +166,8 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             scale = 0.008f;
         GL11.glScalef(scale, scale, scale);
 
-        EnumSet<ItemSlashBlade.SwordType> types = BladeModel.itemBlade.getSwordType(BladeModel.targetStack);
-        WavefrontObject model = BladeModelManager.getInstance().getModel(BladeModel.itemBlade.getModelLocation(BladeModel.targetStack));
+        EnumSet<ItemSlashBlade.SwordType> types =((ItemSlashBlade)stackIn.getItem()).getSwordType(stackIn);
+        WavefrontObject model = BladeModelManager.getInstance().getModel(((ItemSlashBlade)stackIn.getItem()).getModelLocation(stackIn));
 
         String renderTarget;
         if(types.contains(ItemSlashBlade.SwordType.Broken))
@@ -210,7 +198,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
             model = BladeModelManager.getInstance().getModel(BladeModelManager.resourceDurabilityModel);
             bindTexture(BladeModelManager.resourceDurabilityTexture);
 
-            double par = BladeModel.itemBlade.getDurabilityForDisplay(BladeModel.targetStack);
+            double par = ((ItemSlashBlade)stackIn.getItem()).getDurabilityForDisplay(stackIn);
             par = Math.min(Math.max(par, 0.0),1.0);
 
             GlStateManager.translate(0.0F, 0.0F, 0.1f);
@@ -231,7 +219,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
             }
 
-            GlStateManager.translate(0.0F, 0.0F, -2.0f * BladeModel.itemBlade.getDurabilityForDisplay(BladeModel.targetStack));
+            GlStateManager.translate(0.0F, 0.0F, -2.0f * ((ItemSlashBlade)stackIn.getItem()).getDurabilityForDisplay(stackIn));
             model.renderPart("color");
 
             if(isBroken){
@@ -259,28 +247,18 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
         return true;
     }
 
-    private void renderNaked(){
-        renderNaked(false);
-    }
-    private void renderNaked(boolean isVR){
+    private void renderNaked(ItemStack stack,boolean isVR){
         EntityLivingBase entitylivingbaseIn = BladeModel.user ;
-        ItemStack itemstack = BladeModel.targetStack;
-        ItemSlashBlade itemBlade = BladeModel.itemBlade;
-
-
-        if (!itemstack.isEmpty())
-        {
-
-            Item item = itemstack.getItem();
-
-            boolean isScabbard = (item instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(itemstack));
-
+        ItemSlashBlade itemBlade = ((ItemSlashBlade)stack.getItem());
+        if (!stack.isEmpty()){
+        	ItemStack stack_copy = stack.copy();
+            boolean isScabbard = (itemBlade instanceof ItemSlashBladeWrapper && !ItemSlashBladeWrapper.hasWrapedItem(stack_copy));
             if(isScabbard) {
                 ItemStack mainHnad = entitylivingbaseIn.getHeldItemMainhand();
                 if (mainHnad.getItem() instanceof ItemSlashBlade) {
                     EnumSet<ItemSlashBlade.SwordType> mainhandtypes = ((ItemSlashBlade) (mainHnad.getItem())).getSwordType(mainHnad);
                     if (!mainhandtypes.contains(ItemSlashBlade.SwordType.NoScabbard)) {
-                        itemstack = mainHnad;
+                    	stack_copy = mainHnad;
                     }else{
                         return;
                     }
@@ -289,11 +267,11 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
             GlStateManager.pushMatrix();
 
-            EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(itemstack);
+            EnumSet<ItemSlashBlade.SwordType> swordType = itemBlade.getSwordType(stack_copy);
 
             {
-                WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(itemstack));
-                ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(itemstack);
+                WavefrontObject model = BladeModelManager.getInstance().getModel(itemBlade.getModelLocation(stack_copy));
+                ResourceLocationRaw resourceTexture = itemBlade.getModelTexture(stack_copy);
                 bindTexture(resourceTexture);
 
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);

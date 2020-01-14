@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.specialattack;
 
 import mods.flammpfeil.slashblade.entity.EntityMaximumBetManager;
-import mods.flammpfeil.slashblade.entity.EntitySakuraEndManager;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -29,8 +28,6 @@ public class MaximumBet extends SpecialAttackBase {
             if(!ItemSlashBlade.ProudSoul.tryAdd(tag,cost,false)){
                 ItemSlashBlade.damageItem(stack, 10, player);
             }
-
-            ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
 
             EntityMaximumBetManager entityDA = new EntityMaximumBetManager(world, player);
             if (entityDA != null) {

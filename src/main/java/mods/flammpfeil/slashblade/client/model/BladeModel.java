@@ -3,36 +3,19 @@ package mods.flammpfeil.slashblade.client.model;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import mods.flammpfeil.slashblade.SlashBlade;
-import mods.flammpfeil.slashblade.client.model.obj.Face;
-import mods.flammpfeil.slashblade.client.model.obj.WavefrontObject;
-import mods.flammpfeil.slashblade.event.ModelRegister;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.GL11;
-
-import javax.vecmath.Color3b;
-import javax.vecmath.Color4b;
-import javax.vecmath.Color4f;
 import javax.vecmath.Matrix4f;
-import java.awt.*;
-import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -57,8 +40,8 @@ public class BladeModel implements IBakedModel {
         return modelMesher.getItemModel(proudsoul).getQuads(null,null,0);
     }
 
-    static ItemStack targetStack = ItemStack.EMPTY;
-    static ItemSlashBlade itemBlade = null;
+//    static ItemStack targetStack = ItemStack.EMPTY;
+//    static ItemSlashBlade itemBlade = null;
     static EntityLivingBase user = null;
 
     /**
@@ -78,15 +61,8 @@ public class BladeModel implements IBakedModel {
             public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
 
                 if(stack != null && stack.getItem() instanceof ItemSlashBlade) {
-                    targetStack = stack;
                     ItemSlashBlade.isRenderThread.set(true);
-                    //ItemSlashBlade.getItemTagCompound(targetStack).setBoolean("IsRender",true);
-                    itemBlade = (ItemSlashBlade) stack.getItem();
                     user = entity == null ? user : entity;
-                }else{
-                    targetStack = ItemStack.EMPTY;
-                    itemBlade = null;
-                    user = null;
                 }
 
                 return super.handleItemState(originalModel, stack, world, entity);
@@ -256,7 +232,8 @@ public class BladeModel implements IBakedModel {
         return Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getParticleIcon(SlashBlade.proudSoul);
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public ItemCameraTransforms getItemCameraTransforms() {
         return new ItemCameraTransforms(ItemCameraTransforms.DEFAULT){
             @Override
@@ -269,7 +246,7 @@ public class BladeModel implements IBakedModel {
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        this.type = cameraTransformType;
+        BladeModel.type = cameraTransformType;
 
         drawStep = 0;
         return PerspectiveMapWrapper.handlePerspective(this, ModelRotation.X0_Y0, cameraTransformType);

@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.entity.selector;
 
 import com.google.common.base.Predicate;
-import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.item.EntityTNTPrimed;
@@ -25,8 +25,8 @@ public final class EntitySelectorDestructable implements Predicate<Entity> {
         boolean result = false;
 
         String className = input.getClass().getSimpleName();
-        if (SlashBlade.manager.destructableTargets.containsKey(className))
-            result = input.isEntityAlive() && SlashBlade.manager.destructableTargets.get(className);
+        if (ConfigEntityListManager.destructableTargets.containsKey(className))
+            result = input.isEntityAlive() && ConfigEntityListManager.destructableTargets.get(className);
         else if (input instanceof IProjectile
                 || input instanceof EntityTNTPrimed
                 || input instanceof EntityFireball

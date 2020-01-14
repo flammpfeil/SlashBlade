@@ -1,11 +1,8 @@
 package mods.flammpfeil.slashblade.item;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityBladeStand;
-import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
 import mods.flammpfeil.slashblade.entity.EntityGrimGripKey;
 import mods.flammpfeil.slashblade.named.NamedBladeManager;
 import mods.flammpfeil.slashblade.specialeffect.IRemovable;
@@ -13,12 +10,12 @@ import mods.flammpfeil.slashblade.specialeffect.ISpecialEffect;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
 import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFence;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -28,30 +25,22 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.server.management.UserListOpsEntry;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ItemProudSoul extends Item {
@@ -59,7 +48,10 @@ public class ItemProudSoul extends Item {
 	public ItemProudSoul() {
         setHasSubtypes(true);
 	}
-
+	@Override
+	public int getItemBurnTime(ItemStack itemStack) {
+		return (itemStack.getItem() == this && itemStack.getMetadata() == 0) ? 10000 : 0;
+	}
 	public enum EnumSoulType implements IStringSerializable{
         NONE    (-1, "none"),
 	    SOUL    (0, "soul"),
@@ -105,8 +97,7 @@ public class ItemProudSoul extends Item {
         {
             if(metamap.containsKey(meta))
                 return metamap.get(meta);
-            else
-                return NONE;
+			return NONE;
         }
     }
 
@@ -200,17 +191,12 @@ public class ItemProudSoul extends Item {
 
         Block block = world.getBlockState(pos).getBlock();
 
-        if(!world.isRemote && Blocks.OAK_FENCE == block && player.isSneaking()){
-
+        if(!world.isRemote && block instanceof BlockFence && player.isSneaking()){
             world.setBlockToAir(pos);
             EntityBladeStand e = new EntityBladeStand(world);
             e.setStandType(stack.getMetadata());
             e.setPositionAndRotation(pos.getX() + 0.5 ,pos.getY() + 0.5 ,pos.getZ() + 0.5,Math.round(player.rotationYaw / 45.0f) * 45.0f + 180.0f,e.rotationPitch);
             world.spawnEntity(e);
-
-            //todo : advancement
-            //AchievementList.triggerAchievement(player,"bladeStand");
-
             return EnumActionResult.SUCCESS;
         }else if(stack.getMetadata() == 4 //crystal
                 && stack.hasTagCompound() && stack.getTagCompound().hasKey("GPX")
@@ -263,9 +249,7 @@ public class ItemProudSoul extends Item {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack par1ItemStack, World world, List par3List, ITooltipFlag flagIn) {
-        EntityPlayer p_77624_2_ = Minecraft.getMinecraft().player;
-        boolean p_77624_4_ = flagIn.isAdvanced();
+    public void addInformation(ItemStack par1ItemStack, World world, List<String> par3List, ITooltipFlag flagIn) {
         super.addInformation(par1ItemStack, world, par3List, flagIn);
 
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(par1ItemStack);
@@ -273,7 +257,7 @@ public class ItemProudSoul extends Item {
         if(ItemSlashBlade.SpecialAttackType.exists(tag)){
             String key = "flammpfeil.slashblade.specialattack." + SlashBlade.weapon.getSpecialAttack(par1ItemStack).toString();
 
-            par3List.add(String.format("SA:%s",  I18n.translateToLocal(key)));
+            par3List.add(String.format("SA:%s",  I18n.format(key)));
         }
 
         NBTTagCompound etag = ItemSlashBlade.getSpecialEffect(par1ItemStack);
@@ -284,7 +268,7 @@ public class ItemProudSoul extends Item {
                 int reqiredLevel = etag.getInteger(key);
 
                 par3List.add(
-                        I18n.translateToLocal("slashblade.seffect.name." + key)
+                        I18n.format("slashblade.seffect.name." + key)
                                 + reqiredLevel);
             }
         }
@@ -300,13 +284,9 @@ public class ItemProudSoul extends Item {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-
         if(player.world.isRemote) return false;
-
         boolean using = false;
-
         NBTTagCompound tag = ItemSlashBlade.getItemTagCompound(stack);
-
         if(stack.getMetadata() == 3 && !stack.isItemEnchanted() && entity instanceof EntityBladeStand) {
             EntityBladeStand stand = (EntityBladeStand)entity;
 
@@ -384,7 +364,7 @@ public class ItemProudSoul extends Item {
                     }
 
                     if(isLottery) {
-                        if(stand.getType(stand) == EntityBladeStand.StandType.Dual){
+                        if(EntityBladeStand.getType(stand) == EntityBladeStand.StandType.Dual){
                             int lotNum = stand.getEntityData().getInteger("LastLotNumber");
                             lotNum++;
                             lotNum %= NamedBladeManager.namedbladeSouls.size();
@@ -481,14 +461,9 @@ public class ItemProudSoul extends Item {
                 if(0 < seTag.getSize()) //wirte
                 {
                     for(String key : seTag.getKeySet()){
-                        NBTTagCompound bladeTag = ItemSlashBlade.getItemTagCompound(blade);
-
                         int level = seTag.getInteger(key);
-
                         SpecialEffects.addEffect(blade, key, level);
-
                         player.onEnchantmentCritical(stand);
-
                         using = true;
                     }
                 }else{ //remove

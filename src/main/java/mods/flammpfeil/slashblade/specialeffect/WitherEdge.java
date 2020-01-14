@@ -2,13 +2,13 @@ package mods.flammpfeil.slashblade.specialeffect;
 
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.SlashBladeEvent;
 import mods.flammpfeil.slashblade.util.SlashBladeHooks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
 /**
@@ -78,7 +78,7 @@ public class WitherEdge implements ISpecialEffect, IRemovable{
 
     @Override
     public void register() {
-        SlashBladeHooks.EventBus.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override

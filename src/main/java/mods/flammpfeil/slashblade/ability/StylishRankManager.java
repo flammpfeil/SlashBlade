@@ -1,24 +1,16 @@
 package mods.flammpfeil.slashblade.ability;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.network.MessageRankpointSynchronize;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
-//import net.minecraft.stats.Achievement;
-import net.minecraft.stats.StatisticsManagerServer;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.TagPropertyAccessor;
 import net.minecraft.entity.Entity;
@@ -50,7 +42,6 @@ public class StylishRankManager {
                 propIgnoreDamageType.setShowInGui(false);
 
                 String[] strs = propIgnoreDamageType.getStringList();
-                ArrayList<String> tmp = Lists.newArrayList();
                 for(String str : strs){
                     ignoreDamageTypes.add(unescape(str));
                 }
@@ -178,12 +169,11 @@ public class StylishRankManager {
     public static final int addCooltime = 10;
     public static final int maxCooltime = initCooltime + addCooltime;
 
-    public static NBTTagCompound dummyTag = new NBTTagCompound();
+    public static final NBTTagCompound dummyTag = new NBTTagCompound();
     public static NBTTagCompound getTag(Entity e){
         if(e != null)
             return e.getEntityData();
-        else
-            return dummyTag;
+		return dummyTag;
     }
 
     public static int getTotalRankPoint(Entity e){
@@ -316,13 +306,13 @@ public class StylishRankManager {
 
         int rankPoint = getTotalRankPoint(e);
 
-        int lastRank = getStylishRank(rankPoint);
+//        int lastRank = getStylishRank(rankPoint);
 
         rankPoint += amount;
         RankPoint.set(tag, rankPoint);
         LastRankPointUpdate.set(tag,e.world.getTotalWorldTime());
 
-        int postRank = getStylishRank(rankPoint);
+//        int postRank = getStylishRank(rankPoint);
 
         /* todo: advancement
         if(lastRank < postRank){

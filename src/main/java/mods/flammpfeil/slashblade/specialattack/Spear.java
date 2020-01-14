@@ -9,7 +9,6 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
@@ -30,9 +29,6 @@ public class Spear extends SpecialAttackBase {
 
 
         double playerDist = 3.5;
-        float attackDist = (float)(playerDist / 3.0);
-
-
         if(!player.onGround)
             playerDist *= 0.35f;
         ReflectionAccessHelper.setVelocity(player,
@@ -47,7 +43,7 @@ public class Spear extends SpecialAttackBase {
                 ItemSlashBlade.damageItem(stack, 10, player);
             }
 
-            ItemSlashBlade blade = (ItemSlashBlade)stack.getItem();
+            stack.getItem();
 
             player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH,10,0,true,false));
 

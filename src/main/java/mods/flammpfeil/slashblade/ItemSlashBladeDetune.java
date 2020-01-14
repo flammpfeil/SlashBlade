@@ -47,6 +47,5 @@ public class ItemSlashBladeDetune extends ItemSlashBlade {
 	}
 
 	@Override
-    public void addInformationSwordClass(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {}
+    public void addInformationSwordClass(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {}
 }

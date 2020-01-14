@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -22,20 +21,14 @@ public class StylishRankRenderer {
 
     @SubscribeEvent
     public void renderTick(TickEvent.RenderTickEvent event) {
-        Minecraft mc;
-        EntityPlayer player;
-        long time;
-
-        mc = FMLClientHandler.instance().getClient();
-        World world = mc.world;
         if (event.phase == TickEvent.Phase.START || !(Minecraft.getMinecraft().getRenderViewEntity() instanceof EntityPlayer))
             return;
 
-        player = (EntityPlayer) Minecraft.getMinecraft().getRenderViewEntity();
-        time = System.currentTimeMillis();
+        Minecraft mc = FMLClientHandler.instance().getClient();
+        EntityPlayer player= (EntityPlayer) Minecraft.getMinecraft().getRenderViewEntity();
+        long time = System.currentTimeMillis();
 
         if (player != null && mc.inGameHasFocus) {
-            Minecraft _tmp2 = mc;
             if (Minecraft.isGuiEnabled()) {
                 renderRankHud(event.renderTickTime, player, time);
             }

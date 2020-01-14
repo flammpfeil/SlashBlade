@@ -7,7 +7,6 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class MobEffectCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTBase> {
@@ -28,7 +27,8 @@ public class MobEffectCapabilityProvider implements ICapabilityProvider, INBTSer
         return false;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if(capability == MOB_EFFECT) return (T)this.storage;
         return null;

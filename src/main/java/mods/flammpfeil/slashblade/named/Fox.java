@@ -3,21 +3,13 @@ package mods.flammpfeil.slashblade.named;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.init.Enchantments;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
-
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 
 /**
  * Created by Furia on 14/07/07.
@@ -62,17 +54,6 @@ public class Fox {
 
             NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
             SlashBlade.registerCustomItemStack(name, customblade);
-
-            customblade = customblade.copy();
-            NBTTagCompound displayTag = new NBTTagCompound();
-            customblade.setTagInfo("display",displayTag);
-            NBTTagList loreList = new NBTTagList();
-            loreList.appendTag(new NBTTagString("is demo item. is wooden sword"));
-            loreList.appendTag(new NBTTagString("true performance : please crafting"));
-            displayTag.setTag("Lore", loreList);
-            String creativeStr = name+".creative";
-            SlashBlade.registerCustomItemStack(creativeStr, customblade);
-            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + creativeStr);
         }
 
         {
@@ -106,110 +87,46 @@ public class Fox {
 
             NamedBladeManager.registerBladeSoul(tag , customblade.getDisplayName());
             SlashBlade.registerCustomItemStack(name, customblade);
-
-            customblade = customblade.copy();
-            NBTTagCompound displayTag = new NBTTagCompound();
-            customblade.setTagInfo("display",displayTag);
-            NBTTagList loreList = new NBTTagList();
-            loreList.appendTag(new NBTTagString("is demo item. is wooden sword"));
-            loreList.appendTag(new NBTTagString("true performance : please crafting"));
-            displayTag.setTag("Lore", loreList);
-            String creativeStr = name+".creative";
-            SlashBlade.registerCustomItemStack(creativeStr, customblade);
-            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + creativeStr);
         }
     }
 
-    @SubscribeEvent
-    public void postInit(LoadEvent.PostInitEvent event){
+	@SubscribeEvent
+	public void InitFoxRecipes(LoadEvent.PostInitEvent event){
+	    String nameWhite = "flammpfeil.slashblade.named.fox.white";
+	    String nameBlack = "flammpfeil.slashblade.named.fox.black";
+	    final String namekatana = "wrap.BambooMod.katana";
+	    ItemStack foxbladeReqired =SlashBlade.getCustomBlade(namekatana);
+	    foxbladeReqired.addEnchantment(Enchantments.LOOTING,1);
+	    NBTTagCompound reqTag1 = ItemSlashBlade.getItemTagCompound(foxbladeReqired);
+        ItemSlashBlade.KillCount.set(reqTag1,199);
+        ItemSlashBlade.ProudSoul.set(reqTag1,1000);
+        ItemSlashBlade.RepairCount.set(reqTag1,1);
+	    ItemStack fox = SlashBlade.findItemStack(SlashBlade.modid,nameWhite, 1);
 
-        ItemStack innerBlade = SlashBlade.findItemStack("minecraft", "wooden_sword", 1);
+	    ItemStack wheat = (Loader.isModLoaded("tofucraft"))
+	    		?SlashBlade.findItemStack("tofucraft","foodset", 1):new ItemStack(Items.WHEAT,1);
+	    		if((Loader.isModLoaded("tofucraft")))wheat.setItemDamage(10);
+	    SlashBlade.addRecipe(nameWhite, new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,nameWhite),fox, foxbladeReqired,
+	    		new Object[]{"DAD", "DBD", "DHD",
+	    				Character.valueOf('H'), wheat,
+	    				Character.valueOf('A'), SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1),
+	    				Character.valueOf('B'), foxbladeReqired,
+	    				Character.valueOf('D'), SlashBlade.findItemStack("sakura","kitunebi",1),
+	    		}));
 
-        ItemStack kitunebi = SlashBlade.findItemStack("BambooMod","kitunebi",1);
-        if(kitunebi.isEmpty())
-            return;
-
-        ItemStack inari = SlashBlade.findItemStack("TofuCraft","foodSet",1);
-        if(!inari.isEmpty())
-            inari.setItemDamage(14);
-        else
-            inari = new ItemStack(Items.WHEAT,1);
-
-        ItemStack proudsoul = SlashBlade.findItemStack(SlashBlade.modid,"proudsoul",1);
-
-        {
-            ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,nameWhite);
-
-            ItemStack reqiredBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
-            {
-                SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
-
-                reqiredBlade.addEnchantment(Enchantments.LOOTING,1);
-                NBTTagCompound tag = reqiredBlade.getTagCompound();
-                ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
-                ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
-                ItemSlashBlade.TextureName.set(tag,"BambooKatana");
-                ItemSlashBlade.KillCount.set(tag,199);
-                ItemSlashBlade.ProudSoul.set(tag,1000);
-                ItemSlashBlade.RepairCount.set(tag,1);
-
-                reqiredBlade.setStackDisplayName("BambooMod katana");
-            }
-            String reqiredStr = nameWhite + ".reqired";
-            SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
-            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
-
-            reqiredBlade = reqiredBlade.copy();
-
-            IRecipe recipe = new RecipeAwakeBladeFox(new ResourceLocation(SlashBlade.modid,"fox_white"),
-                    blade,reqiredBlade,
-                    "FPF",
-                    "FXF",
-                    "FIF",
-                    'X', reqiredBlade,
-                    'F', kitunebi,
-                    'I', inari,
-                    'P', proudsoul);
-
-            SlashBlade.addRecipe(nameWhite, recipe);
-        }
-        {
-            ItemStack blade = SlashBlade.getCustomBlade(SlashBlade.modid,nameBlack);
-
-            ItemStack reqiredBlade = SlashBlade.findItemStack(SlashBlade.modid,"slashbladeWrapper",1);
-            {
-                SlashBlade.wrapBlade.setWrapItem(reqiredBlade,innerBlade);
-
-                reqiredBlade.addEnchantment(Enchantments.SMITE,1);
-                NBTTagCompound tag = reqiredBlade.getTagCompound();
-                ItemSlashBladeNamed.CurrentItemName.set(tag,"wrap.BambooMod.katana");
-                ItemSlashBladeNamed.BaseAttackModifier.set(tag, 4.0f);
-                ItemSlashBlade.TextureName.set(tag,"BambooKatana");
-                ItemSlashBlade.KillCount.set(tag,199);
-                ItemSlashBlade.ProudSoul.set(tag,1000);
-                ItemSlashBlade.RepairCount.set(tag,1);
-
-                reqiredBlade.setStackDisplayName("BambooMod katana");
-            }
-            String reqiredStr = nameBlack + ".reqired";
-            SlashBlade.registerCustomItemStack(reqiredStr,reqiredBlade);
-            ItemSlashBladeNamed.NamedBlades.add(SlashBlade.modid + ":" + reqiredStr);
-
-            reqiredBlade = reqiredBlade.copy();
-
-            IRecipe recipe = new RecipeAwakeBladeFox(new ResourceLocation(SlashBlade.modid,"fox_black"),
-                    blade,reqiredBlade,
-                    "FPF",
-                    "FXF",
-                    "FIF",
-                    'X', reqiredBlade,
-                    'F', kitunebi,
-                    'I', inari,
-                    'P', proudsoul);
-
-            SlashBlade.addRecipe(nameBlack, recipe);
-        }
-
-        RecipeSorter.register("flammpfeil.slashblade:fox", RecipeAwakeBladeFox.class, SHAPED, "after:forge:shaped");
-    }
+	    ItemStack foxblade2Reqired =SlashBlade.getCustomBlade(namekatana);
+	    foxblade2Reqired.addEnchantment(Enchantments.SMITE,1);
+	    NBTTagCompound reqTag2 = ItemSlashBlade.getItemTagCompound(foxblade2Reqired);
+        ItemSlashBlade.KillCount.set(reqTag2,199);
+        ItemSlashBlade.ProudSoul.set(reqTag2,1000);
+        ItemSlashBlade.RepairCount.set(reqTag2,1);
+	    ItemStack fox2 = SlashBlade.findItemStack(SlashBlade.modid,"flammpfeil.slashblade.named.fox.black", 1);
+	    SlashBlade.addRecipe(nameBlack, new RecipeAwakeBlade(new ResourceLocation(SlashBlade.modid,nameBlack),fox2, foxblade2Reqired,
+	    		new Object[]{"DAD", "DBD", "DHD",
+	    				Character.valueOf('H'), wheat,
+	    				Character.valueOf('A'), SlashBlade.findItemStack(SlashBlade.modid,SlashBlade.ProudSoulStr,1),
+	    				Character.valueOf('B'), foxbladeReqired,
+	    				Character.valueOf('D'), SlashBlade.findItemStack("sakura","kitunebi",1),
+	    		}));
+	}
 }

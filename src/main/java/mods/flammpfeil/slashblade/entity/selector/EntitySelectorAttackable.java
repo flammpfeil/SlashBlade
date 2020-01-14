@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.entity.selector;
 
 import com.google.common.base.Predicate;
-import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.entity.EntityGrimGrip;
 import net.minecraft.entity.*;
 
@@ -32,7 +32,7 @@ public final class EntitySelectorAttackable implements Predicate<Entity>{
 
         String entityStr = EntityList.getEntityString(input);
 
-        if (((entityStr != null && SlashBlade.manager.attackableTargets.containsKey(entityStr) && SlashBlade.manager.attackableTargets.get(entityStr))
+        if (((entityStr != null && ConfigEntityListManager.attackableTargets.containsKey(entityStr) && ConfigEntityListManager.attackableTargets.get(entityStr))
                 || input instanceof EntityGrimGrip
         ))
             result = input.isEntityAlive();

@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.specialeffect;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Furia on 15/06/20.

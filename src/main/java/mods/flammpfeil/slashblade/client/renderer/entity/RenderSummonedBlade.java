@@ -154,9 +154,7 @@ public class RenderSummonedBlade extends Render {
         GL11.glScalef(scale, scale, scale);
         //GL11.glScalef(0.5f, 0.5f, 1.0f);
 
-        //■スタート
-        float lifetime = entitySummonedBlade.getLifeTime();
-        float ticks = entitySummonedBlade.ticksExisted;
+        entitySummonedBlade.getLifeTime();
         BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
