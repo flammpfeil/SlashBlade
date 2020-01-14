@@ -156,7 +156,7 @@ public class SlashBlade {
             }
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "SafeDrop", true, "true:bladestand / false:all ways EntityItem drop");
-                SafeDrop = prop.getBoolean(true);
+                SafeDrop = prop.getBoolean();
                 prop.setShowInGui(true);
             }
             {
