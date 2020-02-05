@@ -52,19 +52,44 @@ public class BladeFirstPersonRender {
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         Face.resetColor();
-        if(ProjectileBarrier.isAvailable(player, stack, player.getItemInUseCount())){
-            GlStateManager.translate(0, 0.2f, -1.0f);
-            GlStateManager.rotate(-25.0F, 1.0F, 0.0F, 0.0f);
-        }else{
-            GlStateManager.translate(-0.25F, 0.2f, -0.5f);
-            GlStateManager.rotate(-10.0F, 1.0F, 0.0F, 0.0f);
-        }
-        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0f);
-        GlStateManager.translate(0.0f, 0.25f, 0);
-        GlStateManager.rotate(-25.0F, 0.9F, 0.1F, 0.0F);
-        GlStateManager.scale(1.2F, 1.0F, 1.0F);
+
         float partialTicks = mc.getRenderPartialTicks();
+
+        if(!SlashBlade.FPVDisabledSyncPitch){
+            float pitch = interpolateRotation(player.prevRotationPitch, player.rotationPitch, partialTicks);
+            GL11.glRotatef(pitch, 1, 0 ,0);
+        }
+
+        if(SlashBlade.FPVOldStryleLike){
+
+            if(ProjectileBarrier.isAvailable(player, stack, player.getItemInUseCount())){
+                GlStateManager.translate(0, 0.1f, -0.8f);
+                GlStateManager.rotate(-30.0F, 1.0F, 0.0F, 0.0f);
+            }else{
+                GlStateManager.translate(-0.35F, -0.1f, -0.8f);
+                GlStateManager.rotate(-3.0F, 1.0F, 0.0F, 0.0f);
+            }
+            GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+
+            GlStateManager.translate(0.0f, 0.25f, 0);
+            GlStateManager.rotate(-25.0F, 0.9F, 0.1F, 0.0F);
+            GlStateManager.scale(1.2F, 1.0F, 1.0F);
+        }else{
+            if(ProjectileBarrier.isAvailable(player, stack, player.getItemInUseCount())){
+                GlStateManager.translate(0, 0.2f, -1.0f);
+                GlStateManager.rotate(-25.0F, 1.0F, 0.0F, 0.0f);
+            }else{
+                GlStateManager.translate(-0.25F, 0.2f, -0.5f);
+                GlStateManager.rotate(-10.0F, 1.0F, 0.0F, 0.0f);
+            }
+            GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0f);
+            GlStateManager.translate(0.0f, 0.25f, 0);
+            GlStateManager.rotate(-25.0F, 0.9F, 0.1F, 0.0F);
+            GlStateManager.scale(1.2F, 1.0F, 1.0F);
+        }
         layer.disableOffhandRendering();
+        if(SlashBlade.FPVNoBlur)
+            layer.setNoBlur();
         layer.doRenderLayer(mc.player, 0, 0, partialTicks, 0, 0, 0, 0);
         layer.enableOffhandRendering();
         GlStateManager.popMatrix();

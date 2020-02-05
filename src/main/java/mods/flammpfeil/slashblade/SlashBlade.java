@@ -1,13 +1,10 @@
 package mods.flammpfeil.slashblade;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.capability.MobEffect.CapabilityMobEffectHandler;
 import mods.flammpfeil.slashblade.capability.MobEffect.CapabilityMobEffectRegister;
-import mods.flammpfeil.slashblade.capability.MobEffect.MobEffect;
-import mods.flammpfeil.slashblade.capability.MobEffect.MobEffectCapabilityProvider;
 import mods.flammpfeil.slashblade.config.ConfigManager;
 import mods.flammpfeil.slashblade.core.ConfigCustomBladeManager;
 import mods.flammpfeil.slashblade.core.CoreProxy;
@@ -15,10 +12,7 @@ import mods.flammpfeil.slashblade.event.*;
 import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
-import mods.flammpfeil.slashblade.item.crafting.RecipeBladeSoulUpgrade;
-import mods.flammpfeil.slashblade.item.crafting.RecipeCustomBlade;
 import mods.flammpfeil.slashblade.network.NetworkManager;
-import net.minecraft.command.FunctionObject;
 import net.minecraft.util.ResourceLocation;
 import mods.flammpfeil.slashblade.util.DummyRecipeBase;
 import net.minecraftforge.common.config.Property;
@@ -46,7 +40,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -55,8 +48,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.File;
 import java.util.*;
-
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
 
 @Mod(name = SlashBlade.modname, modid = SlashBlade.modid, version = SlashBlade.version,
     guiFactory = "mods.flammpfeil.slashblade.gui.config.ConfigGuiFactory")
@@ -94,6 +85,10 @@ public class SlashBlade implements IFuelHandler{
 
     public static boolean RenderEnchantEffect = true;
     public static boolean RenderNFCSEffect = true;
+
+    public static boolean FPVNoBlur = true;
+    public static boolean FPVOldStryleLike = true;
+    public static boolean FPVDisabledSyncPitch = true;
 
 	public static final String ProudSoulStr = "proudsoul";
 	public static final String IngotBladeSoulStr = "ingot_bladesoul";
@@ -164,6 +159,21 @@ public class SlashBlade implements IFuelHandler{
             {
                 Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "NFCSVisualEffect", true);
                 SlashBlade.RenderNFCSEffect = prop.getBoolean();
+                prop.setShowInGui(true);
+            }
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "FPVNoBlur", true);
+                SlashBlade.FPVNoBlur = prop.getBoolean();
+                prop.setShowInGui(true);
+            }
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "FPVOldStryleLike", true);
+                SlashBlade.FPVOldStryleLike = prop.getBoolean();
+                prop.setShowInGui(true);
+            }
+            {
+                Property prop = SlashBlade.mainConfiguration.get(Configuration.CATEGORY_CLIENT, "FPVDisabledSyncPitch", true);
+                SlashBlade.FPVDisabledSyncPitch = prop.getBoolean();
                 prop.setShowInGui(true);
             }
 

@@ -42,6 +42,14 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
     static private boolean enabledOffhandRendering = true;
 
+    static private int blurCount = 3;
+    static public void resetBlurCount(){
+        blurCount = 3;
+    }
+    static public void setNoBlur(){
+        blurCount = 1;
+    }
+
     static public void enableOffhandRendering(){
         enabledOffhandRendering = true;
     }
@@ -80,6 +88,8 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
 
         GL11.glScalef(1.0F, 1.0F, 1.0F);
         render(entitylivingbaseIn, partialTicks);
+
+        resetBlurCount();
 
         GlStateManager.popMatrix();
     }
@@ -229,6 +239,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
             if (player.isSneaking())
             {
                 GlStateManager.translate(0.0F, 0.203125F, 0.0F);
+                GlStateManager.rotate(30.0f, 1, 0 , 0);
             }
         }
 
@@ -687,7 +698,7 @@ public class LayerSlashBlade implements LayerRenderer<EntityLivingBase> {
                 }
 
                 float progressTmp = progress;
-                for (int blurLoop = 0; blurLoop < 3; blurLoop++) {
+                for (int blurLoop = 0; blurLoop < blurCount; blurLoop++) {
                     GL11.glPushMatrix();
                     if ((progressTmp == 1.0f || combo.useScabbard) && blurLoop != 0) {
                         GL11.glPopMatrix();
