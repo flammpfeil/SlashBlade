@@ -31,6 +31,7 @@ public class ModelRegister {
         ModelLoader.setCustomModelResourceLocation(SlashBlade.wrapBlade, 0, modelLoc);
         ModelLoader.setCustomModelResourceLocation(SlashBlade.bladeNamed, 0, modelLoc);
 
+        /*
         ForgeHooksClient.registerTESRItemStack(SlashBlade.weapon, 0, DummyTileEntity.class);
         ForgeHooksClient.registerTESRItemStack(SlashBlade.bladeWood, 0, DummyTileEntity.class);
         ForgeHooksClient.registerTESRItemStack(SlashBlade.bladeBambooLight, 0, DummyTileEntity.class);
@@ -40,6 +41,7 @@ public class ModelRegister {
         ForgeHooksClient.registerTESRItemStack(SlashBlade.bladeNamed, 0, DummyTileEntity.class);
 
         ClientRegistry.bindTileEntitySpecialRenderer(DummyTileEntity.class, new BladeSpecialRender());
+        */
     }
 
     @SubscribeEvent

@@ -9,11 +9,13 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.tileentity.DummyTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.BannerTextures;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -22,6 +24,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Color4f;
@@ -31,10 +34,34 @@ import java.util.EnumSet;
 /**
  * Created by Furia on 2016/06/21.
  */
-public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntity> {
+public class BladeSpecialRender extends TileEntityItemStackRenderer {
+
+    private static final class SingletonHolder {
+        private static final BladeSpecialRender instance = new BladeSpecialRender();
+    }
+
+    public static BladeSpecialRender getInstance() {
+        return SingletonHolder.instance;
+    }
+
     private static final ResourceLocationRaw RES_ITEM_GLINT = new ResourceLocationRaw("textures/misc/enchanted_item_glint.png");
 
     @Override
+    public void renderByItem(ItemStack itemStackIn){
+        ItemSlashBlade.isRenderThread.set(false);
+
+        if(BladeModel.targetStack.isEmpty())
+            return;
+
+        ResourceLocationRaw resourceTexture = BladeModel.itemBlade.getModelTexture(BladeModel.targetStack);
+        bindTexture(resourceTexture);
+
+        if(render() && BladeModel.targetStack.hasEffect()){
+            renderEffect();
+        }
+    }
+
+    /*@Override
     public void render(DummyTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if(te != null) return;
 
@@ -55,6 +82,7 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
         //GlStateManager.popAttrib();
     }
+    */
 
     private void renderEffect()
     {
@@ -369,5 +397,9 @@ public class BladeSpecialRender extends TileEntitySpecialRenderer<DummyTileEntit
 
             GlStateManager.popMatrix();
         }
+    }
+
+    private void bindTexture(ResourceLocation loc){
+        Minecraft.getMinecraft().getTextureManager().bindTexture(loc);
     }
 }

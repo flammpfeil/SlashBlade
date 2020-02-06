@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.ability.StylishRankManager;
 import mods.flammpfeil.slashblade.client.model.BladeModelManager;
+import mods.flammpfeil.slashblade.client.model.BladeSpecialRender;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.EntityLivingRenderHandler;
 import mods.flammpfeil.slashblade.client.renderer.entity.layers.LayerSlashBlade;
@@ -22,6 +23,7 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.util.*;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -606,5 +608,10 @@ public class CoreProxyClient extends CoreProxy {
         });
 
         return null;
+    }
+
+    @Override
+    public void setTEISR(Item item) {
+        item.setTileEntityItemStackRenderer(BladeSpecialRender.getInstance());
     }
 }

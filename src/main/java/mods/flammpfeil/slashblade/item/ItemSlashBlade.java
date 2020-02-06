@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import mods.flammpfeil.slashblade.*;
 import mods.flammpfeil.slashblade.capability.BladeCapabilityProvider;
+import mods.flammpfeil.slashblade.core.CoreProxy;
 import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorAttackable;
 import mods.flammpfeil.slashblade.entity.selector.EntitySelectorDestructable;
@@ -19,6 +20,7 @@ import mods.flammpfeil.slashblade.util.*;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.init.Enchantments;
@@ -761,6 +763,8 @@ public class ItemSlashBlade extends ItemSword {
 		super(par2EnumToolMaterial);
         this.setMaxDamage(50);
         this.defaultBaseAttackModifier = defaultBaseAttackModifier;
+
+        CoreProxy.proxy.setTEISR(this);
 	}
 
     public static NBTTagCompound getItemTagCompound(ItemStack stack){
