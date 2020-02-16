@@ -13,8 +13,8 @@ import mods.flammpfeil.slashblade.item.ItemProudSoul;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.core.ConfigEntityListManager;
 import mods.flammpfeil.slashblade.network.NetworkManager;
+import mods.flammpfeil.slashblade.util.*;
 import net.minecraft.util.ResourceLocation;
-import mods.flammpfeil.slashblade.util.DummyRecipeBase;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.IFuelHandler;
@@ -32,15 +32,12 @@ import mods.flammpfeil.slashblade.named.*;
 import mods.flammpfeil.slashblade.named.BladeMaterials;
 import mods.flammpfeil.slashblade.named.event.LoadEvent;
 import mods.flammpfeil.slashblade.specialeffect.SpecialEffects;
-import mods.flammpfeil.slashblade.util.DummySmeltingRecipe;
-import mods.flammpfeil.slashblade.util.EnchantHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import mods.flammpfeil.slashblade.util.ResourceLocationRaw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
@@ -421,6 +418,8 @@ public class SlashBlade implements IFuelHandler{
         SlashBlade.addRecipe("repair", recipeRepair);
 
         //MinecraftForge.EVENT_BUS.register(recipeRepair);
+
+        SlashBlade.InitEventBus.post(new SlashBladeAchievementCreateEvent());
 
 
         int entityId = 1;

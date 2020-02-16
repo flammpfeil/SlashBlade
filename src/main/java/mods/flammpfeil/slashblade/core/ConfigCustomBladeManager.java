@@ -60,9 +60,9 @@ public class ConfigCustomBladeManager {
             tiny.setCount(x);
 
             IRecipe recipe = new RecipeCustomBlade(customBlade,
-                    "P##",
-                    "#B#",
-                    "##S",
+                    "P  ",
+                    " B ",
+                    "  S",
                     'S', SlashBlade.getCustomBlade(SlashBlade.SphereBladeSoulStr),
                     'B', new ItemStack(SlashBlade.bladeNamed,1,0),
                     'P', tiny
