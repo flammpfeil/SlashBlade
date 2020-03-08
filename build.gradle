@@ -13,14 +13,17 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
-version = "mc1.12-r19"
+version = "mc1.12-r32"
 group= "flammpfeil.slashblade" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SlashBlade"
 
-minecraft {
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
 
-    version = "1.12.2-14.23.4.2764"
+minecraft {
+    version = "1.12.2-14.23.5.2847"
     runDir = "run"
 
     // the mappings can be changed at any time, and must be in the following format.
@@ -36,8 +39,12 @@ minecraft {
     replace '@VERSION@', project.version
     replace '@MC_VERSION@', version
 }
-processResources
-{
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
@@ -46,7 +53,7 @@ processResources
         expand 'version':project.version, 'mcversion':project.minecraft.version, 'modname':project.archivesBaseName, 'modid':project.group
     }
 
-    // copy everything else, thats not the mcmod.info
+    // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
@@ -100,41 +107,4 @@ uploadArchives {
             repository(url: uri(mavenRepository))
         }
     }
-}
-repositories {
-
-	maven {
-    // location of the maven that hosts JEI files
-    name = "Progwml6 maven"
-    url = "http://dvs1.progwml6.com/files/maven"
-	}
-
-	maven {
-    // location of a maven mirror for JEI files, as a fallback
-    name = "ModMaven"
-    url = "modmaven.k-4u.nl"
-	}
-	 maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-
-}
-
-dependencies {
-	configurations.all {
-		resolutionStrategy {
-			force 'mezz.jei:jei_1.12.2:4.14.3.242'
-		}
-	}
-	// compile against the JEI API but do not include it at runtime
-    deobfProvided ("mezz.jei:jei_1.12.2:4.14.3.242:api"){
-	force = true
-	}
-    // at runtime, use the full JEI jar
-    runtime ("mezz.jei:jei_1.12.2:4.14.3.242"){
-	force = true
-	}
-	deobfCompile "reforged:Reforged:0.7.5:1.12+"
-
 }
